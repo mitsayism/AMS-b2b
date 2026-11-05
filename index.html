@@ -1750,12 +1750,13 @@
                 <!-- KNIA Condition Matching Table -->
                 <div>
                   <div style="font-weight:600; font-size:12px; color:var(--slate-700); margin-bottom:8px; text-transform:uppercase;">2. Đối Chiếu Điều Kiện Chart KNIA:</div>
-                  <table class="data-table" style="font-size:12px;">
+                                    <table class="data-table" style="font-size:12px;">
                     <thead>
                       <tr>
-                        <th>Điều kiện quy định</th>
-                        <th>Đánh giá</th>
-                        <th>Căn cứ frame</th>
+                        <th style="min-width:180px;">Điều kiện quy định (KNIA)</th>
+                        <th style="width:80px;">Đánh giá</th>
+                        <th style="width:80px;">Xác suất (p)</th>
+                        <th>Căn cứ thị giác & Frame</th>
                       </tr>
                     </thead>
                     <tbody id="condition-matching-tbody">
@@ -2156,7 +2157,7 @@ Vụ việc tai nạn ngày 04/11 đã có kết quả phân tích:
           <label>Tên vụ việc <input class="chat-input" id="new-case-name" maxlength="80" required placeholder="Ví dụ: Va chạm tại ngã tư Gangnam"></label>
           <label>Tên khách hàng <input class="chat-input" id="new-case-customer" maxlength="80" required placeholder="Tên người được bảo hiểm"></label>
           <label>Thời điểm tai nạn <input class="chat-input" id="new-case-date" type="datetime-local" required></label>
-          <label>Video vụ việc <input class="chat-input" id="new-case-video" type="file" accept=".mp4,.mov,.avi,.mkv,video/*" required data-tooltip="Chọn video MP4, MOV, AVI hoặc MKV; tối đa 200 MB và 180 giây"></label>
+          <label>Video vụ việc (tùy chọn) <input class="chat-input" id="new-case-video" type="file" accept=".mp4,.mov,.avi,.mkv,video/*" data-tooltip="Bỏ qua để dùng dữ liệu mẫu; nếu chọn video, hỗ trợ MP4, MOV, AVI, MKV tối đa 200 MB và 180 giây"></label>
           <label>Địa điểm <input class="chat-input" id="new-case-location" maxlength="120" placeholder="Tùy chọn"></label>
           <div class="case-form-row"><label>Biển số xe <input class="chat-input" id="new-case-plate" maxlength="30" placeholder="Tùy chọn"></label><label>Số hợp đồng <input class="chat-input" id="new-case-policy" maxlength="50" placeholder="Tùy chọn"></label></div>
           <p id="new-case-error" role="alert" style="color:#ffb2bd;font-size:12px;display:none;"></p>
@@ -2253,20 +2254,24 @@ Vụ việc tai nạn ngày 04/11 đã có kết quả phân tích:
       currentCaseId: '10',
       activeTab: 'active',
       caseStageFilter: 'ALL',
-      cases: {
-        '10': {
+      cases: {        '10': {
           id: '#10',
           code: 'CS-2026-8821',
-          customer: 'Kim Tae-woo',
+          customer: 'Kim Tae-woo (Genesis G80 · KB손보)',
           policyNo: 'KB-POL-99214',
           vehicleNo: '30A-12345',
           accidentDate: '2026-11-04 14:30',
-          videoName: 'clip_intersection.mp4',
-          videoDuration: 45.0,
+          location: 'Seoul Gangnam-gu Teheran-ro 4-lanes',
+          videoName: 'dashcam_teheran_rear_end.mp4',
+          videoDuration: 32.4,
           stage: 2, // 1: Reading, 2: Report Draft, 3: Negotiation, 4: Notification, 5: Closed
           statusText: '2. Chờ chốt Chart & Báo cáo',
-          selectedChart: null,
-          evidenceByChart: {},
+          selectedChart: '도표 244 (차31-3)',
+          evidenceByChart: {
+            '도표 244 (차31-3)': { generated: true, processing: false },
+            '도표 252 (차31-1)': { generated: true, processing: false },
+            '도표 245 (차32-2)': { generated: true, processing: false }
+          },
           reportVersions: [],
           activeReportVersion: null,
           isReportConfirmed: false,
@@ -2275,42 +2280,342 @@ Vụ việc tai nạn ngày 04/11 đã có kết quả phân tích:
           finalFaultA: 90,
           finalFaultB: 10,
           charts: [
-            { code: '차31-3', name: 'Ngã tư xe đi thẳng đèn xanh va chạm xe rẽ trái', match: 92, matchLabel: 'Cao', baseFault: '100 : 0', desc: 'Xe đi thẳng vào ngã tư khi đèn xanh có quyền ưu tiên tuyệt đối so với xe rẽ trái thiếu quan sát.', support: ['00:13.7 · Xe A đi vào giao lộ khi đèn xanh', '00:14.2 · Xe B rẽ trái cắt hướng xe A'], gap: 'Khoảng cách phanh chưa đo được từ video.' },
-            { code: '차31-1', name: 'Ngã tư đèn vàng vượt qua va chạm rẽ trái', match: 65, matchLabel: 'Trung bình', baseFault: '80 : 20', desc: 'Áp dụng khi xe đi thẳng vào ngã tư vào thời điểm đèn vàng chuyển pha, có một phần lỗi chú ý quan sát.', support: ['00:14.2 · Có va chạm khi xe B rẽ trái'], gap: 'Chưa xác nhận đèn đã chuyển vàng lúc xe A vào giao lộ; khung hình 00:13.7 nghiêng về đèn xanh.', conditions: [{ name: 'Xe A đi thẳng vào giao lộ lúc đèn chuyển vàng', status: 'Mâu thuẫn', frame: '00:13.7 · Video nghiêng về đèn xanh' }, { name: 'Xe B rẽ trái cắt hướng xe A', status: 'Khớp', frame: '00:14.2' }, { name: 'Xe A có đủ thời gian quan sát và giảm tốc', status: 'Chưa rõ', frame: 'Góc quay chưa đủ rõ' }] },
-            { code: '차32-2', name: 'Ngã tư không có đèn tín hiệu giao thông', match: 45, matchLabel: 'Trung bình', baseFault: '70 : 30', desc: 'Áp dụng cho ngã tư đường đồng cấp không có đèn tín hiệu điều khiển.', support: ['00:14.2 · Hai xe va chạm tại giao lộ'], gap: 'Video cho thấy có đèn tín hiệu; điều kiện không có đèn chưa phù hợp.', conditions: [{ name: 'Nút giao không có đèn tín hiệu', status: 'Mâu thuẫn', frame: '00:13.7 · Video có đèn' }, { name: 'Hai xe đi vào cùng nút giao', status: 'Khớp', frame: '00:14.2' }, { name: 'Quyền ưu tiên của từng hướng đi', status: 'Chưa rõ', frame: 'Cần đối chiếu thêm' }] }
+            {
+              code: '도표 244 (차31-3)',
+              kniaNo: '도표 244',
+              subCode: '차31-3',
+              rank: '추천 1위 · Strong Match',
+              rankBadge: 'Khớp cao (Rank 1)',
+              name: '동일방향 안전거리 미확보 후행추돌 (Tông đuôi cùng chiều do không giữ cự ly an toàn)',
+              shortName: 'Tông đuôi cùng chiều (Thiếu cự ly)',
+              match: 91,
+              matchLabel: 'Khớp cao',
+              baseFault: '100 : 0',
+              faultA: 100,
+              faultB: 0,
+              tree: 'Cấp 1: Va chạm Xe-Xe ➔ Cấp 2: Cùng chiều di chuyển ➔ Cấp 3: Tông đuôi do thiếu cự ly an toàn',
+              roleA: 'Khách hàng (Genesis) · Xe sau đi thẳng · Thiếu khoảng cách an toàn',
+              roleB: 'Đối phương (Tucson) · Xe trước đi thẳng · Giảm tốc trên làn đường',
+              desc: '선행차(상대차 투싼)가 동일 차로 내에서 주행 중 감속하였으나, 후행차(고객차 제네시스)가 안전거리를 미확보하여 후미를 추돌한 전형적 사고. Xe phía trước giảm tốc trên làn đường, xe sau thiếu cự ly an toàn đâm vào cản sau xe trước.',
+              distinction: 'Đặc trưng: Cả 2 xe đã đi thẳng ổn định trong làn đường > 3.4 giây trước va chạm (loại trừ yếu tố chuyển làn).',
+              separatingFact: 'Cả 2 xe đã đi thẳng ổn định trong làn > 3.4s (> 30m) trước va chạm, loại trừ Biểu đồ 252 (chuyển làn).',
+              runnerUp: '도표 252 (68%)',
+              support: [
+                '00:08~00:15 · Hai xe di chuyển thẳng cùng làn đường 2, độ lệch ngang 0.0%',
+                '00:12.00 · Cự ly bám đuôi thu hẹp còn 2.1m (thiếu 18m cự ly phanh tiêu chuẩn)',
+                '00:15.24 · Va chạm trực diện cản sau, độ lệch tâm tiếp xúc < 4cm'
+              ],
+              gap: 'Gia tốc phanh của xe trước lúc 00:09 đạt -0.68G; đối chất yếu tố phanh gấp để đàm phán giảm 10% lỗi theo Án lệ 96다39314.',
+              conditions: [
+                {
+                  id: 'c1',
+                  name: '1. 동일 차로 직진 진행 (Cả hai xe đi thẳng cùng một làn đường)',
+                  status: 'Khớp',
+                  statusKo: '일치',
+                  conf: '0.98',
+                  pVal: 0.98,
+                  frame: '00:08~00:15',
+                  source: '00:08~00:15 VLM nhận diện vạch làn tâm đường (độ lệch ngang 0.0%)'
+                },
+                {
+                  id: 'c2',
+                  name: '2. 후행차 안전거리 미확보 (Xe sau thiếu khoảng cách an toàn - Đ.19.1 Luật GTĐB)',
+                  status: 'Khớp',
+                  statusKo: '일치',
+                  conf: '0.95',
+                  pVal: 0.95,
+                  frame: '00:12.00',
+                  source: 'Cự ly 2.1m lúc 00:12 (thiếu 18m cự ly phanh tiêu chuẩn ở tốc độ 48km/h)'
+                },
+                {
+                  id: 'c3',
+                  name: '3. 충돌 부위 선행차 후미 범퍼 (Điểm va chạm tại cản sau chính diện)',
+                  status: 'Khớp',
+                  statusKo: '일치',
+                  conf: '0.96',
+                  pVal: 0.96,
+                  frame: '00:15.24',
+                  source: '00:15.24 Tiếp xúc chính diện cản sau Tucson, độ lệch tâm < 4cm'
+                },
+                {
+                  id: 'c4',
+                  name: '4. 차로 변경 진행 중 아님 (Không có hành vi chuyển làn trước va chạm)',
+                  status: 'Khớp',
+                  statusKo: '일치',
+                  conf: '0.89',
+                  pVal: 0.89,
+                  frame: '00:11.00',
+                  source: 'Xe trước đã ổn định hoàn toàn trong làn 3.4 giây (> 30m hành trình thẳng)'
+                }
+              ],
+              vlmEvidences: [
+                {
+                  id: 'ev-1',
+                  title: '핵심 증거 1: 충돌 궤적 및 접촉 기하학 (Quỹ đạo va chạm & Hình học tiếp xúc)',
+                  time: '00:15.24',
+                  conf: '98%',
+                  finding: '투싼 후미 범퍼 vs 제네시스 전면 그릴 완전 정합 (오프셋 4cm 미만 직진 추돌). Mặt ca-lăng xe khách hàng khớp hoàn toàn cản sau xe đối phương, khẳng định 100% va chạm thẳng, không có va chạm góc hay tạt đầu.',
+                  legalTag: 'Bác bỏ Biểu đồ 252 (Tranh chấp đâm góc / Chuyển làn)',
+                  tagType: 'defense'
+                },
+                {
+                  id: 'ev-2',
+                  title: '핵심 증거 2: 안전거리 미확보 시점 및 차간거리 (Thời điểm mất cự ly an toàn)',
+                  time: '00:12.00',
+                  conf: '95%',
+                  finding: '주행속도 48km/h 대비 정지거리 18m 부족, 실제 차간거리 2.1m로 좁혀짐. Ở vận tốc 48km/h, cự ly phanh cần thiết là 18m, thực tế cự ly rút xuống chỉ còn 2.1m lúc 00:12, cấu thành vi phạm Điều 19.1 Luật GTĐB.',
+                  legalTag: 'Khẳng định lỗi cơ sở theo Đ.19 Khoản 1 Luật Giao thông Đường bộ',
+                  tagType: 'statute'
+                },
+                {
+                  id: 'ev-3',
+                  title: '핵심 증거 3: 선행차 차선 중앙 주행 안정화 (Xe trước đã ổn định tâm làn 3.4s)',
+                  time: '00:11.00',
+                  conf: '92%',
+                  finding: '선행 차량은 충돌 3.4초 전 이미 2차로 중앙에 완전히 안착 완료, 횡방향 이탈률 0.0%. Xe đối phương đã hoàn tất nhập làn từ giây 00:08 và đi thẳng ổn định hơn 32m trước va chạm.',
+                  legalTag: 'Khóa luận điểm đối phương: Bác bỏ yêu cầu phạt lỗi xe trước chuyển làn',
+                  tagType: 'defense'
+                },
+                {
+                  id: 'ev-4',
+                  title: '핵심 증거 4: 선행차 급제동 및 과도 감속 (Xe trước phanh gấp không cần thiết)',
+                  time: '00:09.50',
+                  conf: '91%',
+                  finding: '00:09 제동등 점등 및 감속도 -0.68G 기록. 전방 택시와 간격 15m 여유가 존재했음에도 과도하게 급제동함. Xe trước phanh gấp -0.68G dù phía trước còn khoảng trống 15m.',
+                  legalTag: 'Vũ khí đàm phán: Bắt buộc giảm 10% lỗi cho xe khách hàng theo Án lệ Tối cao 96다39314',
+                  tagType: 'weapon'
+                }
+              ]
+            },
+            {
+              code: '도표 252 (차31-1)',
+              kniaNo: '도표 252',
+              subCode: '차31-1',
+              rank: '후보 2위 · Moderate Match',
+              rankBadge: 'Khớp trung bình (Rank 2)',
+              name: '차로변경 직후 발생한 후행 추돌 사고 (Tông đuôi ngay sau khi xe trước chuyển làn)',
+              shortName: 'Tông đuôi sau khi chuyển làn',
+              match: 68,
+              matchLabel: 'Khớp trung bình',
+              baseFault: '70 : 30',
+              faultA: 30,
+              faultB: 70,
+              tree: 'Cấp 1: Va chạm Xe-Xe ➔ Cấp 2: Cùng chiều chuyển hướng ➔ Cấp 3: Tông đuôi ngay sau khi nhập làn',
+              roleA: 'Khách hàng (Genesis) · Xe sau đi thẳng · Bị xe trước chuyển làn cản trở',
+              roleB: 'Đối phương (Tucson) · Xe chuyển làn · Cắt mặt nhập làn thiếu an toàn',
+              desc: '선행 차량이 차로를 변경하여 진입한 직후 안전거리 미확보 상태에서 발생한 추돌. Xe đối phương chuyển làn vào trước đầu xe khách hàng và xảy ra va chạm ngay sau khi nhập làn.',
+              distinction: 'Đặc trưng: Va chạm xảy ra trong vòng dưới 30m hoặc dưới 2 giây ngay sau khi xe trước đè vạch nhập làn.',
+              separatingFact: 'Mâu thuẫn then chốt: Video chứng minh xe trước đã nhập làn xong từ 00:08 (trước va chạm 3.4s > 30m), do đó không đủ điều kiện áp dụng biểu đồ này.',
+              runnerUp: '도표 244 (91%)',
+              support: [
+                '00:08.20 · Xe B có thao tác chuyển từ làn 1 sang làn 2 trước khi va chạm',
+                '00:14.00 · Xe A không kịp dừng hẳn dẫn đến tiếp xúc cản sau'
+              ],
+              gap: 'Mâu thuẫn điều kiện cốt lõi: Xe trước đã chạy thẳng hoàn toàn 3.4 giây (> 32m) trước va chạm, không phải va chạm tức thì sau chuyển làn.',
+              conditions: [
+                {
+                  id: 'c252-1',
+                  name: '1. 선행차 차로변경 완료 직후 여부 (Va chạm xảy ra ngay tức thì sau chuyển làn)',
+                  status: 'Mâu thuẫn',
+                  statusKo: '모순',
+                  conf: '0.28',
+                  pVal: 0.28,
+                  frame: '00:08.20',
+                  source: '00:08.20 đã kết thúc đè vạch; xe đã chạy ổn định 3.4s trước khi va chạm (không khớp tính tức thì)'
+                },
+                {
+                  id: 'c252-2',
+                  name: '2. 진입 후 직선 주행거리 30m 미만 (Cự ly chạy thẳng sau nhập làn < 30m)',
+                  status: 'Cần kiểm tra',
+                  statusKo: '확인필요',
+                  conf: '0.61',
+                  pVal: 0.61,
+                  frame: '00:08~00:12',
+                  source: 'Xe đã di chuyển xấp xỉ 32m ở vận tốc 35~40 km/h (sát ngưỡng ranh giới 30m quy định)'
+                },
+                {
+                  id: 'c252-3',
+                  name: '3. 후행차량의 제동 여유 시간 부족 (Xe sau không đủ thời gian phản xạ an toàn)',
+                  status: 'Khớp',
+                  statusKo: '일치',
+                  conf: '0.84',
+                  pVal: 0.84,
+                  frame: '00:13.80',
+                  source: 'Khoảng thời gian từ lúc xe trước phanh đến lúc va chạm chỉ 1.1s, dưới ngưỡng 1.5s'
+                }
+              ],
+              vlmEvidences: [
+                {
+                  id: 'ev-252-1',
+                  title: 'Bằng chứng 1: Mốc hoàn thành chuyển làn & Thân xe ổn định',
+                  time: '00:08.20',
+                  conf: '88%',
+                  finding: 'Bốn bánh xe Tucson đã nằm hoàn toàn bên trong vạch làn 2 tại mốc 00:08.20. Thao tác chuyển làn đã kết thúc 3.4 giây trước mốc va chạm 00:15.24.',
+                  legalTag: 'Bằng chứng mâu thuẫn: Bác bỏ yếu tố chuyển làn đột ngột',
+                  tagType: 'conflict'
+                },
+                {
+                  id: 'ev-252-2',
+                  title: 'Bằng chứng 2: Quãng đường chạy thẳng tích lũy sau nhập làn',
+                  time: '00:11.40',
+                  conf: '75%',
+                  finding: 'VLM đo đạc cự ly di chuyển thẳng sau khi bánh sau cắt vạch đạt 32.4 mét, vượt qua giới hạn quy chuẩn 30m của Hiệp hội KNIA cho biểu đồ 252.',
+                  legalTag: 'Căn cứ pháp lý loại trừ Biểu đồ 252',
+                  tagType: 'conflict'
+                },
+                {
+                  id: 'ev-252-3',
+                  title: 'Bằng chứng 3: Trạng thái đèn tín hiệu báo rẽ (Xi-nhan)',
+                  time: '00:14.00',
+                  conf: '84%',
+                  finding: 'Đèn xi-nhan phải của Tucson đã tắt hoàn toàn tại 00:09 trước khi đạp phanh, chứng tỏ quá trình chuyển làn đã chấm dứt hoàn toàn.',
+                  legalTag: 'Loại trừ lỗi không tắt tín hiệu rẽ',
+                  tagType: 'statute'
+                }
+              ]
+            },
+            {
+              code: '도표 245 (차32-2)',
+              kniaNo: '도표 245',
+              subCode: '차32-2',
+              rank: '후보 3위 · Possible Match',
+              rankBadge: 'Khớp thấp (Rank 3)',
+              name: '선행차량의 이유 없는 급제동으로 인한 추돌 (Tông đuôi do xe trước phanh gấp vô cớ)',
+              shortName: 'Tông đuôi do phanh gấp vô cớ',
+              match: 52,
+              matchLabel: 'Khớp thấp',
+              baseFault: '70 : 30',
+              faultA: 70,
+              faultB: 30,
+              tree: 'Cấp 1: Va chạm Xe-Xe ➔ Cấp 2: Cùng chiều di chuyển ➔ Cấp 3: Phanh gấp vô cớ',
+              roleA: 'Khách hàng (Genesis) · Xe sau đi thẳng · Bị bất ngờ do xe trước phanh gấp',
+              roleB: 'Đối phương (Tucson) · Xe trước đi thẳng · Phanh đột ngột không lý do',
+              desc: '선행 차량이 위험 방지 등 정당한 이유 없이 급정지하여 후행 차량이 추돌한 사고. Xe phía trước phanh gấp đột ngột trên đường thông thoáng không có chướng ngại vật hợp lý dẫn đến tai nạn.',
+              distinction: 'Đặc trưng: Xe trước đạp phanh khẩn cấp mà phía trước không có bất kỳ chướng ngại vật hay lý do giao thông hợp pháp nào.',
+              separatingFact: 'Mâu thuẫn then chốt: Camera ghi nhận phía trước xe Tucson cách 15m có xe taxi đang giảm tốc chờ đèn giao thông, chứng minh việc phanh có lý do khách quan (không cấu thành phanh vô cớ).',
+              runnerUp: '도표 244 (91%)',
+              support: [
+                '00:09.50 · Xe B có thao tác phanh gấp mạnh với gia tốc -0.68G',
+                '00:15.24 · Va chạm tông đuôi xảy ra sau khi xe B phanh dừng'
+              ],
+              gap: 'Mâu thuẫn điều kiện cốt lõi: Phía trước xe B có phương tiện khác (taxi) đang dừng đèn tín hiệu, do đó việc giảm tốc là có lý do chính đáng.',
+              conditions: [
+                {
+                  id: 'c245-1',
+                  name: '1. 선행차량의 급감속 발생 여부 (Xe trước có hành vi phanh gấp / giảm tốc đột ngột)',
+                  status: 'Khớp',
+                  statusKo: '일치',
+                  conf: '0.91',
+                  pVal: 0.91,
+                  frame: '00:09.50',
+                  source: '00:09.50 Đèn phanh sáng, cảm biến IMU viễn trắc ghi nhận gia tốc phanh đạt -0.68G'
+                },
+                {
+                  id: 'c245-2',
+                  name: '2. 급정지의 정당한 사유 부존재 (Không có lý do chính đáng/chướng ngại vật để phanh)',
+                  status: 'Mâu thuẫn',
+                  statusKo: '모순',
+                  conf: '0.19',
+                  pVal: 0.19,
+                  frame: '00:09.80',
+                  source: '00:09.80 VLM nhận diện rõ xe taxi phía trước đang giảm tốc dừng chờ đèn đỏ'
+                },
+                {
+                  id: 'c245-3',
+                  name: '3. 후행차량 안전거리 미확보 (Xe sau thiếu khoảng cách an toàn tối thiểu)',
+                  status: 'Khớp',
+                  statusKo: '일치',
+                  conf: '0.95',
+                  pVal: 0.95,
+                  frame: '00:12.00',
+                  source: 'Cự ly giữa hai xe chỉ 2.1m trước khi xảy ra va chạm, vi phạm quy định giữ cự ly'
+                }
+              ],
+              vlmEvidences: [
+                {
+                  id: 'ev-245-1',
+                  title: 'Bằng chứng 1: Đo lường gia tốc phanh khẩn cấp (-0.68G)',
+                  time: '00:09.50',
+                  conf: '91%',
+                  finding: 'VLM và đồ thị viễn trắc đo được độ giảm tốc -0.68G lúc 00:09.50, vượt xa mức phanh êm ái thông thường (-0.25G đến -0.3G), xác nhận có hiện tượng phanh gấp.',
+                  legalTag: 'Căn cứ áp dụng yếu tố hiệu chỉnh giảm 10% cho xe sau',
+                  tagType: 'weapon'
+                },
+                {
+                  id: 'ev-245-2',
+                  title: 'Bằng chứng 2: Phát hiện chướng ngại vật giao thông phía trước (Taxi dừng đèn)',
+                  time: '00:09.80',
+                  conf: '89%',
+                  finding: 'Khung hình 00:09.80 nhận diện rõ một xe taxi màu cam đang bật đèn dừng cách đầu xe Tucson 15.2m tại giao lộ đèn đỏ, chứng minh phanh có lý do hợp pháp.',
+                  legalTag: 'Bác bỏ hoàn toàn Biểu đồ 245 (Không đủ yếu tố phanh vô cớ)',
+                  tagType: 'conflict'
+                },
+                {
+                  id: 'ev-245-3',
+                  title: 'Bằng chứng 3: Phân tích cự ly phanh phản ứng của xe sau',
+                  time: '00:12.50',
+                  conf: '94%',
+                  finding: 'Xe khách hàng chỉ bắt đầu đạp phanh khi khoảng cách với xe trước còn 1.8m, thời gian trễ phản ứng 1.6s, xác nhận lỗi chủ quan không chú ý quan sát.',
+                  legalTag: 'Căn cứ xác định lỗi không giữ cự ly an toàn của xe A',
+                  tagType: 'statute'
+                }
+              ]
+            }
           ],
           comparisonEvidence: [
-            { time: '00:13.7', observation: 'Đèn giao thông khi xe A vào giao lộ', assessments: {
-              '차31-3': ['Ủng hộ', 'Thấy đèn xanh, đúng điều kiện chart.'],
-              '차31-1': ['Mâu thuẫn', 'Chưa thấy đèn vàng như chart yêu cầu.'],
-              '차32-2': ['Mâu thuẫn', 'Có đèn tín hiệu tại giao lộ.']
-            } },
-            { time: '00:14.2', observation: 'Xe B rẽ trái cắt hướng xe A', assessments: {
-              '차31-3': ['Ủng hộ', 'Khớp hướng di chuyển và điểm va chạm.'],
-              '차31-1': ['Ủng hộ', 'Khớp hành vi rẽ trái.'],
-              '차32-2': ['Ủng hộ', 'Khớp va chạm tại giao lộ.']
-            } },
-            { time: '00:13.9', observation: 'Phanh của xe A trước va chạm', assessments: {
-              '차31-3': ['Chưa rõ', 'Góc quay rung, chưa đo được cự ly phanh.'],
-              '차31-1': ['Chưa rõ', 'Chưa xác định mức giảm tốc.'],
-              '차32-2': ['Chưa rõ', 'Chưa xác định mức giảm tốc.']
-            } }
+            {
+              time: '00:09.50',
+              observation: 'Gia tốc phanh xe trước (-0.68G) & Chướng ngại vật taxi',
+              assessments: {
+                '도표 244 (차31-3)': ['Ủng hộ', 'Xe trước phanh trên làn đường nhưng có khoảng trống 15m; dùng làm vũ khí đàm phán giảm 10% lỗi.'],
+                '도표 252 (차31-1)': ['Mâu thuẫn', 'Hành vi phanh diễn ra sau khi đã đi thẳng trong làn, không liên quan thao tác chuyển làn.'],
+                '도표 245 (차32-2)': ['Mâu thuẫn', 'Phía trước có xe taxi dừng đèn đỏ nên việc phanh là có lý do chính đáng, không cấu thành phanh vô cớ.']
+              }
+            },
+            {
+              time: '00:11.00',
+              observation: 'Trạng thái ổn định thân xe trong làn (Độ lệch ngang 0.0%)',
+              assessments: {
+                '도표 244 (차31-3)': ['Ủng hộ', 'Cả 2 xe đã đi thẳng ổn định trong làn hơn 3.4 giây (> 32m hành trình thẳng).'],
+                '도표 252 (차31-1)': ['Mâu thuẫn', 'Đã vượt ngưỡng 30m sau chuyển làn, loại trừ lỗi chuyển làn tức thời.'],
+                '도표 245 (차32-2)': ['Chưa rõ', 'Xe giữ tâm làn nhưng cần xét đến nguyên nhân phanh phía trước.']
+              }
+            },
+            {
+              time: '00:12.00',
+              observation: 'Cự ly an toàn giữa hai xe (Cự ly còn 2.1m)',
+              assessments: {
+                '도표 244 (차31-3)': ['Ủng hộ', 'Cự ly 2.1m vi phạm nghiêm trọng cự ly phanh tiêu chuẩn 18m theo Đ.19 Luật GTĐB.'],
+                '도표 252 (차31-1)': ['Chưa rõ', 'Thời gian phản ứng bị rút ngắn nhưng xe trước đã vào làn từ trước.'],
+                '도표 245 (차32-2)': ['Ủng hộ', 'Xe sau thiếu cự ly an toàn nên không thể dừng kịp.']
+              }
+            },
+            {
+              time: '00:15.24',
+              observation: 'Hình học tiếp xúc và quỹ đạo điểm va chạm',
+              assessments: {
+                '도표 244 (차31-3)': ['Ủng hộ', 'Tiếp xúc cản sau chính diện 100%, độ lệch tâm < 4cm, đúng chuẩn tông đuôi cùng chiều.'],
+                '도표 252 (차31-1)': ['Mâu thuẫn', 'Không có dấu hiệu tiếp xúc góc hay tạt sườn do chuyển làn.'],
+                '도표 245 (차32-2)': ['Ủng hộ', 'Đặc điểm tiếp xúc cản sau khớp với tình huống tông đuôi xe dừng.']
+              }
+            }
           ],
           events: [
-            { id: 's1', name: 'Đường cùng chiều 2 làn xe', conf: 95, source: 'Computer Vision', verified: true },
-            { id: 's2', name: 'Tín hiệu đèn xanh khi xe A vào ngã tư', conf: 90, source: 'Signal Detector', verified: true },
-            { id: 's3', name: 'Xe B đột ngột rẽ trái cắt qua đầu xe A', conf: 92, source: 'Trajectory Track', verified: true },
-            { id: 's4', name: 'Mốc va chạm góc trước bên trái Frame 426', conf: 98, source: 'Impact Grid', verified: true }
+            { id: 's1', name: 'Đường cùng chiều 4 làn xe Teheran-ro', conf: 98, source: 'Lane Tracker (CV)', finding: 'Giữ tâm làn 2 liên tục từ 00:08~00:15, độ lệch 0.0%', time: '00:11.00', verified: true },
+            { id: 's2', name: 'Xe trước phanh gấp gia tốc -0.68G', conf: 91, source: 'IMU Telemetry / VLM', finding: 'Đèn phanh bật lúc 00:09.50, trước mặt cách taxi 15m', time: '00:09.50', verified: true },
+            { id: 's3', name: 'Mất cự ly an toàn (còn 2.1m thiếu 18m phanh)', conf: 95, source: 'Depth Estimator (CV)', finding: 'Vi phạm Đ.19.1 Luật GTĐB về giữ cự ly an toàn', time: '00:12.00', verified: true },
+            { id: 's4', name: 'Va chạm cản sau chính diện lệch < 4cm', conf: 98, source: 'Impact Geometry Grid', finding: '100% tiếp xúc cản sau, loại trừ va chạm góc chuyển làn', time: '00:15.24', verified: true }
           ],
           conditions: [
-            { name: 'Đường không có đèn rẽ trái riêng cho xe B', status: 'Khớp', frame: 'Frame 390' },
-            { name: 'Xe A vào giao lộ khi đèn xanh hợp lệ', status: 'Khớp', frame: 'Frame 410' },
-            { name: 'Khoảng cách phanh an toàn của xe A', status: 'Chưa rõ', frame: 'Frame 420' }
+            { name: '1. Cả hai xe đi thẳng cùng một làn đường', status: 'Khớp', conf: '0.98', frame: '00:08~00:15' },
+            { name: '2. Xe sau thiếu cự ly an toàn (Đ.19.1 Luật GTĐB)', status: 'Khớp', conf: '0.95', frame: '00:12.00' },
+            { name: '3. Điểm va chạm tại cản sau chính diện (<4cm)', status: 'Khớp', conf: '0.96', frame: '00:15.24' },
+            { name: '4. Không có hành vi chuyển làn trước va chạm', status: 'Khớp', conf: '0.89', frame: '00:11.00' }
           ],
           negotiationFactors: [
-            { id: 'f1', text: 'Xe khách hàng không chú ý quan sát phía trước', impact: '+10% Xe A', status: 'NEGOTIATING' },
-            { id: 'f2', text: 'Xe đối phương rẽ trái quá nhanh cắt luồng không nhường đường', impact: '+10% Xe B', status: 'AGREED' },
-            { id: 'f3', text: 'Tầm nhìn bị hạn chế do thời tiết mưa nhẹ', impact: '+10% Xe A', status: 'NOT_APPLIED' }
+            { id: 'f1', text: 'Xe sau không giữ khoảng cách an toàn (도로교통법 제19조 1항 위반)', impact: '+10% Xe A', status: 'AGREED' },
+            { id: 'f2', text: 'Xe trước phanh gấp không cần thiết (Án lệ Tối cao 96다39314)', impact: '-10% Xe A', status: 'AGREED' },
+            { id: 'f3', text: 'Tầm nhìn ban ngày thời tiết quang đãng không cản trở', impact: '0%', status: 'NOT_APPLIED' }
           ]
         },
         '11': {
@@ -2401,6 +2706,20 @@ Vụ việc tai nạn ngày 04/11 đã có kết quả phân tích:
         { id: 6, time: '15:28', actor: 'Điều tra viên smtadmin', type: 'ANALYSIS', desc: 'Tải video clip_intersection.mp4 lên hệ thống và khởi tạo vụ việc mới #10.' }
       ]
     };
+
+    // ponytail: Một bộ dữ liệu mẫu cho mọi vụ việc mới; thay bằng dữ liệu người dùng hoặc API khi có luồng thật.
+    const DEMO_NEW_CASE = {
+      name: 'Va chạm cùng chiều tại Teheran-ro', customer: 'Khách hàng mẫu',
+      date: '2026-11-04T14:30', location: 'Seoul · Teheran-ro',
+      plate: 'DEMO-1234', policy: 'DEMO-001'
+    };
+    const DEMO_ANALYSIS = JSON.parse(JSON.stringify({
+      videoName: 'Video mẫu · DEMO',
+      videoDuration: STATE.cases['10'].videoDuration,
+      charts: STATE.cases['10'].charts,
+      events: STATE.cases['10'].events,
+      conditions: STATE.cases['10'].conditions
+    }));
 
     function escapeHtml(value) {
       return String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
@@ -2535,7 +2854,9 @@ Vụ việc tai nạn ngày 04/11 đã có kết quả phân tích:
       newCaseReturnFocus = document.activeElement;
       document.getElementById('new-case-form').reset();
       document.getElementById('new-case-error').style.display = 'none';
-      document.getElementById('new-case-date').value = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+      for (const [field, value] of Object.entries(DEMO_NEW_CASE)) {
+        document.getElementById(`new-case-${field}`).value = value;
+      }
       document.getElementById('modal-new-case').classList.add('open');
       document.getElementById('new-case-name').focus();
     }
@@ -2556,8 +2877,8 @@ Vụ việc tai nạn ngày 04/11 đã có kết quả phân tích:
         document.getElementById('new-case-error').style.display = 'block';
         return;
       }
-      if (!video || !/\.(mp4|mov|avi|mkv)$/i.test(video.name) || video.size > 200 * 1024 * 1024) {
-        document.getElementById('new-case-error').textContent = 'Chọn video MP4, MOV, AVI hoặc MKV, tối đa 200 MB.';
+      if (video && (!/\.(mp4|mov|avi|mkv)$/i.test(video.name) || video.size > 200 * 1024 * 1024)) {
+        document.getElementById('new-case-error').textContent = 'Video cần là MP4, MOV, AVI hoặc MKV, tối đa 200 MB.';
         document.getElementById('new-case-error').style.display = 'block';
         return;
       }
@@ -2569,19 +2890,22 @@ Vụ việc tai nạn ngày 04/11 đã có kết quả phân tích:
         location: document.getElementById('new-case-location').value.trim(),
         vehicleNo: document.getElementById('new-case-plate').value.trim() || '—',
         policyNo: document.getElementById('new-case-policy').value.trim() || '—',
-        videoName: 'Chưa có video', videoDuration: 0, videoTime: 0, videoUrl: null, stage: 0, statusText: 'Chờ video',
+        videoName: video ? 'Chưa có video' : DEMO_ANALYSIS.videoName,
+        videoDuration: video ? 0 : DEMO_ANALYSIS.videoDuration,
+        videoTime: 0, videoUrl: null, stage: 0, statusText: 'Chờ phân tích',
         selectedChart: null, reportVersions: [], activeReportVersion: null, isReportConfirmed: false, isClosed: false,
         charts: [], events: [], conditions: [], negotiationFactors: [], evidenceByChart: {}, comparisonMode: false, compareWith: null,
         reportSnapshots: {}, pendingVersion: null, reportNote: '', historyExpanded: false, expandedConditionCharts: [],
         notificationTitle: '', notificationBody: '', shareLink: null, finalFaultA: 0, finalFaultB: 0,
         isAnalyzing: false, analysisStep: 0,
-        chatHistory: [{ role: 'agent', text: 'Vụ việc đã được tạo. AI bắt đầu phân tích video.' }]
+        chatHistory: [{ role: 'agent', text: video ? 'Vụ việc đã được tạo. AI bắt đầu phân tích video.' : 'Vụ việc đã được tạo. AI phân tích dữ liệu mẫu.' }]
       });
       STATE.cases[key] = c;
       STATE.currentCaseId = key;
       closeNewCaseModal();
       navigate('SCR-CASE-DETAIL');
-      selectVideoFile(video);
+      if (video) selectVideoFile(video);
+      else runFakeAnalysis(c);
     }
 
     function selectVideoFile(file) {
@@ -2639,10 +2963,9 @@ Vụ việc tai nạn ngày 04/11 đã có kết quả phân tích:
       steps.forEach((step, index) => setTimeout(() => {
         c.analysisStep = index + 1;
         if (index === steps.length - 1) {
-          const sample = STATE.cases['10'];
-          c.charts = JSON.parse(JSON.stringify(sample.charts));
-          c.events = JSON.parse(JSON.stringify(sample.events));
-          c.conditions = JSON.parse(JSON.stringify(sample.conditions));
+          c.charts = JSON.parse(JSON.stringify(DEMO_ANALYSIS.charts));
+          c.events = JSON.parse(JSON.stringify(DEMO_ANALYSIS.events));
+          c.conditions = JSON.parse(JSON.stringify(DEMO_ANALYSIS.conditions));
           c.demoGenerated = true;
           c.stage = 2;
           c.statusText = '2. Chờ chốt Chart & Báo cáo';
@@ -2885,36 +3208,68 @@ Vụ việc tai nạn ngày 04/11 đã có kết quả phân tích:
 
     function renderEvents(c) {
       const list = document.getElementById('extracted-events-list');
+      if (!list) return;
       list.innerHTML = '';
-      c.events.forEach(ev => {
+      (c.events || []).forEach(ev => {
         const div = document.createElement('div');
         div.style.cssText = "display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:var(--slate-50); border:1px solid var(--slate-200); border-radius:6px; font-size:12px;";
         div.innerHTML = `
-          <div>
-            <span style="font-weight:600; color:var(--slate-800);">${ev.name}</span>
-            <div style="font-size:10px; color:var(--slate-400);">Nguồn: ${ev.source}</div>
+          <div style="flex:1; padding-right:10px;">
+            <div style="font-weight:600; color:var(--slate-800);">${escapeHtml(ev.name)}</div>
+            <div style="font-size:11px; color:var(--slate-500); margin-top:2px;">
+              <span style="font-weight:600; color:var(--slate-600);">${escapeHtml(ev.source || 'Vision')}</span>
+              ${ev.finding ? ` · <span>${escapeHtml(ev.finding)}</span>` : ''}
+            </div>
           </div>
-          <div style="text-align:right;">
+          <div style="text-align:right; white-space:nowrap;">
             <span class="badge ${ev.conf >= 90 ? 'badge-high' : 'badge-mid'}">${ev.conf}%</span>
-            <button class="btn btn-secondary btn-sm" style="padding:2px 6px; font-size:10px; margin-left:6px;" onclick="previewEventFrame('${ev.id}')">Xem chứng cứ</button>
+            ${ev.time ? `<button class="btn btn-secondary btn-sm" style="padding:2px 6px; font-size:10px; margin-left:6px;" data-seek-time="${escapeHtml(ev.time)}">Tua ${escapeHtml(ev.time)}</button>` : ''}
           </div>
         `;
         list.appendChild(div);
+      });
+
+      list.querySelectorAll('[data-seek-time]').forEach(btn => {
+        btn.onclick = () => {
+          const m = (btn.dataset.seekTime || '').match(/(\d+):(\d+(?:\.\d+)?)/);
+          if (m) seekVideo(parseFloat(m[1]) * 60 + parseFloat(m[2]));
+        };
       });
     }
 
     function renderConditions(c) {
       const tbody = document.getElementById('condition-matching-tbody');
+      if (!tbody) return;
       tbody.innerHTML = '';
-      c.conditions.forEach(cd => {
+      const currentChart = c.charts.find(ch => ch.code === c.selectedChart) || c.charts[0];
+      const rows = currentChart?.conditions || c.conditions || [];
+      const codeElem = document.getElementById('evidence-chart-code');
+      if (codeElem && currentChart) codeElem.innerText = currentChart.code;
+
+      rows.forEach(cd => {
         const tr = document.createElement('tr');
-        const badgeClass = cd.status === 'Khớp' ? 'badge-high' : (cd.status === 'Chưa rõ' ? 'badge-mid' : 'badge-danger');
+        const isMatched = cd.status === 'Khớp' || cd.status === '일치';
+        const isConflict = cd.status === 'Mâu thuẫn' || cd.status === '모순';
+        const badgeClass = isMatched ? 'badge-high' : (isConflict ? 'badge-danger' : 'badge-mid');
+        const pDisplay = cd.conf || (cd.pVal ? String(cd.pVal) : '—');
+        const timecode = cd.frame || cd.time || '';
         tr.innerHTML = `
-          <td>${cd.name}</td>
-          <td><span class="badge ${badgeClass}">${cd.status}</span></td>
-          <td><code style="font-size:11px;">${cd.frame}</code></td>
+          <td style="font-weight:600; color:var(--slate-800);">${escapeHtml(cd.name)}</td>
+          <td><span class="badge ${badgeClass}">${escapeHtml(cd.status)}</span></td>
+          <td><code style="font-size:11px; font-weight:700; color:var(--primary);">p = ${escapeHtml(pDisplay)}</code></td>
+          <td>
+            ${timecode ? `<button class="btn btn-secondary btn-sm" data-seek-time="${escapeHtml(timecode)}" style="padding:1px 6px; font-size:10px; margin-right:4px;">▶ ${escapeHtml(timecode)}</button>` : ''}
+            <span style="font-size:11px; color:var(--slate-600);">${escapeHtml(cd.source || '')}</span>
+          </td>
         `;
         tbody.appendChild(tr);
+      });
+
+      tbody.querySelectorAll('[data-seek-time]').forEach(btn => {
+        btn.onclick = () => {
+          const m = (btn.dataset.seekTime || '').match(/(\d+):(\d+(?:\.\d+)?)/);
+          if (m) seekVideo(parseFloat(m[1]) * 60 + parseFloat(m[2]));
+        };
       });
     }
 
@@ -2949,8 +3304,9 @@ Vụ việc tai nạn ngày 04/11 đã có kết quả phân tích:
       const c = STATE.cases[STATE.currentCaseId];
       if (!c) return;
 
-      const found = c.charts.find(ch => ch.code === chartCode);
+      const found = c.charts.find(ch => ch.code === chartCode || ch.kniaNo === chartCode || ch.subCode === chartCode || ch.code.includes(chartCode));
       if (found) {
+        chartCode = found.code;
         if (c.selectedChart === chartCode) {
           if (!c.evidenceByChart?.[chartCode]?.generated) generateEvidenceForChart(chartCode);
           else renderCaseChat(c);
@@ -3104,53 +3460,132 @@ Vụ việc tai nạn ngày 04/11 đã có kết quả phân tích:
       if (!chart) return '<p>Chọn một chart để AI tổng hợp chứng cứ.</p>';
       const state = c.evidenceByChart?.[chart.code];
       if (state?.processing) return `<p role="status">AI đang đối chiếu video và tạo chứng cứ cho ${escapeHtml(chart.code)}…</p>`;
-      if (!state?.generated) return '<p>AI chưa có đủ mốc video để tổng hợp chứng cứ cho chart này.</p>';
-      const rows = (c.comparisonEvidence || []).filter(row => row.assessments?.[chart.code]);
-      const evidence = rows.length
-        ? rows.map(row => {
-          const [status, reason] = row.assessments[chart.code];
-          const tone = status === 'Ủng hộ' ? 'support' : status === 'Mâu thuẫn' ? 'conflict' : 'unknown';
-          return `<div class="evidence-single-row"><button class="evidence-time" data-seek-time="${escapeHtml(row.time)}" aria-label="Tua video đến ${escapeHtml(row.time)}">${escapeHtml(row.time)}</button> · ${escapeHtml(row.observation)}
-            <p><span class="evidence-status ${tone}">${escapeHtml(status)}</span> · ${escapeHtml(reason)}</p></div>`;
-        }).join('')
-        : (chart.support || []).map(point => `<div class="evidence-single-row">${escapeHtml(point)}</div>`).join('');
-      return `<h3>Chứng cứ cho ${escapeHtml(chart.code)}</h3>
-        <div class="evidence-single">${evidence || '<p>Chưa có mốc video.</p>'}</div>
-        <p>Điểm chưa chắc chắn: ${escapeHtml(chart.gap || 'Chưa có thông tin.')}</p>`;
+      if (!state?.generated && !chart.vlmEvidences?.length && !chart.support?.length) {
+        return '<p>AI chưa có đủ mốc video để tổng hợp chứng cứ cho chart này.</p>';
+      }
+
+      let html = '';
+
+      // 1. Roles, Tree & Distinction
+      html += `<div class="evidence-chart-meta" style="margin-bottom:12px; padding:10px 12px; background:rgba(15,28,44,0.7); border:1px solid #233e59; border-radius:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+          <span style="font-size:11px; color:#48cce9; font-weight:700;">${escapeHtml(chart.rank || 'Biểu đồ đề xuất')}</span>
+          <span class="badge ${chart.match >= 70 ? 'badge-high' : 'badge-mid'}" style="font-size:10px;">Độ tự tin: ${chart.match}%</span>
+        </div>
+        <div style="font-size:12px; color:#f3f9ff; margin-bottom:6px;"><strong>Cây phân loại KNIA:</strong> ${escapeHtml(chart.tree || chart.name)}</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:11px; margin-top:6px; padding-top:6px; border-top:1px dashed #233e59;">
+          <div><span style="color:#48cce9; font-weight:700;">● Xe Khách hàng (A):</span> <div style="color:#d3e2ed;">${escapeHtml(chart.roleA || 'Xe khách hàng')}</div></div>
+          <div><span style="color:#ef4444; font-weight:700;">● Xe Đối phương (B):</span> <div style="color:#d3e2ed;">${escapeHtml(chart.roleB || 'Xe đối phương')}</div></div>
+        </div>
+        ${chart.separatingFact ? `<div style="margin-top:6px; padding-top:6px; border-top:1px dashed #233e59; font-size:11px; color:#f3d28b;"><strong>⚡ Yếu tố phân định (Separating Fact):</strong> ${escapeHtml(chart.separatingFact)}</div>` : ''}
+      </div>`;
+
+      // 2. 4 Core VLM Evidences
+      if (chart.vlmEvidences && chart.vlmEvidences.length) {
+        html += `<div style="margin-top:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <h4 style="margin:0; font-size:12px; text-transform:uppercase; color:#48cce9; letter-spacing:0.5px;">🎯 Bộ ${chart.vlmEvidences.length} Bằng Chứng Cốt Lõi VLM (Rebuttal Arsenal)</h4>
+            <span style="font-size:10px; color:#8ba2b5;">Click ▶ timecode để tua video</span>
+          </div>
+          <div class="evidence-single" style="display:grid; gap:8px;">`;
+
+        chart.vlmEvidences.forEach(ev => {
+          const tagStyle = ev.tagType === 'weapon' ? 'background:rgba(245,158,11,0.2); color:#fbbf24; border:1px solid rgba(245,158,11,0.4);' :
+                           ev.tagType === 'conflict' ? 'background:rgba(239,68,68,0.2); color:#fca5a5; border:1px solid rgba(239,68,68,0.4);' :
+                           ev.tagType === 'statute' ? 'background:rgba(99,102,241,0.2); color:#a5b4fc; border:1px solid rgba(99,102,241,0.4);' :
+                           'background:rgba(16,185,129,0.2); color:#6ee7b7; border:1px solid rgba(16,185,129,0.4);';
+
+          html += `<div class="evidence-single-row" style="background:rgba(13,24,37,0.6); padding:8px 10px; border-radius:6px; border:1px solid #233e59;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <div style="font-weight:700; color:#f3f9ff; font-size:11px;">
+                <button class="evidence-time" data-seek-time="${escapeHtml(ev.time)}" aria-label="Tua video đến ${escapeHtml(ev.time)}" style="font-weight:800; font-size:11px; margin-right:6px; background:#1b3248; padding:2px 6px; border-radius:4px; text-decoration:none;">▶ ${escapeHtml(ev.time)}</button>
+                ${escapeHtml(ev.title)}
+              </div>
+              <span class="badge badge-high" style="font-size:10px;">${escapeHtml(ev.conf)}</span>
+            </div>
+            <p style="margin:4px 0 6px 0; font-size:11px; line-height:1.45; color:#c5d8e7;">${escapeHtml(ev.finding)}</p>
+            ${ev.legalTag ? `<div style="display:inline-block; font-size:10px; font-weight:700; padding:2px 8px; border-radius:4px; ${tagStyle}">⚖️ ${escapeHtml(ev.legalTag)}</div>` : ''}
+          </div>`;
+        });
+        html += `</div></div>`;
+      } else {
+        const rows = (c.comparisonEvidence || []).filter(row => row.assessments?.[chart.code]);
+        const evidence = rows.length
+          ? rows.map(row => {
+            const [status, reason] = row.assessments[chart.code];
+            const tone = status === 'Ủng hộ' ? 'support' : status === 'Mâu thuẫn' ? 'conflict' : 'unknown';
+            return `<div class="evidence-single-row"><button class="evidence-time" data-seek-time="${escapeHtml(row.time)}" aria-label="Tua video đến ${escapeHtml(row.time)}">▶ ${escapeHtml(row.time)}</button> · ${escapeHtml(row.observation)}
+              <p><span class="evidence-status ${tone}">${escapeHtml(status)}</span> · ${escapeHtml(reason)}</p></div>`;
+          }).join('')
+          : (chart.support || []).map(point => `<div class="evidence-single-row">${escapeHtml(point)}</div>`).join('');
+        html += `<h3>Chứng cứ cho ${escapeHtml(chart.code)}</h3>
+          <div class="evidence-single">${evidence || '<p>Chưa có mốc video.</p>'}</div>`;
+      }
+
+      // 3. Gap & Action
+      if (chart.gap) {
+        html += `<div style="margin-top:10px; padding:8px 10px; background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.25); border-radius:6px; font-size:11px; color:#fde68a;">
+          <strong>⚠️ Điểm cần lưu ý / Yếu tố đàm phán:</strong> ${escapeHtml(chart.gap)}
+        </div>`;
+      }
+
+      return html;
     }
 
     function renderEvidenceComparisonHtml(c, first, second) {
-      const cell = (row, code) => {
-        const [status, reason] = row.assessments?.[code] || ['Chưa có dữ liệu', 'Chưa có đánh giá cho chart này.'];
+      const getAssessment = (row, chart) => {
+        if (!row.assessments) return ['Chưa có dữ liệu', 'Chưa có đánh giá'];
+        return row.assessments[chart.code]
+          || (chart.kniaNo && row.assessments[chart.kniaNo])
+          || (chart.subCode && row.assessments[chart.subCode])
+          || Object.entries(row.assessments).find(([k]) => chart.code.includes(k) || k.includes(chart.code))?.[1]
+          || ['Chưa có dữ liệu', 'Chưa có đánh giá cho chart này.'];
+      };
+      const cell = (row, chart) => {
+        const [status, reason] = getAssessment(row, chart);
         const tone = status === 'Ủng hộ' ? 'support' : status === 'Mâu thuẫn' ? 'conflict' : 'unknown';
         return `<div><span class="evidence-status ${tone}">${escapeHtml(status)}</span><small>${escapeHtml(reason)}</small></div>`;
       };
       const rows = c.comparisonEvidence || [];
       return `<div class="evidence-compare" aria-label="So sánh chứng cứ giữa hai chart">
-        <div class="evidence-compare-row evidence-compare-head"><div>Mốc video</div><div>${escapeHtml(first.code)}${c.selectedChart === first.code ? ' · Đang chọn' : ''}</div><div>${escapeHtml(second.code)}${c.selectedChart === second.code ? ' · Đang chọn' : ''}</div></div>
-        ${rows.length ? rows.map(row => `<div class="evidence-compare-row"><div><strong>${escapeHtml(row.observation)}</strong><button class="evidence-time" data-seek-time="${escapeHtml(row.time)}" aria-label="Tua video đến ${escapeHtml(row.time)}">${escapeHtml(row.time)}</button></div>${cell(row, first.code)}${cell(row, second.code)}</div>`).join('')
+        <div class="evidence-compare-row evidence-compare-head"><div>Mốc video / Quan sát</div><div>${escapeHtml(first.code)}${c.selectedChart === first.code ? ' · Đang chọn' : ''}</div><div>${escapeHtml(second.code)}${c.selectedChart === second.code ? ' · Đang chọn' : ''}</div></div>
+        ${rows.length ? rows.map(row => `<div class="evidence-compare-row"><div><strong>${escapeHtml(row.observation)}</strong><button class="evidence-time" data-seek-time="${escapeHtml(row.time)}" aria-label="Tua video đến ${escapeHtml(row.time)}">▶ ${escapeHtml(row.time)}</button></div>${cell(row, first)}${cell(row, second)}</div>`).join('')
           : '<div class="evidence-compare-row"><div>Chưa có bảng đối chiếu chứng cứ cho hai chart này.</div></div>'}
         </div>`;
     }
 
     function renderChartResultCard(c, div, index = 0) {
-      const current = c.charts.find(ch => ch.code === c.selectedChart);
+      const current = c.charts.find(ch => ch.code === c.selectedChart) || c.charts[0];
       const other = c.charts.find(ch => ch.code === c.compareWith && ch.code !== current?.code)
         || c.charts.find(ch => ch.code !== current?.code);
       const conditionRows = chart => chart.conditions || (c.charts[0] === chart ? c.conditions : []) || [];
       const conditionTable = chart => {
         const rows = conditionRows(chart);
-        const matched = rows.filter(row => row.status === 'Khớp').length;
-        const conflicts = rows.filter(row => row.status === 'Mâu thuẫn').length;
+        const matched = rows.filter(row => row.status === 'Khớp' || row.status === '일치').length;
+        const conflicts = rows.filter(row => row.status === 'Mâu thuẫn' || row.status === '모순').length;
         const expanded = (c.expandedConditionCharts || []).includes(chart.code);
         return `<details class="analysis-section chart-conditions" data-chart-conditions="${escapeHtml(chart.code)}" ${expanded ? 'open' : ''}>
-          <summary data-tooltip="Xem điều kiện cần đối chiếu trước khi áp dụng chart ${escapeHtml(chart.code)}">Điều kiện áp dụng <span>${matched}/${rows.length} khớp · ${conflicts} mâu thuẫn</span></summary>
-          <div class="chart-conditions-scroll"><table><thead><tr><th>Điều kiện của chart</th><th>Đối chiếu</th><th>Căn cứ</th></tr></thead><tbody>
-          ${rows.length ? rows.map(row => `<tr><td>${escapeHtml(row.name)}</td><td><span class="evidence-status ${row.status === 'Khớp' ? 'support' : row.status === 'Mâu thuẫn' ? 'conflict' : 'unknown'}">${escapeHtml(row.status)}</span></td><td>${escapeHtml(row.frame || '—')}</td></tr>`).join('') : `<tr><td>${escapeHtml(chart.desc || 'Chưa có điều kiện chi tiết')}</td><td><span class="evidence-status unknown">Chưa rõ</span></td><td>Chưa đối chiếu</td></tr>`}
+          <summary data-tooltip="Xem bảng 4 điều kiện kiểm toán chuẩn KNIA trước khi chốt chart ${escapeHtml(chart.code)}">Bảng đối chiếu điều kiện KNIA <span>${matched}/${rows.length} khớp · ${conflicts} mâu thuẫn</span></summary>
+          <div class="chart-conditions-scroll"><table><thead><tr><th style="min-width:140px;">Điều kiện quy chuẩn KNIA</th><th style="width:75px;">Đánh giá</th><th style="width:65px;">Xác suất</th><th>Căn cứ thị giác & Frame</th></tr></thead><tbody>
+          ${rows.length ? rows.map(row => {
+            const isMatched = row.status === 'Khớp' || row.status === '일치';
+            const isConflict = row.status === 'Mâu thuẫn' || row.status === '모순';
+            const tone = isMatched ? 'support' : isConflict ? 'conflict' : 'unknown';
+            const timecode = row.frame || row.time || '';
+            return `<tr>
+              <td style="font-weight:600; color:#f3f9ff;">${escapeHtml(row.name)}</td>
+              <td><span class="evidence-status ${tone}">${escapeHtml(row.status)}</span></td>
+              <td><code style="color:#70dced; font-size:11px;">p=${escapeHtml(row.conf || (row.pVal ? String(row.pVal) : '—'))}</code></td>
+              <td>
+                ${timecode ? `<button class="evidence-time" data-seek-time="${escapeHtml(timecode)}" aria-label="Tua đến ${escapeHtml(timecode)}" style="font-weight:700; margin-right:4px;">▶ ${escapeHtml(timecode)}</button>` : ''}
+                <small style="color:#a9bed1; display:inline;">${escapeHtml(row.source || '')}</small>
+              </td>
+            </tr>`;
+          }).join('') : `<tr><td colspan="4">${escapeHtml(chart.desc || 'Chưa có điều kiện chi tiết')}</td></tr>`}
           </tbody></table></div></details>`;
       };
       div.innerHTML = `<div class="result-card-heading"><strong>${c.demoGenerated ? 'Kết quả mô phỏng' : 'Kết quả phân tích'}</strong></div>
-        ${current ? `<div class="chart-selected-summary"><strong>${escapeHtml(current.code)}</strong><span>${escapeHtml(current.name)}</span><b>${escapeHtml(current.match)}% phù hợp · Lỗi ${escapeHtml(current.baseFault)}</b></div>${conditionTable(current)}` : '<p>Chọn chart ở thanh phía trên để xem điều kiện và chứng cứ.</p>'}
+        ${current ? `<div class="chart-selected-summary"><strong>${escapeHtml(current.code)}</strong><span>${escapeHtml(current.name)}</span><b>${escapeHtml(current.match)}% phù hợp · Tỷ lệ cơ sở ${escapeHtml(current.baseFault)}</b></div>${conditionTable(current)}` : '<p>Chọn chart ở thanh phía trên để xem điều kiện và chứng cứ.</p>'}
         <section class="analysis-section chart-detail">${chartEvidenceHtml(c, current)}</section>
         ${current ? `<button class="btn btn-primary btn-sm inline-report-button" data-create-report ${c.isClosed || !c.evidenceByChart?.[current.code]?.generated ? 'disabled' : ''} data-tooltip="Tạo báo cáo cho chart ${escapeHtml(current.code)} khi AI đã tổng hợp chứng cứ">Dùng chart này tạo báo cáo</button>` : ''}
         ${c.comparisonMode && current && other ? renderEvidenceComparisonHtml(c, current, other) : ''}`;
@@ -3161,8 +3596,13 @@ Vụ việc tai nạn ngày 04/11 đã có kết quả phân tích:
       });
       div.querySelector('[data-create-report]')?.addEventListener('click', requestReport);
       div.querySelectorAll('[data-seek-time]').forEach(button => button.onclick = () => {
-        const [minutes, seconds] = button.dataset.seekTime.split(':').map(Number);
-        seekVideo(minutes * 60 + seconds);
+        const raw = button.dataset.seekTime || '';
+        const match = raw.match(/(\d+):(\d+(?:\.\d+)?)/);
+        if (match) {
+          const mins = parseFloat(match[1]);
+          const secs = parseFloat(match[2]);
+          seekVideo(mins * 60 + secs);
+        }
       });
     }
 
