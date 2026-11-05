@@ -2343,7 +2343,7 @@
       color: #1e293b;
       padding: 28px 32px;
       border-radius: 6px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
       font-size: 13px;
       line-height: 1.6;
       max-width: 740px;
@@ -2673,76 +2673,238 @@
       display: none;
     }
 
-    .ai-reasoning-step-item {
-      background: rgba(15, 29, 46, 0.85);
-      border: 1px solid #233e59;
-      border-radius: 8px;
-      padding: 12px 14px;
+    .ai-reasoning-timeline {
       display: flex;
       flex-direction: column;
-      gap: 6px;
       position: relative;
-      transition: all 0.2s ease;
+      padding: 12px 0 4px 0;
     }
 
-    .ai-reasoning-step-item.active {
+    .timeline-step-row {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      position: relative;
+      animation: reasoningBoxEntrance 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .timeline-node-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 32px;
+      flex: none;
+      position: relative;
+      align-self: stretch;
+    }
+
+    .step-number-circle {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 13px;
+      z-index: 2;
+      transition: all 0.3s ease;
+      background: #0f1c2d;
+      border: 1.5px solid #233e59;
+      color: #64748b;
+    }
+
+    .step-number-circle.pending {
+      background: #0d1827;
+      border-color: #233e59;
+      color: #64748b;
+    }
+
+    .step-number-circle.active {
+      background: #0284c7;
+      border: 2px solid #38bdf8;
+      color: #ffffff;
+      box-shadow: 0 0 14px rgba(56, 189, 248, 0.6);
+      animation: activeRingPulse 1.8s infinite;
+    }
+
+    .step-number-circle.done {
+      background: #064e3b;
+      border: 1.5px solid #10b981;
+      color: #6ee7b7;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+    }
+
+    .timeline-rail-segment {
+      position: absolute;
+      top: 30px;
+      bottom: 0;
+      width: 2px;
+      background: #233e59;
+      z-index: 1;
+      transition: background 0.3s ease;
+    }
+
+    .timeline-rail-segment.done {
+      background: linear-gradient(180deg, #10b981 0%, #0284c7 100%);
+    }
+
+    .timeline-step-row:last-child .timeline-rail-segment {
+      display: none;
+    }
+
+    .reasoning-step-box {
+      flex: 1;
+      min-width: 0;
+      background: #102135;
+      border: 1px solid #233e59;
+      border-radius: 9px;
+      padding: 12px 16px;
+      margin-bottom: 14px;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+    }
+
+    .reasoning-step-box.active {
       border-color: #38bdf8;
-      background: rgba(20, 42, 68, 0.95);
-      box-shadow: 0 0 12px rgba(56, 189, 248, 0.15);
+      background: #142a44;
+      box-shadow: 0 0 18px rgba(56, 189, 248, 0.15);
+      transform: translateY(-1px);
     }
 
-    .ai-reasoning-step-item.done {
-      border-color: #1e3a5f;
+    .reasoning-step-box.done {
+      border-color: #233e59;
+      background: #0f1f31;
     }
 
-    .step-top-line {
+    .reasoning-step-box.collapsed {
+      padding: 8px 14px;
+      margin-bottom: 10px;
+    }
+
+    .reasoning-step-box.collapsed .step-content-collapsible {
+      display: none;
+    }
+
+    .step-content-collapsible {
+      transition: all 0.3s ease;
+    }
+
+    .reasoning-step-box.collapsed:hover {
+      border-color: #38bdf8;
+      background: #13273e;
+    }
+
+    .reasoning-step-box .step-expand-icon {
+      font-size: 11px;
+      color: #64748b;
+      margin-left: 6px;
+      transition: transform 0.2s ease;
+    }
+
+    .reasoning-step-box.collapsed .step-expand-icon {
+      transform: rotate(-90deg);
+    }
+
+    .typing-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 12px;
+      background: #38bdf8;
+      margin-left: 2px;
+      vertical-align: middle;
+      animation: blinkCursor 0.7s infinite;
+    }
+
+    @keyframes blinkCursor {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0;
+      }
+    }
+
+    .step-title-line {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 8px;
-    }
-
-    .step-phase-tag {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      color: #38bdf8;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .step-time-tag {
-      font-size: 10px;
-      color: #94a3b8;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
     .step-title-text {
-      font-size: 13px;
+      font-size: 13.5px;
       font-weight: 700;
       color: #f8fafc;
       line-height: 1.35;
     }
 
+    .step-phase-subtitle {
+      font-size: 11px;
+      font-weight: 700;
+      color: #38bdf8;
+      letter-spacing: 0.04em;
+      margin: 4px 0 8px 0;
+      text-transform: uppercase;
+    }
+
     .step-thought-text {
       font-size: 12px;
       color: #cbd5e1;
-      line-height: 1.5;
+      line-height: 1.55;
       white-space: pre-line;
-      background: rgba(8, 17, 28, 0.5);
-      padding: 8px 10px;
+      background: rgba(8, 17, 28, 0.55);
+      padding: 9px 12px;
       border-radius: 6px;
-      border-left: 2px solid #38bdf8;
-      font-family: inherit;
+      border-left: 3px solid #38bdf8;
+    }
+
+    .ai-reasoning-footer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding-top: 18px;
+      margin-top: 12px;
+      border-top: 1px solid #233e59;
+      gap: 12px;
+      text-align: center;
+    }
+
+    .reasoning-next {
+      font-size: 15px !important;
+      font-weight: 700 !important;
+      padding: 12px 36px !important;
+      border-radius: 9999px !important;
+      background: linear-gradient(135deg, #0284c7 0%, #06b6d4 100%) !important;
+      color: #ffffff !important;
+      box-shadow: 0 4px 18px rgba(6, 182, 212, 0.35) !important;
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.25s ease !important;
+      margin: 0 auto;
+    }
+
+    .reasoning-next:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 6px 24px rgba(6, 182, 212, 0.5) !important;
+      background: linear-gradient(135deg, #0369a1 0%, #0891b2 100%) !important;
     }
 
     .step-telemetry-row {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin-top: 4px;
+      margin-top: 8px;
     }
 
     .step-telemetry-chip {
@@ -2753,6 +2915,81 @@
       border-radius: 4px;
       font-size: 11px;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    .step-badge-done {
+      background: rgba(16, 185, 129, 0.15);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 99px;
+    }
+
+    .step-badge-active {
+      background: rgba(56, 189, 248, 0.18);
+      color: #7dd3fc;
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 99px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .step-badge-pending {
+      background: rgba(100, 116, 139, 0.15);
+      color: #94a3b8;
+      border: 1px solid rgba(100, 116, 139, 0.25);
+      font-size: 11px;
+      font-weight: 500;
+      padding: 2px 8px;
+      border-radius: 99px;
+    }
+
+    .step-spinner {
+      width: 10px;
+      height: 10px;
+      border: 2px solid #7dd3fc;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes reasoningBoxEntrance {
+      0% {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes activeRingPulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.6);
+      }
+
+      50% {
+        transform: scale(1.08);
+        box-shadow: 0 0 0 6px rgba(56, 189, 248, 0);
+      }
     }
 
     /* Collapsible Thought Details in Right AI Chat */
@@ -3178,6 +3415,7 @@
       background: #101e30;
       border: 1px solid #233e59;
       border-radius: 10px;
+      margin-bottom: 14px;
     }
 
     #SCR-CASE-DETAIL .analysis-steps button {
@@ -3234,34 +3472,204 @@
       font-weight: 700;
     }
 
-    #SCR-CASE-DETAIL .chart-card-detail { display:grid; grid-template-columns:minmax(0, 1.2fr) minmax(220px, .8fr); gap:14px; margin-top:12px; cursor:default; }
-    #SCR-CASE-DETAIL .chart-card-detail section { min-width:0; }
-    #SCR-CASE-DETAIL .chart-card-detail h4 { margin:12px 0 6px; color:#d9ecf7; font-size:12px; }
-    #SCR-CASE-DETAIL .chart-card-detail h4:first-child { margin-top:0; }
-    #SCR-CASE-DETAIL .chart-card-detail p { margin:0; color:#a9bed1; font-size:11px; line-height:1.5; }
-    #SCR-CASE-DETAIL .chart-card-detail .chart-condition-table { overflow-x:auto; border:1px solid #294663; border-radius:6px; }
-    #SCR-CASE-DETAIL .chart-condition-table table { border-collapse:collapse; min-width:520px; width:100%; font-size:11px; }
-    #SCR-CASE-DETAIL .chart-condition-table th, #SCR-CASE-DETAIL .chart-condition-table td { padding:7px; border-bottom:1px solid #233e59; text-align:left; vertical-align:top; }
-    #SCR-CASE-DETAIL .chart-condition-table th { color:#8fb1c8; background:#162b42; }
-    #SCR-CASE-DETAIL .chart-actor { padding:8px; margin-bottom:6px; border:1px solid #294663; border-radius:6px; color:#d9ecf7; font-size:11px; }
-    #SCR-CASE-DETAIL .chart-actor b { color:#70dced; }
-    #SCR-CASE-DETAIL .chart-base-ratio { color:#f4f8fe; font-size:30px; font-weight:800; line-height:1.15; letter-spacing:-.03em; }
-    #SCR-CASE-DETAIL .chart-sim-road { position:relative; height:112px; overflow:hidden; border:1px solid #39516a; border-radius:6px; background:repeating-linear-gradient(0deg,#263b47 0 43px,#d8cda6 44px 46px,#263b47 47px 92px); }
-    #SCR-CASE-DETAIL .chart-sim-car { position:absolute; width:30px; height:16px; border-radius:4px; color:white; font-size:10px; font-weight:800; text-align:center; line-height:16px; box-shadow:0 2px 8px #0008; }
-    #SCR-CASE-DETAIL .chart-sim-car.a { top:58px; left:10%; background:#268bd2; animation:chart-follow 5s linear infinite; }
-    #SCR-CASE-DETAIL .chart-sim-car.b { top:58px; left:45%; background:#e35e67; animation:chart-lead 5s linear infinite; }
-    #SCR-CASE-DETAIL .chart-sim-car.b.lane-change { top:10px; animation:chart-lane-change 5s linear infinite; }
-    #SCR-CASE-DETAIL .chart-sim-road.paused .chart-sim-car { animation-play-state:paused; }
-    #SCR-CASE-DETAIL .chart-sim-controls { position:absolute; inset:auto 0 0; display:flex; align-items:center; gap:8px; padding:8px 10px 5px; background:linear-gradient(transparent,rgba(0,0,0,.88)); color:#fff; }
-    #SCR-CASE-DETAIL .chart-sim-toggle { border:0; background:transparent; color:#fff; font-size:17px; line-height:1; padding:2px 5px; cursor:pointer; }
-    #SCR-CASE-DETAIL .chart-sim-progress { position:absolute; left:10px; right:10px; bottom:0; height:3px; background:#cbd5e180; }
-    #SCR-CASE-DETAIL .chart-sim-progress::after { content:""; display:block; height:100%; width:0; background:#f43f5e; animation:chart-progress 5s linear infinite; }
-    #SCR-CASE-DETAIL .chart-sim-road.paused .chart-sim-progress::after { animation-play-state:paused; }
-    @keyframes chart-progress { to { width:100%; } }
-    @keyframes chart-follow { to { transform:translateX(160px); } }
-    @keyframes chart-lead { to { transform:translateX(90px); } }
-    @keyframes chart-lane-change { 0% { transform:translate(0,0); } 65%,100% { transform:translate(90px,48px); } }
-    @media (max-width: 1279px) { #SCR-CASE-DETAIL .chart-card-detail { grid-template-columns:minmax(0, 1fr); } }
+    #SCR-CASE-DETAIL .chart-card-detail {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(220px, .8fr);
+      gap: 14px;
+      margin-top: 12px;
+      cursor: default;
+    }
+
+    #SCR-CASE-DETAIL .chart-card-detail section {
+      min-width: 0;
+    }
+
+    #SCR-CASE-DETAIL .chart-card-detail h4 {
+      margin: 12px 0 6px;
+      color: #d9ecf7;
+      font-size: 12px;
+    }
+
+    #SCR-CASE-DETAIL .chart-card-detail h4:first-child {
+      margin-top: 0;
+    }
+
+    #SCR-CASE-DETAIL .chart-card-detail p {
+      margin: 0;
+      color: #a9bed1;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    #SCR-CASE-DETAIL .chart-card-detail .chart-condition-table {
+      overflow-x: auto;
+      border: 1px solid #294663;
+      border-radius: 6px;
+    }
+
+    #SCR-CASE-DETAIL .chart-condition-table table {
+      border-collapse: collapse;
+      min-width: 520px;
+      width: 100%;
+      font-size: 11px;
+    }
+
+    #SCR-CASE-DETAIL .chart-condition-table th,
+    #SCR-CASE-DETAIL .chart-condition-table td {
+      padding: 7px;
+      border-bottom: 1px solid #233e59;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    #SCR-CASE-DETAIL .chart-condition-table th {
+      color: #8fb1c8;
+      background: #162b42;
+    }
+
+    #SCR-CASE-DETAIL .chart-actor {
+      padding: 8px;
+      margin-bottom: 6px;
+      border: 1px solid #294663;
+      border-radius: 6px;
+      color: #d9ecf7;
+      font-size: 11px;
+    }
+
+    #SCR-CASE-DETAIL .chart-actor b {
+      color: #70dced;
+    }
+
+    #SCR-CASE-DETAIL .chart-base-ratio {
+      color: #f4f8fe;
+      font-size: 30px;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -.03em;
+    }
+
+    #SCR-CASE-DETAIL .chart-sim-road {
+      position: relative;
+      height: 112px;
+      overflow: hidden;
+      border: 1px solid #39516a;
+      border-radius: 6px;
+      background: repeating-linear-gradient(0deg, #263b47 0 43px, #d8cda6 44px 46px, #263b47 47px 92px);
+    }
+
+    #SCR-CASE-DETAIL .chart-sim-car {
+      position: absolute;
+      width: 30px;
+      height: 16px;
+      border-radius: 4px;
+      color: white;
+      font-size: 10px;
+      font-weight: 800;
+      text-align: center;
+      line-height: 16px;
+      box-shadow: 0 2px 8px #0008;
+    }
+
+    #SCR-CASE-DETAIL .chart-sim-car.a {
+      top: 58px;
+      left: 10%;
+      background: #268bd2;
+      animation: chart-follow 5s linear infinite;
+    }
+
+    #SCR-CASE-DETAIL .chart-sim-car.b {
+      top: 58px;
+      left: 45%;
+      background: #e35e67;
+      animation: chart-lead 5s linear infinite;
+    }
+
+    #SCR-CASE-DETAIL .chart-sim-car.b.lane-change {
+      top: 10px;
+      animation: chart-lane-change 5s linear infinite;
+    }
+
+    #SCR-CASE-DETAIL .chart-sim-road.paused .chart-sim-car {
+      animation-play-state: paused;
+    }
+
+    #SCR-CASE-DETAIL .chart-sim-controls {
+      position: absolute;
+      inset: auto 0 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px 5px;
+      background: linear-gradient(transparent, rgba(0, 0, 0, .88));
+      color: #fff;
+    }
+
+    #SCR-CASE-DETAIL .chart-sim-toggle {
+      border: 0;
+      background: transparent;
+      color: #fff;
+      font-size: 17px;
+      line-height: 1;
+      padding: 2px 5px;
+      cursor: pointer;
+    }
+
+    #SCR-CASE-DETAIL .chart-sim-progress {
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      bottom: 0;
+      height: 3px;
+      background: #cbd5e180;
+    }
+
+    #SCR-CASE-DETAIL .chart-sim-progress::after {
+      content: "";
+      display: block;
+      height: 100%;
+      width: 0;
+      background: #f43f5e;
+      animation: chart-progress 5s linear infinite;
+    }
+
+    #SCR-CASE-DETAIL .chart-sim-road.paused .chart-sim-progress::after {
+      animation-play-state: paused;
+    }
+
+    @keyframes chart-progress {
+      to {
+        width: 100%;
+      }
+    }
+
+    @keyframes chart-follow {
+      to {
+        transform: translateX(160px);
+      }
+    }
+
+    @keyframes chart-lead {
+      to {
+        transform: translateX(90px);
+      }
+    }
+
+    @keyframes chart-lane-change {
+      0% {
+        transform: translate(0, 0);
+      }
+
+      65%,
+      100% {
+        transform: translate(90px, 48px);
+      }
+    }
+
+    @media (max-width: 1279px) {
+      #SCR-CASE-DETAIL .chart-card-detail {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
 
     #SCR-CASE-DETAIL #center-selected-chart-details {
       display: none;
@@ -3342,10 +3750,43 @@
     }
 
     .acc-name {
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 700;
-      color: #e2e8f0;
+      color: #f1f5f9;
       line-height: 1.35;
+    }
+
+    .acc-rationale {
+      font-size: 11.5px;
+      color: #94a3b8;
+      line-height: 1.45;
+      margin: 4px 0 6px 0;
+      background: rgba(15, 23, 42, 0.45);
+      border-left: 2.5px solid #38bdf8;
+      padding: 6px 9px;
+      border-radius: 0 5px 5px 0;
+    }
+
+    .chart-card-detail-rationale {
+      margin-bottom: 12px;
+      padding: 8px 10px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid #233e59;
+      border-radius: 6px;
+    }
+
+    .chart-card-detail-rationale h4 {
+      margin: 0 0 4px 0 !important;
+      font-size: 11.5px;
+      color: #70dced;
+      font-weight: 700;
+    }
+
+    .chart-card-detail-rationale p {
+      margin: 0;
+      font-size: 11px;
+      color: #cbd5e1;
+      line-height: 1.5;
     }
 
     .acc-footer {
@@ -3731,6 +4172,137 @@
     .factor-toggle-btn:hover {
       filter: brightness(1.1);
     }
+
+    .header-documents {
+      position: relative;
+    }
+
+    .header-documents[hidden] {
+      display: none;
+    }
+
+    .header-documents summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 6px 10px;
+      border: 1px solid #39516a;
+      border-radius: 6px;
+      color: #d9e9f5;
+      font-size: 12px;
+    }
+
+    .header-documents summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .header-documents summary:focus-visible {
+      outline: 2px solid #48cce9;
+    }
+
+    .header-documents-menu {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 6px);
+      z-index: 30;
+      width: 225px;
+      padding: 6px;
+      border: 1px solid #39516a;
+      border-radius: 8px;
+      background: #102235;
+      box-shadow: 0 12px 25px #0007;
+    }
+
+    .header-documents-menu button {
+      display: flex;
+      width: 100%;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 9px;
+      border: 0;
+      border-radius: 5px;
+      background: transparent;
+      color: #eef7fe;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .header-documents-menu button:hover,
+    .header-documents-menu button:focus-visible {
+      background: #1b4056;
+    }
+
+    .header-documents-menu small {
+      color: #8ddfeb;
+      white-space: nowrap;
+    }
+
+    #SCR-CASE-DETAIL .case-outputs {
+      display: grid;
+      gap: 8px;
+      padding: 12px;
+      border: 1px solid #294663;
+      border-radius: 10px;
+      background: #101e30;
+    }
+
+    #SCR-CASE-DETAIL .case-outputs h3 {
+      margin: 0 0 2px;
+      font-size: 13px;
+      color: #f3f9ff;
+    }
+
+    #SCR-CASE-DETAIL .case-output-card {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 12px;
+      padding: 10px;
+      border: 1px solid #31506b;
+      border-radius: 8px;
+      background: #14283c;
+    }
+
+    #SCR-CASE-DETAIL .case-output-card>div {
+      flex: 1 1 160px;
+      min-width: 0;
+    }
+
+    #SCR-CASE-DETAIL .case-output-card strong,
+    #SCR-CASE-DETAIL .case-output-card small {
+      display: block;
+    }
+
+    #SCR-CASE-DETAIL .case-output-card strong {
+      color: #edf7fd;
+      font-size: 12px;
+    }
+
+    #SCR-CASE-DETAIL .case-output-card small {
+      color: #9db7cb;
+      font-size: 11px;
+      margin-top: 3px;
+    }
+
+    #SCR-CASE-DETAIL .case-output-status {
+      color: #8ee2ef;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    #SCR-CASE-DETAIL .case-outputs p {
+      margin: 0;
+      color: #b2c7d9;
+      font-size: 11px;
+    }
+
+    #SCR-CASE-DETAIL .case-outputs-next {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
   </style>
 </head>
 
@@ -3748,6 +4320,16 @@
         data-tooltip="Mở danh sách vụ việc">Danh sách</button>
       <button class="btn btn-secondary btn-sm" id="header-history-button" onclick="openHeaderHistory()"
         data-tooltip="Mở trang nhật ký hoạt động">Nhật ký hoạt động</button>
+      <details class="header-documents" id="header-documents" hidden>
+        <summary data-tooltip="Mở hai đầu ra độc lập của vụ việc">Tài liệu</summary>
+        <div class="header-documents-menu">
+          <button type="button" onclick="openReportOutput()"
+            data-tooltip="Xem báo cáo nội bộ hoặc tạo phiên bản mới">Báo cáo nội bộ <small
+              id="header-report-status">Chưa tạo</small></button>
+          <button type="button" onclick="goToNotification()" data-tooltip="Mở bản nháp thông báo khách hàng">Thông báo
+            khách hàng <small id="header-notice-status">Chưa tạo</small></button>
+        </div>
+      </details>
     </nav>
     <div class="header-user">
       <div class="user-avatar" data-tooltip="Tài khoản: smtadmin (Điều tra viên chính)">SA</div>
@@ -3838,10 +4420,6 @@
         </div>
         <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
           <button class="btn btn-secondary btn-sm" onclick="navigate('SCR-CASE-LIST')">&larr; Danh sách vụ việc</button>
-          <button class="btn btn-secondary btn-sm" onclick="requestReport()"
-            data-tooltip="Nhập ý kiến và chốt báo cáo">📄 Tạo báo cáo</button>
-          <button class="btn btn-primary btn-sm" id="btn-open-customer-notify" onclick="goToNotification()"
-            data-tooltip="Mở màn soạn và gửi thông báo kết quả cho khách hàng">📲 Thông Báo Khách Hàng &rarr;</button>
         </div>
       </div>
 
@@ -3938,21 +4516,34 @@
             </div>
           </div>
 
-          <div class="reasoning-box" id="ai-reasoning-card" style="display:none;" role="status" aria-live="polite">
-            <div class="reasoning-head"><span>AI phân tích video</span><span id="ai-reasoning-timer"></span></div>
-            <p id="ai-reasoning-stream"></p>
-            <button type="button" class="btn btn-primary btn-sm reasoning-next" id="reasoning-next" onclick="showAnalysisStep('charts')" data-tooltip="Xem kết quả phân tích sau khi AI hoàn tất" hidden>Xem kết quả &rarr;</button>
-          </div>
-
+          <!-- 3 CARDS: 1. AI PHÂN TÍCH · 2. CHỌN CHART · 3. CHỨNG CỨ & YẾU TỐ -->
           <nav class="analysis-steps" id="analysis-steps" aria-label="Các bước phân tích">
             <button type="button" id="analysis-step-reasoning" onclick="showAnalysisStep('reasoning')"
-              data-tooltip="Xem lại quá trình AI phân tích video">1 · AI phân tích<small>Quá trình phân tích</small></button>
+              data-tooltip="Xem lại quá trình AI phân tích video">1 · AI phân tích<small>Quá trình phân
+                tích</small></button>
             <button type="button" id="analysis-step-chart" onclick="showAnalysisStep('charts')"
-              data-tooltip="Quay lại danh sách chart để chọn chart khác">2 · Chọn chart<small>Đối chiếu KNIA</small></button>
+              data-tooltip="Quay lại danh sách chart để chọn chart khác">2 · Chọn chart<small>Đối chiếu
+                KNIA</small></button>
             <button type="button" id="analysis-step-evidence" onclick="showAnalysisStep('evidence')"
               data-tooltip="Xem chứng cứ của chart đã chọn">3 · Chứng cứ &amp; yếu tố<small
                 id="analysis-selected-chart">Chọn chart để tiếp tục</small></button>
           </nav>
+
+          <!-- Multimodal AI Reasoning Timeline Card (ĐẶT DƯỚI 3 CARD) -->
+          <div class="ai-reasoning-card" id="ai-reasoning-card" style="display:none;" role="status" aria-live="polite">
+            <!-- Staggered Timeline Boxes -->
+            <div class="ai-reasoning-timeline" id="ai-reasoning-timeline">
+              <!-- Rendered progressively via renderAiReasoning(c) -->
+            </div>
+
+            <div class="ai-reasoning-footer" id="ai-reasoning-footer">
+              <span id="ai-reasoning-stream" style="font-size:12px; color:#8ba2b5;">Đang suy luận theo thời gian
+                thực...</span>
+              <button type="button" class="btn btn-primary reasoning-next" id="reasoning-next"
+                onclick="showAnalysisStep('charts')" data-tooltip="Xem kết quả phân tích sau khi AI hoàn tất" hidden>Xem
+                kết quả &rarr;</button>
+            </div>
+          </div>
 
           <!-- SECTION 1: CHỌN CHART KNIA -->
           <div class="panel" id="panel-chart-selection" style="background:#101e30; border:1px solid #233e59;">
@@ -3979,7 +4570,7 @@
           </div>
 
           <div class="evidence-stage" id="evidence-stage" hidden>
-            <div class="chart-toolbar" id="chart-toolbar">
+            <div class="chart-toolbar" id="chart-toolbar" style="display:none !important;">
               <div class="chart-switcher" id="chart-switcher" style="display:none;"></div>
               <div class="chart-compare-controls" style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
                 <select id="compare-chart-select" aria-label="Chart cần so sánh"
@@ -3989,8 +4580,6 @@
                   data-tooltip="So sánh chứng cứ 1:1 giữa 2 chart">⚖️ So sánh chứng cứ</button>
                 <button type="button" class="btn btn-secondary btn-sm" onclick="openKniaSourceModal()"
                   data-tooltip="Tra cứu văn bản chuẩn KNIA và án lệ">📖 Nguồn KNIA</button>
-                <button type="button" class="btn btn-primary btn-sm" id="btn-center-create-report"
-                  onclick="requestReport()" data-tooltip="Tạo báo cáo với chart đang chọn">📄 Tạo báo cáo</button>
               </div>
             </div>
             <!-- SECTION 2: BẰNG CHỨNG CỐT LÕI & YẾU TỐ TĂNG GIẢM LỖI -->
@@ -4021,20 +4610,31 @@
                 <div class="panel-body">
                   <div id="fault-balance-widget"></div>
                   <div id="factors-toggle-list" style="display:flex; flex-direction:column; gap:8px;"></div>
-                  <div
-                    style="margin-top:14px; padding-top:12px; border-top:1px dashed #294663; display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
-                    <span style="font-size:11px; color:#8ba2b5;">Chốt tỷ lệ lỗi &amp; chuyển bước tiếp theo:</span>
-                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                      <button type="button" class="btn btn-secondary btn-sm" onclick="requestReport()"
-                        data-tooltip="Nhập ý kiến và chốt báo cáo">📄 Tạo báo cáo</button>
-                      <button type="button" class="btn btn-primary btn-sm" onclick="goToNotification()"
-                        data-tooltip="Mở màn thông báo cho khách hàng">📲 Mở Màn Thông Báo KH &rarr;</button>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
             <div id="center-comparison-container"></div>
+            <section class="case-outputs" aria-labelledby="case-outputs-title">
+              <h3 id="case-outputs-title">Đầu ra vụ việc</h3>
+              <div class="case-output-card" data-tooltip="Báo cáo phân tích nội bộ, độc lập với thông báo khách hàng">
+                <div><strong>Báo cáo nội bộ</strong><small>Chart · chứng cứ · lập luận</small></div>
+                <span class="case-output-status" id="output-report-status">Chưa tạo</span>
+                <button type="button" class="btn btn-secondary btn-sm" id="output-report-action"
+                  onclick="requestReport()" data-tooltip="Tạo hoặc cập nhật báo cáo nội bộ">Tạo báo cáo</button>
+              </div>
+              <div class="case-output-card"
+                data-tooltip="Thông báo dùng dữ kiện vụ việc và tỷ lệ thương lượng, không lấy từ báo cáo">
+                <div><strong>Thông báo khách hàng</strong><small>Dữ kiện đã xác nhận · tỷ lệ dự kiến</small></div>
+                <span class="case-output-status" id="output-notice-status">Chưa tạo</span>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="goToNotification()"
+                  data-tooltip="Soạn bản nháp; duyệt và gửi sau khi chốt tỷ lệ">Soạn thông báo</button>
+              </div>
+              <div class="case-outputs-next">
+                <p id="output-notice-hint">Duyệt/gửi sau khi chốt tỷ lệ thương lượng.</p><button type="button"
+                  class="btn btn-secondary btn-sm" onclick="goToNegotiation()"
+                  data-tooltip="Mở bảng thương lượng sau khi chọn chart">Mở thương lượng &rarr;</button>
+              </div>
+            </section>
           </div>
 
           <!-- Hidden legacy container to preserve DOM IDs -->
@@ -4103,12 +4703,13 @@
       </div>
 
       <!-- Report PDF Preview & Confirmation Modal -->
-      <div class="report-editor" id="report-editor" role="dialog" aria-modal="true" aria-label="Xem trước và chốt báo cáo"
-        aria-hidden="true">
+      <div class="report-editor" id="report-editor" role="dialog" aria-modal="true"
+        aria-label="Xem trước và chốt báo cáo" aria-hidden="true">
         <div class="report-editor-header">
           <div style="display:flex; align-items:center; gap:8px;">
             <span style="font-size:16px;">📄</span>
-            <strong>Xem Trước Báo Cáo Giám Định (B2B Report PDF Preview) &middot; <span id="editor-case-title">Bản dự thảo v1</span></strong>
+            <strong>Xem Trước Báo Cáo Giám Định (B2B Report PDF Preview) &middot; <span id="editor-case-title">Bản dự
+                thảo v1</span></strong>
           </div>
           <button class="btn btn-secondary btn-sm" onclick="closeReportEditor()"
             data-tooltip="Đóng hộp xem trước báo cáo">✕ Đóng</button>
@@ -4118,12 +4719,13 @@
         </div>
         <div class="report-editor-footer">
           <div style="font-size:12px; color:#8ba2b5; display:flex; align-items:center; gap:6px;">
-            <span>ℹ️</span> <span>Kiểm tra kỹ bản xem trước báo cáo. Nhấn <b>Chốt &amp; Lưu Báo Cáo</b> để lưu snapshot và chuyển sang bước tiếp theo.</span>
+            <span>ℹ️</span> <span>Kiểm tra bản xem trước; lưu phiên bản báo cáo nội bộ.</span>
           </div>
           <div style="display:flex; gap:8px;">
             <button type="button" class="btn btn-secondary btn-sm" onclick="closeReportEditor()">Hủy / Xem lại</button>
             <button type="button" class="btn btn-primary btn-sm" id="btn-confirm-report" onclick="confirmReport()"
-              style="background:var(--success); border-color:var(--success); font-weight:700; padding:6px 14px;">✅ Chốt &amp; Lưu Báo Cáo</button>
+              style="background:var(--success); border-color:var(--success); font-weight:700; padding:6px 14px;">✅ Chốt
+              &amp; Lưu Báo Cáo</button>
           </div>
         </div>
       </div>
@@ -4142,7 +4744,7 @@
         <div class="stepper-steps">
           <div class="step-item completed" onclick="navigate('SCR-CASE-DETAIL')"><span>✓</span> 1. AI Đọc Video</div>
           <span class="step-divider">&rarr;</span>
-          <div class="step-item completed" onclick="navigate('SCR-CASE-DETAIL')"><span>✓</span> 2. Chốt Chart & Báo Cáo
+          <div class="step-item completed" onclick="navigate('SCR-CASE-DETAIL')"><span>✓</span> 2. Chọn Chart
           </div>
           <span class="step-divider">&rarr;</span>
           <div class="step-item active" onclick="navigate('SCR-NEGOTIATION')"><span>●</span> 3. Thương Lượng Tỷ Lệ Lỗi
@@ -4157,16 +4759,15 @@
         </div>
       </div>
 
-      <!-- Locked Warning (If report not created) -->
+      <!-- Locked Warning (If chart not selected) -->
       <div id="nego-locked-banner" class="panel"
         style="display:none; border-color:#fde68a; background:var(--warning-light);">
         <div class="panel-body" style="text-align:center; padding:30px 20px;">
           <h3 style="font-size:16px; font-weight:700; color:var(--warning);">Chưa thể thương lượng</h3>
           <p style="font-size:13px; color:#92400e; margin:6px auto 16px auto; max-width:550px;">
-            Hãy xác nhận chart và tạo báo cáo ở bước 2.
+            Hãy chọn chart ở màn phân tích trước.
           </p>
-          <button class="btn btn-primary btn-sm" onclick="navigate('SCR-CASE-DETAIL')">Quay lại Bước 2 để Xác nhận Báo
-            cáo</button>
+          <button class="btn btn-primary btn-sm" onclick="navigate('SCR-CASE-DETAIL')">Quay lại chọn chart</button>
         </div>
       </div>
 
@@ -4211,8 +4812,10 @@
                 <div style="display:flex; gap:10px;">
                   <button class="btn btn-secondary" onclick="exportUpdatedNegoPdf()"
                     data-tooltip="Xuất PDF bổ sung kèm kết quả sau thương lượng">Xuất PDF cập nhật</button>
+                  <button class="btn btn-secondary" id="btn-confirm-negotiation" onclick="confirmNegotiation()"
+                    data-tooltip="Chốt tỷ lệ đang hiển thị để mở duyệt thông báo">Chốt tỷ lệ</button>
                   <button class="btn btn-primary" onclick="goToNotification()"
-                    data-tooltip="Chuyển sang soạn thông báo gửi khách hàng">Soạn thông báo &rarr;</button>
+                    data-tooltip="Có thể soạn nháp trước; duyệt/gửi sau khi chốt tỷ lệ">Soạn thông báo &rarr;</button>
                 </div>
               </div>
             </div>
@@ -4262,7 +4865,8 @@
           <p class="screen-subtitle">Kiểm tra nội dung và bản xem trước trước khi kết thúc vụ việc.</p>
         </div>
         <div style="display:flex; gap:8px; align-items:center;">
-          <button class="btn btn-secondary btn-sm" onclick="navigate('SCR-CASE-DETAIL')">&larr; Quay lại Phân tích vụ việc</button>
+          <button class="btn btn-secondary btn-sm" onclick="navigate('SCR-CASE-DETAIL')">&larr; Quay lại Phân tích vụ
+            việc</button>
           <button class="btn btn-danger btn-sm" onclick="openCloseCaseModal()"
             data-tooltip="Đóng và kết thúc vụ việc">Hoàn tất &amp; Đóng Vụ Việc</button>
         </div>
@@ -4298,6 +4902,9 @@
             </div>
             <div class="panel-body">
               <div id="notice-source" style="font-size:12px;color:#a9bed1;margin-bottom:12px;"></div>
+              <p id="notice-gate" role="status" style="font-size:12px;color:#f3d28b;margin:0 0 12px;"></p>
+              <button type="button" class="btn btn-secondary btn-sm" id="notice-open-negotiation"
+                onclick="goToNegotiation()" data-tooltip="Chốt tỷ lệ để duyệt thông báo">Mở thương lượng &rarr;</button>
               <div id="notice-blocks" class="notice-blocks"></div>
               <div class="notice-actions" style="margin-top:14px;">
                 <div class="notice-channels" role="radiogroup" aria-label="Kênh gửi mô phỏng">
@@ -5024,6 +5631,7 @@
       if (screenId === 'SCR-NEGOTIATION') renderNegotiationScreen();
       if (screenId === 'SCR-CUSTOMER-NOTIFY') renderNotificationScreen();
       if (screenId === 'SCR-ACTIVITY-LOG') filterLogs('ALL');
+      renderDocumentMenu();
     }
 
     function openHeaderHistory() {
@@ -5221,7 +5829,7 @@
         c.stage = 1;
         c.statusText = '1. Đang phân tích';
         c.selectedChart = null;
-        c.analysisView = 'charts';
+        c.analysisView = 'reasoning';
         c.comparisonMode = false;
         c.compareWith = null;
         c.evidenceByChart = {};
@@ -5297,36 +5905,147 @@
       renderAiReasoning(c);
     }
 
+    let reasoningTypingInterval = null;
+    let reasoningAnalysisTimer = null;
+
+    function toggleStepBoxCollapse(stepId) {
+      const c = STATE.cases[STATE.currentCaseId];
+      if (!c) return;
+      c.collapsedStepIds = c.collapsedStepIds || {};
+      c.collapsedStepIds[stepId] = !c.collapsedStepIds[stepId];
+      renderAiReasoning(c);
+    }
+
     function renderAiReasoning(c) {
       const card = document.getElementById('ai-reasoning-card');
       if (!card) return;
-      card.style.display = c?.isAnalyzing || c?.analysisView === 'reasoning' && c.charts?.length ? 'block' : 'none';
-      if (card.style.display === 'none') return;
-      const messages = ['Đang đọc video và xác định các xe liên quan.', 'Đang kiểm tra chuyển động trước va chạm.', 'Đang đối chiếu tình huống với chart KNIA.', 'Đang tổng hợp các chart phù hợp.'];
-      const step = Math.min(c.reasoningStepIndex || 1, messages.length);
-      document.getElementById('ai-reasoning-timer').textContent = c.isAnalyzing ? `· Bước ${step}/${messages.length}` : '· Hoàn tất';
-      document.getElementById('ai-reasoning-stream').textContent = c.isAnalyzing ? messages[step - 1] : 'Đã phân tích video. Bấm "Xem kết quả" để xem biểu đồ và chứng cứ.';
-      document.getElementById('reasoning-next').hidden = !!c.isAnalyzing;
+      const shouldShow = c?.isAnalyzing || (c?.analysisView === 'reasoning' && c.charts?.length);
+      card.style.display = shouldShow ? 'block' : 'none';
+      if (!shouldShow) return;
+
+      const currentStep = c.isAnalyzing ? Math.min(c.reasoningStepIndex || 1, AI_REASONING_STEPS.length) : AI_REASONING_STEPS.length;
+      const isDone = !c.isAnalyzing;
+
+      const streamEl = document.getElementById('ai-reasoning-stream');
+      if (streamEl) {
+        if (isDone) {
+          streamEl.textContent = '';
+          streamEl.style.display = 'none';
+        } else {
+          streamEl.style.display = 'inline-block';
+          streamEl.textContent = `Đang phân tích bước ${currentStep}/${AI_REASONING_STEPS.length}: ${AI_REASONING_STEPS[currentStep - 1]?.title || 'Đang xử lý...'}`;
+        }
+      }
+
+      const nextBtn = document.getElementById('reasoning-next');
+      if (nextBtn) {
+        nextBtn.hidden = !isDone;
+      }
+
+      const timelineEl = document.getElementById('ai-reasoning-timeline');
+      if (!timelineEl) return;
+
+      c.collapsedStepIds = c.collapsedStepIds || {};
+      const visibleSteps = c.isAnalyzing ? AI_REASONING_STEPS.slice(0, currentStep) : AI_REASONING_STEPS;
+
+      timelineEl.innerHTML = visibleSteps.map((step, idx) => {
+        const stepNum = idx + 1;
+        const stepState = isDone || stepNum < currentStep ? 'done' : 'active';
+
+        // Auto-collapsed if prior completed step or user toggled
+        const isCollapsed = c.collapsedStepIds[step.id] ?? (isDone ? true : stepNum < currentStep);
+
+        const nodeIcon = stepState === 'done' ? '✓' : String(stepNum);
+        const badgeHtml = stepState === 'done'
+          ? `<span class="step-badge-done">✓ ${step.time}</span>`
+          : `<span class="step-badge-active"><span class="step-spinner"></span> Đang phân tích...</span>`;
+
+        const typingText = (c.isAnalyzing && stepNum === currentStep)
+          ? (c.currentTypingText || '')
+          : step.thought;
+
+        return `
+          <div class="timeline-step-row" style="animation-delay:${idx === visibleSteps.length - 1 ? '0.05s' : '0s'}">
+            <div class="timeline-node-col">
+              <div class="step-number-circle ${stepState}">${nodeIcon}</div>
+              <div class="timeline-rail-segment ${stepState === 'done' ? 'done' : ''}"></div>
+            </div>
+            <div class="reasoning-step-box ${stepState} ${isCollapsed ? 'collapsed' : ''}" onclick="toggleStepBoxCollapse(${step.id})" title="Nhấn để ${isCollapsed ? 'mở rộng' : 'thu gọn'}">
+              <div class="step-title-line">
+                <div class="step-title-text">
+                  ${escapeHtml(step.title)}
+                  <span class="step-expand-icon">▾</span>
+                </div>
+                ${badgeHtml}
+              </div>
+              <div class="step-content-collapsible">
+                <div class="step-phase-subtitle">${escapeHtml(step.phase)}</div>
+                <div class="step-thought-text" id="step-thought-${step.id}">${escapeHtml(typingText)}${c.isAnalyzing && stepNum === currentStep ? '<span class="typing-cursor"></span>' : ''}</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     function runFakeAnalysis(c, isReanalysis = false) {
+      if (reasoningTypingInterval) clearInterval(reasoningTypingInterval);
+      if (reasoningAnalysisTimer) clearTimeout(reasoningAnalysisTimer);
+      if (isReanalysis) invalidateNegotiation(c);
+
       c.isAnalyzing = true;
       c.analysisView = 'reasoning';
       c.reasoningStepIndex = 1;
-      c.reasoningCollapsed = false;
+      c.collapsedStepIds = {};
+      c.currentTypingText = '';
       if (STATE.cases[STATE.currentCaseId] === c) renderCaseDetail();
 
-      const delays = [500, 1100, 1800, 2500, 3100];
-      delays.forEach((delay, idx) => {
-        setTimeout(() => {
-          if (c.isAnalyzing && STATE.cases[STATE.currentCaseId] === c) {
-            c.reasoningStepIndex = idx + 1;
-            renderAiReasoning(c);
-          }
-        }, delay);
-      });
+      function startTypingStep(stepIndex) {
+        if (!c.isAnalyzing || STATE.cases[STATE.currentCaseId] !== c) return;
+        const step = AI_REASONING_STEPS[stepIndex - 1];
+        if (!step) return;
 
-      setTimeout(() => {
+        c.reasoningStepIndex = stepIndex;
+        c.currentTypingText = '';
+        renderAiReasoning(c);
+
+        const fullText = step.thought;
+        let charIndex = 0;
+        const speed = Math.max(8, Math.min(22, Math.floor(1800 / (fullText.length || 1))));
+
+        if (reasoningTypingInterval) clearInterval(reasoningTypingInterval);
+        reasoningTypingInterval = setInterval(() => {
+          if (!c.isAnalyzing || STATE.cases[STATE.currentCaseId] !== c) {
+            clearInterval(reasoningTypingInterval);
+            return;
+          }
+          charIndex = Math.min(charIndex + 4, fullText.length);
+          c.currentTypingText = fullText.slice(0, charIndex);
+          const thoughtEl = document.getElementById(`step-thought-${step.id}`);
+          if (thoughtEl) {
+            thoughtEl.innerHTML = `${escapeHtml(c.currentTypingText)}<span class="typing-cursor"></span>`;
+          }
+
+          if (charIndex >= fullText.length) {
+            clearInterval(reasoningTypingInterval);
+            if (thoughtEl) thoughtEl.innerHTML = escapeHtml(fullText);
+
+            // Type xong: dừng khoảng 3s để người dùng đọc, sau đó thu gọn box lại chỉ hiện title và chạy tiếp bước sau
+            reasoningAnalysisTimer = setTimeout(() => {
+              if (!c.isAnalyzing || STATE.cases[STATE.currentCaseId] !== c) return;
+              c.collapsedStepIds[step.id] = true;
+
+              if (stepIndex < AI_REASONING_STEPS.length) {
+                startTypingStep(stepIndex + 1);
+              } else {
+                finishAnalysis();
+              }
+            }, 3000);
+          }
+        }, speed);
+      }
+
+      function finishAnalysis() {
         if (!c.charts || !c.charts.length) {
           c.charts = JSON.parse(JSON.stringify(DEMO_ANALYSIS.charts));
           c.events = JSON.parse(JSON.stringify(DEMO_ANALYSIS.events));
@@ -5337,14 +6056,14 @@
         c.stage = 2;
         c.statusText = '2. Chờ chốt Chart & Báo cáo';
         c.isAnalyzing = false;
-        c.reasoningCollapsed = false;
+        c.currentTypingText = '';
 
         const cur = (c.charts || []).find(ch => ch.code === c.selectedChart) || (c.charts || [])[0];
         const thoughtHtml = `
           <div class="chat-thought-wrapper">
             <details class="chat-thought-details">
               <summary class="chat-thought-summary">
-                <span>💭 Đã suy luận trong 3.2 giây (5 bước phân tích VLM &amp; KNIA)</span>
+                <span>💭 Đã suy luận trong 5 bước phân tích VLM &amp; KNIA</span>
               </summary>
               <div class="chat-thought-content">
                 <div><b>[0.4s] Khởi tạo &amp; Giải mã:</b> 60fps 1080p, hiệu chỉnh quang sai fisheye, ban ngày khô ráo.</div>
@@ -5357,10 +6076,11 @@
           </div>
           <div>✅ <b>Hoàn tất phân tích!</b><br>• Biểu đồ đề xuất: <b>${escapeHtml(cur ? cur.code : '도표 244 (차31-3)')}</b> đạt độ khớp cao nhất (<b>${cur ? cur.match : 91}%</b>).<br>• Đã đối chiếu 4 mốc viễn trắc và kích hoạt Án lệ 96다39314 đề xuất mức lỗi <b>90% (A) : 10% (B)</b>. Chi tiết chuỗi suy luận và bảng điều kiện đã hiển thị ở cột giữa.</div>
         `;
-
         appendAgentMessage(thoughtHtml);
         if (STATE.cases[STATE.currentCaseId] === c) renderCaseDetail();
-      }, 3300);
+      }
+
+      startTypingStep(1);
     }
 
     /* =====================================================================
@@ -5417,7 +6137,7 @@
       const c = STATE.cases[STATE.currentCaseId];
       if (!c) return;
       const ready = c.charts && c.charts.length > 0;
-      c.analysisView ||= 'charts';
+      c.analysisView ||= (c.isAnalyzing ? 'reasoning' : 'charts');
 
       const playerTitle = document.getElementById('player-title');
       if (playerTitle) {
@@ -5444,13 +6164,33 @@
       if (chartPanel) {
         chartPanel.style.display = ready && !c.isAnalyzing && c.analysisView === 'charts' ? 'block' : 'none';
       }
-      document.getElementById('analysis-steps').hidden = !ready || !!c.isAnalyzing;
+      const hasVideo = !!c.videoUrl || (!!c.videoName && c.videoName !== 'Chưa có video');
+      const stepsNav = document.getElementById('analysis-steps');
+      if (stepsNav) {
+        stepsNav.hidden = !hasVideo && !c.isAnalyzing && !ready;
+      }
+      const reasoningStep = document.getElementById('analysis-step-reasoning');
+      if (reasoningStep) {
+        reasoningStep.classList.toggle('active', c.analysisView === 'reasoning');
+      }
+      const chartStep = document.getElementById('analysis-step-chart');
+      if (chartStep) {
+        chartStep.disabled = !ready && !c.isAnalyzing;
+        chartStep.classList.toggle('active', c.analysisView === 'charts');
+        const smallText = chartStep.querySelector('small');
+        if (smallText) {
+          smallText.textContent = c.isAnalyzing ? 'Đang phân tích...' : 'Đối chiếu KNIA';
+        }
+      }
       const evidenceStep = document.getElementById('analysis-step-evidence');
-      evidenceStep.disabled = !c.selectedChart;
-      document.getElementById('analysis-selected-chart').textContent = c.selectedChart || 'Chọn chart để tiếp tục';
-      document.getElementById('analysis-step-reasoning').classList.toggle('active', c.analysisView === 'reasoning');
-      document.getElementById('analysis-step-chart').classList.toggle('active', c.analysisView === 'charts');
-      evidenceStep.classList.toggle('active', c.analysisView === 'evidence');
+      if (evidenceStep) {
+        evidenceStep.disabled = !c.selectedChart;
+        evidenceStep.classList.toggle('active', c.analysisView === 'evidence');
+        const selChartEl = document.getElementById('analysis-selected-chart');
+        if (selChartEl) {
+          selChartEl.textContent = c.selectedChart || 'Chọn chart để tiếp tục';
+        }
+      }
       document.getElementById('evidence-stage').hidden = !ready || !!c.isAnalyzing || c.analysisView !== 'evidence' || !c.selectedChart;
 
       const countBadge = document.getElementById('center-chart-count-badge');
@@ -5468,6 +6208,7 @@
       renderCaseChat(c);
       renderQuickChips(c);
       renderReportHistory(c);
+      renderOutputHub(c);
 
       if (ready && !c.isAnalyzing) {
         renderChartCards(c);
@@ -5525,6 +6266,7 @@
       if (!c || !c.negotiationFactors || !c.negotiationFactors[idx]) return;
       const factor = c.negotiationFactors[idx];
       factor.status = (factor.status === 'AGREED' ? 'NOT_APPLIED' : 'AGREED');
+      invalidateNegotiation(c);
 
       recalculateCaseFault(c);
       renderDualEvidenceWorkbench(c);
@@ -5914,6 +6656,51 @@
       return c.activeReportVersion ? c.reportSnapshots?.[c.activeReportVersion]?.chartCode || c.selectedChart : null;
     }
 
+    function renderDocumentMenu() {
+      const c = STATE.cases[STATE.currentCaseId];
+      const menu = document.getElementById('header-documents');
+      menu.hidden = STATE.currentScreen === 'SCR-CASE-LIST' || !c;
+      if (!c || menu.hidden) { menu.open = false; return; }
+      document.getElementById('header-report-status').textContent = c.activeReportVersion || 'Chưa tạo';
+      document.getElementById('header-notice-status').textContent = c.notificationSent?.length ? 'Đã gửi mô phỏng' : c.notificationBlocks ? 'Bản nháp' : 'Chưa tạo';
+      menu.querySelectorAll('button').forEach(button => button.disabled = !c.selectedChart);
+    }
+
+    function openReportOutput() {
+      const c = STATE.cases[STATE.currentCaseId];
+      if (!c?.selectedChart) return;
+      document.getElementById('header-documents').open = false;
+      navigate('SCR-CASE-DETAIL');
+      if (c.activeReportVersion) downloadPdf('current');
+      else requestReport();
+    }
+
+    function negotiationSourceKey(c) {
+      return JSON.stringify([c.selectedChart, (c.negotiationFactors || []).map(f => [f.id, f.status]),
+      recalculateCaseFault(c).finalA]);
+    }
+
+    function isNegotiationConfirmed(c) {
+      return !!c.selectedChart && !!c.negotiationConfirmedKey && c.negotiationConfirmedKey === negotiationSourceKey(c);
+    }
+
+    function renderOutputHub(c) {
+      const report = document.getElementById('output-report-status');
+      if (!report) return;
+      if (c.notificationBlocks) ensureNoticeDraft(c);
+      const reportStale = !!c.activeReportVersion && reportChartCode(c) !== c.selectedChart;
+      report.textContent = reportStale ? 'Cần cập nhật' : c.pendingVersion ? `${c.pendingVersion} · Đang soạn` : c.activeReportVersion || 'Chưa tạo';
+      const reportAction = document.getElementById('output-report-action');
+      reportAction.textContent = c.activeReportVersion ? 'Tạo phiên bản mới' : 'Tạo báo cáo';
+      reportAction.disabled = !!c.isClosed || reportMissing(c).length > 0;
+      const notice = document.getElementById('output-notice-status');
+      const sent = !!c.notificationBlocks && c.notificationSentKey === noticeDraftKey(c);
+      const approved = !!c.notificationBlocks && c.notificationApprovedKey === noticeDraftKey(c);
+      notice.textContent = sent ? 'Đã gửi mô phỏng' : approved ? 'Đã duyệt' : c.notificationBlocks ? isNegotiationConfirmed(c) ? 'Có thể duyệt' : 'Bản nháp' : 'Chưa tạo';
+      document.getElementById('output-notice-hint').textContent = isNegotiationConfirmed(c) ? 'Tỷ lệ đã chốt · có thể duyệt thông báo.' : 'Duyệt/gửi sau khi chốt tỷ lệ thương lượng.';
+      renderDocumentMenu();
+    }
+
     function requestReport() {
       const c = STATE.cases[STATE.currentCaseId];
       if (c.isClosed) { appendAgentMessage('Vụ việc đã kết thúc. Hãy mở lại trước khi tạo báo cáo.'); return; }
@@ -5930,23 +6717,7 @@
     function renderChartToolbar(c) {
       const toolbar = document.getElementById('chart-toolbar');
       if (!toolbar) return;
-      toolbar.style.display = (c.charts && c.charts.length) ? 'flex' : 'none';
-      const otherCharts = (c.charts || []).filter(chart => chart.code !== c.selectedChart);
-      const compareButton = document.getElementById('btn-compare-evidence');
-      if (compareButton) {
-        compareButton.disabled = !c.selectedChart || !otherCharts.length;
-        compareButton.setAttribute('aria-pressed', String(!!c.comparisonMode));
-        compareButton.textContent = c.comparisonMode ? '✕ Ẩn so sánh' : '⚖️ So sánh chứng cứ';
-      }
-      const select = document.getElementById('compare-chart-select');
-      if (select) {
-        select.hidden = !c.comparisonMode || !otherCharts.length;
-        select.innerHTML = otherCharts.map(chart => `<option value="${escapeHtml(chart.code)}">So với ${escapeHtml(chart.code)}</option>`).join('');
-        if (otherCharts.length) {
-          if (!otherCharts.some(chart => chart.code === c.compareWith)) c.compareWith = otherCharts[0].code;
-          select.value = c.compareWith;
-        }
-      }
+      toolbar.style.display = 'none';
     }
 
     function toggleEvidenceComparison() {
@@ -6003,10 +6774,12 @@
             <span class="acc-fault-pill">Cơ sở A:B: <b>${escapeHtml(baseRatio)}</b></span>
           </div>
           <div class="acc-name">${escapeHtml(chart.shortName || chart.name)}</div>
+          ${chart.desc ? `<div class="acc-rationale">${escapeHtml(chart.desc)}</div>` : ''}
           <details class="chart-card-conditions" ${c.expandedConditionCharts?.includes(chart.code) ? 'open' : ''}>
             <summary>Đối chiếu điều kiện KNIA</summary>
             <div class="chart-card-detail">
               <section>
+                ${chart.desc ? `<div class="chart-card-detail-rationale"><h4>Mô tả tình huống &amp; Rationale chuẩn KNIA</h4><p>${escapeHtml(chart.desc)}</p></div>` : ''}
                 <div class="chart-condition-table"><table><thead><tr><th>Điều kiện</th><th>Đánh giá</th><th>Xác suất</th><th>Căn cứ / mốc video</th></tr></thead><tbody>${conditionRows}</tbody></table></div>
               </section>
               <section>
@@ -6188,6 +6961,7 @@
       const found = (c.charts || []).find(ch => ch.code === chartCode || ch.kniaNo === chartCode || ch.subCode === chartCode || ch.code.includes(chartCode));
       if (found) {
         chartCode = found.code;
+        if (c.selectedChart !== chartCode) invalidateNegotiation(c);
         c.selectedChart = chartCode;
         c.analysisView = 'evidence';
         c.evidenceByChart ||= {};
@@ -6228,8 +7002,6 @@
         note
       };
       c.isReportConfirmed = true;
-      c.stage = 3;
-      c.statusText = '3. Đang thương lượng';
 
       STATE.logs.unshift({
         id: Date.now(),
@@ -6237,18 +7009,18 @@
         time: new Date().toLocaleTimeString().substring(0, 5),
         actor: 'Điều tra viên smtadmin',
         type: 'REPORT',
-        desc: `Đã xem trước và chốt lưu Báo cáo PDF phiên bản ${c.activeReportVersion} cho Chart ${c.selectedChart}. Mở khóa giai đoạn Thương lượng.`
+        desc: `Đã xem trước và lưu Báo cáo PDF nội bộ phiên bản ${c.activeReportVersion} cho Chart ${c.selectedChart}.`
       });
 
       closeReportEditor();
       renderCaseDetail();
-      appendAgentMessage(`Đã chốt và lưu báo cáo <b>${escapeHtml(c.activeReportVersion)}</b> cho chart <b>${escapeHtml(c.selectedChart)}</b>. <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;"><button class="btn btn-primary btn-sm" onclick="goToNotification()" data-tooltip="Mở màn thông báo cho khách hàng">📲 Mở Màn Thông Báo KH &rarr;</button><button class="btn btn-secondary btn-sm" onclick="goToNegotiation()" data-tooltip="Chuyển sang màn thương lượng của vụ việc này">Mở thương lượng</button></div>`);
+      appendAgentMessage(`Đã lưu báo cáo nội bộ <b>${escapeHtml(c.activeReportVersion)}</b>. Thông báo khách hàng là đầu ra riêng, có thể soạn từ dữ kiện vụ việc và tỷ lệ thương lượng.`);
     }
 
     function goToNegotiation() {
       const c = STATE.cases[STATE.currentCaseId];
-      if (!c.isReportConfirmed) {
-        alert('Vui lòng Tạo và Xác nhận Báo cáo ở Bước 2 trước khi sang Bước 3 Thương lượng!');
+      if (!c?.selectedChart) {
+        alert('Hãy chọn chart trước khi thương lượng.');
         return;
       }
       navigate('SCR-NEGOTIATION');
@@ -6256,7 +7028,11 @@
 
     function goToNotification() {
       const c = STATE.cases[STATE.currentCaseId];
-      if (!c) return;
+      if (!c?.selectedChart) {
+        alert('Hãy chọn chart trước khi soạn thông báo.');
+        return;
+      }
+      document.getElementById('header-documents').open = false;
       recalculateCaseFault(c);
       navigate('SCR-CUSTOMER-NOTIFY');
     }
@@ -6507,13 +7283,13 @@
       if (!c) return;
       document.getElementById('nego-context-case').textContent = `VỤ VIỆC ${c.id} · BƯỚC 3`;
 
-      const isLocked = !c.isReportConfirmed;
+      const isLocked = !c.selectedChart;
       document.getElementById('nego-locked-banner').style.display = isLocked ? 'block' : 'none';
       document.getElementById('nego-active-content').style.display = isLocked ? 'none' : 'grid';
 
       if (isLocked) return;
 
-      document.getElementById('nego-chart-code').innerText = reportChartCode(c) || '차31-3';
+      document.getElementById('nego-chart-code').innerText = c.selectedChart;
       const tbody = document.getElementById('nego-factors-tbody');
       tbody.innerHTML = '';
 
@@ -6536,40 +7312,40 @@
       });
 
       calculateNegoFault(c);
+      const confirm = document.getElementById('btn-confirm-negotiation');
+      confirm.disabled = !!c.isClosed || c.negotiationFactors.some(f => f.status === 'NEGOTIATING');
+      confirm.textContent = isNegotiationConfirmed(c) ? '✓ Đã chốt tỷ lệ' : 'Chốt tỷ lệ';
+    }
+
+    function invalidateNegotiation(c) {
+      c.negotiationConfirmedKey = null;
+      c.notificationApprovedKey = null;
+      c.notificationFeedback = 'Tỷ lệ thay đổi · cần chốt và duyệt lại.';
     }
 
     function setFactorStatus(idx, newStatus) {
       const c = STATE.cases[STATE.currentCaseId];
-      if (c && c.negotiationFactors[idx]) {
+      if (c?.negotiationFactors[idx] && c.negotiationFactors[idx].status !== newStatus) {
         c.negotiationFactors[idx].status = newStatus;
+        invalidateNegotiation(c);
         renderNegotiationScreen();
       }
     }
 
+    function confirmNegotiation() {
+      const c = STATE.cases[STATE.currentCaseId];
+      if (!c?.selectedChart || c.isClosed || c.negotiationFactors.some(f => f.status === 'NEGOTIATING')) return;
+      c.negotiationConfirmedKey = negotiationSourceKey(c);
+      c.stage = 3;
+      c.statusText = '3. Đã chốt tỷ lệ thương lượng';
+      renderNegotiationScreen();
+      renderDocumentMenu();
+    }
+
     function calculateNegoFault(c) {
-      let faultA = 100;
-      let faultB = 0;
-
-      c.negotiationFactors.forEach(f => {
-        if (f.status === 'AGREED') {
-          if (f.impact.includes('Xe B')) {
-            faultA -= 10;
-            faultB += 10;
-          } else if (f.impact.includes('Xe A')) {
-            faultA += 10;
-            faultB -= 10;
-          }
-        }
-      });
-
-      faultA = Math.max(0, Math.min(100, faultA));
-      faultB = Math.max(0, Math.min(100, faultB));
-
-      c.finalFaultA = faultA;
-      c.finalFaultB = faultB;
-
-      document.getElementById('nego-final-fault-label').innerText = `Xe A: ${faultA}%  |  Xe B: ${faultB}%`;
-      document.getElementById('nego-adjustment-detail').innerText = `Tỷ lệ cơ sở ban đầu 100:0 đã được điều chỉnh theo các mục đã đồng ý.`;
+      const { finalA, finalB, baseA, baseB } = recalculateCaseFault(c);
+      document.getElementById('nego-final-fault-label').innerText = `Xe A: ${finalA}%  |  Xe B: ${finalB}%`;
+      document.getElementById('nego-adjustment-detail').innerText = `Tỷ lệ cơ sở ${baseA}:${baseB} · ${isNegotiationConfirmed(c) ? 'Đã chốt' : 'Chưa chốt'}.`;
     }
 
     function exportUpdatedNegoPdf() {
@@ -6606,17 +7382,18 @@
        SCREEN 5: SCR-CUSTOMER-NOTIFY LOGIC
        ===================================================================== */
     function noticeSourceKey(c) {
-      return JSON.stringify([c.activeReportVersion || 'v1-draft', reportChartCode(c) || c.selectedChart, c.finalFaultA, c.finalFaultB,
+      return JSON.stringify([c.selectedChart, c.finalFaultA, c.finalFaultB, c.negotiationConfirmedKey,
       (c.negotiationFactors || []).map(f => [f.id, f.status])]);
     }
 
     function defaultNoticeBlocks(c) {
-      const chart = reportChartCode(c) || c.selectedChart || 'KNIA';
+      const chart = c.selectedChart || 'KNIA';
+      const { baseA, baseB } = recalculateCaseFault(c);
       const agreed = (c.negotiationFactors || []).filter(f => f.status === 'AGREED').map(f => f.text);
       return [
         { id: 1, title: 'Vụ việc', body: `${c.accidentDate || 'Chưa rõ thời điểm'} · ${c.location || c.caseTitle || c.code}.`, included: true },
-        { id: 2, title: 'Tỷ lệ lỗi', body: `Xe khách hàng ${c.finalFaultA}% · đối phương ${c.finalFaultB}%.`, included: true },
-        { id: 3, title: 'Căn cứ áp dụng', body: `Chart ${chart} · báo cáo ${c.activeReportVersion || 'v1 (Dự thảo)'}.`, included: true, required: true },
+        { id: 2, title: 'Tỷ lệ lỗi', body: isNegotiationConfirmed(c) ? `Dự kiến xe khách hàng ${c.finalFaultA}% · đối phương ${c.finalFaultB}%; kết quả có thể thay đổi.` : `Tỷ lệ cơ sở ${baseA}:${baseB} · đang thương lượng.`, included: true },
+        { id: 3, title: 'Căn cứ áp dụng', body: `Chart ${chart} · dữ kiện vụ việc đã xác nhận.`, included: true, required: true },
         { id: 4, title: 'Lý do điều chỉnh', body: agreed.length ? agreed.join('; ') : 'Chưa có yếu tố điều chỉnh được đồng ý.', included: true },
         { id: 5, title: 'Bước tiếp theo', body: 'Giám định viên tiếp tục xử lý bồi thường và cập nhật cho khách hàng.', included: true },
         { id: 6, title: 'Lưu ý pháp lý', body: 'Tỷ lệ này có thể thay đổi theo thỏa thuận hoặc quyết định có thẩm quyền. Liên hệ người phụ trách hồ sơ để được hỗ trợ.', included: true, required: true }
@@ -6654,13 +7431,13 @@
       document.getElementById('case-closed-banner').style.display = c.isClosed ? 'block' : 'none';
       if (c.isClosed) document.getElementById('case-closed-reason-label').textContent = `Lý do: ${c.closeReason}`;
       document.getElementById('notice-version').textContent = `v${c.notificationSentKey === noticeDraftKey(c) ? c.notificationSent.length : c.notificationSent.length + 1}`;
-      document.getElementById('notice-source').textContent = `${reportChartCode(c) || c.selectedChart || 'Chưa có chart'} · Báo cáo ${c.activeReportVersion || 'v1 (Dự thảo)'} · Xe KH ${c.finalFaultA}% : Đối phương ${c.finalFaultB}%`;
+      document.getElementById('notice-source').textContent = `Chart ${c.selectedChart} · ${isNegotiationConfirmed(c) ? `Tỷ lệ dự kiến ${c.finalFaultA}:${c.finalFaultB}` : 'Tỷ lệ đang thương lượng'}`;
       document.querySelectorAll('input[name="notice-channel"]').forEach(input => {
         input.checked = input.value === c.notificationChannel;
         input.disabled = !!c.isClosed;
       });
       renderNoticeBlocks(c);
-      renderNoticePreview(c);
+      if (c.notificationBlocks) renderNoticePreview(c);
       renderNoticeStatus(c);
       document.getElementById('notice-sent-history').textContent = c.notificationSent.length
         ? `Đã gửi mô phỏng: ${c.notificationSent.map(item => `${item.version} · ${item.channel} · ${item.time}`).join(' | ')}`
@@ -6698,7 +7475,7 @@
       if (draggedNoticeIndex === null || draggedNoticeIndex === targetIndex) return;
       const c = STATE.cases[STATE.currentCaseId];
       if (!c || c.isClosed) return;
-      
+
       const movedItem = c.notificationBlocks.splice(draggedNoticeIndex, 1)[0];
       c.notificationBlocks.splice(targetIndex, 0, movedItem);
       draggedNoticeIndex = null;
@@ -6741,7 +7518,8 @@
 
     function renderNoticePreview(c) {
       document.getElementById('notice-preview-title').textContent = `Kết quả vụ việc ${c.code}`;
-      document.getElementById('notice-preview-ratio').textContent = `Xe khách hàng ${c.finalFaultA}% · đối phương ${c.finalFaultB}%`;
+      document.getElementById('notice-preview-ratio').textContent = isNegotiationConfirmed(c) ? `Tỷ lệ dự kiến: xe khách hàng ${c.finalFaultA}% · đối phương ${c.finalFaultB}%` : 'Tỷ lệ đang thương lượng · chưa công bố kết quả';
+      document.querySelector('#SCR-CUSTOMER-NOTIFY .notice-ratio-bar').style.display = isNegotiationConfirmed(c) ? '' : 'none';
       document.getElementById('notice-ratio-a').style.width = `${c.finalFaultA}%`;
       document.getElementById('notice-ratio-b').style.width = `${c.finalFaultB}%`;
       document.getElementById('notice-preview-blocks').innerHTML = c.notificationBlocks.filter(b => b.included).map(b =>
@@ -6753,8 +7531,12 @@
       const sent = c.notificationSentKey === key;
       const approved = c.notificationApprovedKey === key;
       document.getElementById('notice-status').textContent = sent ? 'Đã gửi mô phỏng' : approved ? 'Đã duyệt' : 'Bản nháp';
-      document.getElementById('btn-approve-notification').disabled = !!c.isClosed || sent;
-      document.getElementById('btn-send-notification').disabled = !!c.isClosed || !approved || sent;
+      const settled = isNegotiationConfirmed(c);
+      document.getElementById('notice-gate').textContent = settled ? '' : 'Chốt tỷ lệ ở màn Thương lượng để duyệt và gửi mô phỏng.';
+      document.getElementById('notice-open-negotiation').style.display = settled ? 'none' : '';
+      document.getElementById('notice-open-negotiation').hidden = settled;
+      document.getElementById('btn-approve-notification').disabled = !!c.isClosed || sent || !settled;
+      document.getElementById('btn-send-notification').disabled = !!c.isClosed || !approved || sent || !settled;
       document.getElementById('notice-feedback').textContent = c.notificationFeedback || '';
     }
 
@@ -6811,7 +7593,7 @@
 
     function approveNotification() {
       const c = STATE.cases[STATE.currentCaseId];
-      if (c.isClosed) return;
+      if (c.isClosed || !isNegotiationConfirmed(c)) return;
       if (c.notificationBlocks.some(b => b.included && !b.body.trim())) {
         c.notificationFeedback = 'Điền nội dung các khối đang dùng.';
         renderNoticeStatus(c);
@@ -6825,7 +7607,7 @@
     function sendNotification() {
       const c = STATE.cases[STATE.currentCaseId];
       const key = noticeDraftKey(c);
-      if (c.isClosed || c.notificationApprovedKey !== key || c.notificationSentKey === key) return;
+      if (c.isClosed || !isNegotiationConfirmed(c) || c.notificationApprovedKey !== key || c.notificationSentKey === key) return;
       const version = `v${c.notificationSent.length + 1}`;
       const time = new Date().toLocaleString('vi-VN');
       c.notificationSent.push({
