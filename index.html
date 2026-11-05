@@ -486,18 +486,220 @@
     .case-form label { display:grid; gap:5px; color:#d9e7f5; font-size:12px; font-weight:600; }
     .case-form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
     .case-form .chat-input { width:100%; color-scheme:dark; background:#0c1929; color:#f1f8fd; border-color:#39516a; }
-    #SCR-CASE-DETAIL .analysis-progress { display:none; flex:1; min-height:0; overflow:auto; padding:32px; color:#e8f0fa; background:#0c1929; }
-    #SCR-CASE-DETAIL .chat-panel.analyzing .analysis-progress { display:flex; flex-direction:column; justify-content:center; }
-    #SCR-CASE-DETAIL .chat-panel.analyzing .chat-body, #SCR-CASE-DETAIL .chat-panel.analyzing .chat-footer { display:none; }
-    #SCR-CASE-DETAIL .analysis-progress-kicker { color:#71dcea; font-size:11px; font-weight:700; letter-spacing:.12em; }
-    #SCR-CASE-DETAIL .analysis-progress h2 { margin:10px 0 4px; color:#fff; font-size:23px; }
-    #SCR-CASE-DETAIL .analysis-progress p { margin:0 0 18px; color:#a9bed1; font-size:12px; }
-    #SCR-CASE-DETAIL .analysis-progress-track { height:7px; border-radius:999px; background:#274358; overflow:hidden; }
-    #SCR-CASE-DETAIL .analysis-progress-track span { display:block; height:100%; width:0; background:#48cce9; transition:width .35s ease; }
-    #SCR-CASE-DETAIL .analysis-progress ol { list-style:none; display:grid; gap:10px; padding:20px 0 0; margin:0; }
-    #SCR-CASE-DETAIL .analysis-progress li { padding:12px 14px; border:1px solid #2b4057; border-radius:9px; color:#91a5bd; background:#14243a; font-size:13px; }
-    #SCR-CASE-DETAIL .analysis-progress li.active { border-color:#48cce9; color:#fff; background:#17384a; }
-    #SCR-CASE-DETAIL .analysis-progress li.done { border-color:#367b68; color:#9be7c7; }
+    /* =====================================================================
+       AI REASONING TRACE (Chain-of-Thought / Deep Multimodal Reasoning)
+       ===================================================================== */
+    .ai-reasoning-card {
+      background: linear-gradient(180deg, #102135 0%, #0d1a29 100%);
+      border: 1px solid #264a6d;
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin-bottom: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ai-reasoning-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, #38bdf8, #818cf8, #48cce9);
+    }
+
+    .ai-reasoning-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .ai-reasoning-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .ai-brain-pulse {
+      font-size: 22px;
+      display: inline-block;
+      animation: pulseGlow 1.8s infinite ease-in-out;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(56, 189, 248, 0.4)); }
+      50% { transform: scale(1.15); filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.8)); }
+    }
+
+    .ai-reasoning-main-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #f0f6fc;
+    }
+
+    .ai-reasoning-timer-badge {
+      font-size: 11px;
+      font-weight: 600;
+      background: rgba(56, 189, 248, 0.15);
+      color: #7dd3fc;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 99px;
+      padding: 2px 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    .ai-reasoning-sub {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    .ai-reasoning-body {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .ai-reasoning-body.collapsed {
+      display: none;
+    }
+
+    .ai-reasoning-step-item {
+      background: rgba(15, 29, 46, 0.85);
+      border: 1px solid #233e59;
+      border-radius: 8px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+
+    .ai-reasoning-step-item.active {
+      border-color: #38bdf8;
+      background: rgba(20, 42, 68, 0.95);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.15);
+    }
+
+    .ai-reasoning-step-item.done {
+      border-color: #1e3a5f;
+    }
+
+    .step-top-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step-phase-tag {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .step-time-tag {
+      font-size: 10px;
+      color: #94a3b8;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    .step-title-text {
+      font-size: 13px;
+      font-weight: 700;
+      color: #f8fafc;
+      line-height: 1.35;
+    }
+
+    .step-thought-text {
+      font-size: 12px;
+      color: #cbd5e1;
+      line-height: 1.5;
+      white-space: pre-line;
+      background: rgba(8, 17, 28, 0.5);
+      padding: 8px 10px;
+      border-radius: 6px;
+      border-left: 2px solid #38bdf8;
+      font-family: inherit;
+    }
+
+    .step-telemetry-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .step-telemetry-chip {
+      background: #102438;
+      border: 1px solid #204060;
+      color: #93c5fd;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    /* Collapsible Thought Details in Right AI Chat */
+    .chat-thought-wrapper {
+      margin-bottom: 8px;
+    }
+
+    .chat-thought-details {
+      background: rgba(14, 26, 42, 0.8);
+      border: 1px solid #254260;
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    .chat-thought-details[open] {
+      background: rgba(12, 23, 37, 0.95);
+      border-color: #32587f;
+    }
+
+    .chat-thought-summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: #7dd3fc;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      outline: none;
+      user-select: none;
+    }
+
+    .chat-thought-summary:hover {
+      color: #bae6fd;
+    }
+
+    .chat-thought-content {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px dashed #223c56;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 11px;
+      line-height: 1.45;
+      color: #cbd5e1;
+    }
     #SCR-CASE-DETAIL .detail-inspector { display:block; flex:none; min-height:0; overflow:visible; }
     #SCR-CASE-DETAIL .history-toggle { display:flex; width:100%; align-items:center; justify-content:space-between; padding:14px 16px; border:0; background:#14243a; color:#f4f8fe; font:inherit; font-size:13px; font-weight:700; text-align:left; cursor:pointer; }
     #SCR-CASE-DETAIL .history-toggle:focus-visible { outline:2px solid #48cce9; outline-offset:-2px; }
@@ -638,6 +840,14 @@
       gap: 10px;
       margin-bottom: 14px;
     }
+
+    #SCR-CASE-DETAIL .analysis-steps { display:flex; gap:8px; padding:10px; background:#101e30; border:1px solid #233e59; border-radius:10px; }
+    #SCR-CASE-DETAIL .analysis-steps button { flex:1; text-align:left; padding:9px 12px; background:#14263a; border:1px solid #294663; border-radius:7px; color:#9eb5ca; cursor:pointer; }
+    #SCR-CASE-DETAIL .analysis-steps button.active { color:#f3f9ff; border-color:#48cce9; background:#183b50; }
+    #SCR-CASE-DETAIL .analysis-steps button:disabled { opacity:.5; cursor:not-allowed; }
+    #SCR-CASE-DETAIL .analysis-steps small { display:block; margin-top:3px; color:#8ba2b5; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    #SCR-CASE-DETAIL .evidence-stage { display:flex; flex-direction:column; gap:12px; }
+    #SCR-CASE-DETAIL .evidence-stage[hidden], #SCR-CASE-DETAIL .analysis-steps[hidden] { display:none; }
 
     #SCR-CASE-DETAIL .chart-card-conditions { border-top: 1px solid #264360; padding-top: 8px; }
     #SCR-CASE-DETAIL .chart-card-conditions summary { color: #70dced; cursor: pointer; font-size: 12px; font-weight: 700; }
@@ -852,7 +1062,7 @@
     /* Evidence Dual Workbench: Core Evidences & Fault Factors */
     .evidence-dual-workbench {
       display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
+      grid-template-columns: minmax(0, 1fr);
       gap: 16px;
       margin-top: 14px;
     }
@@ -1220,33 +1430,43 @@
             </div>
           </div>
 
-          <!-- AI Analysis Progress (Shown while analyzing video) -->
-          <div class="analysis-progress" id="analysis-progress" role="status" aria-live="polite" style="display:none;">
-            <span class="analysis-progress-kicker">AI ĐANG PHÂN TÍCH VIDEO</span>
-            <h2 id="analysis-progress-title">Kiểm tra video</h2>
-            <p id="analysis-progress-count">Bước 1/4</p>
-            <div class="analysis-progress-track"><span id="analysis-progress-fill"></span></div>
-            <ol id="analysis-progress-steps">
-              <li>Kiểm tra video</li><li>Nhận diện sự kiện</li><li>Đối chiếu chart KNIA</li><li>Tổng hợp kết quả</li>
-            </ol>
+          <!-- AI MULTIMODAL REASONING CARD (Chain-of-Thought / Deep Multimodal Reasoning) -->
+          <div class="ai-reasoning-card" id="ai-reasoning-card" style="display:none;" role="region" aria-label="Chuỗi suy luận AI">
+            <div class="ai-reasoning-header">
+              <div class="ai-reasoning-title-group">
+                <span class="ai-brain-pulse">🧠</span>
+                <div>
+                  <div class="ai-reasoning-main-title">
+                    <span>Chuỗi Suy Luận AI (Multimodal Reasoning Trace)</span>
+                    <span class="ai-reasoning-timer-badge" id="ai-reasoning-timer">⏱ 0.0s</span>
+                  </div>
+                  <div class="ai-reasoning-sub">Model VLM Qwen-397B · Khảo sát Đa Giả Thuyết KNIA &amp; Viễn trắc Khung hình 60fps</div>
+                </div>
+              </div>
+              <div class="ai-reasoning-actions">
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-toggle-reasoning" onclick="toggleReasoningCollapse()" style="font-size:11px; padding:3px 8px;">
+                  ▾ Thu gọn suy luận
+                </button>
+              </div>
+            </div>
+            
+            <div class="ai-reasoning-body" id="ai-reasoning-stream">
+              <!-- Rendered via renderAiReasoning(c) -->
+            </div>
           </div>
 
-          <!-- SECTION 1: KẾT QUẢ PHÂN TÍCH CÁC CHART KNIA -->
+          <nav class="analysis-steps" id="analysis-steps" aria-label="Các bước phân tích">
+            <button type="button" id="analysis-step-chart" onclick="showAnalysisStep('charts')" data-tooltip="Quay lại danh sách chart để chọn chart khác">1 · Chọn chart<small>Xem tiêu chí khớp</small></button>
+            <button type="button" id="analysis-step-evidence" onclick="showAnalysisStep('evidence')" data-tooltip="Xem chứng cứ của chart đã chọn">2 · Chứng cứ &amp; yếu tố<small id="analysis-selected-chart">Chọn chart để tiếp tục</small></button>
+          </nav>
+
+          <!-- SECTION 1: CHỌN CHART KNIA -->
           <div class="panel" id="panel-chart-selection" style="background:#101e30; border:1px solid #233e59;">
             <div class="panel-header" style="background:#172a40; border-bottom:1px solid #233e59; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
               <div style="display:flex; align-items:center; gap:8px;">
                 <span style="font-size:16px;">📊</span>
                 <span style="font-weight:700; color:#f3f9ff;">Kết Quả Phân Tích Các Chart KNIA</span>
                 <span class="badge badge-primary" id="center-chart-count-badge">3 Chart ứng viên</span>
-              </div>
-              <div class="chart-toolbar" id="chart-toolbar" style="display:flex; flex-direction:row; align-items:center; gap:8px; padding:0;">
-                <div class="chart-switcher" id="chart-switcher" style="display:none;"></div>
-                <div class="chart-compare-controls" style="display:flex; align-items:center; gap:6px;">
-                  <select id="compare-chart-select" aria-label="Chart cần so sánh" onchange="setComparisonChart(this.value)" hidden></select>
-                  <button type="button" class="btn btn-secondary btn-sm" id="btn-compare-evidence" onclick="toggleEvidenceComparison()" aria-pressed="false" data-tooltip="So sánh chứng cứ 1:1 giữa 2 chart">⚖️ So sánh chứng cứ</button>
-                  <button type="button" class="btn btn-secondary btn-sm" onclick="openKniaSourceModal()" data-tooltip="Tra cứu văn bản chuẩn KNIA và án lệ">📖 Nguồn KNIA</button>
-                  <button type="button" class="btn btn-primary btn-sm" id="btn-center-create-report" onclick="requestReport()" data-tooltip="Tạo báo cáo với chart đang chọn">📄 Tạo báo cáo</button>
-                </div>
               </div>
             </div>
             <div class="panel-body" style="padding:14px;">
@@ -1260,12 +1480,20 @@
                 <!-- Rendered via renderCenterSelectedChartDetails(c) -->
               </div>
 
-              <!-- 1:1 Comparison Matrix (Shown when comparisonMode is active) -->
-              <div id="center-comparison-container" style="margin-top:12px;"></div>
             </div>
           </div>
 
-          <!-- SECTION 2: PHẦN HIỂN THỊ EVIDENCE (2 PANEL: BẰNG CHỨNG CỐT LÕI & YẾU TỐ TĂNG GIẢM LỖI) -->
+          <div class="evidence-stage" id="evidence-stage" hidden>
+            <div class="chart-toolbar" id="chart-toolbar">
+              <div class="chart-switcher" id="chart-switcher" style="display:none;"></div>
+              <div class="chart-compare-controls" style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                <select id="compare-chart-select" aria-label="Chart cần so sánh" onchange="setComparisonChart(this.value)" hidden></select>
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-compare-evidence" onclick="toggleEvidenceComparison()" aria-pressed="false" data-tooltip="So sánh chứng cứ 1:1 giữa 2 chart">⚖️ So sánh chứng cứ</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="openKniaSourceModal()" data-tooltip="Tra cứu văn bản chuẩn KNIA và án lệ">📖 Nguồn KNIA</button>
+                <button type="button" class="btn btn-primary btn-sm" id="btn-center-create-report" onclick="requestReport()" data-tooltip="Tạo báo cáo với chart đang chọn">📄 Tạo báo cáo</button>
+              </div>
+            </div>
+          <!-- SECTION 2: BẰNG CHỨNG CỐT LÕI & YẾU TỐ TĂNG GIẢM LỖI -->
           <div id="evidence-dual-workbench" class="evidence-dual-workbench" style="margin-top:0;">
             <!-- Panel 1: Bằng chứng cốt lõi -->
             <div class="panel dual-panel" id="panel-core-evidence">
@@ -1302,6 +1530,8 @@
                 </div>
               </div>
             </div>
+          </div>
+          <div id="center-comparison-container"></div>
           </div>
 
           <!-- Hidden legacy container to preserve DOM IDs -->
@@ -2360,7 +2590,7 @@
         videoName: video ? 'Chưa có video' : DEMO_ANALYSIS.videoName,
         videoDuration: video ? 0 : DEMO_ANALYSIS.videoDuration,
         videoTime: 0, videoUrl: null, stage: 0, statusText: 'Chờ phân tích',
-        selectedChart: null, reportVersions: [], activeReportVersion: null, isReportConfirmed: false, isClosed: false,
+        selectedChart: null, analysisView: 'charts', reportVersions: [], activeReportVersion: null, isReportConfirmed: false, isClosed: false,
         charts: [], events: [], conditions: [], negotiationFactors: [], evidenceByChart: {}, comparisonMode: false, compareWith: null,
         reportSnapshots: {}, pendingVersion: null, reportNote: '', historyExpanded: false, expandedConditionCharts: [],
         notificationBlocks: null, notificationSent: [], notificationChannel: 'Kakao',
@@ -2407,6 +2637,7 @@
         c.stage = 1;
         c.statusText = '1. Đang phân tích';
         c.selectedChart = null;
+        c.analysisView = 'charts';
         c.comparisonMode = false;
         c.compareWith = null;
         c.evidenceByChart = {};
@@ -2424,28 +2655,189 @@
       probe.src = url;
     }
 
-    function runFakeAnalysis(c) {
-      const steps = ['Kiểm tra video', 'Nhận diện sự kiện', 'Đối chiếu chart KNIA', 'Tổng hợp kết quả'];
+    /* =====================================================================
+       AI MULTIMODAL REASONING TRACE (Chain-of-Thought / Deep Multimodal Reasoning)
+       ===================================================================== */
+    const AI_REASONING_STEPS = [
+      {
+        id: 1,
+        phase: 'BƯỚC 1: KHỞI TẠO & GIẢI MÃ THỊ GIÁC (CV INGESTION)',
+        time: '0.4s',
+        icon: '🔍',
+        title: 'Trích xuất 60 fps & Hiệu chỉnh quang sai trường nhìn',
+        thought: 'Trích xuất chuỗi 1.080 khung hình từ video hành trình ở độ phân giải 1080p@60fps. Hiệu chỉnh quang sai góc rộng (Fisheye Distortion Correction) và cân bằng độ chói HDR. Đánh giá điều kiện ngoại cảnh: Ban ngày (14:30), mặt đường Teheran-ro khô ráo, tầm nhìn quan sát > 500m, không có vật cản thời tiết.',
+        telemetry: ['1080p @ 60fps', 'Fisheye Rectified', 'Độ rọi 12.000 lux', 'Tầm nhìn > 500m']
+      },
+      {
+        id: 2,
+        phase: 'BƯỚC 2: ĐỊNH DANH ĐỐI TƯỢNG & BÁM VẾT LÀN ĐƯỜNG (TRACKING)',
+        time: '1.0s',
+        icon: '🚘',
+        title: 'Bám vết quỹ đạo Xe Khách hàng (Genesis) và Xe Đối phương (Tucson)',
+        thought: 'Khóa 2 hộp định danh Bounding Box: Xe A (Genesis - Khách hàng, ID#01) và Xe B (Tucson - Đối phương, ID#02). VLM phân tích vạch phân làn số 2 liên tục từ 00:08 đến 00:15, tính toán tỷ lệ lệch tâm ngang 0.0%. Khẳng định: Cả 2 phương tiện đang di chuyển thẳng cùng chiều trong cùng một làn đường duy nhất.',
+        telemetry: ['Làn số 2 (Đường 4 làn)', 'Độ lệch ngang: 0.0%', 'Vận tốc Xe A: 48 km/h', 'Vận tốc Xe B: 42 km/h']
+      },
+      {
+        id: 3,
+        phase: 'BƯỚC 3: TRÍCH XUẤT CHUỖI MỐC VIỄN TRẮC SỰ KIỆN (TELEMETRY ANCHORING)',
+        time: '1.8s',
+        icon: '⚡',
+        title: 'Đo lường gia tốc phanh gấp, mất khoảng cách an toàn và điểm va chạm',
+        thought: '• Mốc 00:09.50: Đèn phanh Xe B sáng, cảm biến viễn trắc ghi nhận gia tốc giảm tốc đột ngột đạt -0.68G (vượt xa ngưỡng dừng êm ái -0.3G), trong khi phía trước vẫn còn khoảng trống an toàn 15m tới taxi dừng đèn đỏ.\n• Mốc 00:12.00: Khoảng cách giữa 2 xe rút nhanh còn 2.1m (với tốc độ 48 km/h đòi hỏi khoảng cách an toàn tối thiểu 18m) ➔ Cấu thành vi phạm Điều 19 Khoản 1 Luật Giao thông Đường bộ.\n• Mốc 00:15.24: Va chạm vật lý trực diện cản sau Tucson, độ lệch tâm tiếp xúc < 4cm.',
+        telemetry: ['00:09.50 (Phanh gấp -0.68G)', '00:11.00 (Tâm làn 3.4s)', '00:12.00 (Cự ly 2.1m / Thiếu 18m)', '00:15.24 (Va chạm lệch < 4cm)']
+      },
+      {
+        id: 4,
+        phase: 'BƯỚC 4: ĐỐI CHIẾU ĐA GIẢ THUYẾT QUY CHUẨN KNIA (HYPOTHESIS TESTING)',
+        time: '2.5s',
+        icon: '⚖️',
+        title: 'Khảo sát song song 3 giả thuyết biểu đồ KNIA trong đồ thị tri thức',
+        thought: '• Giả thuyết 1 - 도표 252 (Chuyển làn): MÂU THUẪN! Video xác thực Xe B đã hoàn tất nhập làn từ 00:08 (chạy thẳng ổn định 3.4s > 30m trước va chạm). Không thỏa mãn điều kiện va chạm tức thì ➔ Loại trừ (Khớp 68%).\n• Giả thuyết 2 - 도표 245 (Phanh gấp vô cớ): Phía trước Xe B có xe taxi giảm tốc chờ đèn đỏ ➔ Việc phanh có nguyên nhân khách quan ➔ Loại trừ (Khớp 52%).\n• Giả thuyết 3 - 도표 244 (Tông đuôi do thiếu cự ly an toàn): Thỏa mãn hoàn toàn 4/4 điều kiện định nghĩa chuẩn KNIA ➔ Khẳng định là biểu đồ tối ưu (Khớp 91% - Strong Match).',
+        telemetry: ['도표 244: 91% (Hạng 1)', '도표 252: 68% (Mâu thuẫn cự ly 32m)', '도표 245: 52% (Mâu thuẫn lý do phanh)']
+      },
+      {
+        id: 5,
+        phase: 'BƯỚC 5: TỔNG HỢP PHÁP LÝ & TỶ LỆ LỖI (LEGAL REASONING SYNTHESIS)',
+        time: '3.2s',
+        icon: '🎯',
+        title: 'Xác lập tỷ lệ cơ sở 100:0 & Đề xuất giảm 10% theo Án lệ 96다39314',
+        thought: '• Tỷ lệ lỗi cơ sở chuẩn KNIA Biểu đồ 244: Xe A 100% : Xe B 0%.\n• Áp dụng Án lệ Tòa án Tối cao Hàn Quốc 96다39314: Yếu tố Xe B phanh gấp -0.68G khi phía trước còn 15m khoảng trống là căn cứ bắt buộc giảm 10% trách nhiệm cho Xe A.\n• Tỷ lệ đề xuất sau điều chỉnh: Xe A 90% : Xe B 10%.\n• Khóa bất biến 4 Bằng chứng VLM cốt lõi và kết xuất ma trận điều kiện sang bảng thẩm định.',
+        telemetry: ['Lỗi cơ sở: 100 : 0', 'Án lệ Tối cao: 96다39314 (-10%)', 'Tỷ lệ sau điều chỉnh: 90 : 10', '4 Bằng chứng VLM: Khóa bất biến']
+      }
+    ];
+
+    function toggleReasoningCollapse() {
+      const c = STATE.cases[STATE.currentCaseId];
+      if (!c) return;
+      c.reasoningCollapsed = !c.reasoningCollapsed;
+      renderAiReasoning(c);
+    }
+
+    function renderAiReasoning(c) {
+      const card = document.getElementById('ai-reasoning-card');
+      if (!card) return;
+
+      const isAnalyzing = Boolean(c && c.isAnalyzing);
+
+      if (!isAnalyzing) {
+        card.style.display = 'none';
+        return;
+      }
+
+      card.style.display = 'flex';
+      const timerEl = document.getElementById('ai-reasoning-timer');
+      const toggleBtn = document.getElementById('btn-toggle-reasoning');
+      const streamEl = document.getElementById('ai-reasoning-stream');
+
+      const maxStep = isAnalyzing ? Math.min(AI_REASONING_STEPS.length, c.reasoningStepIndex || 1) : AI_REASONING_STEPS.length;
+      const currentStepObj = AI_REASONING_STEPS[Math.max(0, maxStep - 1)];
+
+      if (isAnalyzing) {
+        if (timerEl) {
+          timerEl.innerHTML = `⏱ ${currentStepObj ? currentStepObj.time : '0.4s'} · Đang suy luận...`;
+          timerEl.style.borderColor = 'rgba(56, 189, 248, 0.6)';
+          timerEl.style.color = '#7dd3fc';
+        }
+        if (toggleBtn) {
+          toggleBtn.style.display = 'none';
+        }
+        streamEl.classList.remove('collapsed');
+      } else {
+        if (timerEl) {
+          timerEl.innerHTML = `✓ Hoàn tất chuỗi suy luận (5 bước trong 3.2s)`;
+          timerEl.style.borderColor = 'rgba(74, 222, 128, 0.5)';
+          timerEl.style.color = '#86efac';
+        }
+        if (toggleBtn) {
+          toggleBtn.style.display = 'inline-flex';
+          toggleBtn.innerHTML = c.reasoningCollapsed ? '▸ Xem chuỗi suy luận (5 bước phân tích VLM)' : '▾ Thu gọn suy luận';
+        }
+        streamEl.classList.toggle('collapsed', Boolean(c.reasoningCollapsed));
+      }
+
+      let html = '';
+      for (let i = 0; i < maxStep; i++) {
+        const step = AI_REASONING_STEPS[i];
+        const isCurrent = isAnalyzing && (i === maxStep - 1);
+        const isDone = !isAnalyzing || (i < maxStep - 1);
+        const statusBadge = isCurrent
+          ? `<span class="badge badge-primary" style="font-size:10px; background:rgba(56, 189, 248, 0.2); border-color:#38bdf8;">⏳ Đang kiểm chứng...</span>`
+          : `<span class="badge badge-high" style="font-size:10px; background:rgba(34, 197, 94, 0.15); border-color:#22c55e; color:#86efac;">✓ Đã xác thực</span>`;
+
+        html += `
+          <div class="ai-reasoning-step-item ${isCurrent ? 'active' : 'done'}">
+            <div class="step-top-line">
+              <span class="step-phase-tag">${step.icon} ${escapeHtml(step.phase)}</span>
+              <div style="display:flex; align-items:center; gap:8px;">
+                ${statusBadge}
+                <span class="step-time-tag">${escapeHtml(step.time)}</span>
+              </div>
+            </div>
+            <div class="step-title-text">${escapeHtml(step.title)}</div>
+            <div class="step-thought-text">${escapeHtml(step.thought)}</div>
+            <div class="step-telemetry-row">
+              ${step.telemetry.map(t => `<span class="step-telemetry-chip">${escapeHtml(t)}</span>`).join('')}
+            </div>
+          </div>
+        `;
+      }
+      streamEl.innerHTML = html;
+    }
+
+    function runFakeAnalysis(c, isReanalysis = false) {
       c.isAnalyzing = true;
-      c.analysisStep = 0;
+      c.selectedChart = null;
+      c.analysisView = 'charts';
+      c.comparisonMode = false;
+      c.evidenceByChart = {};
+      c.reasoningStepIndex = 1;
+      c.reasoningCollapsed = false;
       if (STATE.cases[STATE.currentCaseId] === c) renderCaseDetail();
-      steps.forEach((step, index) => setTimeout(() => {
-        c.analysisStep = index + 1;
-        if (index === steps.length - 1) {
+
+      const delays = [500, 1100, 1800, 2500, 3100];
+      delays.forEach((delay, idx) => {
+        setTimeout(() => {
+          if (c.isAnalyzing && STATE.cases[STATE.currentCaseId] === c) {
+            c.reasoningStepIndex = idx + 1;
+            renderAiReasoning(c);
+          }
+        }, delay);
+      });
+
+      setTimeout(() => {
+        if (!c.charts || !c.charts.length) {
           c.charts = JSON.parse(JSON.stringify(DEMO_ANALYSIS.charts));
           c.events = JSON.parse(JSON.stringify(DEMO_ANALYSIS.events));
           c.conditions = JSON.parse(JSON.stringify(DEMO_ANALYSIS.conditions));
-          c.demoGenerated = true;
-          c.stage = 2;
-          c.statusText = '2. Chờ chốt Chart & Báo cáo';
-          c.isAnalyzing = false;
-          c.chatHistory.push({ role: 'agent', text: `Phân tích ${c.videoName} đã hoàn tất. Chọn chart để xem điều kiện và chứng cứ.` });
-          c.chatHistory.push({ role: 'result' });
-          if (STATE.cases[STATE.currentCaseId] === c) renderCaseDetail();
-        } else if (STATE.cases[STATE.currentCaseId] === c) {
-          renderAnalysisProgress(c);
         }
-      }, 1200 * (index + 1)));
+        c.demoGenerated = true;
+        c.stage = 2;
+        c.statusText = '2. Chờ chốt Chart & Báo cáo';
+        c.isAnalyzing = false;
+        c.reasoningCollapsed = false;
+
+        const cur = (c.charts || [])[0];
+        const thoughtHtml = `
+          <div class="chat-thought-wrapper">
+            <details class="chat-thought-details">
+              <summary class="chat-thought-summary">
+                <span>💭 Đã suy luận trong 3.2 giây (5 bước phân tích VLM &amp; KNIA)</span>
+              </summary>
+              <div class="chat-thought-content">
+                <div><b>[0.4s] Khởi tạo &amp; Giải mã:</b> 60fps 1080p, hiệu chỉnh quang sai fisheye, ban ngày khô ráo.</div>
+                <div><b>[1.0s] Bám vết quỹ đạo:</b> Genesis và Tucson bám thẳng làn 2 đường Teheran-ro (độ lệch 0.0%).</div>
+                <div><b>[1.8s] Viễn trắc mốc thời gian:</b> 00:09.50 (-0.68G) ➔ 00:12.00 (cự ly 2.1m) ➔ 00:15.24 (tiếp xúc cản sau).</div>
+                <div><b>[2.5s] Đa giả thuyết KNIA:</b> 도표 252 (mâu thuẫn cự ly 32m) ➔ 도표 245 (mâu thuẫn taxi trước) ➔ Chốt 도표 244 (91%).</div>
+                <div><b>[3.2s] Tổng hợp pháp lý:</b> Lỗi cơ sở 100:0; Kích hoạt Án lệ Tòa án Tối cao 96다39314 giảm 10% cho xe sau.</div>
+              </div>
+            </details>
+          </div>
+          <div>Phân tích hoàn tất. Chart đề xuất: <b>${escapeHtml(cur?.code || '—')}</b> (${cur?.match || 0}% khớp). Chọn chart ở bước 1 để xem bằng chứng.</div>
+        `;
+
+        appendAgentMessage(thoughtHtml);
+        if (STATE.cases[STATE.currentCaseId] === c) renderCaseDetail();
+      }, 3300);
     }
 
     /* =====================================================================
@@ -2502,15 +2894,7 @@
       const c = STATE.cases[STATE.currentCaseId];
       if (!c) return;
       const ready = c.charts && c.charts.length > 0;
-      if (ready && !c.selectedChart) {
-        c.selectedChart = c.charts[0].code;
-      }
-      if (ready && c.selectedChart) {
-        c.evidenceByChart ||= {};
-        if (!c.evidenceByChart[c.selectedChart]) {
-          c.evidenceByChart[c.selectedChart] = { generated: true, processing: false };
-        }
-      }
+      c.analysisView ||= 'charts';
 
       const playerTitle = document.getElementById('player-title');
       if (playerTitle) {
@@ -2525,9 +2909,7 @@
       document.getElementById('btn-attach-video').disabled = !!c.isAnalyzing;
       document.getElementById('case-video-input').disabled = !!c.isAnalyzing;
 
-      const progressBox = document.getElementById('analysis-progress');
-      if (progressBox) progressBox.style.display = c.isAnalyzing ? 'grid' : 'none';
-      renderAnalysisProgress(c);
+      renderAiReasoning(c);
       renderChartToolbar(c);
 
       const stoppedAlert = document.getElementById('alert-stopped-case');
@@ -2537,8 +2919,15 @@
 
       const chartPanel = document.getElementById('panel-chart-selection');
       if (chartPanel) {
-        chartPanel.style.display = ready ? 'block' : 'none';
+        chartPanel.style.display = ready && !c.isAnalyzing && c.analysisView === 'charts' ? 'block' : 'none';
       }
+      document.getElementById('analysis-steps').hidden = !ready || !!c.isAnalyzing;
+      const evidenceStep = document.getElementById('analysis-step-evidence');
+      evidenceStep.disabled = !c.selectedChart;
+      document.getElementById('analysis-selected-chart').textContent = c.selectedChart || 'Chọn chart để tiếp tục';
+      document.getElementById('analysis-step-chart').classList.toggle('active', c.analysisView === 'charts');
+      evidenceStep.classList.toggle('active', c.analysisView === 'evidence');
+      document.getElementById('evidence-stage').hidden = !ready || !!c.isAnalyzing || c.analysisView !== 'evidence' || !c.selectedChart;
 
       const countBadge = document.getElementById('center-chart-count-badge');
       if (countBadge) {
@@ -2556,7 +2945,7 @@
       renderQuickChips(c);
       renderReportHistory(c);
 
-      if (ready) {
+      if (ready && !c.isAnalyzing) {
         renderChartCards(c);
         renderCenterSelectedChartDetails(c);
         renderEvents(c);
@@ -2564,26 +2953,21 @@
         updateReportMeta(c);
         const notesInput = document.getElementById('adjuster-notes-input');
         if (notesInput) notesInput.value = c.reportNote || '';
-        renderDualEvidenceWorkbench(c);
+        if (c.selectedChart) renderDualEvidenceWorkbench(c);
       } else {
         const dualWb = document.getElementById('evidence-dual-workbench');
         if (dualWb) dualWb.style.display = 'none';
       }
     }
 
-    function renderAnalysisProgress(c) {
-      if (!c.isAnalyzing) return;
-      const steps = [...document.querySelectorAll('#analysis-progress-steps li')];
-      const current = Math.min(c.analysisStep || 0, steps.length - 1);
-      document.getElementById('analysis-progress-title').textContent = steps[current].textContent;
-      document.getElementById('analysis-progress-count').textContent = `Bước ${current + 1}/${steps.length}`;
-      document.getElementById('analysis-progress-fill').style.width = `${(c.analysisStep || 0) / steps.length * 100}%`;
-      steps.forEach((step, index) => {
-        step.classList.toggle('done', index < c.analysisStep);
-        step.classList.toggle('active', index === current);
-      });
+    function showAnalysisStep(step) {
+      const c = STATE.cases[STATE.currentCaseId];
+      if (!c || (step === 'evidence' && !c.selectedChart)) return;
+      c.analysisView = step;
+      renderCaseDetail();
     }
 
+    
     function recalculateCaseFault(c) {
       const currentChart = (c.charts || []).find(ch => ch.code === c.selectedChart) || (c.charts || [])[0];
       let baseA = currentChart?.faultA != null ? currentChart.faultA : 100;
@@ -2626,7 +3010,7 @@
     function renderDualEvidenceWorkbench(c) {
       const container = document.getElementById('evidence-dual-workbench');
       if (!container) return;
-      if (!c || !c.charts || !c.charts.length) {
+      if (!c || !c.selectedChart || !c.charts || !c.charts.length) {
         container.style.display = 'none';
         return;
       }
@@ -2947,27 +3331,13 @@
       detailBox.innerHTML = `
         <div style="background:rgba(13,25,40,0.85); border:1px solid #264360; border-radius:8px; padding:12px;">
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
-            <div>
-              <span style="font-size:11px; color:#48cce9; font-weight:700; text-transform:uppercase;">Đang xem chi tiết biểu đồ:</span>
-              <strong style="font-size:14px; color:#ffffff; margin-left:6px;">${escapeHtml(current.code)} — ${escapeHtml(current.shortName || current.name)}</strong>
-            </div>
-            <span class="badge ${ conflicts > 0 ? 'badge-danger' : 'badge-high' }" style="font-size:11px;">
-              Kiểm toán điều kiện: ${matched}/${rows.length} khớp · ${conflicts} mâu thuẫn
-            </span>
+            <strong style="font-size:14px; color:#ffffff;">${escapeHtml(current.code)} — ${escapeHtml(current.shortName || current.name)}</strong>
           </div>
 
-          <div style="font-size:12px; color:#d3e5f0; margin-bottom:8px;">
-            <strong>🌳 Cây phân loại KNIA:</strong> ${escapeHtml(current.tree || current.name)}
-          </div>
-
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:11px; padding:8px 10px; background:rgba(19,36,56,0.7); border-radius:6px; border:1px solid #233e59; margin-bottom:8px;">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:11px; padding:8px 10px; background:rgba(19,36,56,0.7); border-radius:6px; border:1px solid #233e59; margin-bottom:10px;">
             <div><span style="color:#48cce9; font-weight:700;">● Xe Khách hàng (Vai A):</span> <div style="color:#e2e8f0; margin-top:2px;">${escapeHtml(current.roleA || 'Xe khách hàng')}</div></div>
             <div><span style="color:#f87171; font-weight:700;">● Xe Đối phương (Vai B):</span> <div style="color:#e2e8f0; margin-top:2px;">${escapeHtml(current.roleB || 'Xe đối phương')}</div></div>
           </div>
-
-          ${current.separatingFact ? `<div style="font-size:11px; color:#fde68a; background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.3); padding:7px 10px; border-radius:6px; margin-bottom:10px;">
-            <strong>⚡ Yếu tố phân định (Separating Fact):</strong> ${escapeHtml(current.separatingFact)}
-          </div>` : ''}
 
           <!-- 4-Column KNIA Condition Matching Table -->
           <div style="font-weight:700; font-size:11px; color:#93c5fd; text-transform:uppercase; margin-bottom:6px; letter-spacing:0.4px;">
@@ -3081,6 +3451,7 @@
       if (found) {
         chartCode = found.code;
         c.selectedChart = chartCode;
+        c.analysisView = 'evidence';
         c.evidenceByChart ||= {};
         c.evidenceByChart[chartCode] = { generated: true, processing: false };
         renderCaseDetail();
@@ -3234,11 +3605,11 @@
     }
 
     function renderChartResultCard(c, div, index = 0) {
-      const cur = (c.charts || []).find(ch => ch.code === c.selectedChart) || (c.charts || [])[0];
+      const cur = (c.charts || []).find(ch => ch.code === c.selectedChart);
       div.className = 'chat-bubble agent';
       div.innerHTML = cur
-        ? `📊 <b>Kết quả phân tích & Bằng chứng đã hiển thị ở cột giữa:</b><br>• Chart đề xuất: <b>${escapeHtml(cur.code)}</b> (${cur.match}% phù hợp · Cơ sở ${escapeHtml(cur.baseFault)})<br>• Bạn có thể hỏi tôi chi tiết về bất kỳ điều kiện nào, luận điểm phản bác, hoặc bấm <b>"🔄 Phân tích lại"</b>.`
-        : `Đã hoàn tất phân tích. Chọn chart ở cột giữa để xem bằng chứng.`;
+        ? `Đã chọn <b>${escapeHtml(cur.code)}</b>. Bằng chứng và yếu tố tăng giảm lỗi ở bước 2.`
+        : `Đã hoàn tất phân tích. Chọn chart ở bước 1 để xem bằng chứng.`;
     }
 
     function focusChartResult() {}
@@ -3256,7 +3627,7 @@
       if (!c.chatHistory) {
         c.chatHistory = (c.charts && c.charts.length)
           ? [
-              { role: 'agent', html: `👋 Chào bạn! Tôi đã phân tích xong video <b>${escapeHtml(c.videoName)}</b>. Đề xuất hàng đầu là <b>${escapeHtml(c.charts[0].code)}</b> (${c.charts[0].match}% khớp).<br><br>Toàn bộ <b>Các Chart đã phân tích</b> và <b>2 Panel Bằng chứng & Yếu tố tăng giảm lỗi</b> đang hiển thị ở cột giữa. Bạn có thể hỏi tôi thêm hoặc yêu cầu phân tích lại tại đây!` }
+              { role: 'agent', html: `Tôi đã phân tích video <b>${escapeHtml(c.videoName)}</b>. Chọn một chart ở bước 1 để xem bằng chứng và yếu tố tăng giảm lỗi.` }
             ]
           : [
               { role: 'agent', text: c.stage === 1 ? '⚠️ AI tạm dừng ở bước xác định va chạm (impact_grid). Hãy nhập mốc thời gian va chạm (VD: "va chạm lúc 00:12") hoặc bấm "🔄 Phân tích lại".' : 'Đính kèm video để bắt đầu phân tích.' }
@@ -3329,30 +3700,14 @@
       appendUserMessage('🔄 Yêu cầu AI phân tích lại video hiện trường');
 
       if (c.stage === 1 && (!c.charts || !c.charts.length)) {
-        appendAgentMessage('🔄 Đang chạy phân tích lại video với model <b>VLM Qwen-397B</b> và quét lại lưới va chạm <code>impact_grid</code>...');
+        appendAgentMessage('🔄 Đang kích hoạt chuỗi suy luận đa phương thức với model <b>VLM Qwen-397B</b>...');
         setTimeout(() => {
           recoverStoppedCase();
         }, 700);
         return;
       }
 
-      c.isAnalyzing = true;
-      c.analysisStep = 1;
-      renderCaseDetail();
-      appendAgentMessage('🔄 Đang chạy phân tích lại toàn bộ khung hình video và kiểm chứng lại các điều kiện KNIA...');
-
-      setTimeout(() => {
-        c.analysisStep = 3;
-        renderAnalysisProgress(c);
-      }, 350);
-
-      setTimeout(() => {
-        c.isAnalyzing = false;
-        c.analysisStep = 4;
-        renderCaseDetail();
-        const cur = (c.charts || []).find(ch => ch.code === c.selectedChart) || (c.charts || [])[0];
-        appendAgentMessage(`✅ <b>Hoàn tất phân tích lại!</b><br>• Đã kiểm chứng lại 4 mốc viễn trắc: <code>00:09.50 (-0.68G)</code>, <code>00:11.00 (ổn định làn 0.0%)</code>, <code>00:12.00 (cự ly 2.1m)</code>, và <code>00:15.24 (tiếp xúc cản sau <4cm)</code>.<br>• Biểu đồ <b>${escapeHtml(cur ? cur.code : '도표 244')}</b> đạt độ khớp cao nhất (${cur ? cur.match : 91}%). Kết quả chi tiết đã được cập nhật ở cột giữa.`);
-      }, 800);
+      runFakeAnalysis(c, true);
     }
 
     function processAgentChat(text) {
@@ -3391,7 +3746,8 @@
       c.stage = 2;
       c.statusText = '2. Chờ chốt Chart & Báo cáo';
       c.charts = JSON.parse(JSON.stringify(template.charts));
-      c.selectedChart = c.charts[0].code;
+      c.selectedChart = null;
+      c.analysisView = 'charts';
       c.comparisonEvidence = JSON.parse(JSON.stringify(template.comparisonEvidence));
       c.conditions = JSON.parse(JSON.stringify(template.conditions));
       c.negotiationFactors = JSON.parse(JSON.stringify(template.negotiationFactors));
@@ -3401,7 +3757,7 @@
         '도표 245 (차32-2)': { generated: true, processing: false }
       };
       renderCaseDetail();
-      appendAgentMessage(`✅ <b>Phân tích lại thành công!</b> Đã xác định mốc va chạm và trích xuất đầy đủ 3 biểu đồ KNIA ứng viên (dẫn đầu là <b>${escapeHtml(c.selectedChart)}</b> - 91%) cùng bộ bằng chứng ở cột giữa.`);
+      appendAgentMessage('Phân tích lại hoàn tất. Chọn chart ở bước 1 để xem bằng chứng.');
     }
 
     function triggerReanalyze() {
