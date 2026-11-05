@@ -445,7 +445,7 @@
     #SCR-CASE-DETAIL .report-history-list { padding:0; }
     #SCR-CASE-DETAIL .report-history-list button { display:flex; gap:8px; align-items:center; }
     #SCR-CASE-DETAIL .side-empty { color:#a9bed1; font-size:12px; padding:12px 2px; }
-    #SCR-CASE-DETAIL .report-editor { position:fixed; inset:68px max(16px,4vw) 18px; z-index:60; display:none; flex-direction:column; background:#101e30; border:1px solid #38516a; border-radius:14px; box-shadow:0 24px 70px #0009; overflow:hidden; }
+    #SCR-CASE-DETAIL .report-editor { position:fixed; top:50%; left:50%; width:min(520px, calc(100vw - 32px)); max-height:calc(100vh - 32px); transform:translate(-50%, -50%); z-index:60; display:none; flex-direction:column; background:#101e30; border:1px solid #38516a; border-radius:14px; box-shadow:0 24px 70px #0009; overflow:hidden; }
     #SCR-CASE-DETAIL .report-editor.open { display:flex; }
     #SCR-CASE-DETAIL .report-editor-header { display:flex; justify-content:space-between; align-items:center; gap:10px; padding:12px 16px; border-bottom:1px solid #38516a; color:#f4f8fe; }
     #SCR-CASE-DETAIL .report-editor-body { overflow:auto; padding:16px; }
@@ -470,7 +470,7 @@
     @media (max-width:900px) {
       #SCR-CASE-DETAIL .workspace-sidebar { overflow:visible; }
       #SCR-CASE-DETAIL .detail-inspector { position:static; height:auto; max-height:42vh; }
-      #SCR-CASE-DETAIL .report-editor { inset:60px 8px 8px; }
+      #SCR-CASE-DETAIL .report-editor { width:calc(100vw - 16px); }
       #SCR-CASE-DETAIL .case-context { align-items:flex-start; flex-wrap:wrap; }
       .version-compare { grid-template-columns:1fr; }
     }
@@ -634,10 +634,17 @@
     /* Analyzed Chart Cards Grid (3 Cards in Center Column) */
     #SCR-CASE-DETAIL .analyzed-charts-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      grid-template-columns: minmax(0, 1fr);
       gap: 10px;
       margin-bottom: 14px;
     }
+
+    #SCR-CASE-DETAIL .chart-card-conditions { border-top: 1px solid #264360; padding-top: 8px; }
+    #SCR-CASE-DETAIL .chart-card-conditions summary { color: #70dced; cursor: pointer; font-size: 12px; font-weight: 700; }
+    #SCR-CASE-DETAIL .chart-card-conditions ul { list-style: none; margin: 8px 0 0; padding: 0; }
+    #SCR-CASE-DETAIL .chart-card-conditions li { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-top: 1px solid #233e59; font-size: 11px; color: #d3e5f0; }
+    #SCR-CASE-DETAIL .chart-card-conditions li span:last-child { white-space: nowrap; color: #8ce2f7; }
+    #SCR-CASE-DETAIL #center-selected-chart-details { display: none; }
 
     .analyzed-chart-card {
       background: rgba(14, 26, 42, 0.85);
@@ -824,20 +831,22 @@
       color: #d3e5f0;
     }
 
-    @media (max-width: 1180px) {
+    @media (max-width: 1279px) and (min-width: 901px) {
       #SCR-CASE-DETAIL .three-col-workspace,
       #SCR-CASE-DETAIL .three-col-workspace.chat-collapsed {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr) 320px;
       }
+      #SCR-CASE-DETAIL .three-col-workspace.chat-collapsed { grid-template-columns: minmax(0, 1fr) 44px; }
+      #SCR-CASE-DETAIL .col-left-video { grid-column: 1; grid-row: 1; position: static; max-height: none; }
+      #SCR-CASE-DETAIL .col-center-analysis { grid-column: 1; grid-row: 2; }
+      #SCR-CASE-DETAIL .col-right-chat { grid-column: 2; grid-row: 1 / span 2; }
+    }
+    @media (max-width: 900px) {
+      #SCR-CASE-DETAIL .three-col-workspace,
+      #SCR-CASE-DETAIL .three-col-workspace.chat-collapsed { grid-template-columns: minmax(0, 1fr); }
       #SCR-CASE-DETAIL .col-left-video,
-      #SCR-CASE-DETAIL .col-right-chat {
-        position: static;
-        height: auto;
-        max-height: none;
-      }
-      #SCR-CASE-DETAIL .col-right-chat .chat-panel {
-        height: 520px;
-      }
+      #SCR-CASE-DETAIL .col-right-chat { position: static; height: auto; max-height: none; }
+      #SCR-CASE-DETAIL .col-right-chat .chat-panel { height: 520px; }
     }
 
     /* Evidence Dual Workbench: Core Evidences & Fault Factors */
@@ -1136,7 +1145,8 @@
         </div>
         <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
           <button class="btn btn-secondary btn-sm" onclick="navigate('SCR-CASE-LIST')">&larr; Danh sách vụ việc</button>
-          <button class="btn btn-primary btn-sm" onclick="requestReport()" data-tooltip="Mở trình soạn thảo & chốt Báo cáo PDF">📄 Soạn / Chốt Báo Cáo PDF</button>
+          <button class="btn btn-secondary btn-sm" onclick="requestReport()" data-tooltip="Nhập ý kiến và chốt báo cáo">📄 Tạo báo cáo</button>
+          <button class="btn btn-primary btn-sm" id="btn-open-customer-notify" onclick="goToNotification()" data-tooltip="Mở màn soạn và gửi thông báo kết quả cho khách hàng">📲 Thông Báo Khách Hàng &rarr;</button>
         </div>
       </div>
 
@@ -1235,7 +1245,7 @@
                   <select id="compare-chart-select" aria-label="Chart cần so sánh" onchange="setComparisonChart(this.value)" hidden></select>
                   <button type="button" class="btn btn-secondary btn-sm" id="btn-compare-evidence" onclick="toggleEvidenceComparison()" aria-pressed="false" data-tooltip="So sánh chứng cứ 1:1 giữa 2 chart">⚖️ So sánh chứng cứ</button>
                   <button type="button" class="btn btn-secondary btn-sm" onclick="openKniaSourceModal()" data-tooltip="Tra cứu văn bản chuẩn KNIA và án lệ">📖 Nguồn KNIA</button>
-                  <button type="button" class="btn btn-primary btn-sm" id="btn-center-create-report" onclick="requestReport()" data-tooltip="Tạo báo cáo với chart đang chọn">📄 Tạo Báo Cáo</button>
+                  <button type="button" class="btn btn-primary btn-sm" id="btn-center-create-report" onclick="requestReport()" data-tooltip="Tạo báo cáo với chart đang chọn">📄 Tạo báo cáo</button>
                 </div>
               </div>
             </div>
@@ -1283,6 +1293,13 @@
               <div class="panel-body">
                 <div id="fault-balance-widget"></div>
                 <div id="factors-toggle-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+                <div style="margin-top:14px; padding-top:12px; border-top:1px dashed #294663; display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
+                  <span style="font-size:11px; color:#8ba2b5;">Chốt tỷ lệ lỗi &amp; chuyển bước tiếp theo:</span>
+                  <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="requestReport()" data-tooltip="Nhập ý kiến và chốt báo cáo">📄 Tạo báo cáo</button>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="goToNotification()" data-tooltip="Mở màn thông báo cho khách hàng">📲 Mở Màn Thông Báo KH &rarr;</button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -1293,31 +1310,6 @@
             <div id="extracted-events-list"></div>
             <table><tbody id="condition-matching-tbody"></tbody></table>
           </div>
-
-          <!-- Report Draft Paper Panel -->
-          <div class="panel" id="panel-report-draft">
-            <div class="panel-header">
-              <span>Dự Thảo Báo Cáo Phân Tích Tai Nạn (B2B Report)</span>
-              <span id="report-version-badge" class="badge badge-primary">Phiên bản: v1 [Dự thảo]</span>
-            </div>
-            <div class="panel-body">
-              <div class="report-paper">
-                
-                <!-- Section 1: Info -->
-                <div class="report-section">
-                  <div class="report-section-title">
-                    <span>Mục 1. Thông Tin Hồ Sơ & Video Tai Nạn</span>
-                    <span class="report-lock-tag">🔒 Khóa chỉnh sửa</span>
-                  </div>
-                  <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; font-size:12px; color:var(--slate-600);" id="report-meta-content">
-                    <div><b>Mã hồ sơ:</b> #10 (CS-2026-8821)</div>
-                    <div><b>Khách hàng:</b> Kim Tae-woo</div>
-                    <div><b>Số hợp đồng:</b> KB-POL-99214</div>
-                    <div><b>Biển số xe:</b> 30A-12345</div>
-                    <div><b>Thời điểm tai nạn:</b> 2026-11-04 14:30</div>
-                    <div><b>Tên video:</b> clip_intersection.mp4</div>
-                  </div>
-                </div>
 
         </div>
 
@@ -1361,9 +1353,13 @@
       </div>
 
       <!-- Report Editor Dialog -->
-      <div class="report-editor" id="report-editor" role="dialog" aria-modal="true" aria-label="Soạn báo cáo" aria-hidden="true">
-        <div class="report-editor-header"><strong>Soạn báo cáo · <span id="editor-case-title">Vụ việc</span></strong><button class="btn btn-secondary btn-sm" onclick="closeReportEditor()" data-tooltip="Đóng bản nháp">Đóng</button></div>
-        <div class="report-editor-body" id="report-editor-body"></div>
+      <div class="report-editor" id="report-editor" role="dialog" aria-modal="true" aria-label="Tạo báo cáo" aria-hidden="true">
+        <div class="report-editor-header"><strong>Tạo báo cáo · <span id="editor-case-title">Vụ việc</span></strong><button class="btn btn-secondary btn-sm" onclick="closeReportEditor()" data-tooltip="Đóng hộp tạo báo cáo">Đóng</button></div>
+        <div class="report-editor-body" id="report-editor-body">
+          <label for="adjuster-notes-input">Ý kiến điều tra viên</label>
+          <textarea id="adjuster-notes-input" class="chat-input" rows="5" placeholder="Nhập nhận định trước khi chốt báo cáo"></textarea>
+          <div style="margin-top:12px;"><button type="button" class="btn btn-primary" id="btn-confirm-report" onclick="confirmReport()">Chốt báo cáo</button></div>
+        </div>
       </div>
     </div>
 
@@ -1492,7 +1488,8 @@
           <span class="step-divider">&rarr;</span>
           <div class="step-item" onclick="openCloseCaseModal()"><span>5</span> 5. Kết Thúc</div>
         </div>
-        <div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <button class="btn btn-secondary btn-sm" onclick="navigate('SCR-CASE-DETAIL')">&larr; Quay lại Phân tích vụ việc</button>
           <button class="btn btn-danger btn-sm" onclick="openCloseCaseModal()" data-tooltip="Đóng và kết thúc vụ việc">Hoàn tất & Đóng Vụ Việc</button>
         </div>
       </div>
@@ -2758,14 +2755,6 @@
       }
     }
 
-    function setupCaseLayout() {
-      const reportDraft = document.getElementById('panel-report-draft');
-      const reportEditorBody = document.getElementById('report-editor-body');
-      if (reportDraft && reportEditorBody && reportDraft.parentElement !== reportEditorBody) {
-        reportEditorBody.appendChild(reportDraft);
-      }
-    }
-
     function showInspector(mode) {
       if (mode === 'report') { openReportEditor(); return; }
       if (mode === 'history') toggleReportHistory(true);
@@ -2898,10 +2887,14 @@
         const card = document.createElement('div');
         card.className = `analyzed-chart-card ${isSelected ? 'selected' : ''}`;
         card.onclick = () => selectChartByCode(chart.code);
-        card.setAttribute('data-tooltip', `Click để chọn ${chart.code} và xem bảng đối chiếu điều kiện & bằng chứng bên dưới`);
+        card.setAttribute('data-tooltip', `Chọn ${chart.code} để xem chứng cứ; mở tiêu chí để xem điều kiện khớp`);
 
         const rankText = chart.rank || (idx === 0 ? '추천 1위 · Strong Match' : `후보 ${idx + 1}위`);
         const matchBadgeClass = chart.match >= 80 ? 'badge-high' : (chart.match >= 60 ? 'badge-primary' : 'badge-mid');
+        const conditions = chart.conditions || (idx === 0 ? c.conditions : []) || [];
+        const conditionList = conditions.length
+          ? conditions.map(row => `<li><span>${escapeHtml(row.name)}</span><span>${escapeHtml(row.status)}</span></li>`).join('')
+          : '<li>Chưa có tiêu chí chi tiết</li>';
 
         card.innerHTML = `
           <div class="acc-top-row">
@@ -2914,12 +2907,23 @@
           </div>
           <div class="acc-name">${escapeHtml(chart.name)}</div>
           <div class="acc-desc">${escapeHtml(chart.desc || '')}</div>
+          <details class="chart-card-conditions" ${c.expandedConditionCharts?.includes(chart.code) ? 'open' : ''}>
+            <summary>Tiêu chí khớp · ${conditions.filter(row => row.status === 'Khớp' || row.status === '일치').length}/${conditions.length}</summary>
+            <ul>${conditionList}</ul>
+          </details>
           <div class="acc-footer">
             <span class="acc-select-status ${isSelected ? 'active' : ''}">
               ${isSelected ? '✓ Đang chọn hiển thị chứng cứ' : '○ Bấm để xem chứng cứ chart này'}
             </span>
           </div>
         `;
+        const details = card.querySelector('details');
+        details.onclick = event => event.stopPropagation();
+        details.ontoggle = () => {
+          c.expandedConditionCharts ||= [];
+          c.expandedConditionCharts = c.expandedConditionCharts.filter(code => code !== chart.code);
+          if (details.open) c.expandedConditionCharts.push(chart.code);
+        };
         container.appendChild(card);
       });
     }
@@ -3132,7 +3136,7 @@
 
       closeReportEditor();
       renderCaseDetail();
-      appendAgentMessage(`Đã chốt <b>${escapeHtml(c.activeReportVersion)}</b> cho chart <b>${escapeHtml(c.selectedChart)}</b>. <button class="btn btn-primary btn-sm" onclick="goToNegotiation()" data-tooltip="Chuyển sang màn thương lượng của vụ việc này">Mở thương lượng</button>`);
+      appendAgentMessage(`Đã chốt <b>${escapeHtml(c.activeReportVersion)}</b> cho chart <b>${escapeHtml(c.selectedChart)}</b>. <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;"><button class="btn btn-primary btn-sm" onclick="goToNotification()" data-tooltip="Mở màn thông báo cho khách hàng">📲 Mở Màn Thông Báo KH &rarr;</button><button class="btn btn-secondary btn-sm" onclick="goToNegotiation()" data-tooltip="Chuyển sang màn thương lượng của vụ việc này">Mở thương lượng</button></div>`);
     }
 
     function goToNegotiation() {
@@ -3146,14 +3150,8 @@
 
     function goToNotification() {
       const c = STATE.cases[STATE.currentCaseId];
-      if (!c.isReportConfirmed) {
-        alert('Chưa có Báo cáo được xác nhận!');
-        return;
-      }
-      if (c.finalFaultA + c.finalFaultB !== 100) {
-        alert('Hãy xem tỷ lệ lỗi ở bước Thương lượng trước khi soạn thông báo.');
-        return;
-      }
+      if (!c) return;
+      recalculateCaseFault(c);
       navigate('SCR-CUSTOMER-NOTIFY');
     }
 
@@ -3517,17 +3515,17 @@
        SCREEN 5: SCR-CUSTOMER-NOTIFY LOGIC
        ===================================================================== */
     function noticeSourceKey(c) {
-      return JSON.stringify([c.activeReportVersion, reportChartCode(c), c.finalFaultA, c.finalFaultB,
+      return JSON.stringify([c.activeReportVersion || 'v1-draft', reportChartCode(c) || c.selectedChart, c.finalFaultA, c.finalFaultB,
         (c.negotiationFactors || []).map(f => [f.id, f.status])]);
     }
 
     function defaultNoticeBlocks(c) {
-      const chart = reportChartCode(c) || 'KNIA';
+      const chart = reportChartCode(c) || c.selectedChart || 'KNIA';
       const agreed = (c.negotiationFactors || []).filter(f => f.status === 'AGREED').map(f => f.text);
       return [
         { id: 1, title: 'Vụ việc', body: `${c.accidentDate || 'Chưa rõ thời điểm'} · ${c.location || c.caseTitle || c.code}.`, included: true },
         { id: 2, title: 'Tỷ lệ lỗi', body: `Xe khách hàng ${c.finalFaultA}% · đối phương ${c.finalFaultB}%.`, included: true },
-        { id: 3, title: 'Căn cứ áp dụng', body: `Chart ${chart} · báo cáo ${c.activeReportVersion || 'chưa có'}.`, included: true, required: true },
+        { id: 3, title: 'Căn cứ áp dụng', body: `Chart ${chart} · báo cáo ${c.activeReportVersion || 'v1 (Dự thảo)'}.`, included: true, required: true },
         { id: 4, title: 'Lý do điều chỉnh', body: agreed.length ? agreed.join('; ') : 'Chưa có yếu tố điều chỉnh được đồng ý.', included: true },
         { id: 5, title: 'Bước tiếp theo', body: 'Giám định viên tiếp tục xử lý bồi thường và cập nhật cho khách hàng.', included: true },
         { id: 6, title: 'Lưu ý pháp lý', body: 'Tỷ lệ này có thể thay đổi theo thỏa thuận hoặc quyết định có thẩm quyền. Liên hệ người phụ trách hồ sơ để được hỗ trợ.', included: true, required: true }
@@ -3558,12 +3556,13 @@
     function renderNotificationScreen() {
       const c = STATE.cases[STATE.currentCaseId];
       if (!c) return;
+      recalculateCaseFault(c);
       ensureNoticeDraft(c);
       document.getElementById('notify-context-case').textContent = `VỤ VIỆC ${c.id} · BƯỚC 4`;
       document.getElementById('case-closed-banner').style.display = c.isClosed ? 'block' : 'none';
       if (c.isClosed) document.getElementById('case-closed-reason-label').textContent = `Lý do: ${c.closeReason}`;
       document.getElementById('notice-version').textContent = `v${c.notificationSentKey === noticeDraftKey(c) ? c.notificationSent.length : c.notificationSent.length + 1}`;
-      document.getElementById('notice-source').textContent = `${reportChartCode(c) || 'Chưa có chart'} · Báo cáo ${c.activeReportVersion || '—'} · Xe KH ${c.finalFaultA}%`;
+      document.getElementById('notice-source').textContent = `${reportChartCode(c) || c.selectedChart || 'Chưa có chart'} · Báo cáo ${c.activeReportVersion || 'v1 (Dự thảo)'} · Xe KH ${c.finalFaultA}% : Đối phương ${c.finalFaultB}%`;
       document.querySelectorAll('input[name="notice-channel"]').forEach(input => {
         input.checked = input.value === c.notificationChannel;
         input.disabled = !!c.isClosed;
@@ -3984,7 +3983,6 @@
 
     // Init on page load
     window.addEventListener('DOMContentLoaded', () => {
-      setupCaseLayout();
       renderCaseTable();
     });
     window.addEventListener('keydown', event => {
