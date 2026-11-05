@@ -1865,6 +1865,44 @@
       border: 1px solid #334d65;
       border-radius: 9px;
       background: #122238;
+      transition: background 0.15s, border-color 0.15s, transform 0.15s;
+    }
+
+    #SCR-CUSTOMER-NOTIFY .notice-block[draggable="true"] {
+      cursor: grab;
+    }
+
+    #SCR-CUSTOMER-NOTIFY .notice-block[draggable="true"]:active {
+      cursor: grabbing;
+    }
+
+    #SCR-CUSTOMER-NOTIFY .notice-block.is-dragging {
+      opacity: 0.45;
+      border: 1px dashed #38bdf8;
+      background: #0d1b2d;
+    }
+
+    #SCR-CUSTOMER-NOTIFY .notice-block.drag-over {
+      border-top: 3px solid #38bdf8 !important;
+      background: #193150;
+      transform: translateY(-2px);
+    }
+
+    #SCR-CUSTOMER-NOTIFY .notice-drag-handle {
+      cursor: grab;
+      user-select: none;
+      color: #64748b;
+      font-size: 15px;
+      line-height: 1;
+      padding: 2px 4px;
+      border-radius: 4px;
+      transition: color 0.15s, background 0.15s;
+      flex: none;
+    }
+
+    #SCR-CUSTOMER-NOTIFY .notice-drag-handle:hover {
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.15);
     }
 
     #SCR-CUSTOMER-NOTIFY .notice-block.is-off {
@@ -2264,16 +2302,16 @@
       position: fixed;
       top: 50%;
       left: 50%;
-      width: min(520px, calc(100vw - 32px));
-      max-height: calc(100vh - 32px);
+      width: min(840px, calc(100vw - 32px));
+      max-height: calc(100vh - 40px);
       transform: translate(-50%, -50%);
       z-index: 60;
       display: none;
       flex-direction: column;
-      background: #101e30;
+      background: #0f1c2d;
       border: 1px solid #38516a;
       border-radius: 14px;
-      box-shadow: 0 24px 70px #0009;
+      box-shadow: 0 24px 70px #000c;
       overflow: hidden;
     }
 
@@ -2286,14 +2324,42 @@
       justify-content: space-between;
       align-items: center;
       gap: 10px;
-      padding: 12px 16px;
-      border-bottom: 1px solid #38516a;
+      padding: 12px 18px;
+      border-bottom: 1px solid #294663;
+      background: #152538;
       color: #f4f8fe;
+      flex: none;
     }
 
     #SCR-CASE-DETAIL .report-editor-body {
-      overflow: auto;
-      padding: 16px;
+      overflow-y: auto;
+      padding: 20px;
+      background: #09131f;
+      flex: 1;
+    }
+
+    #SCR-CASE-DETAIL .report-preview-sheet {
+      background: #ffffff;
+      color: #1e293b;
+      padding: 28px 32px;
+      border-radius: 6px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      font-size: 13px;
+      line-height: 1.6;
+      max-width: 740px;
+      margin: 0 auto;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    #SCR-CASE-DETAIL .report-editor-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 18px;
+      border-top: 1px solid #294663;
+      background: #111e2e;
+      flex: none;
     }
 
     #SCR-CASE-DETAIL .report-editor #panel-report-draft {
@@ -3168,27 +3234,6 @@
       font-weight: 700;
     }
 
-    #SCR-CASE-DETAIL .chart-card-conditions ul {
-      list-style: none;
-      margin: 8px 0 0;
-      padding: 0;
-    }
-
-    #SCR-CASE-DETAIL .chart-card-conditions li {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 6px 0;
-      border-top: 1px solid #233e59;
-      font-size: 11px;
-      color: #d3e5f0;
-    }
-
-    #SCR-CASE-DETAIL .chart-card-conditions li span:last-child {
-      white-space: nowrap;
-      color: #8ce2f7;
-    }
-
     #SCR-CASE-DETAIL .chart-card-detail { display:grid; grid-template-columns:minmax(0, 1.2fr) minmax(220px, .8fr); gap:14px; margin-top:12px; cursor:default; }
     #SCR-CASE-DETAIL .chart-card-detail section { min-width:0; }
     #SCR-CASE-DETAIL .chart-card-detail h4 { margin:12px 0 6px; color:#d9ecf7; font-size:12px; }
@@ -3200,14 +3245,19 @@
     #SCR-CASE-DETAIL .chart-condition-table th { color:#8fb1c8; background:#162b42; }
     #SCR-CASE-DETAIL .chart-actor { padding:8px; margin-bottom:6px; border:1px solid #294663; border-radius:6px; color:#d9ecf7; font-size:11px; }
     #SCR-CASE-DETAIL .chart-actor b { color:#70dced; }
-    #SCR-CASE-DETAIL .chart-base-ratio { color:#f4f8fe; font-size:18px; font-weight:800; }
-    #SCR-CASE-DETAIL .chart-sim-road { position:relative; height:94px; overflow:hidden; border:1px solid #39516a; border-radius:6px; background:repeating-linear-gradient(0deg,#263b47 0 43px,#d8cda6 44px 46px,#263b47 47px 92px); }
+    #SCR-CASE-DETAIL .chart-base-ratio { color:#f4f8fe; font-size:30px; font-weight:800; line-height:1.15; letter-spacing:-.03em; }
+    #SCR-CASE-DETAIL .chart-sim-road { position:relative; height:112px; overflow:hidden; border:1px solid #39516a; border-radius:6px; background:repeating-linear-gradient(0deg,#263b47 0 43px,#d8cda6 44px 46px,#263b47 47px 92px); }
     #SCR-CASE-DETAIL .chart-sim-car { position:absolute; width:30px; height:16px; border-radius:4px; color:white; font-size:10px; font-weight:800; text-align:center; line-height:16px; box-shadow:0 2px 8px #0008; }
     #SCR-CASE-DETAIL .chart-sim-car.a { top:58px; left:10%; background:#268bd2; animation:chart-follow 5s linear infinite; }
     #SCR-CASE-DETAIL .chart-sim-car.b { top:58px; left:45%; background:#e35e67; animation:chart-lead 5s linear infinite; }
     #SCR-CASE-DETAIL .chart-sim-car.b.lane-change { top:10px; animation:chart-lane-change 5s linear infinite; }
     #SCR-CASE-DETAIL .chart-sim-road.paused .chart-sim-car { animation-play-state:paused; }
-    #SCR-CASE-DETAIL .chart-sim-controls { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:5px; color:#8fb1c8; font-size:10px; }
+    #SCR-CASE-DETAIL .chart-sim-controls { position:absolute; inset:auto 0 0; display:flex; align-items:center; gap:8px; padding:8px 10px 5px; background:linear-gradient(transparent,rgba(0,0,0,.88)); color:#fff; }
+    #SCR-CASE-DETAIL .chart-sim-toggle { border:0; background:transparent; color:#fff; font-size:17px; line-height:1; padding:2px 5px; cursor:pointer; }
+    #SCR-CASE-DETAIL .chart-sim-progress { position:absolute; left:10px; right:10px; bottom:0; height:3px; background:#cbd5e180; }
+    #SCR-CASE-DETAIL .chart-sim-progress::after { content:""; display:block; height:100%; width:0; background:#f43f5e; animation:chart-progress 5s linear infinite; }
+    #SCR-CASE-DETAIL .chart-sim-road.paused .chart-sim-progress::after { animation-play-state:paused; }
+    @keyframes chart-progress { to { width:100%; } }
     @keyframes chart-follow { to { transform:translateX(160px); } }
     @keyframes chart-lead { to { transform:translateX(90px); } }
     @keyframes chart-lane-change { 0% { transform:translate(0,0); } 65%,100% { transform:translate(90px,48px); } }
@@ -3296,16 +3346,6 @@
       font-weight: 700;
       color: #e2e8f0;
       line-height: 1.35;
-    }
-
-    .acc-desc {
-      font-size: 11px;
-      color: #94a3b8;
-      line-height: 1.4;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
     }
 
     .acc-footer {
@@ -3905,11 +3945,12 @@
           </div>
 
           <nav class="analysis-steps" id="analysis-steps" aria-label="Các bước phân tích">
+            <button type="button" id="analysis-step-reasoning" onclick="showAnalysisStep('reasoning')"
+              data-tooltip="Xem lại quá trình AI phân tích video">1 · AI phân tích<small>Quá trình phân tích</small></button>
             <button type="button" id="analysis-step-chart" onclick="showAnalysisStep('charts')"
-              data-tooltip="Quay lại danh sách chart để chọn chart khác">1 · Chọn chart<small>Xem tiêu chí
-                khớp</small></button>
+              data-tooltip="Quay lại danh sách chart để chọn chart khác">2 · Chọn chart<small>Đối chiếu KNIA</small></button>
             <button type="button" id="analysis-step-evidence" onclick="showAnalysisStep('evidence')"
-              data-tooltip="Xem chứng cứ của chart đã chọn">2 · Chứng cứ &amp; yếu tố<small
+              data-tooltip="Xem chứng cứ của chart đã chọn">3 · Chứng cứ &amp; yếu tố<small
                 id="analysis-selected-chart">Chọn chart để tiếp tục</small></button>
           </nav>
 
@@ -4061,18 +4102,29 @@
 
       </div>
 
-      <!-- Report Editor Dialog -->
-      <div class="report-editor" id="report-editor" role="dialog" aria-modal="true" aria-label="Tạo báo cáo"
+      <!-- Report PDF Preview & Confirmation Modal -->
+      <div class="report-editor" id="report-editor" role="dialog" aria-modal="true" aria-label="Xem trước và chốt báo cáo"
         aria-hidden="true">
-        <div class="report-editor-header"><strong>Tạo báo cáo · <span id="editor-case-title">Vụ
-              việc</span></strong><button class="btn btn-secondary btn-sm" onclick="closeReportEditor()"
-            data-tooltip="Đóng hộp tạo báo cáo">Đóng</button></div>
+        <div class="report-editor-header">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-size:16px;">📄</span>
+            <strong>Xem Trước Báo Cáo Giám Định (B2B Report PDF Preview) &middot; <span id="editor-case-title">Bản dự thảo v1</span></strong>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="closeReportEditor()"
+            data-tooltip="Đóng hộp xem trước báo cáo">✕ Đóng</button>
+        </div>
         <div class="report-editor-body" id="report-editor-body">
-          <label for="adjuster-notes-input">Ý kiến điều tra viên</label>
-          <textarea id="adjuster-notes-input" class="chat-input" rows="5"
-            placeholder="Nhập nhận định trước khi chốt báo cáo"></textarea>
-          <div style="margin-top:12px;"><button type="button" class="btn btn-primary" id="btn-confirm-report"
-              onclick="confirmReport()">Chốt báo cáo</button></div>
+          <!-- Rendered dynamically in renderReportEditorPreview() -->
+        </div>
+        <div class="report-editor-footer">
+          <div style="font-size:12px; color:#8ba2b5; display:flex; align-items:center; gap:6px;">
+            <span>ℹ️</span> <span>Kiểm tra kỹ bản xem trước báo cáo. Nhấn <b>Chốt &amp; Lưu Báo Cáo</b> để lưu snapshot và chuyển sang bước tiếp theo.</span>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="closeReportEditor()">Hủy / Xem lại</button>
+            <button type="button" class="btn btn-primary btn-sm" id="btn-confirm-report" onclick="confirmReport()"
+              style="background:var(--success); border-color:var(--success); font-weight:700; padding:6px 14px;">✅ Chốt &amp; Lưu Báo Cáo</button>
+          </div>
         </div>
       </div>
     </div>
@@ -4205,29 +4257,14 @@
     <!-- SCREEN 5: SCR-CUSTOMER-NOTIFY -->
     <div id="SCR-CUSTOMER-NOTIFY" class="view-screen">
       <div class="screen-lead">
-        <div><span class="screen-kicker" id="notify-context-case">VỤ VIỆC #10 · BƯỚC 4</span>
+        <div>
           <h1 class="screen-title">Thông báo khách hàng</h1>
           <p class="screen-subtitle">Kiểm tra nội dung và bản xem trước trước khi kết thúc vụ việc.</p>
         </div>
-      </div>
-      <!-- Stepper Header -->
-      <div class="stepper-bar">
-        <div class="stepper-steps">
-          <div class="step-item completed" onclick="navigate('SCR-CASE-DETAIL')"><span>✓</span> 1. Đọc Video</div>
-          <span class="step-divider">&rarr;</span>
-          <div class="step-item completed" onclick="navigate('SCR-CASE-DETAIL')"><span>✓</span> 2. Chốt Báo Cáo</div>
-          <span class="step-divider">&rarr;</span>
-          <div class="step-item completed" onclick="goToNegotiation()"><span>✓</span> 3. Thương Lượng</div>
-          <span class="step-divider">&rarr;</span>
-          <div class="step-item active" onclick="navigate('SCR-CUSTOMER-NOTIFY')"><span>●</span> 4. Thông Báo KH</div>
-          <span class="step-divider">&rarr;</span>
-          <div class="step-item" onclick="openCloseCaseModal()"><span>5</span> 5. Kết Thúc</div>
-        </div>
         <div style="display:flex; gap:8px; align-items:center;">
-          <button class="btn btn-secondary btn-sm" onclick="navigate('SCR-CASE-DETAIL')">&larr; Quay lại Phân tích vụ
-            việc</button>
+          <button class="btn btn-secondary btn-sm" onclick="navigate('SCR-CASE-DETAIL')">&larr; Quay lại Phân tích vụ việc</button>
           <button class="btn btn-danger btn-sm" onclick="openCloseCaseModal()"
-            data-tooltip="Đóng và kết thúc vụ việc">Hoàn tất & Đóng Vụ Việc</button>
+            data-tooltip="Đóng và kết thúc vụ việc">Hoàn tất &amp; Đóng Vụ Việc</button>
         </div>
       </div>
 
@@ -5274,6 +5311,7 @@
 
     function runFakeAnalysis(c, isReanalysis = false) {
       c.isAnalyzing = true;
+      c.analysisView = 'reasoning';
       c.reasoningStepIndex = 1;
       c.reasoningCollapsed = false;
       if (STATE.cases[STATE.currentCaseId] === c) renderCaseDetail();
@@ -5410,6 +5448,7 @@
       const evidenceStep = document.getElementById('analysis-step-evidence');
       evidenceStep.disabled = !c.selectedChart;
       document.getElementById('analysis-selected-chart').textContent = c.selectedChart || 'Chọn chart để tiếp tục';
+      document.getElementById('analysis-step-reasoning').classList.toggle('active', c.analysisView === 'reasoning');
       document.getElementById('analysis-step-chart').classList.toggle('active', c.analysisView === 'charts');
       evidenceStep.classList.toggle('active', c.analysisView === 'evidence');
       document.getElementById('evidence-stage').hidden = !ready || !!c.isAnalyzing || c.analysisView !== 'evidence' || !c.selectedChart;
@@ -5545,9 +5584,8 @@
               </div>
               <div class="core-ev-meta-row">
                 <button type="button" class="core-ev-time-btn" data-seek-time="${escapeHtml(ev.time)}" title="Tua video đến ${escapeHtml(ev.time)}">
-                  ▶ Tua ${escapeHtml(ev.time)}
+                  ▶ ${escapeHtml(ev.time)}
                 </button>
-                <span style="color:#8ba2b5; font-size:11px;">Thời gian diễn ra bằng chứng</span>
               </div>
               <div class="core-ev-argument">
                 <strong>Luận điểm:</strong> ${escapeHtml(ev.finding)}
@@ -5639,15 +5677,201 @@
 
     function openReportEditor() {
       const editor = document.getElementById('report-editor');
+      if (!editor) return;
+      const c = STATE.cases[STATE.currentCaseId];
+      if (!c) return;
+
+      c.pendingVersion ||= `v${Math.max(0, ...(c.reportVersions || []).map(v => Number(v.slice(1)) || 0)) + 1}`;
+      const vText = c.pendingVersion;
+
+      const titleEl = document.getElementById('editor-case-title');
+      if (titleEl) titleEl.textContent = `${c.code} · ${vText} (Dự thảo)`;
+
+      renderReportEditorPreview(c, vText);
+
       editor.classList.add('open');
       editor.setAttribute('aria-hidden', 'false');
-      document.getElementById('adjuster-notes-input')?.focus();
+    }
+
+    function renderReportEditorPreview(c, vText) {
+      const body = document.getElementById('report-editor-body');
+      if (!body) return;
+      recalculateCaseFault(c);
+      const selectedChart = (c.charts || []).find(ch => ch.code === c.selectedChart) || (c.charts || [])[0] || {
+        code: '차31-3',
+        name: 'Ngã tư xe đi thẳng đèn xanh va chạm xe rẽ trái',
+        match: 92,
+        baseFault: '100 : 0',
+        support: []
+      };
+
+      const faultA = c.finalFaultA != null ? c.finalFaultA : 100;
+      const faultB = c.finalFaultB != null ? c.finalFaultB : 0;
+
+      body.innerHTML = `
+        <div class="report-preview-sheet">
+          <!-- Document Header -->
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:2px solid #0f172a; padding-bottom:14px; margin-bottom:18px;">
+            <div>
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                <span style="background:#f59e0b; color:#000; font-weight:900; font-size:11px; padding:2px 6px; border-radius:3px; letter-spacing:0.5px;">KB손해보험</span>
+                <span style="font-size:12px; font-weight:700; color:#475569; letter-spacing:0.5px;">BẢO HIỂM THẨM ĐỊNH TAI NẠN XE CƠ GIỚI</span>
+              </div>
+              <h2 style="font-size:17px; font-weight:800; text-transform:uppercase; color:#0f172a; margin:4px 0 2px 0;">BÁO CÁO GIÁM ĐỊNH TAI NẠN &amp; PHÂN ĐỊNH TỶ LỆ LỖI</h2>
+              <div style="font-size:11px; color:#64748b;">Hệ thống thẩm định Visus Multimodal AI &middot; Tiêu chuẩn Hiệp hội Bảo hiểm Phi nhân thọ Hàn Quốc (KNIA)</div>
+            </div>
+            <div style="text-align:right;">
+              <span style="display:inline-block; background:#fef3c7; color:#92400e; border:1px solid #fde68a; font-weight:700; font-size:11px; padding:3px 8px; border-radius:4px; margin-bottom:4px;">[ BẢN DỰ THẢO CHỜ CHỐT ]</span>
+              <div style="font-size:11px; color:#64748b;">Phiên bản: <b>${escapeHtml(vText)}</b></div>
+              <div style="font-size:11px; color:#64748b;">Mã hồ sơ: <b>${escapeHtml(c.code)}</b></div>
+            </div>
+          </div>
+
+          <!-- Section 1: Thông tin hồ sơ & Video -->
+          <div style="margin-bottom:16px;">
+            <div style="font-size:12px; font-weight:800; color:#0f172a; text-transform:uppercase; margin-bottom:6px; background:#f1f5f9; padding:4px 8px; border-left:3px solid #0284c7;">
+              1. THÔNG TIN HỒ SƠ &amp; DỮ LIỆU HIỆN TRƯỜNG
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px 16px; font-size:12px;">
+              <div>&bull; Mã vụ việc: <b>#${escapeHtml(c.id)} (${escapeHtml(c.code)})</b></div>
+              <div>&bull; Số hợp đồng bảo hiểm: <b>${escapeHtml(c.policyNo || '—')}</b></div>
+              <div>&bull; Người được bảo hiểm: <b>${escapeHtml(c.customer || '—')}</b></div>
+              <div>&bull; Biển số xe khách hàng: <b>${escapeHtml(c.vehicleNo || '—')}</b></div>
+              <div>&bull; Thời điểm tai nạn: <b>${escapeHtml(c.accidentDate || '—')}</b></div>
+              <div>&bull; Địa điểm: <b>Seoul Gangnam-gu Teheran-ro (4 làn xe)</b></div>
+              <div style="grid-column:1 / -1;">&bull; Video trích xuất: <b>${escapeHtml(c.videoName || 'demo_dashcam_01.mp4')}</b> (${c.videoDuration || 47} giây &middot; 1080p@60fps &middot; Telemetry GPS/G-sensor)</div>
+            </div>
+          </div>
+
+          <!-- Section 2: Dữ liệu Viễn trắc thị giác VLM -->
+          <div style="margin-bottom:16px;">
+            <div style="font-size:12px; font-weight:800; color:#0f172a; text-transform:uppercase; margin-bottom:6px; background:#f1f5f9; padding:4px 8px; border-left:3px solid #0284c7;">
+              2. KẾT QUẢ NHẬN DIỆN THỊ GIÁC VLM (VISION TELEMETRY)
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px 12px; font-size:12px;">
+              <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:8px; border-radius:4px;">
+                <div style="color:#64748b; font-size:11px;">Mô hình thị giác AI:</div>
+                <div style="font-weight:700; color:#0f172a;">Qwen-397B Multimodal VLM</div>
+              </div>
+              <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:8px; border-radius:4px;">
+                <div style="color:#64748b; font-size:11px;">Tỷ lệ bám làn (Lane Deviation):</div>
+                <div style="font-weight:700; color:#059669;">0.0% (Đi thẳng ổn định trong làn &gt; 3.4s)</div>
+              </div>
+              <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:8px; border-radius:4px;">
+                <div style="color:#64748b; font-size:11px;">Gia tốc hãm phanh (Deceleration):</div>
+                <div style="font-weight:700; color:#dc2626;">-0.68G (Xe trước phanh gấp đột ngột)</div>
+              </div>
+              <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:8px; border-radius:4px;">
+                <div style="color:#64748b; font-size:11px;">Cự ly an toàn thực tế:</div>
+                <div style="font-weight:700; color:#d97706;">2.1m (Quy chuẩn tối thiểu: 15.0m tại 50km/h)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 3: Biểu đồ chuẩn KNIA đối chiếu -->
+          <div style="margin-bottom:16px;">
+            <div style="font-size:12px; font-weight:800; color:#0f172a; text-transform:uppercase; margin-bottom:6px; background:#f1f5f9; padding:4px 8px; border-left:3px solid #0284c7;">
+              3. BIỂU ĐỒ TÌNH HUỐNG CHUẨN KNIA ÁP DỤNG
+            </div>
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:4px; padding:10px 12px; font-size:12px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                <div>Biểu đồ: <b style="color:#0284c7; font-size:13px;">${escapeHtml(selectedChart.code)}</b> &mdash; <b>${escapeHtml(selectedChart.name)}</b></div>
+                <span style="background:#dbeafe; color:#1d4ed8; font-weight:700; font-size:11px; padding:2px 8px; border-radius:999px;">Khớp: ${selectedChart.match}%</span>
+              </div>
+              <div>&bull; Tỷ lệ lỗi cơ sở chuẩn KNIA (Xe A : Xe B): <b>${escapeHtml(selectedChart.baseFault || '100 : 0')}</b></div>
+              <div style="color:#475569; font-size:11px; margin-top:4px;">
+                Căn cứ: Biểu đồ quy chuẩn tình huống va chạm cùng chiều, xe sau va chạm xe trước khi dừng/phanh đột ngột (Bộ Quy tắc Phân định Trách nhiệm Bồi thường KNIA ban hành).
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 4: Bộ 4 Bằng chứng VLM cốt lõi -->
+          <div style="margin-bottom:16px;">
+            <div style="font-size:12px; font-weight:800; color:#0f172a; text-transform:uppercase; margin-bottom:6px; background:#f1f5f9; padding:4px 8px; border-left:3px solid #0284c7;">
+              4. BỘ 4 BẰNG CHỨNG THỊ GIÁC VLM ĐÃ KIỂM CHỨNG
+            </div>
+            <table style="width:100%; border-collapse:collapse; font-size:11.5px;">
+              <thead>
+                <tr style="background:#f1f5f9; border-bottom:1px solid #cbd5e1; text-align:left;">
+                  <th style="padding:6px 8px; width:22%;">Hạng mục</th>
+                  <th style="padding:6px 8px; width:18%;">Thời điểm</th>
+                  <th style="padding:6px 8px; width:45%;">Nội dung chứng cứ</th>
+                  <th style="padding:6px 8px; width:15%; text-align:center;">Độ tin cậy</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom:1px solid #e2e8f0;">
+                  <td style="padding:6px 8px; font-weight:700;">1. Điểm va chạm</td>
+                  <td style="padding:6px 8px; color:#64748b;">00:03.45</td>
+                  <td style="padding:6px 8px;">Mặt tiếp xúc cản sau Xe B và tâm cản trước Xe A, độ lệch tâm &lt; 4cm.</td>
+                  <td style="padding:6px 8px; text-align:center;"><span style="color:#059669; font-weight:700;">99.2%</span></td>
+                </tr>
+                <tr style="border-bottom:1px solid #e2e8f0;">
+                  <td style="padding:6px 8px; font-weight:700;">2. Cự ly an toàn</td>
+                  <td style="padding:6px 8px; color:#64748b;">00:02.10 - 00:03.45</td>
+                  <td style="padding:6px 8px;">Cự ly duy trì 2.1m, dưới ngưỡng an toàn tối thiểu 15.0m theo quy định.</td>
+                  <td style="padding:6px 8px; text-align:center;"><span style="color:#059669; font-weight:700;">98.7%</span></td>
+                </tr>
+                <tr style="border-bottom:1px solid #e2e8f0;">
+                  <td style="padding:6px 8px; font-weight:700;">3. Ổn định làn đường</td>
+                  <td style="padding:6px 8px; color:#64748b;">00:00.00 - 00:03.40</td>
+                  <td style="padding:6px 8px;">Cả 2 xe đi thẳng liên tục trong làn &gt; 3.4s, không có hành vi chuyển làn.</td>
+                  <td style="padding:6px 8px; text-align:center;"><span style="color:#059669; font-weight:700;">97.9%</span></td>
+                </tr>
+                <tr style="border-bottom:1px solid #e2e8f0;">
+                  <td style="padding:6px 8px; font-weight:700;">4. Hành vi phanh</td>
+                  <td style="padding:6px 8px; color:#64748b;">00:02.80</td>
+                  <td style="padding:6px 8px;">Xe trước giảm tốc đột ngột -0.68G; không có chướng ngại vật phía trước.</td>
+                  <td style="padding:6px 8px; text-align:center;"><span style="color:#059669; font-weight:700;">96.5%</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Section 5: Đề xuất Tỷ lệ phân định lỗi cuối cùng & Căn cứ pháp lý -->
+          <div style="margin-bottom:16px;">
+            <div style="font-size:12px; font-weight:800; color:#0f172a; text-transform:uppercase; margin-bottom:6px; background:#f1f5f9; padding:4px 8px; border-left:3px solid #0284c7;">
+              5. ĐỀ XUẤT TỶ LỆ LỖI VÀ CĂN CỨ PHÁP LÝ
+            </div>
+            <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:4px; padding:10px 14px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <div style="font-size:11px; color:#1e40af; font-weight:700;">TỶ LỆ LỖI ĐỀ XUẤT CUỐI CÙNG:</div>
+                <div style="font-size:16px; font-weight:800; color:#1d4ed8; margin-top:2px;">
+                  Xe Khách hàng (A): ${faultA}% &nbsp;&bull;&nbsp; Xe Đối phương (B): ${faultB}%
+                </div>
+              </div>
+              <div style="text-align:right;">
+                <span style="background:#1d4ed8; color:#fff; font-size:11px; font-weight:700; padding:3px 8px; border-radius:4px;">Khuyến nghị AI</span>
+              </div>
+            </div>
+            <div style="font-size:11.5px; color:#334155; line-height:1.5;">
+              <b>Căn cứ pháp luật &amp; Án lệ:</b><br>
+              &bull; <b>Điều 19 Khoản 1 &amp; Khoản 4 Luật Giao thông đường bộ Hàn Quốc</b> (도로교통법 제19조 1항, 4항): Quy định người điều khiển phương tiện phải duy trì khoảng cách an toàn cần thiết để tránh va chạm khi xe phía trước dừng đột ngột, và nghiêm cấm việc phanh gấp mà không có lý do nguy hiểm chính đáng.<br>
+              &bull; <b>Án lệ Tòa án Tối cao Hàn Quốc số 96다39314</b>: Xác định độ trễ nhận thức và phản xạ phanh tiêu chuẩn 0.7s - 1.0s; áp dụng điều chỉnh trách nhiệm đối với hành vi dừng khẩn cấp bất ngờ.
+            </div>
+          </div>
+
+          <!-- Document Sign-off / Signature -->
+          <div style="margin-top:20px; padding-top:12px; border-top:1px dashed #cbd5e1; display:flex; justify-content:space-between; align-items:flex-end; font-size:11px; color:#64748b;">
+            <div>
+              Hệ thống thẩm định: <b>Visus B2B Auto-Audit Engine v3.4</b><br>
+              Chứng thực số băm dữ liệu: <code>SHA-256: 7f8a9e2c...41b0</code>
+            </div>
+            <div style="text-align:right;">
+              KB 손해보험 보상센터 &middot; Giám định viên:<br>
+              <b style="color:#0f172a; font-size:12px;">smtadmin (Xác thực điện tử)</b>
+            </div>
+          </div>
+        </div>
+      `;
     }
 
     function closeReportEditor() {
       const editor = document.getElementById('report-editor');
-      editor.classList.remove('open');
-      editor.setAttribute('aria-hidden', 'true');
+      if (editor) {
+        editor.classList.remove('open');
+        editor.setAttribute('aria-hidden', 'true');
+      }
       document.getElementById('chat-input-field')?.focus();
     }
 
@@ -5756,19 +5980,17 @@
         const card = document.createElement('div');
         card.className = `analyzed-chart-card ${isSelected ? 'selected' : ''}`;
         card.onclick = () => selectChartByCode(chart.code);
-        card.setAttribute('data-tooltip', `Chọn ${chart.code} để xem chứng cứ; mở tiêu chí để xem điều kiện khớp`);
+        card.setAttribute('data-tooltip', `Chọn biểu đồ để xem chứng cứ; mở đối chiếu điều kiện KNIA`);
 
-        const rankText = chart.rank || (idx === 0 ? '추천 1위 · Strong Match' : `후보 ${idx + 1}위`);
+        const rankText = `Ứng viên ${idx + 1} · ${chart.matchLabel || (chart.match >= 80 ? 'Khớp cao' : 'Cần kiểm tra')}`;
         const matchBadgeClass = chart.match >= 80 ? 'badge-high' : (chart.match >= 60 ? 'badge-primary' : 'badge-mid');
         const baseRatio = chart.faultA != null && chart.faultB != null ? `${chart.faultA} : ${chart.faultB}` : chart.baseFault || '—';
         const conditions = chart.conditions || (idx === 0 ? c.conditions : []) || [];
         const conditionState = row => row.status === 'Khớp' || row.status === '일치' ? '<span aria-label="Khớp" title="Khớp">✓</span>' : row.status === 'Mâu thuẫn' || row.status === '모순' ? '<span aria-label="Mâu thuẫn" title="Mâu thuẫn">✕</span>' : escapeHtml(row.status);
-        const conditionList = conditions.length
-          ? conditions.map(row => `<li><span>${escapeHtml(row.name)}</span><span>${conditionState(row)}</span></li>`).join('')
-          : '<li>Chưa có tiêu chí chi tiết</li>';
+        const conditionName = name => name.match(/\((?=[A-Za-zÀ-ỹĐđ])(.+)\)\s*$/)?.[1] || name;
         const conditionRows = conditions.length ? conditions.map(row => {
           const frame = row.frame || row.time || '';
-          return `<tr><td>${escapeHtml(row.name)}</td><td>${conditionState(row)}</td><td>${escapeHtml(row.conf || '—')}</td><td>${frame ? `<button type="button" class="core-ev-time-btn" data-chart-seek="${escapeHtml(frame)}" aria-label="Tua video đến ${escapeHtml(frame)}">▶ ${escapeHtml(frame)}</button>` : ''} ${escapeHtml(row.source || '')}</td></tr>`;
+          return `<tr><td>${escapeHtml(conditionName(row.name))}</td><td>${conditionState(row)}</td><td>${escapeHtml(row.conf || '—')}</td><td>${frame ? `<button type="button" class="core-ev-time-btn" data-chart-seek="${escapeHtml(frame)}" aria-label="Tua video đến ${escapeHtml(frame)}">▶ ${escapeHtml(frame)}</button>` : ''} ${escapeHtml(row.source || '')}</td></tr>`;
         }).join('') : '<tr><td colspan="4">Chưa có dữ liệu đối chiếu.</td></tr>';
 
         card.innerHTML = `
@@ -5777,20 +5999,15 @@
             <span class="badge ${matchBadgeClass}">Độ khớp: ${chart.match}%</span>
           </div>
           <div class="acc-code-row">
-            <span class="acc-code">${escapeHtml(chart.code)}</span>
+            <span class="acc-code">${escapeHtml(chart.code.replace(/^도표/, 'Biểu đồ'))}</span>
             <span class="acc-fault-pill">Cơ sở A:B: <b>${escapeHtml(baseRatio)}</b></span>
           </div>
-          <div class="acc-name">${escapeHtml(chart.name)}</div>
-          <div class="acc-desc">${escapeHtml(chart.desc || '')}</div>
+          <div class="acc-name">${escapeHtml(chart.shortName || chart.name)}</div>
           <details class="chart-card-conditions" ${c.expandedConditionCharts?.includes(chart.code) ? 'open' : ''}>
-            <summary>Tiêu chí khớp · ${conditions.filter(row => row.status === 'Khớp' || row.status === '일치').length}/${conditions.length}</summary>
-            <ul>${conditionList}</ul>
+            <summary>Đối chiếu điều kiện KNIA</summary>
             <div class="chart-card-detail">
               <section>
-                <h4>Giải thích biểu đồ</h4>
-                <p>${escapeHtml(chart.desc || chart.name)}</p>
-                <h4>Đối chiếu điều kiện KNIA</h4>
-                <div class="chart-condition-table"><table><thead><tr><th>Điều kiện</th><th>Đánh giá</th><th>Xác suất</th><th>Căn cứ / frame</th></tr></thead><tbody>${conditionRows}</tbody></table></div>
+                <div class="chart-condition-table"><table><thead><tr><th>Điều kiện</th><th>Đánh giá</th><th>Xác suất</th><th>Căn cứ / mốc video</th></tr></thead><tbody>${conditionRows}</tbody></table></div>
               </section>
               <section>
                 <h4>Vai trò trong chart</h4>
@@ -5799,8 +6016,7 @@
                 <h4>Tỷ lệ cơ sở · dữ liệu mẫu</h4>
                 <div class="chart-base-ratio">A ${escapeHtml(baseRatio)} B</div>
                 <h4>Mô phỏng tình huống</h4>
-                <div class="chart-sim-road" role="img" aria-label="Hoạt họa 2D minh họa xe A và xe B theo chart; dữ liệu demo"><span class="chart-sim-car a">A</span><span class="chart-sim-car b ${chart.code.includes('252') ? 'lane-change' : ''}">B</span></div>
-                <div class="chart-sim-controls"><span>Hoạt họa 2D · demo</span><button type="button" class="btn btn-secondary btn-sm chart-sim-toggle" aria-label="Tạm dừng mô phỏng">Tạm dừng</button></div>
+                <div class="chart-sim-road" role="group" aria-label="Mô phỏng xe A và xe B theo biểu đồ; dữ liệu minh họa"><span class="chart-sim-car a">A</span><span class="chart-sim-car b ${chart.code.includes('252') ? 'lane-change' : ''}">B</span><div class="chart-sim-controls"><button type="button" class="chart-sim-toggle" aria-label="Tạm dừng mô phỏng" title="Tạm dừng">❚❚</button></div><div class="chart-sim-progress" aria-hidden="true"></div></div>
               </section>
             </div>
           </details>
@@ -5821,8 +6037,9 @@
         details.querySelector('.chart-sim-toggle').onclick = event => {
           const road = details.querySelector('.chart-sim-road');
           const paused = road.classList.toggle('paused');
-          event.currentTarget.textContent = paused ? 'Phát' : 'Tạm dừng';
+          event.currentTarget.textContent = paused ? '▶' : '❚❚';
           event.currentTarget.setAttribute('aria-label', paused ? 'Phát mô phỏng' : 'Tạm dừng mô phỏng');
+          event.currentTarget.title = paused ? 'Phát' : 'Tạm dừng';
         };
         details.ontoggle = () => {
           c.expandedConditionCharts ||= [];
@@ -5984,17 +6201,12 @@
     function confirmReport() {
       const c = STATE.cases[STATE.currentCaseId];
       if (!c) return;
-      if (c.isClosed || reportMissing(c).length || !c.pendingVersion) {
-        alert(`Chưa thể tạo báo cáo. Còn thiếu: ${reportMissing(c).join(', ') || 'bản dự thảo mới'}.`);
+      if (c.isClosed || reportMissing(c).length) {
+        alert(`Chưa thể tạo báo cáo. Còn thiếu: ${reportMissing(c).join(', ')}.`);
         return;
       }
 
-      const note = document.getElementById('adjuster-notes-input').value;
-      if (!note.trim()) {
-        alert('Vui lòng nhập nội dung diễn giải của bạn tại Mục 5 trước khi xác nhận.');
-        return;
-      }
-      c.reportNote = note;
+      c.pendingVersion ||= `v${Math.max(0, ...(c.reportVersions || []).map(v => Number(v.slice(1)) || 0)) + 1}`;
 
       const version = c.pendingVersion;
       const priorVersion = c.activeReportVersion;
@@ -6003,12 +6215,14 @@
       c.activeReportVersion = version;
       c.pendingVersion = null;
       c.reportSnapshots ||= {};
-      const chart = c.charts.find(ch => ch.code === c.selectedChart);
+      const chart = c.charts.find(ch => ch.code === c.selectedChart) || c.charts[0];
+      const note = c.reportNote || 'Báo cáo giám định chuẩn hóa KNIA & VLM';
+      c.reportNote = note;
       c.reportSnapshots[version] = {
         chartCode: c.selectedChart,
         name: chart?.name || '',
         match: chart?.match || 0,
-        baseFault: chart?.baseFault || '—',
+        baseFault: chart?.baseFault || '100 : 0',
         support: [...(chart?.support || [])],
         gap: chart?.gap || '',
         note
@@ -6023,12 +6237,12 @@
         time: new Date().toLocaleTimeString().substring(0, 5),
         actor: 'Điều tra viên smtadmin',
         type: 'REPORT',
-        desc: `Xác nhận tạo Báo cáo PDF phiên bản ${c.activeReportVersion} cho Chart ${c.selectedChart}. Mở khóa giai đoạn Thương lượng.`
+        desc: `Đã xem trước và chốt lưu Báo cáo PDF phiên bản ${c.activeReportVersion} cho Chart ${c.selectedChart}. Mở khóa giai đoạn Thương lượng.`
       });
 
       closeReportEditor();
       renderCaseDetail();
-      appendAgentMessage(`Đã chốt <b>${escapeHtml(c.activeReportVersion)}</b> cho chart <b>${escapeHtml(c.selectedChart)}</b>. <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;"><button class="btn btn-primary btn-sm" onclick="goToNotification()" data-tooltip="Mở màn thông báo cho khách hàng">📲 Mở Màn Thông Báo KH &rarr;</button><button class="btn btn-secondary btn-sm" onclick="goToNegotiation()" data-tooltip="Chuyển sang màn thương lượng của vụ việc này">Mở thương lượng</button></div>`);
+      appendAgentMessage(`Đã chốt và lưu báo cáo <b>${escapeHtml(c.activeReportVersion)}</b> cho chart <b>${escapeHtml(c.selectedChart)}</b>. <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;"><button class="btn btn-primary btn-sm" onclick="goToNotification()" data-tooltip="Mở màn thông báo cho khách hàng">📲 Mở Màn Thông Báo KH &rarr;</button><button class="btn btn-secondary btn-sm" onclick="goToNegotiation()" data-tooltip="Chuyển sang màn thương lượng của vụ việc này">Mở thương lượng</button></div>`);
     }
 
     function goToNegotiation() {
@@ -6435,7 +6649,8 @@
       if (!c) return;
       recalculateCaseFault(c);
       ensureNoticeDraft(c);
-      document.getElementById('notify-context-case').textContent = `VỤ VIỆC ${c.id} · BƯỚC 4`;
+      const notifyKicker = document.getElementById('notify-context-case');
+      if (notifyKicker) notifyKicker.textContent = `VỤ VIỆC ${c.id} · BƯỚC 4`;
       document.getElementById('case-closed-banner').style.display = c.isClosed ? 'block' : 'none';
       if (c.isClosed) document.getElementById('case-closed-reason-label').textContent = `Lý do: ${c.closeReason}`;
       document.getElementById('notice-version').textContent = `v${c.notificationSentKey === noticeDraftKey(c) ? c.notificationSent.length : c.notificationSent.length + 1}`;
@@ -6452,10 +6667,66 @@
         : '';
     }
 
+    let draggedNoticeIndex = null;
+
+    function handleNoticeDragStart(e, index) {
+      const c = STATE.cases[STATE.currentCaseId];
+      if (c?.isClosed) return;
+      draggedNoticeIndex = index;
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', String(index));
+      const target = e.currentTarget;
+      setTimeout(() => target.classList.add('is-dragging'), 0);
+    }
+
+    function handleNoticeDragOver(e, index) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      const target = e.currentTarget;
+      if (!target.classList.contains('drag-over') && draggedNoticeIndex !== index) {
+        target.classList.add('drag-over');
+      }
+    }
+
+    function handleNoticeDragLeave(e, index) {
+      e.currentTarget.classList.remove('drag-over');
+    }
+
+    function handleNoticeDrop(e, targetIndex) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('drag-over');
+      if (draggedNoticeIndex === null || draggedNoticeIndex === targetIndex) return;
+      const c = STATE.cases[STATE.currentCaseId];
+      if (!c || c.isClosed) return;
+      
+      const movedItem = c.notificationBlocks.splice(draggedNoticeIndex, 1)[0];
+      c.notificationBlocks.splice(targetIndex, 0, movedItem);
+      draggedNoticeIndex = null;
+      markNoticeDirty(c);
+      renderNotificationScreen();
+    }
+
+    function handleNoticeDragEnd(e) {
+      draggedNoticeIndex = null;
+      document.querySelectorAll('.notice-block').forEach(el => {
+        el.classList.remove('is-dragging', 'drag-over');
+      });
+    }
+
     function renderNoticeBlocks(c) {
-      document.getElementById('notice-blocks').innerHTML = c.notificationBlocks.map((block, index) => `
-        <section class="notice-block ${block.included ? '' : 'is-off'}">
+      const container = document.getElementById('notice-blocks');
+      if (!container) return;
+      container.innerHTML = c.notificationBlocks.map((block, index) => `
+        <section class="notice-block ${block.included ? '' : 'is-off'}"
+                 draggable="${!c.isClosed}"
+                 data-index="${index}"
+                 ondragstart="handleNoticeDragStart(event, ${index})"
+                 ondragover="handleNoticeDragOver(event, ${index})"
+                 ondragleave="handleNoticeDragLeave(event, ${index})"
+                 ondrop="handleNoticeDrop(event, ${index})"
+                 ondragend="handleNoticeDragEnd(event)">
           <div class="notice-block-top">
+            <span class="notice-drag-handle" title="Kéo thả để sắp xếp lại vị trí">⋮⋮</span>
             <strong>${escapeHtml(block.title)}</strong>
             ${block.required ? '<span class="badge badge-primary">Bắt buộc</span>' : `<button type="button" class="btn btn-secondary" onclick="toggleNoticeBlock(${block.id})" ${c.isClosed ? 'disabled' : ''} aria-label="${block.included ? 'Bỏ' : 'Thêm'} khối ${escapeHtml(block.title)}">${block.included ? 'Bỏ' : 'Thêm'}</button>`}
             <button type="button" class="btn btn-secondary" onclick="moveNoticeBlock(${block.id},-1)" ${index === 0 || c.isClosed ? 'disabled' : ''} aria-label="Đưa ${escapeHtml(block.title)} lên">↑</button>
