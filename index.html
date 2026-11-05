@@ -486,220 +486,6 @@
     .case-form label { display:grid; gap:5px; color:#d9e7f5; font-size:12px; font-weight:600; }
     .case-form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
     .case-form .chat-input { width:100%; color-scheme:dark; background:#0c1929; color:#f1f8fd; border-color:#39516a; }
-    /* =====================================================================
-       AI REASONING TRACE (Chain-of-Thought / Deep Multimodal Reasoning)
-       ===================================================================== */
-    .ai-reasoning-card {
-      background: linear-gradient(180deg, #102135 0%, #0d1a29 100%);
-      border: 1px solid #264a6d;
-      border-radius: 10px;
-      padding: 16px 18px;
-      margin-bottom: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .ai-reasoning-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, #38bdf8, #818cf8, #48cce9);
-    }
-
-    .ai-reasoning-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .ai-reasoning-title-group {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .ai-brain-pulse {
-      font-size: 22px;
-      display: inline-block;
-      animation: pulseGlow 1.8s infinite ease-in-out;
-    }
-
-    @keyframes pulseGlow {
-      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(56, 189, 248, 0.4)); }
-      50% { transform: scale(1.15); filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.8)); }
-    }
-
-    .ai-reasoning-main-title {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 14px;
-      font-weight: 700;
-      color: #f0f6fc;
-    }
-
-    .ai-reasoning-timer-badge {
-      font-size: 11px;
-      font-weight: 600;
-      background: rgba(56, 189, 248, 0.15);
-      color: #7dd3fc;
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      border-radius: 99px;
-      padding: 2px 8px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    }
-
-    .ai-reasoning-sub {
-      font-size: 11px;
-      color: #94a3b8;
-      margin-top: 2px;
-    }
-
-    .ai-reasoning-body {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      transition: all 0.3s ease;
-    }
-
-    .ai-reasoning-body.collapsed {
-      display: none;
-    }
-
-    .ai-reasoning-step-item {
-      background: rgba(15, 29, 46, 0.85);
-      border: 1px solid #233e59;
-      border-radius: 8px;
-      padding: 12px 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      position: relative;
-      transition: all 0.2s ease;
-    }
-
-    .ai-reasoning-step-item.active {
-      border-color: #38bdf8;
-      background: rgba(20, 42, 68, 0.95);
-      box-shadow: 0 0 12px rgba(56, 189, 248, 0.15);
-    }
-
-    .ai-reasoning-step-item.done {
-      border-color: #1e3a5f;
-    }
-
-    .step-top-line {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .step-phase-tag {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      color: #38bdf8;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .step-time-tag {
-      font-size: 10px;
-      color: #94a3b8;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    }
-
-    .step-title-text {
-      font-size: 13px;
-      font-weight: 700;
-      color: #f8fafc;
-      line-height: 1.35;
-    }
-
-    .step-thought-text {
-      font-size: 12px;
-      color: #cbd5e1;
-      line-height: 1.5;
-      white-space: pre-line;
-      background: rgba(8, 17, 28, 0.5);
-      padding: 8px 10px;
-      border-radius: 6px;
-      border-left: 2px solid #38bdf8;
-      font-family: inherit;
-    }
-
-    .step-telemetry-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 4px;
-    }
-
-    .step-telemetry-chip {
-      background: #102438;
-      border: 1px solid #204060;
-      color: #93c5fd;
-      padding: 2px 7px;
-      border-radius: 4px;
-      font-size: 11px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    }
-
-    /* Collapsible Thought Details in Right AI Chat */
-    .chat-thought-wrapper {
-      margin-bottom: 8px;
-    }
-
-    .chat-thought-details {
-      background: rgba(14, 26, 42, 0.8);
-      border: 1px solid #254260;
-      border-radius: 8px;
-      padding: 8px 10px;
-      font-size: 12px;
-      color: #94a3b8;
-    }
-
-    .chat-thought-details[open] {
-      background: rgba(12, 23, 37, 0.95);
-      border-color: #32587f;
-    }
-
-    .chat-thought-summary {
-      cursor: pointer;
-      font-weight: 600;
-      color: #7dd3fc;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      outline: none;
-      user-select: none;
-    }
-
-    .chat-thought-summary:hover {
-      color: #bae6fd;
-    }
-
-    .chat-thought-content {
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px dashed #223c56;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 11px;
-      line-height: 1.45;
-      color: #cbd5e1;
-    }
     #SCR-CASE-DETAIL .detail-inspector { display:block; flex:none; min-height:0; overflow:visible; }
     #SCR-CASE-DETAIL .history-toggle { display:flex; width:100%; align-items:center; justify-content:space-between; padding:14px 16px; border:0; background:#14243a; color:#f4f8fe; font:inherit; font-size:13px; font-weight:700; text-align:left; cursor:pointer; }
     #SCR-CASE-DETAIL .history-toggle:focus-visible { outline:2px solid #48cce9; outline-offset:-2px; }
@@ -854,6 +640,12 @@
     #SCR-CASE-DETAIL .chart-card-conditions ul { list-style: none; margin: 8px 0 0; padding: 0; }
     #SCR-CASE-DETAIL .chart-card-conditions li { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-top: 1px solid #233e59; font-size: 11px; color: #d3e5f0; }
     #SCR-CASE-DETAIL .chart-card-conditions li span:last-child { white-space: nowrap; color: #8ce2f7; }
+    #SCR-CASE-DETAIL .chart-card-conditions .condition-check { color:#8be6b5; font-size:16px; font-weight:800; line-height:1; }
+    #SCR-CASE-DETAIL .reasoning-box { background:#101e30; border:1px solid #294663; border-radius:10px; padding:16px; color:#d9e7f5; }
+    #SCR-CASE-DETAIL .reasoning-box p { margin:10px 0 0; font-size:13px; line-height:1.5; }
+    #SCR-CASE-DETAIL .reasoning-box .reasoning-head { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:700; color:#70dced; }
+    #SCR-CASE-DETAIL .reasoning-box .reasoning-next { display:block; margin:14px 0 0 auto; }
+    #SCR-CASE-DETAIL .reasoning-box .reasoning-next[hidden] { display:none; }
     #SCR-CASE-DETAIL #center-selected-chart-details { display: none; }
 
     .analyzed-chart-card {
@@ -1269,6 +1061,340 @@
       filter: brightness(1.1);
     }
 
+
+    /* =====================================================================
+       KNIA FULL CHART CARD (Exact Match to User Specification / Wireframe)
+       ===================================================================== */
+    .knia-full-chart-card {
+      background: linear-gradient(180deg, #102236 0%, #0c1a29 100%);
+      border: 1.5px solid #284c70;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 14px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      position: relative;
+    }
+
+    .kfc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .kfc-title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .kfc-badge-circle {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #2563eb;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .kfc-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 0;
+      letter-spacing: -0.2px;
+    }
+
+    .kfc-match-pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 12px;
+      border-radius: 99px;
+      text-transform: lowercase;
+    }
+
+    .kfc-match-pill.strong {
+      background: #2563eb;
+      color: #ffffff;
+    }
+
+    .kfc-match-pill.moderate {
+      background: #0284c7;
+      color: #ffffff;
+    }
+
+    .kfc-match-pill.possible {
+      background: #64748b;
+      color: #ffffff;
+    }
+
+    .kfc-summary-lead {
+      font-size: 13px;
+      color: #94a3b8;
+      line-height: 1.5;
+      margin: 0 0 16px 0;
+    }
+
+    .kfc-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(280px, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .kfc-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Left Column */
+    .kfc-col-left {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .kfc-explanation-block p {
+      font-size: 12.5px;
+      color: #cbd5e1;
+      line-height: 1.6;
+      margin: 0;
+      text-align: justify;
+    }
+
+    .kfc-conditions-box {
+      border: 1px solid #233e59;
+      border-radius: 8px;
+      overflow: hidden;
+      background: rgba(12, 23, 37, 0.7);
+    }
+
+    .kfc-conditions-header {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 14px;
+      background: #172a40;
+      border-bottom: 1px solid #233e59;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+
+    .kfc-condition-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      border-bottom: 1px solid #1a2f45;
+      font-size: 12px;
+      color: #e2e8f0;
+    }
+
+    .kfc-condition-row:last-child {
+      border-bottom: none;
+    }
+
+    .kfc-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .kfc-status-pill.supported {
+      color: #38bdf8;
+    }
+
+    .kfc-status-pill.contradicted {
+      color: #f87171;
+    }
+
+    /* Right Column */
+    .kfc-col-right {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .kfc-card-subblock {
+      background: #0f1f33;
+      border: 1px solid #254260;
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+
+    .kfc-subblock-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-bottom: 2px;
+    }
+
+    .kfc-subblock-desc {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-bottom: 10px;
+    }
+
+    .kfc-actors-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .kfc-actor-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .kfc-actor-pill {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1.5px solid #64748b;
+      color: #cbd5e1;
+      font-weight: 800;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2px;
+    }
+
+    .kfc-actor-item:first-child .kfc-actor-pill {
+      border-color: #38bdf8;
+      color: #38bdf8;
+    }
+
+    .kfc-actor-item:last-child .kfc-actor-pill {
+      border-color: #f87171;
+      color: #f87171;
+    }
+
+    .kfc-actor-action {
+      font-size: 12px;
+      color: #e2e8f0;
+      font-weight: 500;
+      line-height: 1.35;
+    }
+
+    .kfc-ratio-big {
+      font-size: 28px;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: 0.5px;
+      margin-top: 4px;
+    }
+
+    /* Video player */
+    .kfc-chart-video-player {
+      padding: 0;
+      overflow: hidden;
+      background: #0b1522;
+    }
+
+    .chart-video-viewport {
+      position: relative;
+      width: 100%;
+      height: 155px;
+      background: #1e293b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    #chart-sim-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .chart-video-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .chart-video-overlay:hover {
+      background: rgba(0, 0, 0, 0.15);
+    }
+
+    .chart-play-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(37, 99, 235, 0.85);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+      padding-left: 3px;
+    }
+
+    .chart-video-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      background: rgba(10, 20, 32, 0.95);
+      font-size: 11px;
+      color: #cbd5e1;
+    }
+
+    .cv-ctrl-btn {
+      background: none;
+      border: none;
+      color: #cbd5e1;
+      cursor: pointer;
+      font-size: 12px;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+
+    .cv-ctrl-btn:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .cv-time {
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-size: 10.5px;
+      color: #94a3b8;
+      white-space: nowrap;
+    }
+
+    .cv-progress-bar {
+      flex: 1;
+      height: 4px;
+      background: #334155;
+      border-radius: 99px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .cv-progress-fill {
+      height: 100%;
+      background: #38bdf8;
+      transition: width 0.1s linear;
+    }
+
   </style>
 </head>
 <body class="ams-dark">
@@ -1430,29 +1556,10 @@
             </div>
           </div>
 
-          <!-- AI MULTIMODAL REASONING CARD (Chain-of-Thought / Deep Multimodal Reasoning) -->
-          <div class="ai-reasoning-card" id="ai-reasoning-card" style="display:none;" role="region" aria-label="Chuỗi suy luận AI">
-            <div class="ai-reasoning-header">
-              <div class="ai-reasoning-title-group">
-                <span class="ai-brain-pulse">🧠</span>
-                <div>
-                  <div class="ai-reasoning-main-title">
-                    <span>Chuỗi Suy Luận AI (Multimodal Reasoning Trace)</span>
-                    <span class="ai-reasoning-timer-badge" id="ai-reasoning-timer">⏱ 0.0s</span>
-                  </div>
-                  <div class="ai-reasoning-sub">Model VLM Qwen-397B · Khảo sát Đa Giả Thuyết KNIA &amp; Viễn trắc Khung hình 60fps</div>
-                </div>
-              </div>
-              <div class="ai-reasoning-actions">
-                <button type="button" class="btn btn-secondary btn-sm" id="btn-toggle-reasoning" onclick="toggleReasoningCollapse()" style="font-size:11px; padding:3px 8px;">
-                  ▾ Thu gọn suy luận
-                </button>
-              </div>
-            </div>
-            
-            <div class="ai-reasoning-body" id="ai-reasoning-stream">
-              <!-- Rendered via renderAiReasoning(c) -->
-            </div>
+          <div class="reasoning-box" id="ai-reasoning-card" style="display:none;" role="status" aria-live="polite">
+            <div class="reasoning-head"><span>AI phân tích video</span><span id="ai-reasoning-timer"></span></div>
+            <p id="ai-reasoning-stream"></p>
+            <button type="button" class="btn btn-primary btn-sm reasoning-next" id="reasoning-next" onclick="showAnalysisStep('charts')" data-tooltip="Xem danh sách chart sau khi phân tích hoàn tất" hidden>Chọn chart →</button>
           </div>
 
           <nav class="analysis-steps" id="analysis-steps" aria-label="Các bước phân tích">
@@ -2590,7 +2697,7 @@
         videoName: video ? 'Chưa có video' : DEMO_ANALYSIS.videoName,
         videoDuration: video ? 0 : DEMO_ANALYSIS.videoDuration,
         videoTime: 0, videoUrl: null, stage: 0, statusText: 'Chờ phân tích',
-        selectedChart: null, analysisView: 'charts', reportVersions: [], activeReportVersion: null, isReportConfirmed: false, isClosed: false,
+        selectedChart: null, analysisView: 'reasoning', reportVersions: [], activeReportVersion: null, isReportConfirmed: false, isClosed: false,
         charts: [], events: [], conditions: [], negotiationFactors: [], evidenceByChart: {}, comparisonMode: false, compareWith: null,
         reportSnapshots: {}, pendingVersion: null, reportNote: '', historyExpanded: false, expandedConditionCharts: [],
         notificationBlocks: null, notificationSent: [], notificationChannel: 'Kakao',
@@ -2637,7 +2744,7 @@
         c.stage = 1;
         c.statusText = '1. Đang phân tích';
         c.selectedChart = null;
-        c.analysisView = 'charts';
+        c.analysisView = 'reasoning';
         c.comparisonMode = false;
         c.compareWith = null;
         c.evidenceByChart = {};
@@ -2655,146 +2762,28 @@
       probe.src = url;
     }
 
-    /* =====================================================================
-       AI MULTIMODAL REASONING TRACE (Chain-of-Thought / Deep Multimodal Reasoning)
-       ===================================================================== */
-    const AI_REASONING_STEPS = [
-      {
-        id: 1,
-        phase: 'BƯỚC 1: KHỞI TẠO & GIẢI MÃ THỊ GIÁC (CV INGESTION)',
-        time: '0.4s',
-        icon: '🔍',
-        title: 'Trích xuất 60 fps & Hiệu chỉnh quang sai trường nhìn',
-        thought: 'Trích xuất chuỗi 1.080 khung hình từ video hành trình ở độ phân giải 1080p@60fps. Hiệu chỉnh quang sai góc rộng (Fisheye Distortion Correction) và cân bằng độ chói HDR. Đánh giá điều kiện ngoại cảnh: Ban ngày (14:30), mặt đường Teheran-ro khô ráo, tầm nhìn quan sát > 500m, không có vật cản thời tiết.',
-        telemetry: ['1080p @ 60fps', 'Fisheye Rectified', 'Độ rọi 12.000 lux', 'Tầm nhìn > 500m']
-      },
-      {
-        id: 2,
-        phase: 'BƯỚC 2: ĐỊNH DANH ĐỐI TƯỢNG & BÁM VẾT LÀN ĐƯỜNG (TRACKING)',
-        time: '1.0s',
-        icon: '🚘',
-        title: 'Bám vết quỹ đạo Xe Khách hàng (Genesis) và Xe Đối phương (Tucson)',
-        thought: 'Khóa 2 hộp định danh Bounding Box: Xe A (Genesis - Khách hàng, ID#01) và Xe B (Tucson - Đối phương, ID#02). VLM phân tích vạch phân làn số 2 liên tục từ 00:08 đến 00:15, tính toán tỷ lệ lệch tâm ngang 0.0%. Khẳng định: Cả 2 phương tiện đang di chuyển thẳng cùng chiều trong cùng một làn đường duy nhất.',
-        telemetry: ['Làn số 2 (Đường 4 làn)', 'Độ lệch ngang: 0.0%', 'Vận tốc Xe A: 48 km/h', 'Vận tốc Xe B: 42 km/h']
-      },
-      {
-        id: 3,
-        phase: 'BƯỚC 3: TRÍCH XUẤT CHUỖI MỐC VIỄN TRẮC SỰ KIỆN (TELEMETRY ANCHORING)',
-        time: '1.8s',
-        icon: '⚡',
-        title: 'Đo lường gia tốc phanh gấp, mất khoảng cách an toàn và điểm va chạm',
-        thought: '• Mốc 00:09.50: Đèn phanh Xe B sáng, cảm biến viễn trắc ghi nhận gia tốc giảm tốc đột ngột đạt -0.68G (vượt xa ngưỡng dừng êm ái -0.3G), trong khi phía trước vẫn còn khoảng trống an toàn 15m tới taxi dừng đèn đỏ.\n• Mốc 00:12.00: Khoảng cách giữa 2 xe rút nhanh còn 2.1m (với tốc độ 48 km/h đòi hỏi khoảng cách an toàn tối thiểu 18m) ➔ Cấu thành vi phạm Điều 19 Khoản 1 Luật Giao thông Đường bộ.\n• Mốc 00:15.24: Va chạm vật lý trực diện cản sau Tucson, độ lệch tâm tiếp xúc < 4cm.',
-        telemetry: ['00:09.50 (Phanh gấp -0.68G)', '00:11.00 (Tâm làn 3.4s)', '00:12.00 (Cự ly 2.1m / Thiếu 18m)', '00:15.24 (Va chạm lệch < 4cm)']
-      },
-      {
-        id: 4,
-        phase: 'BƯỚC 4: ĐỐI CHIẾU ĐA GIẢ THUYẾT QUY CHUẨN KNIA (HYPOTHESIS TESTING)',
-        time: '2.5s',
-        icon: '⚖️',
-        title: 'Khảo sát song song 3 giả thuyết biểu đồ KNIA trong đồ thị tri thức',
-        thought: '• Giả thuyết 1 - 도표 252 (Chuyển làn): MÂU THUẪN! Video xác thực Xe B đã hoàn tất nhập làn từ 00:08 (chạy thẳng ổn định 3.4s > 30m trước va chạm). Không thỏa mãn điều kiện va chạm tức thì ➔ Loại trừ (Khớp 68%).\n• Giả thuyết 2 - 도표 245 (Phanh gấp vô cớ): Phía trước Xe B có xe taxi giảm tốc chờ đèn đỏ ➔ Việc phanh có nguyên nhân khách quan ➔ Loại trừ (Khớp 52%).\n• Giả thuyết 3 - 도표 244 (Tông đuôi do thiếu cự ly an toàn): Thỏa mãn hoàn toàn 4/4 điều kiện định nghĩa chuẩn KNIA ➔ Khẳng định là biểu đồ tối ưu (Khớp 91% - Strong Match).',
-        telemetry: ['도표 244: 91% (Hạng 1)', '도표 252: 68% (Mâu thuẫn cự ly 32m)', '도표 245: 52% (Mâu thuẫn lý do phanh)']
-      },
-      {
-        id: 5,
-        phase: 'BƯỚC 5: TỔNG HỢP PHÁP LÝ & TỶ LỆ LỖI (LEGAL REASONING SYNTHESIS)',
-        time: '3.2s',
-        icon: '🎯',
-        title: 'Xác lập tỷ lệ cơ sở 100:0 & Đề xuất giảm 10% theo Án lệ 96다39314',
-        thought: '• Tỷ lệ lỗi cơ sở chuẩn KNIA Biểu đồ 244: Xe A 100% : Xe B 0%.\n• Áp dụng Án lệ Tòa án Tối cao Hàn Quốc 96다39314: Yếu tố Xe B phanh gấp -0.68G khi phía trước còn 15m khoảng trống là căn cứ bắt buộc giảm 10% trách nhiệm cho Xe A.\n• Tỷ lệ đề xuất sau điều chỉnh: Xe A 90% : Xe B 10%.\n• Khóa bất biến 4 Bằng chứng VLM cốt lõi và kết xuất ma trận điều kiện sang bảng thẩm định.',
-        telemetry: ['Lỗi cơ sở: 100 : 0', 'Án lệ Tối cao: 96다39314 (-10%)', 'Tỷ lệ sau điều chỉnh: 90 : 10', '4 Bằng chứng VLM: Khóa bất biến']
-      }
-    ];
-
-    function toggleReasoningCollapse() {
-      const c = STATE.cases[STATE.currentCaseId];
-      if (!c) return;
-      c.reasoningCollapsed = !c.reasoningCollapsed;
-      renderAiReasoning(c);
-    }
-
     function renderAiReasoning(c) {
       const card = document.getElementById('ai-reasoning-card');
       if (!card) return;
-
-      const isAnalyzing = Boolean(c && c.isAnalyzing);
-
-      if (!isAnalyzing) {
-        card.style.display = 'none';
-        return;
-      }
-
-      card.style.display = 'flex';
-      const timerEl = document.getElementById('ai-reasoning-timer');
-      const toggleBtn = document.getElementById('btn-toggle-reasoning');
-      const streamEl = document.getElementById('ai-reasoning-stream');
-
-      const maxStep = isAnalyzing ? Math.min(AI_REASONING_STEPS.length, c.reasoningStepIndex || 1) : AI_REASONING_STEPS.length;
-      const currentStepObj = AI_REASONING_STEPS[Math.max(0, maxStep - 1)];
-
-      if (isAnalyzing) {
-        if (timerEl) {
-          timerEl.innerHTML = `⏱ ${currentStepObj ? currentStepObj.time : '0.4s'} · Đang suy luận...`;
-          timerEl.style.borderColor = 'rgba(56, 189, 248, 0.6)';
-          timerEl.style.color = '#7dd3fc';
-        }
-        if (toggleBtn) {
-          toggleBtn.style.display = 'none';
-        }
-        streamEl.classList.remove('collapsed');
-      } else {
-        if (timerEl) {
-          timerEl.innerHTML = `✓ Hoàn tất chuỗi suy luận (5 bước trong 3.2s)`;
-          timerEl.style.borderColor = 'rgba(74, 222, 128, 0.5)';
-          timerEl.style.color = '#86efac';
-        }
-        if (toggleBtn) {
-          toggleBtn.style.display = 'inline-flex';
-          toggleBtn.innerHTML = c.reasoningCollapsed ? '▸ Xem chuỗi suy luận (5 bước phân tích VLM)' : '▾ Thu gọn suy luận';
-        }
-        streamEl.classList.toggle('collapsed', Boolean(c.reasoningCollapsed));
-      }
-
-      let html = '';
-      for (let i = 0; i < maxStep; i++) {
-        const step = AI_REASONING_STEPS[i];
-        const isCurrent = isAnalyzing && (i === maxStep - 1);
-        const isDone = !isAnalyzing || (i < maxStep - 1);
-        const statusBadge = isCurrent
-          ? `<span class="badge badge-primary" style="font-size:10px; background:rgba(56, 189, 248, 0.2); border-color:#38bdf8;">⏳ Đang kiểm chứng...</span>`
-          : `<span class="badge badge-high" style="font-size:10px; background:rgba(34, 197, 94, 0.15); border-color:#22c55e; color:#86efac;">✓ Đã xác thực</span>`;
-
-        html += `
-          <div class="ai-reasoning-step-item ${isCurrent ? 'active' : 'done'}">
-            <div class="step-top-line">
-              <span class="step-phase-tag">${step.icon} ${escapeHtml(step.phase)}</span>
-              <div style="display:flex; align-items:center; gap:8px;">
-                ${statusBadge}
-                <span class="step-time-tag">${escapeHtml(step.time)}</span>
-              </div>
-            </div>
-            <div class="step-title-text">${escapeHtml(step.title)}</div>
-            <div class="step-thought-text">${escapeHtml(step.thought)}</div>
-            <div class="step-telemetry-row">
-              ${step.telemetry.map(t => `<span class="step-telemetry-chip">${escapeHtml(t)}</span>`).join('')}
-            </div>
-          </div>
-        `;
-      }
-      streamEl.innerHTML = html;
+      card.style.display = c?.isAnalyzing || c?.analysisView === 'reasoning' && c.charts?.length ? 'block' : 'none';
+      if (card.style.display === 'none') return;
+      const messages = ['Đang đọc video và xác định các xe liên quan.', 'Đang kiểm tra chuyển động trước va chạm.', 'Đang đối chiếu tình huống với chart KNIA.', 'Đang tổng hợp các chart phù hợp.'];
+      const step = Math.min(c.reasoningStepIndex || 1, messages.length);
+      document.getElementById('ai-reasoning-timer').textContent = c.isAnalyzing ? `· Bước ${step}/${messages.length}` : '· Hoàn tất';
+      document.getElementById('ai-reasoning-stream').textContent = c.isAnalyzing ? messages[step - 1] : 'Đã phân tích video. Chọn chart để xem tiêu chí áp dụng và chứng cứ.';
+      document.getElementById('reasoning-next').hidden = !!c.isAnalyzing;
     }
 
-    function runFakeAnalysis(c, isReanalysis = false) {
+    function runFakeAnalysis(c) {
       c.isAnalyzing = true;
       c.selectedChart = null;
-      c.analysisView = 'charts';
+      c.analysisView = 'reasoning';
       c.comparisonMode = false;
       c.evidenceByChart = {};
       c.reasoningStepIndex = 1;
-      c.reasoningCollapsed = false;
       if (STATE.cases[STATE.currentCaseId] === c) renderCaseDetail();
 
-      const delays = [500, 1100, 1800, 2500, 3100];
+      const delays = [500, 1100, 1800, 2500];
       delays.forEach((delay, idx) => {
         setTimeout(() => {
           if (c.isAnalyzing && STATE.cases[STATE.currentCaseId] === c) {
@@ -2814,28 +2803,7 @@
         c.stage = 2;
         c.statusText = '2. Chờ chốt Chart & Báo cáo';
         c.isAnalyzing = false;
-        c.reasoningCollapsed = false;
 
-        const cur = (c.charts || [])[0];
-        const thoughtHtml = `
-          <div class="chat-thought-wrapper">
-            <details class="chat-thought-details">
-              <summary class="chat-thought-summary">
-                <span>💭 Đã suy luận trong 3.2 giây (5 bước phân tích VLM &amp; KNIA)</span>
-              </summary>
-              <div class="chat-thought-content">
-                <div><b>[0.4s] Khởi tạo &amp; Giải mã:</b> 60fps 1080p, hiệu chỉnh quang sai fisheye, ban ngày khô ráo.</div>
-                <div><b>[1.0s] Bám vết quỹ đạo:</b> Genesis và Tucson bám thẳng làn 2 đường Teheran-ro (độ lệch 0.0%).</div>
-                <div><b>[1.8s] Viễn trắc mốc thời gian:</b> 00:09.50 (-0.68G) ➔ 00:12.00 (cự ly 2.1m) ➔ 00:15.24 (tiếp xúc cản sau).</div>
-                <div><b>[2.5s] Đa giả thuyết KNIA:</b> 도표 252 (mâu thuẫn cự ly 32m) ➔ 도표 245 (mâu thuẫn taxi trước) ➔ Chốt 도표 244 (91%).</div>
-                <div><b>[3.2s] Tổng hợp pháp lý:</b> Lỗi cơ sở 100:0; Kích hoạt Án lệ Tòa án Tối cao 96다39314 giảm 10% cho xe sau.</div>
-              </div>
-            </details>
-          </div>
-          <div>Phân tích hoàn tất. Chart đề xuất: <b>${escapeHtml(cur?.code || '—')}</b> (${cur?.match || 0}% khớp). Chọn chart ở bước 1 để xem bằng chứng.</div>
-        `;
-
-        appendAgentMessage(thoughtHtml);
         if (STATE.cases[STATE.currentCaseId] === c) renderCaseDetail();
       }, 3300);
     }
@@ -2894,7 +2862,7 @@
       const c = STATE.cases[STATE.currentCaseId];
       if (!c) return;
       const ready = c.charts && c.charts.length > 0;
-      c.analysisView ||= 'charts';
+      c.analysisView ||= 'reasoning';
 
       const playerTitle = document.getElementById('player-title');
       if (playerTitle) {
@@ -2921,7 +2889,7 @@
       if (chartPanel) {
         chartPanel.style.display = ready && !c.isAnalyzing && c.analysisView === 'charts' ? 'block' : 'none';
       }
-      document.getElementById('analysis-steps').hidden = !ready || !!c.isAnalyzing;
+      document.getElementById('analysis-steps').hidden = !ready || !!c.isAnalyzing || c.analysisView === 'reasoning';
       const evidenceStep = document.getElementById('analysis-step-evidence');
       evidenceStep.disabled = !c.selectedChart;
       document.getElementById('analysis-selected-chart').textContent = c.selectedChart || 'Chọn chart để tiếp tục';
@@ -3277,7 +3245,7 @@
         const matchBadgeClass = chart.match >= 80 ? 'badge-high' : (chart.match >= 60 ? 'badge-primary' : 'badge-mid');
         const conditions = chart.conditions || (idx === 0 ? c.conditions : []) || [];
         const conditionList = conditions.length
-          ? conditions.map(row => `<li><span>${escapeHtml(row.name)}</span><span>${escapeHtml(row.status)}</span></li>`).join('')
+          ? conditions.map(row => `<li><span>${escapeHtml(row.name)}</span>${row.status === 'Khớp' || row.status === '일치' ? '<span class="condition-check" aria-label="Khớp" title="Khớp">✓</span>' : `<span>${escapeHtml(row.status)}</span>`}</li>`).join('')
           : '<li>Chưa có tiêu chí chi tiết</li>';
 
         card.innerHTML = `
@@ -3707,7 +3675,7 @@
         return;
       }
 
-      runFakeAnalysis(c, true);
+      runFakeAnalysis(c);
     }
 
     function processAgentChat(text) {
@@ -3747,7 +3715,7 @@
       c.statusText = '2. Chờ chốt Chart & Báo cáo';
       c.charts = JSON.parse(JSON.stringify(template.charts));
       c.selectedChart = null;
-      c.analysisView = 'charts';
+      c.analysisView = 'reasoning';
       c.comparisonEvidence = JSON.parse(JSON.stringify(template.comparisonEvidence));
       c.conditions = JSON.parse(JSON.stringify(template.conditions));
       c.negotiationFactors = JSON.parse(JSON.stringify(template.negotiationFactors));
