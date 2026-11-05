@@ -462,13 +462,22 @@
     #SCR-CASE-DETAIL .workspace-sidebar .chat-panel { width:100%; height:100%; min-height:0; }
     #SCR-CASE-DETAIL .workspace-sidebar .chat-panel.awaiting-chart { height:auto; min-height:0; }
     #SCR-CASE-DETAIL .chat-panel.awaiting-chart .chat-body { flex:0 1 auto; min-height:140px; max-height:min(45vh,380px); }
-    #SCR-CASE-DETAIL .case-confirm-card { align-self:stretch; display:grid; gap:10px; padding:16px; border:1px solid #48cce9; border-radius:12px; background:#14283c; }
-    #SCR-CASE-DETAIL .case-confirm-card > strong { color:#f4f8fe; font-size:15px; }
-    #SCR-CASE-DETAIL .case-confirm-card label { display:grid; gap:5px; color:#bcd0df; font-size:11px; }
-    #SCR-CASE-DETAIL .case-confirm-card .chat-input { width:100%; }
-    #SCR-CASE-DETAIL .case-confirm-extra { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-    #SCR-CASE-DETAIL #draft-case-error { min-height:0; margin:0; color:#ffb2bd; font-size:11px; }
-    #SCR-CASE-DETAIL .case-confirm-card .btn { justify-self:start; }
+    .case-form { display:grid; gap:12px; }
+    .case-form label { display:grid; gap:5px; color:#d9e7f5; font-size:12px; font-weight:600; }
+    .case-form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .case-form .chat-input { width:100%; color-scheme:dark; background:#0c1929; color:#f1f8fd; border-color:#39516a; }
+    #SCR-CASE-DETAIL .analysis-progress { display:none; flex:1; min-height:0; overflow:auto; padding:32px; color:#e8f0fa; background:#0c1929; }
+    #SCR-CASE-DETAIL .chat-panel.analyzing .analysis-progress { display:flex; flex-direction:column; justify-content:center; }
+    #SCR-CASE-DETAIL .chat-panel.analyzing .chat-body, #SCR-CASE-DETAIL .chat-panel.analyzing .chat-footer { display:none; }
+    #SCR-CASE-DETAIL .analysis-progress-kicker { color:#71dcea; font-size:11px; font-weight:700; letter-spacing:.12em; }
+    #SCR-CASE-DETAIL .analysis-progress h2 { margin:10px 0 4px; color:#fff; font-size:23px; }
+    #SCR-CASE-DETAIL .analysis-progress p { margin:0 0 18px; color:#a9bed1; font-size:12px; }
+    #SCR-CASE-DETAIL .analysis-progress-track { height:7px; border-radius:999px; background:#274358; overflow:hidden; }
+    #SCR-CASE-DETAIL .analysis-progress-track span { display:block; height:100%; width:0; background:#48cce9; transition:width .35s ease; }
+    #SCR-CASE-DETAIL .analysis-progress ol { list-style:none; display:grid; gap:10px; padding:20px 0 0; margin:0; }
+    #SCR-CASE-DETAIL .analysis-progress li { padding:12px 14px; border:1px solid #2b4057; border-radius:9px; color:#91a5bd; background:#14243a; font-size:13px; }
+    #SCR-CASE-DETAIL .analysis-progress li.active { border-color:#48cce9; color:#fff; background:#17384a; }
+    #SCR-CASE-DETAIL .analysis-progress li.done { border-color:#367b68; color:#9be7c7; }
     #SCR-CASE-DETAIL .detail-inspector { display:block; flex:none; min-height:0; overflow:visible; }
     #SCR-CASE-DETAIL .history-toggle { display:flex; width:100%; align-items:center; justify-content:space-between; padding:14px 16px; border:0; background:#14243a; color:#f4f8fe; font:inherit; font-size:13px; font-weight:700; text-align:left; cursor:pointer; }
     #SCR-CASE-DETAIL .history-toggle:focus-visible { outline:2px solid #48cce9; outline-offset:-2px; }
@@ -514,10 +523,7 @@
       #SCR-CASE-DETAIL .detail-inspector { position:static; max-height:none; }
       #SCR-CASE-DETAIL .inspector-content { max-height:30vh; }
     }
-    #SCR-CASE-DETAIL.draft-mode .workspace-layout { display:block; max-width:820px; margin:auto; }
-    #SCR-CASE-DETAIL.draft-mode .workspace-main, #SCR-CASE-DETAIL.draft-mode .case-version-context { display:none; }
-    #SCR-CASE-DETAIL.draft-mode .workspace-sidebar { position:static; width:100%; height:auto; min-height:0; overflow:visible; }
-    #SCR-CASE-DETAIL.draft-mode .chat-panel.awaiting-chart .chat-body { min-height:220px; max-height:60vh; }
+    @media (max-width:600px) { .case-form-row { grid-template-columns:1fr; } #SCR-CASE-DETAIL .analysis-progress { padding:20px; } }
 
     /* =====================================================================
        LEFT COLLAPSIBLE HOVER DOCK (CASE & CHAT SWITCHER)
@@ -1613,7 +1619,7 @@
         </div>
         <div style="display:flex; gap:10px;">
           <button class="btn btn-secondary" onclick="switchCaseTab('archived')" id="btn-tab-archived" data-tooltip="Xem các hồ sơ đã lưu trữ vào kho">Kho lưu trữ (0)</button>
-          <button class="btn btn-primary" onclick="startNewCase()" data-tooltip="Mô tả vụ việc với AI, xác nhận thông tin rồi tạo hồ sơ">+ Tạo Vụ Việc Mới</button>
+          <button class="btn btn-primary" onclick="startNewCase()" data-tooltip="Nhập thông tin vụ việc trước khi mở phân tích">+ Tạo Vụ Việc Mới</button>
         </div>
       </div>
       <div class="queue-metrics" role="group" aria-label="Lọc vụ việc theo trạng thái">
@@ -1872,13 +1878,22 @@
                 <button type="button" class="btn btn-secondary btn-sm" id="btn-compare-evidence" onclick="toggleEvidenceComparison()" aria-pressed="false" data-tooltip="So sánh chứng cứ của chart đang xem với chart khác">So sánh chứng cứ</button>
               </div>
             </div>
+            <div class="analysis-progress" id="analysis-progress" role="status" aria-live="polite">
+              <span class="analysis-progress-kicker">AI ĐANG PHÂN TÍCH</span>
+              <h2 id="analysis-progress-title">Kiểm tra video</h2>
+              <p id="analysis-progress-count">Bước 1/4</p>
+              <div class="analysis-progress-track"><span id="analysis-progress-fill"></span></div>
+              <ol id="analysis-progress-steps">
+                <li>Kiểm tra video</li><li>Nhận diện sự kiện</li><li>Đối chiếu chart KNIA</li><li>Tổng hợp kết quả</li>
+              </ol>
+            </div>
             <div class="chat-body" id="chat-messages-container" aria-live="polite"></div>
             <div class="chat-footer">
               <div class="chat-chips" id="case-quick-chips" aria-label="Câu hỏi gợi ý"></div>
               <div class="chat-input-row">
                 <input id="case-video-input" type="file" accept=".mp4,.mov,.avi,.mkv,video/*" style="display:none" onchange="selectVideoFile(this.files[0])">
-                <button class="btn btn-secondary btn-sm" id="btn-attach-video" onclick="document.getElementById('case-video-input').click()" data-tooltip="Đính kèm video sau khi xác nhận tạo vụ việc" aria-label="Đính kèm video">📎</button>
-                <input type="text" id="chat-input-field" class="chat-input" placeholder="Mô tả vụ việc hoặc trả lời AI..." onkeydown="if(event.key==='Enter') sendChatMessage()">
+                <button class="btn btn-secondary btn-sm" id="btn-attach-video" onclick="document.getElementById('case-video-input').click()" data-tooltip="Đính kèm video để AI phân tích vụ việc" aria-label="Đính kèm video">📎</button>
+                <input type="text" id="chat-input-field" class="chat-input" placeholder="Hỏi AI về vụ việc hoặc chart..." onkeydown="if(event.key==='Enter') sendChatMessage()">
                 <button class="btn btn-primary btn-sm" onclick="sendChatMessage()" data-tooltip="Gửi tin nhắn cho Agent">Gửi</button>
               </div>
             </div>
@@ -2136,6 +2151,23 @@ Vụ việc tai nạn ngày 04/11 đã có kết quả phân tích:
     </div>
 
   </main>
+
+  <div class="modal-backdrop" id="modal-new-case" role="dialog" aria-modal="true" aria-labelledby="new-case-title">
+    <div class="modal-box" style="max-width:520px;">
+      <form id="new-case-form" onsubmit="createNewCase(event)">
+        <div class="modal-header"><span id="new-case-title">Tạo vụ việc mới</span><button type="button" class="btn btn-secondary btn-sm" onclick="closeNewCaseModal()" aria-label="Đóng">✕</button></div>
+        <div class="modal-body case-form">
+          <label>Tên vụ việc <input class="chat-input" id="new-case-name" maxlength="80" required placeholder="Ví dụ: Va chạm tại ngã tư Gangnam"></label>
+          <label>Tên khách hàng <input class="chat-input" id="new-case-customer" maxlength="80" required placeholder="Tên người được bảo hiểm"></label>
+          <label>Thời điểm tai nạn <input class="chat-input" id="new-case-date" type="datetime-local" required></label>
+          <label>Địa điểm <input class="chat-input" id="new-case-location" maxlength="120" placeholder="Tùy chọn"></label>
+          <div class="case-form-row"><label>Biển số xe <input class="chat-input" id="new-case-plate" maxlength="30" placeholder="Tùy chọn"></label><label>Số hợp đồng <input class="chat-input" id="new-case-policy" maxlength="50" placeholder="Tùy chọn"></label></div>
+          <p id="new-case-error" role="alert" style="color:#ffb2bd;font-size:12px;display:none;">Cần nhập tên vụ việc, khách hàng và thời điểm.</p>
+        </div>
+        <div class="modal-footer"><button type="button" class="btn btn-secondary" onclick="closeNewCaseModal()">Hủy</button><button type="submit" class="btn btn-primary">Tạo và mở phân tích</button></div>
+      </form>
+    </div>
+  </div>
 
   <!-- MODAL: Tra Cứu Nguồn Chuẩn KNIA -->
   <div class="modal-backdrop" id="modal-knia-source">
@@ -2418,7 +2450,7 @@ Vụ việc tai nạn ngày 04/11 đã có kết quả phân tích:
     function renderCaseTable() {
       const tbody = document.getElementById('case-table-body');
       tbody.innerHTML = '';
-      const cases = Object.values(STATE.cases).filter(c => !c.isDraft);
+      const cases = Object.values(STATE.cases);
       document.getElementById('metric-total').textContent = cases.length;
       document.getElementById('metric-wait-video').textContent = cases.filter(c => c.stage === 0).length;
       document.getElementById('metric-attention').textContent = cases.filter(c => c.stage === 1).length;
@@ -2444,7 +2476,6 @@ Vụ việc tai nạn ngày 04/11 đã có kết quả phân tích:
       let count = 0;
       Object.keys(STATE.cases).forEach(key => {
         const c = STATE.cases[key];
-        if (c.isDraft) return;
         if (stageFilter !== 'ALL' && c.stage.toString() !== stageFilter) return;
         if (search && !c.code.toLowerCase().includes(search) && !c.customer.toLowerCase().includes(search) && !c.vehicleNo.toLowerCase().includes(search) && !(c.caseTitle || '').toLowerCase().includes(search)) return;
 
@@ -2501,80 +2532,51 @@ Vụ việc tai nạn ngày 04/11 đã có kết quả phân tích:
       navigate('SCR-CASE-DETAIL');
     }
 
-    /* A draft lives only in memory until the user confirms its summary card. */
+    /* Case details are confirmed in the form before the analysis chat opens. */
+    let newCaseReturnFocus = null;
     function startNewCase() {
-      if (!STATE.cases.draft) {
-        const c = JSON.parse(JSON.stringify(STATE.cases['10']));
-        Object.assign(c, {
-          id: '', code: '', caseTitle: '', customer: '', accidentDate: '', location: '', policyNo: '—', vehicleNo: '—',
-          videoName: 'Chưa có video', videoDuration: 0, videoTime: 0, videoUrl: null, stage: 0, statusText: 'Bản nháp',
-          selectedChart: null, reportVersions: [], activeReportVersion: null, isReportConfirmed: false, isClosed: false,
-          charts: [], events: [], conditions: [], negotiationFactors: [], evidenceByChart: {}, comparisonMode: false, compareWith: null,
-          reportSnapshots: {}, pendingVersion: null, reportNote: '', historyExpanded: false, expandedConditionCharts: [],
-          notificationTitle: '', notificationBody: '', shareLink: null, finalFaultA: 0, finalFaultB: 0, isDraft: true,
-          draftStep: 'description', chatHistory: [{ role: 'agent', text: 'Hãy mô tả ngắn vụ tai nạn. Tôi sẽ hỏi thêm thông tin cần thiết trước khi tạo hồ sơ.' }]
-        });
-        STATE.cases.draft = c;
-      }
-      STATE.currentCaseId = 'draft';
-      navigate('SCR-CASE-DETAIL');
-      document.getElementById('chat-input-field').focus();
+      newCaseReturnFocus = document.activeElement;
+      document.getElementById('new-case-form').reset();
+      document.getElementById('new-case-error').style.display = 'none';
+      document.getElementById('new-case-date').value = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+      document.getElementById('modal-new-case').classList.add('open');
+      document.getElementById('new-case-name').focus();
     }
 
-    function parseDraftDate(value) {
-      const match = value.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})$/);
-      const iso = match ? `${match[3]}-${match[2].padStart(2, '0')}-${match[1].padStart(2, '0')}T${match[4].padStart(2, '0')}:${match[5]}` : value.trim().replace(' ', 'T');
-      const date = new Date(iso);
-      return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(iso) && !Number.isNaN(date.getTime()) && date.getFullYear() === Number(iso.slice(0, 4)) && date.getMonth() + 1 === Number(iso.slice(5, 7)) && date.getDate() === Number(iso.slice(8, 10)) ? iso : null;
+    function closeNewCaseModal() {
+      document.getElementById('modal-new-case').classList.remove('open');
+      newCaseReturnFocus?.focus?.();
     }
 
-    function handleDraftMessage(text) {
-      const c = STATE.cases.draft;
-      if (c.draftStep === 'description') {
-        c.description = text;
-        c.caseTitle = text.slice(0, 80);
-        c.draftStep = 'customer';
-        appendAgentMessage('Tên khách hàng hoặc người được bảo hiểm là gì?');
-      } else if (c.draftStep === 'customer') {
-        c.customer = text.slice(0, 80);
-        c.draftStep = 'date';
-        appendAgentMessage('Tai nạn xảy ra lúc nào? Nhập theo dạng 05/11/2026 14:30.');
-      } else if (c.draftStep === 'date') {
-        const date = parseDraftDate(text);
-        if (!date) { appendAgentMessage('Chưa đọc được thời điểm. Hãy nhập dạng 05/11/2026 14:30.'); return; }
-        c.accidentDate = date.replace('T', ' ');
-        c.draftStep = 'review';
-        appendAgentMessage('Đã có thông tin tối thiểu. Kiểm tra thẻ bên dưới trước khi tạo vụ việc.');
-      } else {
-        appendAgentMessage('Bạn có thể sửa thông tin trên thẻ xác nhận, rồi bấm Tạo vụ việc.');
-      }
-    }
-
-    function confirmDraftCase(event) {
+    function createNewCase(event) {
       event.preventDefault();
-      const c = STATE.cases.draft;
-      if (!c) return;
-      const name = document.getElementById('draft-case-name').value.trim();
-      const customer = document.getElementById('draft-case-customer').value.trim();
-      const date = parseDraftDate(document.getElementById('draft-case-date').value);
-      if (!name || !customer || !date) {
-        document.getElementById('draft-case-error').textContent = 'Cần tên vụ việc, khách hàng và thời điểm hợp lệ.';
+      const name = document.getElementById('new-case-name').value.trim();
+      const customer = document.getElementById('new-case-customer').value.trim();
+      const date = document.getElementById('new-case-date').value;
+      if (!name || !customer || !date || Number.isNaN(new Date(date).getTime())) {
+        document.getElementById('new-case-error').style.display = 'block';
         return;
       }
       const key = String(Math.max(...Object.keys(STATE.cases).filter(id => /^\d+$/.test(id)).map(Number)) + 1);
+      const c = JSON.parse(JSON.stringify(STATE.cases['10']));
       Object.assign(c, {
         id: `#${key}`, code: `CS-${new Date().getFullYear()}-${key.padStart(4, '0')}`,
-        caseTitle: name.slice(0, 80), customer: customer.slice(0, 80), accidentDate: date.replace('T', ' '),
-        location: document.getElementById('draft-case-location').value.trim().slice(0, 120),
-        vehicleNo: document.getElementById('draft-case-plate').value.trim().slice(0, 30) || '—',
-        policyNo: document.getElementById('draft-case-policy').value.trim().slice(0, 50) || '—',
-        isDraft: false, statusText: 'Chờ video'
+        caseTitle: name, customer, accidentDate: date.replace('T', ' '),
+        location: document.getElementById('new-case-location').value.trim(),
+        vehicleNo: document.getElementById('new-case-plate').value.trim() || '—',
+        policyNo: document.getElementById('new-case-policy').value.trim() || '—',
+        videoName: 'Chưa có video', videoDuration: 0, videoTime: 0, videoUrl: null, stage: 0, statusText: 'Chờ video',
+        selectedChart: null, reportVersions: [], activeReportVersion: null, isReportConfirmed: false, isClosed: false,
+        charts: [], events: [], conditions: [], negotiationFactors: [], evidenceByChart: {}, comparisonMode: false, compareWith: null,
+        reportSnapshots: {}, pendingVersion: null, reportNote: '', historyExpanded: false, expandedConditionCharts: [],
+        notificationTitle: '', notificationBody: '', shareLink: null, finalFaultA: 0, finalFaultB: 0,
+        isAnalyzing: false, analysisStep: 0,
+        chatHistory: [{ role: 'agent', text: 'Vụ việc đã được tạo. Đính kèm video để bắt đầu phân tích.' }]
       });
-      delete STATE.cases.draft;
       STATE.cases[key] = c;
       STATE.currentCaseId = key;
-      c.chatHistory.push({ role: 'agent', text: `Đã tạo vụ việc ${c.id}. Đính kèm video để bắt đầu phân tích.` });
-      renderCaseDetail();
+      closeNewCaseModal();
+      navigate('SCR-CASE-DETAIL');
       document.getElementById('chat-input-field').focus();
     }
 
@@ -2582,7 +2584,6 @@ Vụ việc tai nạn ngày 04/11 đã có kết quả phân tích:
       if (!file) return;
       const c = STATE.cases[STATE.currentCaseId];
       document.getElementById('case-video-input').value = '';
-      if (c.isDraft) { appendAgentMessage('Xác nhận thẻ thông tin vụ việc trước khi đính kèm video.'); return; }
       if (c.isReportConfirmed || c.isClosed) {
         appendAgentMessage('Báo cáo đã chốt. Hãy tạo vụ việc mới nếu cần phân tích video khác.');
         return;
@@ -2627,10 +2628,12 @@ Vụ việc tai nạn ngày 04/11 đã có kết quả phân tích:
     }
 
     function runFakeAnalysis(c) {
-      const steps = ['Đã kiểm tra video', 'Đang xác định sự kiện', 'Đang đối chiếu chart KNIA', 'Đang tổng hợp kết quả'];
+      const steps = ['Kiểm tra video', 'Nhận diện sự kiện', 'Đối chiếu chart KNIA', 'Tổng hợp kết quả'];
+      c.isAnalyzing = true;
+      c.analysisStep = 0;
+      if (STATE.cases[STATE.currentCaseId] === c) renderCaseDetail();
       steps.forEach((step, index) => setTimeout(() => {
-        c.chatHistory.push({ role: 'agent', text: `Demo ${index + 1}/4 · ${step}` });
-        if (STATE.cases[STATE.currentCaseId] === c) renderCaseChat(c);
+        c.analysisStep = index + 1;
         if (index === steps.length - 1) {
           const sample = STATE.cases['10'];
           c.charts = JSON.parse(JSON.stringify(sample.charts));
@@ -2639,10 +2642,14 @@ Vụ việc tai nạn ngày 04/11 đã có kết quả phân tích:
           c.demoGenerated = true;
           c.stage = 2;
           c.statusText = '2. Chờ chốt Chart & Báo cáo';
+          c.isAnalyzing = false;
+          c.chatHistory.push({ role: 'agent', text: `Phân tích ${c.videoName} đã hoàn tất. Chọn chart để xem điều kiện và chứng cứ.` });
           c.chatHistory.push({ role: 'result' });
           if (STATE.cases[STATE.currentCaseId] === c) renderCaseDetail();
+        } else if (STATE.cases[STATE.currentCaseId] === c) {
+          renderAnalysisProgress(c);
         }
-      }, 450 * (index + 1)));
+      }, 1200 * (index + 1)));
     }
 
     /* =====================================================================
@@ -2651,20 +2658,22 @@ Vụ việc tai nạn ngày 04/11 đã có kết quả phân tích:
     function renderCaseDetail() {
       const c = STATE.cases[STATE.currentCaseId];
       if (!c) return;
-      document.getElementById('SCR-CASE-DETAIL').classList.toggle('draft-mode', !!c.isDraft);
       const ready = c.charts.length > 0;
       document.getElementById('player-title').innerText = c.videoName === 'Chưa có video' ? 'Video vụ việc' : c.videoName;
-      document.getElementById('case-context-code').innerText = c.isDraft ? 'VỤ VIỆC MỚI · BẢN NHÁP' : `VỤ VIỆC ${c.id}`;
+      document.getElementById('case-context-code').innerText = `VỤ VIỆC ${c.id}`;
       document.getElementById('case-context-title').innerText = c.caseTitle || (c.videoName === 'Chưa có video' ? 'Vụ việc mới' : `${c.customer} · ${c.videoName}`);
       const activeChart = reportChartCode(c);
       document.getElementById('case-current-version').textContent = c.activeReportVersion ? `Hiện hành: ${c.activeReportVersion} · ${activeChart || '—'}` : 'Chưa có báo cáo';
       document.getElementById('case-preview-chart').textContent = c.selectedChart ? `Đang xem thử: ${c.selectedChart}${c.selectedChart === activeChart ? ' · chart hiện hành' : ' · chưa tạo báo cáo'}` : 'Chưa xem chart';
-      const chatTitle = c.isDraft ? (c.caseTitle || 'Vụ việc mới · bản nháp') : (c.caseTitle || `${c.customer} · ${c.videoName}`);
+      const chatTitle = c.caseTitle || `${c.customer} · ${c.videoName}`;
       document.getElementById('chat-case-title').textContent = chatTitle;
       document.getElementById('chat-case-title').title = chatTitle;
-      document.getElementById('btn-attach-video').disabled = !!c.isDraft;
-      document.getElementById('case-video-input').disabled = !!c.isDraft;
-      document.querySelector('#SCR-CASE-DETAIL .chat-panel').classList.toggle('awaiting-chart', !c.selectedChart);
+      document.getElementById('btn-attach-video').disabled = !!c.isAnalyzing;
+      document.getElementById('case-video-input').disabled = !!c.isAnalyzing;
+      const chatPanel = document.querySelector('#SCR-CASE-DETAIL .chat-panel');
+      chatPanel.classList.toggle('analyzing', !!c.isAnalyzing);
+      chatPanel.classList.toggle('awaiting-chart', !c.selectedChart && !c.isAnalyzing);
+      renderAnalysisProgress(c);
       renderChartToolbar(c);
       document.getElementById('alert-stopped-case').style.display = 'none';
       document.getElementById('panel-chart-selection').style.display = 'none';
@@ -2689,6 +2698,19 @@ Vụ việc tai nạn ngày 04/11 đã có kết quả phân tích:
         updateReportMeta(c);
         document.getElementById('adjuster-notes-input').value = c.reportNote || '';
       }
+    }
+
+    function renderAnalysisProgress(c) {
+      if (!c.isAnalyzing) return;
+      const steps = [...document.querySelectorAll('#analysis-progress-steps li')];
+      const current = Math.min(c.analysisStep || 0, steps.length - 1);
+      document.getElementById('analysis-progress-title').textContent = steps[current].textContent;
+      document.getElementById('analysis-progress-count').textContent = `Bước ${current + 1}/${steps.length}`;
+      document.getElementById('analysis-progress-fill').style.width = `${(c.analysisStep || 0) / steps.length * 100}%`;
+      steps.forEach((step, index) => {
+        step.classList.toggle('done', index < c.analysisStep);
+        step.classList.toggle('active', index === current);
+      });
     }
 
     function setupCaseLayout() {
@@ -3195,19 +3217,6 @@ Vụ việc tai nạn ngày 04/11 đã có kết quả phân tích:
         }
         box.appendChild(div);
       });
-      if (c.isDraft && c.draftStep === 'review') {
-        const card = document.createElement('form');
-        card.className = 'case-confirm-card';
-        card.onsubmit = confirmDraftCase;
-        card.innerHTML = `<strong>Xác nhận thông tin vụ việc</strong>
-          <label>Tên vụ việc<input id="draft-case-name" class="chat-input" maxlength="80" required value="${escapeHtml(c.caseTitle)}" data-tooltip="Tên hiển thị trong danh sách vụ việc"></label>
-          <label>Khách hàng<input id="draft-case-customer" class="chat-input" maxlength="80" required value="${escapeHtml(c.customer)}" data-tooltip="Tên khách hàng hoặc người được bảo hiểm"></label>
-          <label>Thời điểm tai nạn<input id="draft-case-date" class="chat-input" type="datetime-local" required value="${escapeHtml(c.accidentDate.replace(' ', 'T'))}" data-tooltip="Thời điểm vụ tai nạn xảy ra"></label>
-          <label>Địa điểm (tùy chọn)<input id="draft-case-location" class="chat-input" maxlength="120" value="${escapeHtml(c.location)}"></label>
-          <div class="case-confirm-extra"><label>Biển số (tùy chọn)<input id="draft-case-plate" class="chat-input" maxlength="30" value="${escapeHtml(c.vehicleNo === '—' ? '' : c.vehicleNo)}"></label><label>Số hợp đồng (tùy chọn)<input id="draft-case-policy" class="chat-input" maxlength="50" value="${escapeHtml(c.policyNo === '—' ? '' : c.policyNo)}"></label></div>
-          <p id="draft-case-error" role="alert"></p><button type="submit" class="btn btn-primary" data-tooltip="Xác nhận thông tin và cấp mã vụ việc">Tạo vụ việc</button>`;
-        box.appendChild(card);
-      }
       if (c.stage === 1 && !c.charts.length && !c.videoUrl) {
         const recovery = document.createElement('div');
         recovery.className = 'chat-recovery';
@@ -3228,14 +3237,12 @@ Vụ việc tai nạn ngày 04/11 đã có kết quả phân tích:
         recovery.appendChild(actions);
         box.appendChild(recovery);
       }
-      const reviewCard = box.querySelector('.case-confirm-card');
-      box.scrollTop = reviewCard ? Math.max(0, reviewCard.offsetTop - box.offsetTop) : box.scrollHeight;
+      box.scrollTop = box.scrollHeight;
     }
 
     function renderQuickChips(c) {
       const box = document.getElementById('case-quick-chips');
       box.replaceChildren();
-      if (c.isDraft) return;
       const suggestions = !c.charts.length
         ? ['AI đang làm gì?', 'Vì sao chưa có chart?']
         : !c.selectedChart
@@ -3271,7 +3278,6 @@ Vụ việc tai nạn ngày 04/11 đã có kết quả phân tích:
 
     function processAgentChat(text) {
       const c = STATE.cases[STATE.currentCaseId];
-      if (c.isDraft) { handleDraftMessage(text); return; }
       setTimeout(() => {
         if (text.includes('So sánh chứng cứ') || text.includes('Ẩn so sánh')) {
           c.comparisonMode = text.includes('So sánh') && Boolean(c.selectedChart);
@@ -3664,7 +3670,7 @@ Vụ việc tai nạn ngày 04/11 đã có kết quả phân tích:
       const fake = document.getElementById('video-fake-frame');
       const seek = document.getElementById('video-seek');
       const hasVideo = c.videoName !== 'Chưa có video';
-      empty.textContent = c.isDraft ? 'Xác nhận vụ việc để đính kèm video' : 'Đính kèm video trong chat để bắt đầu';
+      empty.textContent = 'Đính kèm video trong chat để bắt đầu';
       empty.classList.toggle('visible', !hasVideo);
       fake.style.display = hasVideo && !c.videoUrl ? 'flex' : 'none';
       video.style.display = c.videoUrl ? 'block' : 'none';
@@ -3958,6 +3964,7 @@ Vụ việc tai nạn ngày 04/11 đã có kết quả phân tích:
       renderCaseTable();
     });
     window.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && document.getElementById('modal-new-case').classList.contains('open')) closeNewCaseModal();
       if (event.key === 'Escape' && document.getElementById('report-editor').classList.contains('open')) closeReportEditor();
     });
   </script>
