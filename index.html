@@ -13385,12 +13385,13 @@ function renderInternalReportTab(c) {
   let picking = false, target = null, editing = null;
   const save = () => { try { localStorage.setItem(key, JSON.stringify(notes)); return true; } catch (_) { alert('Không thể lưu ghi chú trên trình duyệt này.'); return false; } };
   const screen = () => document.querySelector('.view-screen.active');
+  const commentRoot = el => el.closest('.modal-backdrop[id]') || (screen()?.contains(el) ? screen() : null);
   const pathFor = (el, root) => {
     const path = [];
     while (el && el !== root) { const parent = el.parentElement; if (!parent) return ''; path.unshift([...parent.children].indexOf(el)); el = parent; }
     return el === root ? path.join('.') : '';
   };
-  const resolve = note => { let el = document.getElementById(note.screen); if (!el) return null; for (const index of note.path.split('.').filter(Boolean)) { el = el.children[Number(index)]; if (!el) return null; } return el; };
+  const resolve = note => { let el = document.getElementById(note.rootId || note.screen); if (!el || !el.getClientRects().length || getComputedStyle(el).visibility === 'hidden') return null; for (const index of note.path.split('.').filter(Boolean)) { el = el.children[Number(index)]; if (!el) return null; } return el; };
   const draw = () => {
     document.querySelectorAll('.dc-note').forEach(el => el.remove());
     notes.forEach((note, index) => {
@@ -13421,11 +13422,12 @@ function renderInternalReportTab(c) {
           if (!moved) return;
           if (end.type !== 'pointercancel') {
             item.style.pointerEvents = 'none';
-            const root = screen(), destination = document.elementFromPoint(end.clientX, end.clientY);
+            const destination = document.elementFromPoint(end.clientX, end.clientY);
+            const root = destination && commentRoot(destination);
             item.style.pointerEvents = '';
             if (root && destination && root.contains(destination)) {
               const bounds = destination.getBoundingClientRect();
-              Object.assign(note, { screen:root.id, path:pathFor(destination, root), x:bounds.width ? (end.clientX - bounds.left) / bounds.width : 0, y:bounds.height ? (end.clientY - bounds.top) / bounds.height : 0 });
+              Object.assign(note, { screen:screen().id, rootId:root.id, path:pathFor(destination, root), x:bounds.width ? (end.clientX - bounds.left) / bounds.width : 0, y:bounds.height ? (end.clientY - bounds.top) / bounds.height : 0 });
               save();
             }
           }
@@ -13447,10 +13449,10 @@ function renderInternalReportTab(c) {
   document.addEventListener('click', event => {
     if (!picking || event.target.closest('#design-comments, #design-comments-toggle, .dc-note')) return;
     event.preventDefault(); event.stopImmediatePropagation(); picking = false; document.body.classList.remove('dc-picking');
-    const root = screen(); if (!root || !root.contains(event.target)) { alert('Hãy chọn một vị trí trong màn hình hiện tại.'); return; }
+    const root = commentRoot(event.target); if (!screen() || !root) { alert('Hãy chọn một vị trí trong màn hình hoặc popup hiện tại.'); return; }
     const el = event.target;
     const rect = el.getBoundingClientRect();
-    target = { screen:root.id, screenName:root.querySelector('h1,h2')?.textContent.trim() || root.id, path:pathFor(el,root), x:rect.width ? (event.clientX - rect.left) / rect.width : 0, y:rect.height ? (event.clientY - rect.top) / rect.height : 0, label:(el.getAttribute('aria-label') || el.innerText || el.placeholder || el.tagName).trim().replace(/\s+/g,' ').slice(0,80) };
+    target = { screen:screen().id, rootId:root.id, screenName:root.querySelector('h1,h2,.modal-header')?.textContent.trim() || root.id, path:pathFor(el,root), x:rect.width ? (event.clientX - rect.left) / rect.width : 0, y:rect.height ? (event.clientY - rect.top) / rect.height : 0, label:(el.getAttribute('aria-label') || el.innerText || el.placeholder || el.tagName).trim().replace(/\s+/g,' ').slice(0,80) };
     editing = null; titleInput.value = ''; input.value = ''; document.getElementById('dc-location').textContent = `Vị trí: ${target.label}`; form.hidden = false; panel.hidden = false; toggle.setAttribute('aria-expanded','true'); titleInput.focus();
   }, true);
   document.getElementById('dc-cancel').onclick = () => { form.hidden = true; target = null; };
@@ -13458,7 +13460,7 @@ function renderInternalReportTab(c) {
   document.getElementById('dc-export').onclick = () => { const content = '# Ghi chú nghiệp vụ\n\n' + notes.map((n,i) => `## ${i + 1}. ${n.title || n.label}\n\nMàn: ${n.screenName} (${n.screen})\n\n${n.text}\n`).join('\n'); const url = URL.createObjectURL(new Blob([content], {type:'text/markdown;charset=utf-8'})); const a = document.createElement('a'); a.href = url; a.download = 'ghi-chu-nghiep-vu.md'; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); };
   let scheduled = false; const refresh = () => { if (!scheduled) { scheduled = true; requestAnimationFrame(() => { scheduled = false; draw(); }); } };
   window.addEventListener('scroll', refresh, true); window.addEventListener('resize', refresh);
-  new MutationObserver(records => { if (records.some(r => r.target instanceof Element && !r.target.closest('#design-comments, .dc-note') && (r.type === 'attributes' || r.target.closest('.view-screen')))) refresh(); }).observe(document.body, {subtree:true, childList:true, attributes:true, attributeFilter:['class','style','hidden']});
+  new MutationObserver(records => { if (records.some(r => r.target instanceof Element && !r.target.closest('#design-comments, .dc-note') && (r.type === 'attributes' || r.target.closest('.view-screen, .modal-backdrop')))) refresh(); }).observe(document.body, {subtree:true, childList:true, attributes:true, attributeFilter:['class','style','hidden']});
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && picking) { picking = false; document.body.classList.remove('dc-picking'); panel.hidden = false; toggle.setAttribute('aria-expanded','true'); } });
   draw();
 })();
