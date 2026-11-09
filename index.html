@@ -5845,6 +5845,7 @@
           <p class="screen-subtitle">Chọn hồ sơ cần kiểm tra hoặc bắt đầu phân tích mới.</p>
         </div>
         <div style="display:flex; gap:10px;">
+          <button type="button" class="btn btn-secondary" onclick="renderCaseTable()" aria-label="Làm mới danh sách vụ việc" title="Làm mới danh sách vụ việc">↻ Làm mới</button>
           <button class="btn btn-secondary" onclick="switchCaseTab('archived')" id="btn-tab-archived"
             data-tooltip="Xem các hồ sơ đã lưu trữ vào kho">Kho lưu trữ (0)</button>
           <button class="btn btn-primary" onclick="startNewCase()"
@@ -13342,5 +13343,94 @@ function renderInternalReportTab(c) {
 
   
   </script>
+<style>
+  #design-comments-toggle { position:fixed; right:20px; bottom:20px; z-index:99990; border:0; border-radius:24px; padding:12px 18px; background:#22d3ee; color:#082032; font-weight:700; cursor:pointer; box-shadow:0 5px 24px #0008; }
+  #design-comments { position:fixed; right:20px; bottom:76px; width:min(360px,calc(100vw - 40px)); max-height:70vh; overflow:auto; z-index:99991; padding:16px; border:1px solid #31516b; border-radius:12px; background:#0e1c2c; color:#e2e8f0; box-shadow:0 10px 35px #0009; font:14px/1.45 system-ui,sans-serif; }
+  #design-comments[hidden] { display:none; }
+  #design-comments:has(#dc-form:not([hidden])) > .dc-intro, #design-comments:has(#dc-form:not([hidden])) > .dc-toolbar { display:none; }
+  #design-comments h2 { margin:0 0 8px; font-size:16px; color:#fff; }
+  #design-comments p { margin:7px 0; color:#a9bdce; font-size:12px; }
+  #design-comments button { cursor:pointer; padding:7px 10px; border:1px solid #38546b; border-radius:6px; background:#162b3d; color:#cce7f1; }
+  #design-comments textarea, #design-comments input { width:100%; box-sizing:border-box; padding:8px; margin:8px 0; border:1px solid #38546b; border-radius:6px; background:#081523; color:#fff; font:inherit; }
+  #design-comments textarea { min-height:75px; resize:vertical; }
+  #design-comments .dc-actions { display:flex; gap:6px; flex-wrap:wrap; }
+  #design-comments .dc-item { padding:10px 0; border-top:1px solid #294157; overflow-wrap:anywhere; }
+  #design-comments .dc-item p { white-space:pre-wrap; color:#e2e8f0; font-size:13px; }
+  .dc-note { position:fixed; z-index:99989; font:13px/1.4 system-ui,sans-serif; }
+  .dc-marker { width:28px; height:28px; border:2px solid #fff; border-radius:50%; background:#0891b2; color:#fff; font-weight:700; cursor:pointer; }
+  .dc-detail { display:none; position:absolute; left:0; top:100%; width:240px; max-width:calc(100vw - 44px); max-height:50vh; overflow:auto; padding:12px; border:1px solid #22d3ee; border-radius:9px; background:#10273a; color:#e2e8f0; box-shadow:0 5px 20px #0008; overflow-wrap:anywhere; }
+  .dc-note:hover .dc-detail, .dc-note:focus-within .dc-detail { display:block; }
+  .dc-note.dc-right .dc-detail { left:auto; right:0; } .dc-note.dc-bottom .dc-detail { top:auto; bottom:100%; }
+  .dc-detail strong { color:#fff; } .dc-detail p { white-space:pre-wrap; margin:6px 0 10px; } .dc-detail button { background:none; border:0; color:#67e8f9; cursor:pointer; padding:2px 12px 2px 0; }
+  body.dc-picking, body.dc-picking * { cursor:crosshair !important; }
+</style>
+<button id="design-comments-toggle" type="button" aria-expanded="false">💬 Ghi chú nghiệp vụ</button>
+<aside id="design-comments" hidden aria-label="Ghi chú nghiệp vụ">
+  <h2>Ghi chú nghiệp vụ</h2>
+  <p class="dc-intro">Chọn vị trí trên màn hình, rồi nhập nội dung. Ghi chú lưu trên trình duyệt này.</p>
+  <div class="dc-actions dc-toolbar"><button id="dc-pick" type="button">＋ Chọn vị trí</button><button id="dc-export" type="button">Xuất Markdown</button></div>
+  <div id="dc-form" hidden><p id="dc-location"></p><input id="dc-title" aria-label="Tiêu đề ghi chú" placeholder="Tiêu đề"><textarea id="dc-text" aria-label="Giải thích" placeholder="Giải thích nghiệp vụ..."></textarea><div class="dc-actions"><button id="dc-save" type="button">Lưu ghi chú</button><button id="dc-cancel" type="button">Hủy</button></div></div>
+</aside>
+<script>
+(() => {
+  const key = 'ams-b2b-design-comments-v1';
+  const panel = document.getElementById('design-comments');
+  const toggle = document.getElementById('design-comments-toggle');
+  const form = document.getElementById('dc-form');
+  const input = document.getElementById('dc-text');
+  const titleInput = document.getElementById('dc-title');
+  let notes = [];
+  try { notes = JSON.parse(localStorage.getItem(key) || '[]'); if (!Array.isArray(notes)) notes = []; } catch (_) {}
+  let picking = false, target = null, editing = null;
+  const save = () => { try { localStorage.setItem(key, JSON.stringify(notes)); return true; } catch (_) { alert('Không thể lưu ghi chú trên trình duyệt này.'); return false; } };
+  const screen = () => document.querySelector('.view-screen.active');
+  const pathFor = (el, root) => {
+    const path = [];
+    while (el && el !== root) { const parent = el.parentElement; if (!parent) return ''; path.unshift([...parent.children].indexOf(el)); el = parent; }
+    return el === root ? path.join('.') : '';
+  };
+  const resolve = note => { let el = document.getElementById(note.screen); if (!el) return null; for (const index of note.path.split('.').filter(Boolean)) { el = el.children[Number(index)]; if (!el) return null; } return el; };
+  const draw = () => {
+    document.querySelectorAll('.dc-note').forEach(el => el.remove());
+    notes.forEach((note, index) => {
+      if (screen()?.id !== note.screen) return;
+      const el = resolve(note); if (!el || !el.getClientRects().length) return;
+      const rect = el.getBoundingClientRect(); if (rect.bottom < 0 || rect.top > innerHeight || rect.right < 0 || rect.left > innerWidth) return;
+      const item = document.createElement('div'); item.className = 'dc-note';
+      const x = Math.max(0, Math.min(innerWidth - 28, rect.left + rect.width * (note.x ?? 0)));
+      const y = Math.max(0, Math.min(innerHeight - 28, rect.top + rect.height * (note.y ?? 0)));
+      item.style.left = `${x}px`; item.style.top = `${y}px`;
+      item.classList.toggle('dc-right', x + 264 > innerWidth); item.classList.toggle('dc-bottom', y > innerHeight / 2);
+      const marker = document.createElement('button'); marker.type = 'button'; marker.className = 'dc-marker'; marker.textContent = index + 1; marker.setAttribute('aria-label', `Xem ghi chú ${index + 1}`);
+      const detail = document.createElement('div'); detail.className = 'dc-detail';
+      const title = document.createElement('strong'); title.textContent = note.title || note.label || 'Ghi chú';
+      const text = document.createElement('p'); text.textContent = note.text;
+      const actions = document.createElement('div'); actions.className = 'dc-actions';
+      const edit = document.createElement('button'); edit.textContent = 'Sửa'; edit.onclick = () => { editing = note.id; target = note; titleInput.value = note.title || note.label || ''; input.value = note.text; document.getElementById('dc-location').textContent = `Sửa ghi chú`; form.hidden = false; panel.hidden = false; toggle.setAttribute('aria-expanded', 'true'); titleInput.focus(); };
+      const del = document.createElement('button'); del.textContent = 'Xóa'; del.onclick = () => { if (confirm('Xóa ghi chú này?')) { notes = notes.filter(n => n.id !== note.id); save(); draw(); } };
+      actions.append(edit, del); detail.append(title, text, actions); item.append(marker, detail); document.body.append(item);
+    });
+  };
+  toggle.onclick = () => { panel.hidden = !panel.hidden; toggle.setAttribute('aria-expanded', String(!panel.hidden)); draw(); };
+  document.getElementById('dc-pick').onclick = () => { picking = true; document.body.classList.add('dc-picking'); panel.hidden = true; toggle.setAttribute('aria-expanded', 'false'); };
+  document.addEventListener('click', event => {
+    if (!picking || event.target.closest('#design-comments, #design-comments-toggle, .dc-note')) return;
+    event.preventDefault(); event.stopImmediatePropagation(); picking = false; document.body.classList.remove('dc-picking');
+    const root = screen(); if (!root || !root.contains(event.target)) { alert('Hãy chọn một vị trí trong màn hình hiện tại.'); return; }
+    const el = event.target;
+    const rect = el.getBoundingClientRect();
+    target = { screen:root.id, screenName:root.querySelector('h1,h2')?.textContent.trim() || root.id, path:pathFor(el,root), x:rect.width ? (event.clientX - rect.left) / rect.width : 0, y:rect.height ? (event.clientY - rect.top) / rect.height : 0, label:(el.getAttribute('aria-label') || el.innerText || el.placeholder || el.tagName).trim().replace(/\s+/g,' ').slice(0,80) };
+    editing = null; titleInput.value = ''; input.value = ''; document.getElementById('dc-location').textContent = `Vị trí: ${target.label}`; form.hidden = false; panel.hidden = false; toggle.setAttribute('aria-expanded','true'); titleInput.focus();
+  }, true);
+  document.getElementById('dc-cancel').onclick = () => { form.hidden = true; target = null; };
+  document.getElementById('dc-save').onclick = () => { const text = input.value.trim(), title = titleInput.value.trim(); if (!target || !title || !text) { (title ? input : titleInput).focus(); return; } if (editing) { const note = notes.find(n => n.id === editing); if (note) Object.assign(note, {title, text}); } else notes.push({ ...target, id:Date.now() + Math.random(), title, text }); if (save()) { form.hidden = true; target = null; draw(); } };
+  document.getElementById('dc-export').onclick = () => { const content = '# Ghi chú nghiệp vụ\n\n' + notes.map((n,i) => `## ${i + 1}. ${n.title || n.label}\n\nMàn: ${n.screenName} (${n.screen})\n\n${n.text}\n`).join('\n'); const url = URL.createObjectURL(new Blob([content], {type:'text/markdown;charset=utf-8'})); const a = document.createElement('a'); a.href = url; a.download = 'ghi-chu-nghiep-vu.md'; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); };
+  let scheduled = false; const refresh = () => { if (!scheduled) { scheduled = true; requestAnimationFrame(() => { scheduled = false; draw(); }); } };
+  window.addEventListener('scroll', refresh, true); window.addEventListener('resize', refresh);
+  new MutationObserver(records => { if (records.some(r => r.target instanceof Element && !r.target.closest('#design-comments, .dc-note') && (r.type === 'attributes' || r.target.closest('.view-screen')))) refresh(); }).observe(document.body, {subtree:true, childList:true, attributes:true, attributeFilter:['class','style','hidden']});
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && picking) { picking = false; document.body.classList.remove('dc-picking'); panel.hidden = false; toggle.setAttribute('aria-expanded','true'); } });
+  draw();
+})();
+</script>
 </body>
 </html>
