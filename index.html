@@ -13385,6 +13385,10 @@ function renderInternalReportTab(c) {
   let picking = false, target = null, editing = null;
   const save = () => { try { localStorage.setItem(key, JSON.stringify(notes)); return true; } catch (_) { alert('Không thể lưu ghi chú trên trình duyệt này.'); return false; } };
   const screen = () => document.querySelector('.view-screen.active');
+  const activeRoot = () => [...document.querySelectorAll('.modal-backdrop[id]')]
+    .filter(el => el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden')
+    .sort((a, b) => (parseInt(getComputedStyle(a).zIndex, 10) || 0) - (parseInt(getComputedStyle(b).zIndex, 10) || 0))
+    .at(-1) || screen();
   const commentRoot = el => el.closest('.modal-backdrop[id]') || (screen()?.contains(el) ? screen() : null);
   const pathFor = (el, root) => {
     const path = [];
@@ -13395,7 +13399,7 @@ function renderInternalReportTab(c) {
   const draw = () => {
     document.querySelectorAll('.dc-note').forEach(el => el.remove());
     notes.forEach((note, index) => {
-      if (screen()?.id !== note.screen) return;
+      if (screen()?.id !== note.screen || (note.rootId || note.screen) !== activeRoot()?.id) return;
       const el = resolve(note); if (!el || !el.getClientRects().length) return;
       const rect = el.getBoundingClientRect(); if (rect.bottom < 0 || rect.top > innerHeight || rect.right < 0 || rect.left > innerWidth) return;
       const item = document.createElement('div'); item.className = 'dc-note';
@@ -13425,7 +13429,7 @@ function renderInternalReportTab(c) {
             const destination = document.elementFromPoint(end.clientX, end.clientY);
             const root = destination && commentRoot(destination);
             item.style.pointerEvents = '';
-            if (root && destination && root.contains(destination)) {
+            if (root && root === activeRoot() && destination && root.contains(destination)) {
               const bounds = destination.getBoundingClientRect();
               Object.assign(note, { screen:screen().id, rootId:root.id, path:pathFor(destination, root), x:bounds.width ? (end.clientX - bounds.left) / bounds.width : 0, y:bounds.height ? (end.clientY - bounds.top) / bounds.height : 0 });
               save();
@@ -13449,7 +13453,7 @@ function renderInternalReportTab(c) {
   document.addEventListener('click', event => {
     if (!picking || event.target.closest('#design-comments, #design-comments-toggle, .dc-note')) return;
     event.preventDefault(); event.stopImmediatePropagation(); picking = false; document.body.classList.remove('dc-picking');
-    const root = commentRoot(event.target); if (!screen() || !root) { alert('Hãy chọn một vị trí trong màn hình hoặc popup hiện tại.'); return; }
+    const root = commentRoot(event.target); if (!screen() || !root || root !== activeRoot()) { alert('Hãy chọn một vị trí trong màn hình hoặc popup hiện tại.'); return; }
     const el = event.target;
     const rect = el.getBoundingClientRect();
     target = { screen:screen().id, rootId:root.id, screenName:root.querySelector('h1,h2,.modal-header')?.textContent.trim() || root.id, path:pathFor(el,root), x:rect.width ? (event.clientX - rect.left) / rect.width : 0, y:rect.height ? (event.clientY - rect.top) / rect.height : 0, label:(el.getAttribute('aria-label') || el.innerText || el.placeholder || el.tagName).trim().replace(/\s+/g,' ').slice(0,80) };
