@@ -13359,7 +13359,7 @@ function renderInternalReportTab(c) {
   .dc-note { position:fixed; z-index:99989; font:13px/1.4 system-ui,sans-serif; }
   .dc-marker { width:28px; height:28px; border:2px solid #fff; border-radius:50%; background:#0891b2; color:#fff; font-weight:700; cursor:grab; touch-action:none; }
   .dc-detail { display:none; position:absolute; left:0; top:100%; width:240px; max-width:calc(100vw - 44px); max-height:50vh; overflow:auto; padding:12px; border:1px solid #22d3ee; border-radius:9px; background:#10273a; color:#e2e8f0; box-shadow:0 5px 20px #0008; overflow-wrap:anywhere; }
-  .dc-note:hover .dc-detail, .dc-note:focus-within .dc-detail { display:block; }
+  .dc-note:not(.dc-closed):hover .dc-detail, .dc-note:not(.dc-closed):focus-within .dc-detail, .dc-note.dc-open .dc-detail { display:block; }
   .dc-note.dc-dragging .dc-detail { display:none; } .dc-note.dc-dragging .dc-marker { cursor:grabbing; }
   .dc-note.dc-right .dc-detail { left:auto; right:0; } .dc-note.dc-bottom .dc-detail { top:auto; bottom:100%; }
   .dc-detail strong { color:#fff; } .dc-detail p { white-space:pre-wrap; margin:6px 0 10px; } .dc-detail button { background:none; border:0; color:#67e8f9; cursor:pointer; padding:2px 12px 2px 0; }
@@ -13382,7 +13382,7 @@ function renderInternalReportTab(c) {
   const titleInput = document.getElementById('dc-title');
   let notes = [];
   try { notes = JSON.parse(localStorage.getItem(key) || '[]'); if (!Array.isArray(notes)) notes = []; } catch (_) {}
-  let picking = false, target = null, editing = null;
+  let picking = false, target = null, editing = null, openNoteId = null;
   const save = () => { try { localStorage.setItem(key, JSON.stringify(notes)); return true; } catch (_) { alert('Không thể lưu ghi chú trên trình duyệt này.'); return false; } };
   const screen = () => document.querySelector('.view-screen.active');
   const activeRoot = () => [...document.querySelectorAll('.modal-backdrop[id]')]
@@ -13403,11 +13403,22 @@ function renderInternalReportTab(c) {
       const el = resolve(note); if (!el || !el.getClientRects().length) return;
       const rect = el.getBoundingClientRect(); if (rect.bottom < 0 || rect.top > innerHeight || rect.right < 0 || rect.left > innerWidth) return;
       const item = document.createElement('div'); item.className = 'dc-note';
+      item.classList.toggle('dc-open', openNoteId === note.id);
       const x = Math.max(0, Math.min(innerWidth - 28, rect.left + rect.width * (note.x ?? 0)));
       const y = Math.max(0, Math.min(innerHeight - 28, rect.top + rect.height * (note.y ?? 0)));
       item.style.left = `${x}px`; item.style.top = `${y}px`;
       item.classList.toggle('dc-right', x + 264 > innerWidth); item.classList.toggle('dc-bottom', y > innerHeight / 2);
       const marker = document.createElement('button'); marker.type = 'button'; marker.className = 'dc-marker'; marker.textContent = index + 1; marker.setAttribute('aria-label', `Xem ghi chú ${index + 1}`);
+      marker.setAttribute('aria-expanded', String(openNoteId === note.id));
+      marker.onclick = event => {
+        event.stopPropagation();
+        const wasOpen = openNoteId === note.id;
+        document.querySelectorAll('.dc-note.dc-open').forEach(el => { el.classList.remove('dc-open'); el.querySelector('.dc-marker')?.setAttribute('aria-expanded', 'false'); });
+        openNoteId = wasOpen ? null : note.id;
+        item.classList.toggle('dc-open', !wasOpen); item.classList.toggle('dc-closed', wasOpen);
+        marker.setAttribute('aria-expanded', String(!wasOpen));
+      };
+      item.addEventListener('mouseleave', () => item.classList.remove('dc-closed'));
       marker.title = 'Kéo để di chuyển ghi chú';
       marker.addEventListener('pointerdown', event => {
         if (event.button !== 0) return;
@@ -13448,6 +13459,11 @@ function renderInternalReportTab(c) {
       actions.append(edit, del); detail.append(title, text, actions); item.append(marker, detail); document.body.append(item);
     });
   };
+  document.addEventListener('click', event => {
+    if (event.target.closest('.dc-note')) return;
+    openNoteId = null;
+    document.querySelectorAll('.dc-note.dc-open').forEach(el => { el.classList.remove('dc-open'); el.querySelector('.dc-marker')?.setAttribute('aria-expanded', 'false'); });
+  });
   toggle.onclick = () => { panel.hidden = !panel.hidden; toggle.setAttribute('aria-expanded', String(!panel.hidden)); draw(); };
   document.getElementById('dc-pick').onclick = () => { picking = true; document.body.classList.add('dc-picking'); panel.hidden = true; toggle.setAttribute('aria-expanded', 'false'); };
   document.addEventListener('click', event => {
