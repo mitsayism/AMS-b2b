@@ -6908,6 +6908,18 @@
     </div>
   </div>
 
+  <div class="modal-backdrop" id="modal-evidence-lightbox" role="dialog" aria-modal="true" aria-labelledby="lb-frame-title">
+    <div class="modal-box" style="width:min(900px,94vw);max-height:90vh;overflow:auto;">
+      <div class="modal-header"><span id="lb-frame-title">Khung hình căn cứ</span><button type="button" class="btn btn-secondary btn-sm" onclick="closeEvidenceLightbox()" aria-label="Đóng">✕</button></div>
+      <div class="modal-body">
+        <span id="lb-frame-badge" class="badge"></span>
+        <div id="lb-frame-canvas" style="margin:12px 0;aspect-ratio:16/9;background:#0a1524;"></div>
+        <p id="lb-frame-finding"></p>
+        <div id="lb-filmstrip" style="display:flex;gap:8px;overflow-x:auto;margin:12px 0;"></div>
+        <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;"><button type="button" class="btn btn-secondary" onclick="navigateEvidenceFrame(-1)">← Trước</button><button type="button" id="lb-seek-btn" class="btn btn-primary" onclick="seekLightboxVideo()">Tua video</button><button type="button" class="btn btn-secondary" onclick="navigateEvidenceFrame(1)">Sau →</button></div>
+      </div>
+    </div>
+  </div>
   <div class="modal-backdrop" id="modal-chart-library" role="dialog" aria-modal="true" aria-labelledby="chart-library-title">
     <div class="modal-box" style="max-width:800px;width:94%;max-height:88vh;display:flex;flex-direction:column;">
       <div class="modal-header"><span id="chart-library-title">Chọn chart khác</span><button type="button" class="btn btn-secondary btn-sm" onclick="closeChartLibrary()" aria-label="Đóng">✕</button></div>
@@ -13371,7 +13383,8 @@ function renderInternalReportTab(c) {
 <button id="design-comments-toggle" type="button" aria-expanded="false">💬 Ghi chú nghiệp vụ</button>
 <aside id="design-comments" hidden aria-label="Ghi chú nghiệp vụ">
   <h2>Ghi chú nghiệp vụ</h2>
-  <p class="dc-intro">Kéo để khoanh vùng hoặc nhấn chọn vị trí, rồi nhập nội dung. Ghi chú lưu trên trình duyệt này.</p>
+  <p class="dc-intro">Kéo để khoanh vùng hoặc nhấn chọn vị trí, rồi nhập nội dung.</p>
+  <p id="dc-sync-status" role="status">Đang kết nối ghi chú chung…</p>
   <div class="dc-actions dc-toolbar"><button id="dc-pick" type="button">＋ Chọn vị trí</button><button id="dc-export" type="button">Xuất Markdown</button></div>
   <div id="dc-form" hidden><p id="dc-location"></p><input id="dc-title" aria-label="Tiêu đề ghi chú" placeholder="Tiêu đề"><textarea id="dc-text" aria-label="Giải thích" placeholder="Giải thích nghiệp vụ..."></textarea><div class="dc-actions"><button id="dc-redraw" type="button" hidden>Vẽ lại vùng</button><button id="dc-save" type="button">Lưu ghi chú</button><button id="dc-cancel" type="button">Hủy</button></div></div>
 </aside>
@@ -13386,7 +13399,53 @@ function renderInternalReportTab(c) {
   let notes = [];
   try { notes = JSON.parse(localStorage.getItem(key) || '[]'); if (!Array.isArray(notes)) notes = []; } catch (_) {}
   let picking = false, target = null, editing = null, openNoteId = null, redrawing = false;
-  const save = () => { try { localStorage.setItem(key, JSON.stringify(notes)); return true; } catch (_) { alert('Không thể lưu ghi chú trên trình duyệt này.'); return false; } };
+  const endpoint = 'https://ktiuyqtvspdreyupxuve.supabase.co/rest/v1/prototype_comments';
+  const apiKey = 'sb_publishable_GPRgAzD7HnW6t_meh9QfXA_rQMN12MD';
+  const queueKey = `${key}-pending`, migratedKey = `${key}-shared-migrated`;
+  let pending = [], previous = new Map(notes.map(note => [String(note.id), JSON.stringify(note)])), syncing = false;
+  try { pending = JSON.parse(localStorage.getItem(queueKey) || '[]'); if (!Array.isArray(pending)) pending = []; } catch (_) {}
+  const status = message => { document.getElementById('dc-sync-status').textContent = message; };
+  const request = async (url, options = {}) => {
+    const response = await fetch(url, { ...options, headers: { apikey:apiKey, 'Content-Type':'application/json', ...(options.headers || {}) } });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response;
+  };
+  const sync = async () => {
+    if (syncing) return;
+    syncing = true;
+    try {
+      if (!localStorage.getItem(migratedKey)) {
+        const initial = notes.map(note => ({id:String(note.id), data:note}));
+        if (initial.length) await request(`${endpoint}?on_conflict=id`, {method:'POST', headers:{Prefer:'resolution=ignore-duplicates'}, body:JSON.stringify(initial)});
+        localStorage.setItem(migratedKey, '1');
+      }
+      while (pending.length) {
+        const operation = pending[0];
+        if (operation.data) await request(`${endpoint}?on_conflict=id`, {method:'POST', headers:{Prefer:'resolution=merge-duplicates'}, body:JSON.stringify({id:operation.id, data:operation.data})});
+        else await request(`${endpoint}?id=eq.${encodeURIComponent(operation.id)}`, {method:'DELETE'});
+        pending.shift(); localStorage.setItem(queueKey, JSON.stringify(pending));
+      }
+      const rows = await (await request(`${endpoint}?select=id,data&order=id.asc`)).json();
+      if (!pending.length && !picking && form.hidden) {
+        notes = rows.map(row => row.data).filter(note => note && note.id != null);
+        previous = new Map(notes.map(note => [String(note.id), JSON.stringify(note)]));
+        localStorage.setItem(key, JSON.stringify(notes));
+        draw();
+      }
+      status('Đã đồng bộ ghi chú chung.');
+    } catch (_) { status('Chưa kết nối được ghi chú chung. Thay đổi đang lưu tạm trên trình duyệt.'); }
+    finally { syncing = false; }
+  };
+  const save = () => {
+    try {
+      const current = new Map(notes.map(note => [String(note.id), JSON.stringify(note)]));
+      for (const [id, data] of current) if (previous.get(id) !== data) pending.push({id, data:JSON.parse(data)});
+      for (const id of previous.keys()) if (!current.has(id)) pending.push({id, data:null});
+      localStorage.setItem(queueKey, JSON.stringify(pending));
+      localStorage.setItem(key, JSON.stringify(notes)); previous = current;
+      status('Đang đồng bộ ghi chú…'); void sync(); return true;
+    } catch (_) { alert('Không thể lưu ghi chú trên trình duyệt này.'); return false; }
+  };
   const screen = () => document.querySelector('.view-screen.active');
   const currentTab = () => { const view = STATE.cases[STATE.currentCaseId]?.analysisView; return view === 'reasoning' ? 'charts' : view; };
   const commentTab = el => screen()?.id === 'SCR-CASE-DETAIL' && el.closest('#col-center-analysis') && !el.closest('#analysis-steps') ? currentTab() : null;
@@ -13535,6 +13594,8 @@ function renderInternalReportTab(c) {
   new MutationObserver(records => { if (records.some(r => r.target instanceof Element && !r.target.closest('#design-comments, .dc-note') && (r.type === 'attributes' || r.target.closest('.view-screen, .modal-backdrop')))) refresh(); }).observe(document.body, {subtree:true, childList:true, attributes:true, attributeFilter:['class','style','hidden','open']});
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && picking) { picking = false; redrawing = false; document.body.classList.remove('dc-picking'); panel.hidden = false; toggle.setAttribute('aria-expanded','true'); } });
   draw();
+  void sync();
+  setInterval(() => { if (!picking && form.hidden) void sync(); }, 15000);
 })();
 </script>
 </body>
