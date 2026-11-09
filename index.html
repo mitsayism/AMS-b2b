@@ -5086,6 +5086,9 @@
     }
 
     .evidence-facts-table th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
       background: #0c1826;
       color: #94a3b8;
       font-weight: 700;
@@ -5105,6 +5108,10 @@
     .evidence-facts-table tr:hover {
       background: rgba(22, 43, 68, 0.4);
     }
+
+    .evidence-remove { opacity: 0; border: 0; background: transparent; color: #f87171; cursor: pointer; font-size: 20px; }
+    .evidence-facts-table tr:hover .evidence-remove, .evidence-remove:focus-visible { opacity: 1; }
+    @media (hover: none) { .evidence-remove { opacity: 1; } }
 
     .fact-tag-badge {
       display: inline-block;
@@ -6187,6 +6194,7 @@
                   <span style="font-weight:700; color:#f3f9ff; font-size:13px;">1. Bằng chứng cốt lõi</span>
                   <span class="badge badge-primary" id="core-ev-chart-badge">Biểu đồ 31-3</span>
                 </div>
+                <button type="button" class="btn btn-secondary btn-sm" id="restore-evidence" hidden>Khôi phục bằng chứng</button>
               </div>
               <div class="evidence-facts-table-wrap">
                 <table class="evidence-facts-table">
@@ -6198,6 +6206,7 @@
                       <th style="width:55px; text-align:center;">Độ tin cậy</th>
                       <th style="width:92px; text-align:center;">Khung hình căn cứ</th>
                       <th>Lý do / Căn cứ trích xuất</th>
+                      <th aria-label="Thao tác"></th>
                     </tr>
                   </thead>
                   <tbody id="evidence-facts-tbody">
@@ -9166,13 +9175,23 @@
       if (modal) modal.style.display = 'none';
     }
 
+    function caseEvidence(c) {
+      const events = c.events && c.events.length ? c.events : (STATE.cases['10'].events || []);
+      return events.filter((ev, idx) => !(c.excludedEvidence || []).includes(ev.id || `s${idx + 1}`));
+    }
+
     function renderFactsTable(c) {
       const tbody = document.getElementById('evidence-facts-tbody');
       if (!tbody) return;
       const events = c.events && c.events.length ? c.events : (STATE.cases['10'].events || []);
 
+      const restore = document.getElementById('restore-evidence');
+      restore.hidden = c.isClosed || !(c.excludedEvidence || []).length;
+      restore.onclick = () => { c.excludedEvidence = []; renderFactsTable(c); };
+
       tbody.innerHTML = events.map((ev, idx) => {
         const sid = ev.id || `s${idx + 1}`;
+        if ((c.excludedEvidence || []).includes(sid)) return '';
         const timeHtml = ev.time
           ? `<button type="button" class="core-ev-time-btn" data-seek-time="${escapeHtml(ev.time)}" title="Tua video đến ${escapeHtml(ev.time)}" style="padding:1px 6px; font-size:10.5px;">▶ ${escapeHtml(ev.time)}</button>`
           : '—';
@@ -9242,9 +9261,18 @@
               </div>
             </td>
             <td style="color:#cbd5e1; font-size:11px; vertical-align:middle;">${escapeHtml(ev.finding || '—')}</td>
+            <td>${c.isClosed ? '' : `<button type="button" class="evidence-remove" data-evidence-index="${idx}" aria-label="Loại bằng chứng ${escapeHtml(sid)}" title="Loại bằng chứng">−</button>`}</td>
           </tr>
         `;
       }).join('');
+
+      tbody.querySelectorAll('[data-evidence-index]').forEach(btn => {
+        btn.onclick = () => {
+          const idx = Number(btn.dataset.evidenceIndex);
+          (c.excludedEvidence ||= []).push(events[idx].id || `s${idx + 1}`);
+          renderFactsTable(c);
+        };
+      });
 
       tbody.querySelectorAll('[data-seek-time]').forEach(btn => {
         btn.onclick = (e) => {
@@ -9302,7 +9330,7 @@
 
       const faultA = c.finalFaultA != null ? c.finalFaultA : 90;
       const faultB = c.finalFaultB != null ? c.finalFaultB : 10;
-      const events = c.events && c.events.length ? c.events : (STATE.cases['10'].events || []);
+      const events = caseEvidence(c);
       const factors = (c.negotiationFactors || []).filter(f => f.status === 'AGREED');
 
       // Tạo bảng sự kiện & tình tiết tai nạn (Facts / 사실)
@@ -10071,7 +10099,7 @@
         basedOn: isNegotiationConfirmed(c) ? c.negotiationBaseVersion : null,
         finalFaultA: isNegotiationConfirmed(c) ? c.negotiationAgreement.faultA : c.finalFaultA,
         finalFaultB: isNegotiationConfirmed(c) ? c.negotiationAgreement.faultB : c.finalFaultB,
-        events: JSON.parse(JSON.stringify(c.events || [])),
+        events: JSON.parse(JSON.stringify(caseEvidence(c))),
         factors: JSON.parse(JSON.stringify((c.negotiationFactors || []).filter(f => isNegotiationConfirmed(c) ? c.negotiationDecisions?.[f.id] === 'AGREED' : f.status === 'AGREED'))),
         name: chart?.name || '',
         match: chart?.match || 0,
@@ -11293,7 +11321,7 @@
       const r = typeof negoCompute === 'function' ? negoCompute(c) : { base: 100, cur: c.finalFaultA ?? 90, agreed: [], negotiating: [] };
       const faultA = isNegotiationConfirmed(c) ? c.negotiationAgreement.faultA : r.cur;
       const faultB = 100 - faultA;
-      const events = (c.events && c.events.length) ? c.events : (STATE.cases['10']?.events || []);
+      const events = caseEvidence(c);
       const evLines = events.slice(0, 4).map(ev => `• [${ev.time || 'Video'}] ${ev.name}: ${ev.finding || 'Đã xác thực trên khung hình'}`).join('\n');
 
       const agreedLines = r.agreed.map(i => `• [Đồng thuận ${i.delta > 0 ? '+' : ''}${i.delta}%] ${i.name} — ${i.aiReasoning || i.note}`).join('\n');
