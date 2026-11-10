@@ -4424,6 +4424,7 @@
       flex-direction: column;
       margin: 0 !important;
     }
+    #SCR-CASE-DETAIL #evidence-stage [hidden] { display:none !important; }
     #SCR-CASE-DETAIL #evidence-stage .evidence-facts-table-wrap {
       min-height: 0;
       max-height: 480px;
@@ -5125,6 +5126,10 @@
     .evidence-facts-table tr:hover {
       background: rgba(22, 43, 68, 0.4);
     }
+    .evidence-tabs { display:flex; gap:6px; padding:8px; margin-bottom:10px; border:1px solid #233e59; border-radius:8px; background:#10243a; overflow:auto; }
+    .evidence-tab { flex:0 0 auto; border:1px solid transparent; border-radius:6px; background:transparent; color:#9eb4c5; padding:8px 12px; font-size:12px; font-weight:800; cursor:pointer; }
+    .evidence-tab:hover { color:#fff; background:#17324b; }
+    .evidence-tab.active { color:#062031; background:#45d2ee; }
 
     .evidence-remove { opacity: 0; border: 0; background: transparent; color: #f87171; cursor: pointer; font-size: 20px; }
     .evidence-facts-table tr:hover .evidence-remove, .evidence-remove:focus-visible { opacity: 1; }
@@ -6209,6 +6214,11 @@
               </div>
             </div>
             <!-- SECTION 2: BẰNG CHỨNG CỐT LÕI & YẾU TỐ TĂNG GIẢM LỖI -->
+            <div class="evidence-tabs" role="tablist" aria-label="Nhóm kết quả phân tích">
+              <button type="button" class="evidence-tab active" data-evidence-tab="evidence" onclick="showEvidenceTab('evidence')">Bằng chứng <span class="badge badge-primary">4</span></button>
+              <button type="button" class="evidence-tab" data-evidence-tab="factors" onclick="showEvidenceTab('factors')">Quyết định tranh chấp <span class="badge badge-primary">3</span></button>
+              <button type="button" class="evidence-tab" data-evidence-tab="precedent" onclick="showEvidenceTab('precedent')">Án lệ <span class="badge badge-primary">2</span></button>
+            </div>
             <!-- Panel 1: Bằng chứng cốt lõi -->
             <div class="evidence-facts-panel" id="panel-core-evidence" style="margin-top:0; margin-bottom:14px;">
               <div class="evidence-facts-header">
@@ -9025,6 +9035,23 @@
       return (chart.code || '').replace(/^도표\s*/, 'Biểu đồ ');
     }
 
+    function showEvidenceTab(tab) {
+      const allowed = ['evidence', 'factors', 'precedent'];
+      if (!allowed.includes(tab)) tab = 'evidence';
+      const stage = document.getElementById('evidence-stage');
+      if (!stage) return;
+      stage.dataset.evidenceTab = tab;
+      document.querySelectorAll('[data-evidence-tab]').forEach(btn => btn.classList.toggle('active', btn.dataset.evidenceTab === tab));
+      const core = document.getElementById('panel-core-evidence');
+      const refs = document.querySelector('.evidence-references');
+      const factors = document.getElementById('panel-fault-factors');
+      const precedent = document.getElementById('evidence-precedent');
+      if (core) core.hidden = tab !== 'evidence';
+      if (refs) refs.style.display = tab === 'evidence' ? 'none' : 'block';
+      if (factors) factors.hidden = tab !== 'factors';
+      if (precedent) precedent.hidden = tab !== 'precedent';
+    }
+
     function renderDualEvidenceWorkbench(c) {
       if (!c || !c.selectedChart || !c.charts || !c.charts.length) return;
 
@@ -9076,6 +9103,7 @@
       }
 
       renderEvidencePrecedent(c);
+      showEvidenceTab(document.getElementById('evidence-stage')?.dataset.evidenceTab || 'evidence');
     }
 
     function renderEvidencePrecedent(c) {
