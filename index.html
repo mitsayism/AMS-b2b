@@ -1082,15 +1082,17 @@
     .header-nav {
       display: flex;
       gap: 6px;
-      margin-left: auto;
-      margin-right: 16px;
+      margin-left: 18px;
+      margin-right: 0;
     }
 
     .header-nav .btn {
       padding: 5px 10px;
     }
+    .header-icon-btn { width:32px; height:30px; padding:0 !important; display:inline-flex; align-items:center; justify-content:center; }
+    .header-icon-btn svg { width:16px; height:16px; }
 
-    .header-case-context { min-width:0; margin-left:18px; color:#cfe7f2; font-size:12px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .header-case-context { min-width:0; flex:1; margin-left:18px; color:#cfe7f2; font-size:12px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .header-case-context small { color:#7f9bb1; font-weight:600; margin-left:6px; }
 
     #SCR-CASE-DETAIL {
@@ -5835,13 +5837,17 @@
       <span class="brand-divider">/</span>
       <span class="brand-product">Phân tích tai nạn</span>
     </div>
-    <div id="header-case-context" class="header-case-context" hidden></div>
     <nav class="header-nav" aria-label="Điều hướng chính">
-      <button class="btn btn-secondary btn-sm" onclick="navigate('SCR-CASE-LIST')"
-        data-tooltip="Mở danh sách vụ việc">Danh sách</button>
-      <button class="btn btn-secondary btn-sm" id="header-history-button" onclick="openHeaderHistory()"
-        data-tooltip="Mở trang nhật ký hoạt động">Nhật ký hoạt động</button>
+      <button class="btn btn-secondary btn-sm header-icon-btn" onclick="navigate('SCR-CASE-LIST')"
+        data-tooltip="Danh sách vụ việc" aria-label="Danh sách vụ việc" title="Danh sách vụ việc">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 5h16M4 12h16M4 19h16"/><circle cx="7" cy="5" r="1" fill="currentColor"/><circle cx="7" cy="12" r="1" fill="currentColor"/><circle cx="7" cy="19" r="1" fill="currentColor"/></svg>
+      </button>
+      <button class="btn btn-secondary btn-sm header-icon-btn" id="header-history-button" onclick="openHeaderHistory()"
+        data-tooltip="Nhật ký hoạt động" aria-label="Nhật ký hoạt động" title="Nhật ký hoạt động">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/><path d="M4 4v4h4"/></svg>
+      </button>
     </nav>
+    <div id="header-case-context" class="header-case-context" hidden></div>
     <div class="lang-switcher-wrap" role="group" aria-label="Language Selector">
       <button type="button" class="lang-btn" id="lang-btn-ko" onclick="switchLanguage('ko')" title="한국어 (Korean)">🇰🇷
         한국어</button>
@@ -7293,10 +7299,10 @@
       try {
         const bProduct = document.querySelector('.brand-product');
         if (bProduct) bProduct.textContent = t('brand_title');
-        const navList = document.querySelector('.header-nav button:first-child');
-        if (navList) navList.textContent = t('nav_case_list');
         const navHist = document.getElementById('header-history-button');
-        if (navHist) navHist.textContent = t('nav_activity_log');
+        if (navHist) navHist.title = t('nav_activity_log');
+        const navListButton = document.querySelector('.header-nav button:first-child');
+        if (navListButton) navListButton.title = t('nav_case_list');
         const userSpan = document.getElementById('header-user-name');
         if (userSpan) userSpan.textContent = 'smtadmin (' + t('user_role') + ')';
 
