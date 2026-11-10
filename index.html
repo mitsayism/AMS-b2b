@@ -1125,7 +1125,7 @@
 
     #SCR-CASE-DETAIL .case-context h1 {
       color: #f4f8fe;
-      font-size: clamp(20px, 2vw, 27px);
+      font-size: clamp(24px, 2.6vw, 34px);
       line-height: 1.2;
       letter-spacing: -.035em;
       font-weight: 680;
@@ -1136,6 +1136,14 @@
     }
 
     #SCR-CASE-DETAIL .case-context h1 {
+      overflow-wrap: anywhere;
+    }
+
+    #SCR-CASE-DETAIL .case-context-video {
+      margin-top: 4px;
+      color: #91a5bd;
+      font-size: 12px;
+      line-height: 1.35;
       overflow-wrap: anywhere;
     }
 
@@ -5909,8 +5917,9 @@
     <div id="SCR-CASE-DETAIL" class="view-screen">
       <div class="case-context" style="margin-bottom:12px;">
         <div>
-          <span class="case-eyebrow" id="case-context-code">VỤ VIỆC #10</span>
-          <h1 id="case-context-title">Phân tích video tai nạn</h1>
+          <span class="case-eyebrow" id="case-context-code" hidden>VỤ VIỆC #10</span>
+          <h1 id="case-context-title" class="case-context-main">#10 · CS-2026-8821 · Kim Tae-woo</h1>
+          <div id="case-context-video" class="case-context-video">dashcam_teheran_rear_end.mp4</div>
         </div>
         <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
           <button class="btn btn-secondary btn-sm" onclick="navigate('SCR-CASE-LIST')">&larr; Danh sách vụ việc</button>
@@ -8740,7 +8749,8 @@
         playerTitle.innerText = 'Video vụ việc'; playerTitle.title = c.videoName || 'Video vụ việc';
       }
       document.getElementById('case-context-code').innerText = `VỤ VIỆC ${c.id} · ${c.code}`;
-      document.getElementById('case-context-title').innerText = c.caseTitle || (c.videoName === 'Chưa có video' ? 'Vụ việc mới' : `${c.customer} · ${c.videoName}`);
+      document.getElementById('case-context-title').innerText = `${c.id} · ${c.code} · ${c.customer || 'Khách hàng'}`;
+      document.getElementById('case-context-video').innerText = c.videoName || 'Chưa có video';
 
       const chatTitle = c.caseTitle || `${c.customer} · ${c.videoName}`;
       document.getElementById('chat-case-title').textContent = chatTitle;
