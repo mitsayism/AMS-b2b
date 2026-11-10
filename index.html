@@ -4416,6 +4416,44 @@
     .evidence-references .precedent-compact-card { min-width: 0; }
     .evidence-references .precedent-compact-card button { flex-shrink: 0; }
     .evidence-references .precedent-compact-card div { overflow-wrap: anywhere; }
+    .precedent-compact-card {
+      min-height: 42px;
+      padding: 8px 10px !important;
+      border-radius: 8px !important;
+      transition: border-color .18s ease, background .18s ease, transform .18s ease;
+    }
+    .precedent-compact-card:hover {
+      border-color: #38bdf8 !important;
+      background: rgba(14,165,233,.10) !important;
+      transform: translateY(-1px);
+    }
+    .precedent-compact-card .compact-detail-btn {
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 0;
+      border-radius: 50%;
+      background: transparent;
+      color: #7dd3fc;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      flex: 0 0 auto;
+    }
+    .precedent-compact-card .compact-detail-btn:hover,
+    .precedent-compact-card .compact-detail-btn:focus-visible {
+      color: #fff;
+      background: rgba(56,189,248,.18);
+      outline: none;
+    }
+    .precedent-compact-card .compact-title {
+      min-width: 0;
+      overflow-wrap: anywhere;
+      line-height: 1.35;
+    }
     @media (max-width: 900px) { .evidence-references { grid-template-columns: 1fr; } }
     #SCR-CASE-DETAIL #evidence-stage > #panel-core-evidence,
     #SCR-CASE-DETAIL #evidence-stage > #panel-fault-factors,
@@ -9093,11 +9131,11 @@
         disputeList.innerHTML = [0, 1, 4].map(index => {
           const item = disputes[index];
           const badge = favorabilityBadgeMeta(item.favorability);
-          return `<div class="precedent-compact-card" style="background:rgba(15,28,44,.65);border:1px solid #233e59;border-radius:7px;padding:10px 14px;display:flex;align-items:center;gap:12px;">
+          return `<div class="precedent-compact-card" style="background:rgba(15,28,44,.65);border:1px solid #233e59;display:flex;align-items:center;gap:10px;">
             <div style="flex:1;min-width:0;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
               <span class="badge" style="${badge.style}">${badge.label}</span>
-              <div style="font-size:12.5px;font-weight:700;color:#f1f5f9;">${escapeHtml(item.title)}</div></div>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="openDisputeReference(${index})">Xem chi tiết</button>
+              <div class="compact-title" style="font-size:12.5px;font-weight:700;color:#f1f5f9;">${escapeHtml(item.title)}</div></div>
+            <button type="button" class="compact-detail-btn" onclick="openDisputeReference(${index})" aria-label="Mở chi tiết quyết định tranh chấp" title="Xem chi tiết">›</button>
           </div>`;
         }).join('');
       }
@@ -9185,18 +9223,14 @@
 
       content.innerHTML = list.map((p, pIdx) => `
         <div class="precedent-compact-card"
-          style="background:rgba(15,28,44,0.65); border:1px solid #233e59; border-radius:7px; padding:10px 14px; cursor:pointer; transition:all 0.2s ease; display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:8px;"
-          onmouseover="this.style.borderColor='#38bdf8'; this.style.background='rgba(14,165,233,0.1)';"
-          onmouseout="this.style.borderColor='#233e59'; this.style.background='rgba(15,28,44,0.65)';"
+          style="background:rgba(15,28,44,0.65); border:1px solid #233e59; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:8px;"
           data-tooltip="Bấm để xem chi tiết bản án và phán quyết phân định lỗi">
-          <div style="flex:1 1 auto; min-width:0;">
-            <div style="font-size:12.5px; font-weight:700; color:#f1f5f9; margin-bottom:4px; line-height:1.35;">
+          <div class="compact-title" style="flex:1 1 auto;">
+            <div style="font-size:12.5px; font-weight:700; color:#f1f5f9;">
               ${escapeHtml(p.title)}
             </div>
           </div>
-          <div style="flex-shrink:0;">
-            <button type="button" class="btn btn-secondary btn-sm" onclick="openPrecedentModal(${pIdx})">Xem chi tiết</button>
-          </div>
+          <button type="button" class="compact-detail-btn" onclick="openPrecedentModal(${pIdx})" aria-label="Mở chi tiết án lệ" title="Xem chi tiết">›</button>
         </div>
       `).join('');
     }
