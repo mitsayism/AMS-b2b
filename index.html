@@ -5155,10 +5155,10 @@
     }
 
     .evidence-facts-table td {
-      padding: 9px 10px;
+      padding: 7px 8px;
       border-bottom: 1px solid #1a2e44;
       vertical-align: middle;
-      line-height: 1.45;
+      line-height: 1.35;
     }
 
     .evidence-facts-table tr:hover {
@@ -5172,6 +5172,27 @@
     .evidence-remove { opacity: 0; border: 0; background: transparent; color: #f87171; cursor: pointer; font-size: 20px; }
     .evidence-facts-table tr:hover .evidence-remove, .evidence-remove:focus-visible { opacity: 1; }
     @media (hover: none) { .evidence-remove { opacity: 1; } }
+
+    /* Bằng chứng cốt lõi: hàng gọn, khung hình không làm kéo cao bảng */
+    #panel-core-evidence .evidence-facts-table { min-width: 620px; font-size: 11px; }
+    #panel-core-evidence .evidence-facts-table th { padding: 7px 8px !important; }
+    #panel-core-evidence .fact-thumb-strip {
+      flex-direction: row;
+      gap: 3px;
+      padding: 0;
+      flex-wrap: nowrap;
+    }
+    #panel-core-evidence .fact-thumb-item,
+    #panel-core-evidence .fact-thumb-img {
+      width: 50px;
+      height: 31px;
+    }
+    #panel-core-evidence .evidence-facts-table td:nth-child(6) {
+      max-width: 250px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
     .fact-tag-badge {
       display: inline-block;
