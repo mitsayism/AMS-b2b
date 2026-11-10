@@ -1090,6 +1090,9 @@
       padding: 5px 10px;
     }
 
+    .header-case-context { min-width:0; margin-left:18px; color:#cfe7f2; font-size:12px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .header-case-context small { color:#7f9bb1; font-weight:600; margin-left:6px; }
+
     #SCR-CASE-DETAIL {
       --primary: #48cce9;
       --primary-hover: #35b8d6;
@@ -2388,6 +2391,8 @@
     }
 
     @media (max-width:600px) {
+      .header-case-context { display:none; }
+      .brand-product { display:none; }
       .header-nav {
         margin-right: 0;
       }
@@ -5830,6 +5835,7 @@
       <span class="brand-divider">/</span>
       <span class="brand-product">Phân tích tai nạn</span>
     </div>
+    <div id="header-case-context" class="header-case-context" hidden></div>
     <nav class="header-nav" aria-label="Điều hướng chính">
       <button class="btn btn-secondary btn-sm" onclick="navigate('SCR-CASE-LIST')"
         data-tooltip="Mở danh sách vụ việc">Danh sách</button>
@@ -6602,12 +6608,13 @@
           <h1 class="screen-title">Lịch sử hoạt động</h1>
           <p class="screen-subtitle">Các thay đổi trong hồ sơ theo thứ tự thời gian.</p>
         </div>
-        <button class="btn btn-secondary btn-sm" onclick="navigate('SCR-CASE-DETAIL')">&larr; Quay lại vụ việc</button>
+        <button class="btn btn-secondary btn-sm" id="activity-back-button" onclick="navigate('SCR-CASE-LIST')">&larr; Danh sách vụ việc</button>
       </div>
 
       <!-- Filter Categories -->
       <div class="panel" style="margin-bottom:16px;">
-        <div class="panel-body" style="padding:10px; display:flex; gap:8px; flex-wrap:wrap;" id="log-filter-buttons">
+        <div class="panel-body" style="padding:10px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;" id="log-filter-buttons">
+          <select id="activity-case-select" class="chat-input" style="width:auto;min-width:210px;" onchange="setActivityCaseFilter(this.value)" aria-label="Lọc theo vụ việc"></select>
           <button class="btn btn-primary btn-sm" data-log-filter="ALL" onclick="filterLogs('ALL')">Tất cả</button>
           <button class="btn btn-secondary btn-sm" data-log-filter="ANALYSIS" onclick="filterLogs('ANALYSIS')">Phân
             tích</button>
@@ -8084,10 +8091,21 @@
       if (screenId === 'SCR-CUSTOMER-NOTIFY') renderNotificationScreen();
       if (screenId === 'SCR-ACTIVITY-LOG') filterLogs('ALL');
       renderDocumentMenu();
+      renderHeaderContext();
     }
 
     function openHeaderHistory() {
+      STATE.activityCaseFilter = 'ALL';
       navigate('SCR-ACTIVITY-LOG');
+    }
+
+    function renderHeaderContext() {
+      const el = document.getElementById('header-case-context');
+      if (!el) return;
+      const c = STATE.cases[STATE.currentCaseId];
+      const inDetail = STATE.currentScreen === 'SCR-CASE-DETAIL' && c;
+      el.hidden = !inDetail;
+      if (inDetail) el.innerHTML = `· ${escapeHtml(c.id)} · ${escapeHtml(c.code)} <small>${escapeHtml(c.customer || 'Khách hàng')}</small>`;
     }
 
     function switchCaseTab(tab) {
@@ -12589,11 +12607,21 @@ function renderInternalReportTab(c) {
        SCREEN 6: SCR-ACTIVITY-LOG LOGIC
        ===================================================================== */
     function renderActivityLog(filterType = 'ALL') {
-      document.getElementById('activity-context-case').textContent = `VỤ VIỆC ${STATE.cases[STATE.currentCaseId].id}`;
+      const caseSelect = document.getElementById('activity-case-select');
+      const cases = Object.values(STATE.cases);
+      const selectedCase = STATE.activityCaseFilter || 'ALL';
+      if (caseSelect) {
+        caseSelect.innerHTML = `<option value="ALL">Tất cả vụ việc</option>${cases.map(c => `<option value="${escapeHtml(String(c.id).replace('#',''))}">${escapeHtml(c.id)} · ${escapeHtml(c.code)} · ${escapeHtml(c.customer || 'Khách hàng')}</option>`).join('')}`;
+        caseSelect.value = selectedCase;
+      }
+      const scopedCase = selectedCase === 'ALL' ? null : STATE.cases[selectedCase];
+      document.getElementById('activity-context-case').textContent = scopedCase ? `${scopedCase.id} · ${scopedCase.customer}` : 'TẤT CẢ VỤ VIỆC';
+      const back = document.getElementById('activity-back-button');
+      if (back) { back.textContent = scopedCase ? '← Quay lại vụ việc' : '← Danh sách vụ việc'; back.onclick = () => navigate(scopedCase ? 'SCR-CASE-DETAIL' : 'SCR-CASE-LIST'); }
       const container = document.getElementById('timeline-container');
       container.innerHTML = '';
 
-      let filtered = STATE.logs.map(normalizeActivity).filter(log => (log.caseId || '10') === STATE.currentCaseId);
+      let filtered = STATE.logs.map(normalizeActivity).filter(log => selectedCase === 'ALL' ? true : (log.caseId || '10') === selectedCase);
       const filterKinds = {
         ANALYSIS: ['analysis_queued', 'analysis_started', 'analysis_done', 'analysis_failed'],
         FACT: ['fact_edited'],
@@ -12636,6 +12664,11 @@ function renderInternalReportTab(c) {
         button.className = `btn ${button.dataset.logFilter === type ? 'btn-primary' : 'btn-secondary'} btn-sm`;
       });
       renderActivityLog(type);
+    }
+
+    function setActivityCaseFilter(caseId) {
+      STATE.activityCaseFilter = caseId;
+      renderActivityLog(document.querySelector('[data-log-filter].btn-primary')?.dataset.logFilter || 'ALL');
     }
 
     /* =====================================================================
