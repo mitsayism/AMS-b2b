@@ -3702,10 +3702,9 @@
 
     .nego4-sum {
       display: grid;
-      grid-template-columns: 0.85fr 1.3fr 0.85fr;
+      grid-template-columns: 1fr 1fr 1fr;
       gap: 10px;
       margin-bottom: 12px;
-      align-items: center;
     }
 
     .nego4-sum>div {
@@ -3718,32 +3717,21 @@
       justify-content: center;
     }
 
-    .nego4-sum .us,
-    .nego4-sum .them {
-      padding: 8px 12px;
-      align-items: center;
-      text-align: center;
-      opacity: 0.92;
-    }
-
     .nego4-sum .us {
       border-color: #2f9d62;
-      background: rgba(34, 197, 94, 0.05);
+      background: rgba(34, 197, 94, 0.06);
     }
 
     .nego4-sum .now {
-      padding: 14px 18px;
-      border-width: 1.5px;
       border-color: #38bdf8;
-      background: rgba(14, 165, 233, 0.11);
-      box-shadow: 0 4px 18px rgba(14, 165, 233, 0.14);
+      background: rgba(14, 165, 233, 0.08);
       align-items: center;
       text-align: center;
     }
 
     .nego4-sum .them {
       border-color: #ef4444;
-      background: rgba(239, 68, 68, 0.05);
+      background: rgba(239, 68, 68, 0.06);
     }
 
     .nego4-sum .lbl {
@@ -3751,11 +3739,6 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.3px;
-    }
-
-    .nego4-sum .us .lbl,
-    .nego4-sum .them .lbl {
-      font-size: 10px;
     }
 
     .nego4-sum .us .lbl,
@@ -3774,16 +3757,10 @@
     }
 
     .nego4-sum .big {
-      font-size: 34px;
+      font-size: 32px;
       font-weight: 800;
       line-height: 1.1;
       margin: 3px 0 2px;
-    }
-
-    .nego4-sum .us .big,
-    .nego4-sum .them .big {
-      font-size: 22px;
-      font-weight: 700;
     }
 
     .nego4-sum .big small {
@@ -5876,7 +5853,7 @@
         </div>
         <div style="display:flex; gap:10px;">
           <button type="button" class="btn btn-secondary" onclick="renderCaseTable()" aria-label="Làm mới danh sách vụ việc" title="Làm mới danh sách vụ việc">↻ Làm mới</button>
-          <button class="btn btn-secondary" onclick="switchCaseTab('archived')" id="btn-tab-archived"
+          <button class="btn btn-secondary" onclick="switchCaseTab(STATE.activeTab === 'archived' ? 'active' : 'archived')" id="btn-tab-archived"
             data-tooltip="Xem các hồ sơ đã lưu trữ vào kho">Kho lưu trữ (0)</button>
           <button class="btn btn-primary" onclick="startNewCase()"
             data-tooltip="Nhập thông tin vụ việc trước khi mở phân tích">+ Tạo Vụ Việc Mới</button>
@@ -6547,14 +6524,10 @@
                   việc #10</span>
               </div>
               <div style="display:flex; align-items:center; gap:6px; flex:none;">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="requestAiReanalysis()"
+                  style="padding:3px 9px; font-size:11px;">Phân tích lại</button>
                 <button type="button" class="btn btn-secondary btn-sm" onclick="toggleRightChat(true)"
-                  title="Thu gọn AI Chat" aria-label="Thu gọn AI Chat"
-                  style="width:28px; height:28px; padding:0; display:inline-flex; align-items:center; justify-content:center; border-radius:6px;">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <polyline points="13 17 18 12 13 7"></polyline>
-                    <polyline points="6 17 11 12 6 7"></polyline>
-                  </svg>
-                </button>
+                  style="padding:3px 9px; font-size:11px;">Thu gọn</button>
               </div>
             </div>
 
@@ -7265,8 +7238,8 @@
         "stage_status_draft": "Bản nháp",
         "stage_status_approved": "Đã duyệt",
         "stage_status_sent": "Đã gửi mô phỏng",
-        "our_claim_title": "Lập luận bảo vệ khách hàng (lỗi khách hàng ↓)",
-        "their_claim_title": "Lập luận đối phương có thể đưa ra (lỗi khách hàng ↑)",
+        "our_claim_title": "Lập luận bảo vệ khách hàng (giảm lỗi ↓)",
+        "their_claim_title": "Lập luận đối phương có thể đưa ra (tăng lỗi ↑)",
         "current_ratio_title": "Tỷ lệ hiện tại · Đã đồng thuận",
         "exclude": "Loại trừ",
         "negotiating": "Đang bàn",
@@ -8116,6 +8089,8 @@
       const tbody = document.getElementById('case-table-body');
       tbody.innerHTML = '';
       const cases = Object.values(STATE.cases);
+      const archiveButton = document.getElementById('btn-tab-archived');
+      if (archiveButton) archiveButton.textContent = STATE.activeTab === 'archived' ? '← Quay lại danh sách' : `Kho lưu trữ (${cases.filter(c => c.isClosed || c.stage === 5).length})`;
       document.getElementById('metric-total').textContent = cases.length;
       document.getElementById('metric-wait-video').textContent = cases.filter(c => caseProgress(c) === 'waiting').length;
       document.getElementById('metric-attention').textContent = cases.filter(c => caseProgress(c) === 'analyzing').length;
@@ -8129,18 +8104,13 @@
         button.setAttribute('aria-pressed', String(active));
       });
 
-      if (STATE.activeTab === 'archived') {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:40px; color:var(--slate-400);">Kho lưu trữ hiện tại đang trống (0 vụ việc). <button class="btn btn-secondary btn-sm" onclick="switchCaseTab('active')">Quay lại danh sách</button></td></tr>`;
-        document.getElementById('case-count-label').innerText = 'Hiển thị 0 vụ việc';
-        return;
-      }
-
       const search = (document.getElementById('case-search-input')?.value || '').toLowerCase();
       const stageFilter = STATE.caseStageFilter;
+      const displayCases = STATE.activeTab === 'archived' ? cases.filter(c => c.isClosed || c.stage === 5) : cases.filter(c => !c.isClosed && c.stage !== 5);
 
       let count = 0;
-      Object.keys(STATE.cases).forEach(key => {
-        const c = STATE.cases[key];
+      displayCases.forEach(c => {
+        const key = Object.keys(STATE.cases).find(id => STATE.cases[id] === c);
         if (stageFilter !== 'ALL' && caseProgress(c) !== stageFilter) return;
         if (search && !c.code.toLowerCase().includes(search) && !c.customer.toLowerCase().includes(search) && !c.vehicleNo.toLowerCase().includes(search) && !(c.caseTitle || '').toLowerCase().includes(search)) return;
 
@@ -8165,7 +8135,6 @@
           <td><b style="color:var(--primary);">${c.id}</b><br><span style="font-size:11px; color:var(--slate-400);">${c.code}</span></td>
           <td>
             <div style="font-weight:600; color:var(--slate-800);">${escapeHtml(c.caseTitle || c.customer)}</div>
-            <div style="font-size:11px; color:var(--slate-500);">${escapeHtml(c.customer)}</div>
             <div style="font-size:11px; color:var(--slate-500);">${escapeHtml(c.videoName)} &bull; ${c.vehicleNo}</div>
           </td>
           <td><span class="badge ${caseProgress(c) === 'closed' ? 'badge-low' : (caseProgress(c) === 'waiting' ? 'badge-danger' : 'badge-primary')}">${caseProgressLabels[caseProgress(c)]}</span></td>
@@ -8181,6 +8150,8 @@
         `;
         tbody.appendChild(tr);
       });
+
+      if (!count) tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--slate-400);">${STATE.activeTab === 'archived' ? 'Kho lưu trữ hiện đang trống.' : 'Chưa có vụ việc trong danh sách.'}</td></tr>`;
 
       document.getElementById('case-count-label').innerText = `${t('showing_cases_prefix')}${count}${t('showing_cases_suffix')}`;
     }
@@ -10717,7 +10688,7 @@
         <div class="nego4-sum">
           <div class="us">
             <div class="lbl">Nếu ta được công nhận thêm 1 mục</div>
-            <div class="big">${usVal}%</div>
+            <div class="big">${usVal}%<small>${usVal === r.cur ? "" : `thấp hơn ${r.cur - usVal}% ↓`}</small></div>
           </div>
           <div class="now">
             <div class="lbl">Tỷ lệ hiện tại · Đã đồng thuận</div>
@@ -10725,12 +10696,12 @@
           </div>
           <div class="them">
             <div class="lbl">Nếu đối phương được công nhận thêm 1 mục</div>
-            <div class="big">${themVal}%</div>
+            <div class="big">${themVal}%<small>${themVal === r.cur ? (r.cur >= 100 ? "chạm 100%" : "") : `cao hơn ${themVal - r.cur}% ↑`}</small></div>
           </div>
         </div>
         <div class="nego4-cols">
-          ${col('us', 'Lập luận bảo vệ khách hàng', 'lỗi khách hàng', '↓')}
-          ${col('them', 'Lập luận đối phương có thể đưa ra', 'lỗi khách hàng', '↑')}
+          ${col('us', 'Lập luận bảo vệ khách hàng', 'giảm lỗi khách hàng', '↓')}
+          ${col('them', 'Lập luận đối phương có thể đưa ra', 'tăng lỗi khách hàng', '↑')}
         </div>
                 <div class="nego4-foot-actions" style="margin-top:20px; display:flex; justify-content:center; align-items:center; gap:12px; padding:14px; background:rgba(15,23,42,0.6); border-radius:8px; border:1px solid #1e334a; flex-wrap:wrap;">
           <button type="button" class="btn btn-primary" onclick="goToNotification()"
