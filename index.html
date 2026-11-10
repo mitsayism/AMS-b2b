@@ -6524,10 +6524,14 @@
                   việc #10</span>
               </div>
               <div style="display:flex; align-items:center; gap:6px; flex:none;">
-                <button type="button" class="btn btn-secondary btn-sm" onclick="requestAiReanalysis()"
-                  style="padding:3px 9px; font-size:11px;">Phân tích lại</button>
                 <button type="button" class="btn btn-secondary btn-sm" onclick="toggleRightChat(true)"
-                  style="padding:3px 9px; font-size:11px;">Thu gọn</button>
+                  title="Thu gọn AI Chat" aria-label="Thu gọn AI Chat"
+                  style="width:28px; height:28px; padding:0; display:inline-flex; align-items:center; justify-content:center; border-radius:6px;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="13 17 18 12 13 7"></polyline>
+                    <polyline points="6 17 11 12 6 7"></polyline>
+                  </svg>
+                </button>
               </div>
             </div>
 
@@ -7238,8 +7242,8 @@
         "stage_status_draft": "Bản nháp",
         "stage_status_approved": "Đã duyệt",
         "stage_status_sent": "Đã gửi mô phỏng",
-        "our_claim_title": "Ta có thể chủ trương (lỗi khách hàng ↓)",
-        "their_claim_title": "Đối phương có thể chủ trương (lỗi khách hàng ↑)",
+        "our_claim_title": "Lập luận bảo vệ khách hàng (lỗi khách hàng ↓)",
+        "their_claim_title": "Lập luận đối phương có thể đưa ra (lỗi khách hàng ↑)",
         "current_ratio_title": "Tỷ lệ hiện tại · Đã đồng thuận",
         "exclude": "Loại trừ",
         "negotiating": "Đang bàn",
@@ -10702,8 +10706,8 @@
           </div>
         </div>
         <div class="nego4-cols">
-          ${col('us', 'Ta có thể chủ trương', 'lỗi khách hàng', '↓')}
-          ${col('them', 'Đối phương có thể chủ trương', 'lỗi khách hàng', '↑')}
+          ${col('us', 'Lập luận bảo vệ khách hàng', 'lỗi khách hàng', '↓')}
+          ${col('them', 'Lập luận đối phương có thể đưa ra', 'lỗi khách hàng', '↑')}
         </div>
                 <div class="nego4-foot-actions" style="margin-top:20px; display:flex; justify-content:center; align-items:center; gap:12px; padding:14px; background:rgba(15,23,42,0.6); border-radius:8px; border:1px solid #1e334a; flex-wrap:wrap;">
           <button type="button" class="btn btn-primary" onclick="goToNotification()"
