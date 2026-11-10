@@ -3702,7 +3702,7 @@
 
     .nego4-sum {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: .82fr 1.36fr .82fr;
       gap: 10px;
       margin-bottom: 12px;
     }
@@ -3716,6 +3716,8 @@
       flex-direction: column;
       justify-content: center;
     }
+    .nego4-sum .us, .nego4-sum .them { padding: 9px 11px; }
+    .nego4-sum .us .big, .nego4-sum .them .big { font-size: 26px; }
 
     .nego4-sum .us {
       border-color: #2f9d62;
@@ -10707,7 +10709,7 @@
         <div class="nego4-sum">
           <div class="us">
             <div class="lbl">Nếu ta được công nhận thêm 1 mục</div>
-            <div class="big">${usVal}%<small>${usVal === r.cur ? "" : `thấp hơn ${r.cur - usVal}% ↓`}</small></div>
+            <div class="big">${usVal}%</div>
           </div>
           <div class="now">
             <div class="lbl">Tỷ lệ hiện tại · Đã đồng thuận</div>
@@ -10715,7 +10717,7 @@
           </div>
           <div class="them">
             <div class="lbl">Nếu đối phương được công nhận thêm 1 mục</div>
-            <div class="big">${themVal}%<small>${themVal === r.cur ? (r.cur >= 100 ? "chạm 100%" : "") : `cao hơn ${themVal - r.cur}% ↑`}</small></div>
+            <div class="big">${themVal}%</div>
           </div>
         </div>
         <div class="nego4-cols">
@@ -13457,7 +13459,7 @@ function renderInternalReportTab(c) {
   
   </script>
 <style>
-  #design-comments-toggle { position:fixed; right:20px; bottom:20px; z-index:99990; border:0; border-radius:24px; padding:12px 18px; background:#22d3ee; color:#082032; font-weight:700; cursor:pointer; box-shadow:0 5px 24px #0008; }
+  #design-comments-toggle { position:fixed; right:156px; bottom:20px; z-index:99990; border:0; border-radius:24px; padding:12px 18px; background:#22d3ee; color:#082032; font-weight:700; cursor:pointer; box-shadow:0 5px 24px #0008; }
   #design-comments { position:fixed; right:20px; bottom:76px; width:min(360px,calc(100vw - 40px)); max-height:70vh; overflow:auto; z-index:99991; padding:16px; border:1px solid #31516b; border-radius:12px; background:#0e1c2c; color:#e2e8f0; box-shadow:0 10px 35px #0009; font:14px/1.45 system-ui,sans-serif; }
   #design-comments[hidden] { display:none; }
   #design-comments:has(#dc-form:not([hidden])) > .dc-intro, #design-comments:has(#dc-form:not([hidden])) > .dc-toolbar { display:none; }
