@@ -3702,9 +3702,10 @@
 
     .nego4-sum {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: 0.85fr 1.3fr 0.85fr;
       gap: 10px;
       margin-bottom: 12px;
+      align-items: center;
     }
 
     .nego4-sum>div {
@@ -3717,21 +3718,32 @@
       justify-content: center;
     }
 
+    .nego4-sum .us,
+    .nego4-sum .them {
+      padding: 8px 12px;
+      align-items: center;
+      text-align: center;
+      opacity: 0.92;
+    }
+
     .nego4-sum .us {
       border-color: #2f9d62;
-      background: rgba(34, 197, 94, 0.06);
+      background: rgba(34, 197, 94, 0.05);
     }
 
     .nego4-sum .now {
+      padding: 14px 18px;
+      border-width: 1.5px;
       border-color: #38bdf8;
-      background: rgba(14, 165, 233, 0.08);
+      background: rgba(14, 165, 233, 0.11);
+      box-shadow: 0 4px 18px rgba(14, 165, 233, 0.14);
       align-items: center;
       text-align: center;
     }
 
     .nego4-sum .them {
       border-color: #ef4444;
-      background: rgba(239, 68, 68, 0.06);
+      background: rgba(239, 68, 68, 0.05);
     }
 
     .nego4-sum .lbl {
@@ -3739,6 +3751,11 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.3px;
+    }
+
+    .nego4-sum .us .lbl,
+    .nego4-sum .them .lbl {
+      font-size: 10px;
     }
 
     .nego4-sum .us .lbl,
@@ -3757,10 +3774,16 @@
     }
 
     .nego4-sum .big {
-      font-size: 32px;
+      font-size: 34px;
       font-weight: 800;
       line-height: 1.1;
       margin: 3px 0 2px;
+    }
+
+    .nego4-sum .us .big,
+    .nego4-sum .them .big {
+      font-size: 22px;
+      font-weight: 700;
     }
 
     .nego4-sum .big small {
@@ -10694,7 +10717,7 @@
         <div class="nego4-sum">
           <div class="us">
             <div class="lbl">Nếu ta được công nhận thêm 1 mục</div>
-            <div class="big">${usVal}%<small>${usVal === r.cur ? "" : `thấp hơn ${r.cur - usVal}% ↓`}</small></div>
+            <div class="big">${usVal}%</div>
           </div>
           <div class="now">
             <div class="lbl">Tỷ lệ hiện tại · Đã đồng thuận</div>
@@ -10702,7 +10725,7 @@
           </div>
           <div class="them">
             <div class="lbl">Nếu đối phương được công nhận thêm 1 mục</div>
-            <div class="big">${themVal}%<small>${themVal === r.cur ? (r.cur >= 100 ? "chạm 100%" : "") : `cao hơn ${themVal - r.cur}% ↑`}</small></div>
+            <div class="big">${themVal}%</div>
           </div>
         </div>
         <div class="nego4-cols">
