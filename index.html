@@ -115,6 +115,9 @@
     .portal-card.card-spec:hover::before {
       background: linear-gradient(90deg, #34d399, #10b981);
     }
+    .portal-card.card-rules:hover::before {
+      background: linear-gradient(90deg, #c084fc, #9333ea);
+    }
     .card-icon {
       width: 52px;
       height: 52px;
@@ -132,6 +135,10 @@
     .card-spec .card-icon {
       background: rgba(16, 185, 129, 0.15);
       border: 1px solid rgba(52, 211, 153, 0.3);
+    }
+    .card-rules .card-icon {
+      background: rgba(147, 51, 234, 0.15);
+      border: 1px solid rgba(192, 132, 252, 0.3);
     }
     .card-title {
       font-size: 19px;
@@ -174,6 +181,14 @@
     .portal-card.card-spec:hover .card-action {
       background: #047857;
       box-shadow: 0 0 16px rgba(16, 185, 129, 0.3);
+    }
+    .card-rules .card-action {
+      background: #7e22ce;
+      color: white;
+    }
+    .portal-card.card-rules:hover .card-action {
+      background: #9333ea;
+      box-shadow: 0 0 16px rgba(168, 85, 247, 0.35);
     }
     .quick-links {
       display: flex;
@@ -236,10 +251,27 @@
           <span class="card-action">Mở Tài Liệu Nghiệp Vụ →</span>
         </div>
       </a>
+
+      <!-- 3. Quản Lý Quy Tắc Phân Tích (Demo Riêng) -->
+      <a href="./prototype/analysis-rules-demo.html" class="portal-card card-rules">
+        <div>
+          <div class="card-icon">🧠</div>
+          <div class="card-title">
+            <span>Quản Lý Quy Tắc Phân Tích</span>
+            <span style="font-size: 16px;">→</span>
+          </div>
+          <p class="card-desc">Màn demo riêng cho Reviewer &amp; TFT: Theo dõi mức độ khớp 4 nguồn, rà soát vụ việc khác biệt, tra cứu quy tắc, tạo đề xuất hiểu tình huống và quy trình phê duyệt.</p>
+        </div>
+        <div>
+          <span class="card-action">Mở Màn Demo Quy Tắc →</span>
+        </div>
+      </a>
     </div>
 
     <div class="quick-links">
       <span>Truy cập nhanh:</span>
+      <a href="./prototype/analysis-rules-demo.html">🧠 Quản Lý Quy Tắc Phân Tích</a>
+      <span>·</span>
       <a href="./prototype/swimlane-editor/index.html">🌊 Swimlane Process Editor</a>
       <span>·</span>
       <a href="./domain-spec/business-rules.md">📋 Business Rules (Markdown)</a>
@@ -251,4 +283,3 @@
   </div>
 </body>
 </html>
-

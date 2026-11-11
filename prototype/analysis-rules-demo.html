@@ -1,0 +1,2264 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visus × KNIA AMS — Quản Lý Quy Tắc Phân Tích (Demo)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #070f1e;
+      --bg-panel: #0d1a2d;
+      --bg-card: #12243e;
+      --bg-card-hover: #172e4f;
+      --bg-input: #0a1627;
+      --border: #1e3a5f;
+      --border-bright: #2d558a;
+      --border-focus: #38bdf8;
+      
+      --cyan: #38bdf8;
+      --cyan-glow: rgba(56, 189, 248, 0.25);
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-glow: rgba(37, 99, 235, 0.3);
+      --emerald: #10b981;
+      --emerald-glow: rgba(16, 185, 129, 0.25);
+      --amber: #f59e0b;
+      --amber-glow: rgba(245, 158, 11, 0.25);
+      --rose: #f43f5e;
+      --rose-glow: rgba(244, 63, 94, 0.25);
+      --purple: #a855f7;
+      
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-deep);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Top Navigation Bar */
+    header.app-header {
+      background: rgba(13, 26, 45, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      height: 60px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .brand-badge {
+      background: linear-gradient(135deg, #2563eb, #38bdf8);
+      color: #fff;
+      font-weight: 800;
+      font-size: 13px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+    }
+    .brand-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: #ffffff;
+    }
+    .brand-sep {
+      color: var(--border-bright);
+      font-size: 16px;
+    }
+    .brand-subtitle {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--cyan);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .module-badge {
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--cyan);
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 12.5px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .header-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
+      border-color: var(--border-bright);
+    }
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+    }
+    .user-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #2563eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 11px;
+      color: white;
+    }
+
+    /* Sub-header Navigation Tabs */
+    .tab-bar-container {
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      position: sticky;
+      top: 60px;
+      z-index: 90;
+    }
+    .tab-nav {
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tab-nav::-webkit-scrollbar { display: none; }
+    .nav-tab-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 16px;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .nav-tab-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .nav-tab-btn.active {
+      color: var(--cyan);
+      border-bottom-color: var(--cyan);
+      background: rgba(56, 189, 248, 0.05);
+    }
+    .tab-count {
+      font-size: 11px;
+      padding: 1px 6px;
+      border-radius: 999px;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+    }
+    .nav-tab-btn.active .tab-count {
+      background: rgba(56, 189, 248, 0.2);
+      color: var(--cyan);
+    }
+    .tab-count.alert {
+      background: rgba(244, 63, 94, 0.2);
+      color: var(--rose);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+    }
+
+    .tab-bar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Main Container */
+    main.content-area {
+      flex: 1;
+      padding: 24px;
+      max-width: 1560px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .tab-pane {
+      display: none;
+      animation: fadeIn 0.25s ease-out;
+    }
+    .tab-pane.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Screen Title Bar */
+    .screen-header {
+      margin-bottom: 24px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .screen-kicker {
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--cyan);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .screen-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+    }
+    .screen-desc {
+      color: var(--text-muted);
+      font-size: 13.5px;
+      margin-top: 4px;
+      max-width: 820px;
+      line-height: 1.55;
+    }
+
+    /* KPI Cards Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+    .kpi-card:hover {
+      border-color: var(--border-bright);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    }
+    .kpi-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .kpi-value-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .kpi-value {
+      font-size: 28px;
+      font-weight: 800;
+      color: #ffffff;
+      font-family: var(--font-sans);
+    }
+    .kpi-sub {
+      font-size: 11.5px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .kpi-sub.up { color: var(--emerald); }
+    .kpi-sub.down { color: var(--rose); }
+    .kpi-sub.neutral { color: var(--cyan); }
+    .kpi-footer {
+      font-size: 11.5px;
+      color: var(--text-dim);
+      margin-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 8px;
+    }
+
+    /* Panels & Cards */
+    .panel-box {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .panel-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .panel-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .panel-body {
+      padding: 20px;
+    }
+
+    /* Tables */
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+    }
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+    table.data-table th {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+      font-size: 11.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    table.data-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-main);
+      vertical-align: middle;
+    }
+    table.data-table tr:hover td {
+      background: rgba(56, 189, 248, 0.03);
+    }
+
+    /* Badges & Pills */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .badge-primary { background: rgba(37, 99, 235, 0.15); border: 1px solid rgba(37, 99, 235, 0.35); color: #93c5fd; }
+    .badge-cyan { background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.35); color: #7dd3fc; }
+    .badge-emerald { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); color: #6ee7b7; }
+    .badge-amber { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.35); color: #fcd34d; }
+    .badge-rose { background: rgba(244, 63, 94, 0.15); border: 1px solid rgba(244, 63, 94, 0.35); color: #fda4af; }
+    .badge-purple { background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.35); color: #d8b4fe; }
+    .badge-slate { background: rgba(148, 163, 184, 0.12); border: 1px solid rgba(148, 163, 184, 0.25); color: #cbd5e1; }
+
+    /* Button Styles */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 0 16px var(--primary-glow);
+    }
+    .btn-cyan {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: rgba(56, 189, 248, 0.4);
+      color: var(--cyan);
+    }
+    .btn-cyan:hover {
+      background: rgba(56, 189, 248, 0.25);
+      border-color: var(--cyan);
+      box-shadow: 0 0 16px var(--cyan-glow);
+    }
+    .btn-emerald {
+      background: #059669;
+      color: white;
+    }
+    .btn-emerald:hover {
+      background: #047857;
+      box-shadow: 0 0 16px var(--emerald-glow);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--border);
+      color: var(--text-main);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--border-bright);
+    }
+    .btn-danger {
+      background: rgba(244, 63, 94, 0.15);
+      border-color: rgba(244, 63, 94, 0.4);
+      color: var(--rose);
+    }
+    .btn-danger:hover {
+      background: rgba(244, 63, 94, 0.25);
+    }
+    .btn-sm {
+      padding: 5px 10px;
+      font-size: 11.5px;
+      border-radius: 6px;
+    }
+
+    /* Form Controls */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    .search-input-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 260px;
+    }
+    .search-input-wrap input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 9px 12px 9px 34px;
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .search-input-wrap input:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+    }
+    .search-icon {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      font-size: 14px;
+    }
+    select.filter-select {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 9px 14px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      outline: none;
+      cursor: pointer;
+    }
+    select.filter-select:focus {
+      border-color: var(--cyan);
+    }
+
+    /* Modal / Drawer */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(7, 15, 30, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .modal-backdrop.active {
+      display: flex;
+      animation: modalFadeIn 0.2s ease-out;
+    }
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.97); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .modal-container {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-bright);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 900px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+    }
+    .modal-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-title {
+      font-size: 16.5px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .modal-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 18px;
+      padding: 4px;
+      border-radius: 6px;
+    }
+    .modal-close:hover { color: #fff; background: rgba(255, 255, 255, 0.1); }
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      background: rgba(0, 0, 0, 0.15);
+    }
+
+    /* Comparison 4-Column Grid */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .compare-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      position: relative;
+    }
+    .compare-card.match {
+      border-color: rgba(16, 185, 129, 0.4);
+      background: rgba(16, 185, 129, 0.04);
+    }
+    .compare-card.conflict {
+      border-color: rgba(244, 63, 94, 0.4);
+      background: rgba(244, 63, 94, 0.04);
+    }
+    .compare-source {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .compare-chart {
+      font-size: 16px;
+      font-weight: 800;
+      color: #fff;
+      font-family: var(--font-mono);
+      margin-bottom: 4px;
+    }
+    .compare-fault {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--cyan);
+    }
+    .compare-reason {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 8px;
+      line-height: 1.45;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 8px;
+    }
+
+    /* Weekly Chart Visualization */
+    .weekly-chart-wrap {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      padding: 16px 0;
+    }
+    .week-col {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+    }
+    .week-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .week-bar-container {
+      height: 120px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 8px;
+      padding: 0 10px;
+    }
+    .source-bar {
+      width: 14px;
+      border-radius: 4px 4px 0 0;
+      transition: height 0.5s ease-out;
+      position: relative;
+    }
+    .source-bar:hover::after {
+      content: attr(data-tip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #000;
+      color: #fff;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+      margin-bottom: 4px;
+      z-index: 10;
+    }
+    .bar-routing { background: #3b82f6; }
+    .bar-kb { background: #10b981; }
+    .bar-ai { background: #8b5cf6; }
+    .bar-final { background: #f59e0b; }
+    .week-match-rate {
+      font-size: 14px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    /* Toast Notification */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
+    .toast {
+      background: #0f1d33;
+      border: 1px solid var(--border-bright);
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideToast 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: auto;
+    }
+    @keyframes slideToast {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    .toast.success { border-color: rgba(16, 185, 129, 0.5); }
+    .toast.success::before { content: '✓'; color: var(--emerald); font-weight: 800; }
+    .toast.info { border-color: rgba(56, 189, 248, 0.5); }
+    .toast.info::before { content: 'ℹ'; color: var(--cyan); font-weight: 800; }
+
+    /* Form Grid */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+    .form-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .form-input, .form-textarea, .form-select {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+    }
+    .form-hint {
+      font-size: 11.5px;
+      color: var(--text-dim);
+    }
+
+    /* Regression Test Box */
+    .test-box {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      margin-top: 14px;
+    }
+    .progress-bar-bg {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 8px 0;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #2563eb, #38bdf8);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Application Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <a href="../index.html" class="brand-group" title="Về Portal điều hướng">
+        <span class="brand-badge">AMS</span>
+        <span class="brand-title">Visus B2B</span>
+      </a>
+      <span class="brand-sep">/</span>
+      <div class="brand-subtitle">
+        <span>Quản Lý Quy Tắc Phân Tích</span>
+        <span class="module-badge">Reviewer &amp; TFT Workspace</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <a href="./index.html" class="header-btn" title="Mở Bàn làm việc phân tích">
+        <span>⚡ Workbench</span>
+      </a>
+      <a href="../domain-spec/index.html" class="header-btn" title="Tài liệu nghiệp vụ &amp; Swimlane">
+        <span>📑 Domain Spec</span>
+      </a>
+      <div class="user-pill">
+        <div class="user-avatar">RV</div>
+        <span style="font-weight: 600; color:#e2e8f0;">reviewer_tft (Senior Analyst)</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sub-header Tab Bar (5 Chức năng theo đặc tả) -->
+  <div class="tab-bar-container">
+    <nav class="tab-nav">
+      <button class="nav-tab-btn active" onclick="switchMainTab('tab-quality')" id="btn-tab-quality">
+        <span>📊 Màn hình hiệu quả</span>
+        <span class="tab-count">Theo dõi</span>
+      </button>
+      <button class="nav-tab-btn" onclick="switchMainTab('tab-discrepancy')" id="btn-tab-discrepancy">
+        <span>🔍 Rà soát khác biệt</span>
+        <span class="tab-count alert" id="badge-discrepancy-count">14 vụ</span>
+      </button>
+      <button class="nav-tab-btn" onclick="switchMainTab('tab-rules')" id="btn-tab-rules">
+        <span>📋 Danh sách quy tắc</span>
+        <span class="tab-count">48 active</span>
+      </button>
+      <button class="nav-tab-btn" onclick="switchMainTab('tab-create')" id="btn-tab-create">
+        <span>✍️ Tạo quy tắc</span>
+        <span class="tab-count">+ Đề xuất</span>
+      </button>
+      <button class="nav-tab-btn" onclick="switchMainTab('tab-approval')" id="btn-tab-approval">
+        <span>⚖️ Phê duyệt đề xuất</span>
+        <span class="tab-count alert" id="badge-pending-proposals">8 chờ</span>
+      </button>
+    </nav>
+    <div class="tab-bar-actions">
+      <button class="btn btn-primary btn-sm" onclick="switchMainTab('tab-create')">
+        <span>+ Tạo đề xuất mới</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <main class="content-area">
+
+    <!-- ================= TAB 1: THEO DÕI CHẤT LƯỢNG PHÂN TÍCH (MÀN HÌNH HIỆU QUẢ) ================= -->
+    <section id="tab-quality" class="tab-pane active">
+      <div class="screen-header">
+        <div>
+          <div class="screen-kicker">
+            <span>Theo dõi chất lượng phân tích</span>
+            <span>•</span>
+            <span>Màn hình hiệu quả</span>
+          </div>
+          <h1 class="screen-title">Xem mức độ khớp giữa các kết quả phân tích</h1>
+          <p class="screen-desc">
+            Reviewer so sánh kết quả của <strong>Routing model</strong>, <strong>Knowledge Base</strong>, <strong>AI lần đầu</strong> và <strong>Quyết định của điều tra viên</strong> theo thời gian gần đây hoặc theo từng tuần để phát hiện sai lệch và nâng cao chất lượng tự động hóa.
+          </p>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <select class="filter-select" id="quality-time-filter" onchange="updateQualityStats()">
+            <option value="w45">Tuần 45 (Hiện tại: 04/11 - 10/11/2026)</option>
+            <option value="w44">Tuần 44 (28/10 - 03/11/2026)</option>
+            <option value="w43">Tuần 43 (21/10 - 27/10/2026)</option>
+            <option value="w42">Tuần 42 (14/10 - 20/10/2026)</option>
+            <option value="month">30 ngày qua (Tổng hợp)</option>
+          </select>
+          <button class="btn btn-secondary btn-sm" onclick="showToast('Đã làm mới dữ liệu đối soát tuần 45', 'info')">
+            <span>⟳ Làm mới</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI Summary Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">
+            <span>ĐỘ KHỚP TỔNG THỂ (OVERALL)</span>
+            <span class="badge badge-emerald">Mục tiêu ≥80%</span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" id="kpi-overall">84.6%</span>
+            <span class="kpi-sub up">▲ +2.4% vs tuần trước</span>
+          </div>
+          <div class="kpi-footer">Tính trên 142 vụ việc đã hoàn tất thẩm định tuần 45</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-label">
+            <span>ROUTING VS KNOWLEDGE BASE</span>
+            <span class="badge badge-cyan">Hệ thống</span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" id="kpi-routing-kb">88.5%</span>
+            <span class="kpi-sub up">▲ 126/142 vụ cùng mẫu</span>
+          </div>
+          <div class="kpi-footer">16 vụ có sự phân kỳ giữa thuật toán routing và KB</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-label">
+            <span>AI LẦN ĐẦU VS ĐIỀU TRA VIÊN</span>
+            <span class="badge badge-primary">Nghiệp vụ</span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" id="kpi-ai-investigator">81.2%</span>
+            <span class="kpi-sub up">▲ +3.1%</span>
+          </div>
+          <div class="kpi-footer">Điều tra viên chấp nhận tỷ lệ lỗi AI đề xuất ngay lần đầu</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-label">
+            <span>SỐ VỤ CÓ KHÁC BIỆT CẦN XỬ LÝ</span>
+            <span class="badge badge-rose">Cần rà soát</span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" style="color:var(--rose);">14 vụ</span>
+            <span class="kpi-sub down">▼ -3 vụ</span>
+          </div>
+          <div class="kpi-footer">Đã chuyển sang tab <strong>Rà soát khác biệt</strong> để tìm nguyên nhân</div>
+        </div>
+      </div>
+
+      <!-- Weekly Trend & 4-Way Concordance Breakdown -->
+      <div style="display:grid; grid-template-columns: 1.4fr 1fr; gap:20px; margin-bottom:24px;">
+        <!-- Left: Weekly Trend Chart -->
+        <div class="panel-box">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span>📈 Xu hướng độ khớp 4 nguồn phân tích theo tuần</span>
+            </div>
+            <div style="display:flex; gap:12px; font-size:11.5px; color:var(--text-muted);">
+              <span style="display:inline-flex; align-items:center; gap:4px;"><span style="width:10px; height:10px; background:#3b82f6; border-radius:2px;"></span> Routing</span>
+              <span style="display:inline-flex; align-items:center; gap:4px;"><span style="width:10px; height:10px; background:#10b981; border-radius:2px;"></span> Knowledge Base</span>
+              <span style="display:inline-flex; align-items:center; gap:4px;"><span style="width:10px; height:10px; background:#8b5cf6; border-radius:2px;"></span> AI Lần đầu</span>
+              <span style="display:inline-flex; align-items:center; gap:4px;"><span style="width:10px; height:10px; background:#f59e0b; border-radius:2px;"></span> Điều tra viên</span>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="weekly-chart-wrap">
+              <div class="week-col">
+                <div class="week-label">Tuần 42</div>
+                <div class="week-bar-container">
+                  <div class="source-bar bar-routing" style="height:76%;" data-tip="Routing: 76%"></div>
+                  <div class="source-bar bar-kb" style="height:78%;" data-tip="KB: 78%"></div>
+                  <div class="source-bar bar-ai" style="height:74%;" data-tip="AI 1st: 74%"></div>
+                  <div class="source-bar bar-final" style="height:81%;" data-tip="Final: 81%"></div>
+                </div>
+                <div class="week-match-rate">78.5%</div>
+                <div style="font-size:11px; color:var(--text-dim);">128 vụ việc</div>
+              </div>
+
+              <div class="week-col">
+                <div class="week-label">Tuần 43</div>
+                <div class="week-bar-container">
+                  <div class="source-bar bar-routing" style="height:80%;" data-tip="Routing: 80%"></div>
+                  <div class="source-bar bar-kb" style="height:82%;" data-tip="KB: 82%"></div>
+                  <div class="source-bar bar-ai" style="height:77%;" data-tip="AI 1st: 77%"></div>
+                  <div class="source-bar bar-final" style="height:83%;" data-tip="Final: 83%"></div>
+                </div>
+                <div class="week-match-rate">80.5%</div>
+                <div style="font-size:11px; color:var(--text-dim);">135 vụ việc</div>
+              </div>
+
+              <div class="week-col">
+                <div class="week-label">Tuần 44</div>
+                <div class="week-bar-container">
+                  <div class="source-bar bar-routing" style="height:83%;" data-tip="Routing: 83%"></div>
+                  <div class="source-bar bar-kb" style="height:85%;" data-tip="KB: 85%"></div>
+                  <div class="source-bar bar-ai" style="height:79%;" data-tip="AI 1st: 79%"></div>
+                  <div class="source-bar bar-final" style="height:86%;" data-tip="Final: 86%"></div>
+                </div>
+                <div class="week-match-rate">82.2%</div>
+                <div style="font-size:11px; color:var(--text-dim);">139 vụ việc</div>
+              </div>
+
+              <div class="week-col" style="border-color:rgba(56,189,248,0.4); background:rgba(56,189,248,0.04);">
+                <div class="week-label" style="color:var(--cyan);">Tuần 45 (Hiện tại)</div>
+                <div class="week-bar-container">
+                  <div class="source-bar bar-routing" style="height:88%;" data-tip="Routing: 88%"></div>
+                  <div class="source-bar bar-kb" style="height:90%;" data-tip="KB: 90%"></div>
+                  <div class="source-bar bar-ai" style="height:83%;" data-tip="AI 1st: 83%"></div>
+                  <div class="source-bar bar-final" style="height:89%;" data-tip="Final: 89%"></div>
+                </div>
+                <div class="week-match-rate" style="color:var(--emerald);">84.6%</div>
+                <div style="font-size:11px; color:var(--cyan); font-weight:600;">142 vụ việc</div>
+              </div>
+            </div>
+            <div style="font-size:12px; color:var(--text-muted); line-height:1.5; padding:10px; background:rgba(0,0,0,0.2); border-radius:8px;">
+              💡 <strong>Nhận định chất lượng của Reviewer:</strong> Sau khi áp dụng 3 quy tắc bổ sung về chuyển làn không xi nhan ở Tuần 44, độ khớp giữa Knowledge Base và Quyết định Điều tra viên đã tăng <strong>+2.4%</strong>. Khác biệt hiện tập trung chủ yếu ở nhóm tai nạn ngã tư không đèn và vòng xuyến.
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: 4-Way Source Concordance Matrix -->
+        <div class="panel-box">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span>🎯 Ma trận đối chiếu 4 nguồn (Concordance)</span>
+            </div>
+          </div>
+          <div class="panel-body" style="padding:12px;">
+            <table class="data-table" style="font-size:12px;">
+              <thead>
+                <tr>
+                  <th>Cặp so sánh</th>
+                  <th>Độ khớp</th>
+                  <th>Chênh lệch TB</th>
+                  <th>Đánh giá</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>Routing ↔ Knowledge Base</b></td>
+                  <td><span class="badge badge-emerald">88.5%</span></td>
+                  <td>±3.2% lỗi</td>
+                  <td><span class="badge badge-slate">Đồng thuận cao</span></td>
+                </tr>
+                <tr>
+                  <td><b>Knowledge Base ↔ Điều tra viên</b></td>
+                  <td><span class="badge badge-emerald">85.4%</span></td>
+                  <td>±4.5% lỗi</td>
+                  <td><span class="badge badge-slate">Đạt chuẩn</span></td>
+                </tr>
+                <tr>
+                  <td><b>AI Lần đầu ↔ Điều tra viên</b></td>
+                  <td><span class="badge badge-cyan">81.2%</span></td>
+                  <td>±6.8% lỗi</td>
+                  <td><span class="badge badge-slate">Cần hoàn thiện</span></td>
+                </tr>
+                <tr>
+                  <td><b>Routing ↔ Điều tra viên</b></td>
+                  <td><span class="badge badge-amber">79.0%</span></td>
+                  <td>±8.4% lỗi</td>
+                  <td><span class="badge badge-amber">Phân kỳ lặp lại</span></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div style="margin-top:16px; padding:12px; background:rgba(245,158,11,0.06); border:1px solid rgba(245,158,11,0.2); border-radius:8px;">
+              <div style="font-size:12px; font-weight:700; color:var(--amber); margin-bottom:4px;">⚠️ Vùng phân kỳ trọng điểm:</div>
+              <div style="font-size:11.5px; color:var(--text-muted); line-height:1.45;">
+                Routing đưa ra mẫu Chart 112 (ngã tư bình đẳng) nhưng Điều tra viên chọn Chart 114 (ưu tiên đường lớn) do lời khai ghi nhận xe B đi từ đường nhánh.
+              </div>
+              <button class="btn btn-primary btn-sm" style="margin-top:8px; width:100%;" onclick="switchMainTab('tab-discrepancy')">
+                <span>Rà soát 14 vụ phân kỳ ngay ➔</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Breakdown by Accident Category -->
+      <div class="panel-box">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>📑 Phân bố độ khớp theo Loại tai nạn (Tuần 45)</span>
+          </div>
+          <span style="font-size:12px; color:var(--text-muted);">Tổng cộng 6 nhóm nghiệp vụ</span>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Loại tai nạn</th>
+                <th>Số vụ tuần 45</th>
+                <th>Routing ↔ KB</th>
+                <th>KB ↔ Điều tra viên</th>
+                <th>AI 1st ↔ Điều tra viên</th>
+                <th>Số vụ lệch</th>
+                <th>Hành động</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><b>Ngã tư không có đèn tín hiệu</b></td>
+                <td>46 vụ</td>
+                <td><span class="badge badge-amber">76.1%</span></td>
+                <td><span class="badge badge-amber">78.3%</span></td>
+                <td><span class="badge badge-rose">73.9%</span></td>
+                <td><b style="color:var(--rose);">8 vụ</b></td>
+                <td><button class="btn btn-secondary btn-sm" onclick="filterDiscrepancy('Ngã tư không đèn')">Xem 8 vụ</button></td>
+              </tr>
+              <tr>
+                <td><b>Chuyển làn cùng chiều</b></td>
+                <td>38 vụ</td>
+                <td><span class="badge badge-emerald">92.1%</span></td>
+                <td><span class="badge badge-emerald">89.5%</span></td>
+                <td><span class="badge badge-emerald">86.8%</span></td>
+                <td><b style="color:var(--text-muted);">3 vụ</b></td>
+                <td><button class="btn btn-secondary btn-sm" onclick="filterDiscrepancy('Chuyển làn')">Xem 3 vụ</button></td>
+              </tr>
+              <tr>
+                <td><b>Đâm đuôi (Rear-end)</b></td>
+                <td>28 vụ</td>
+                <td><span class="badge badge-emerald">96.4%</span></td>
+                <td><span class="badge badge-emerald">96.4%</span></td>
+                <td><span class="badge badge-emerald">92.9%</span></td>
+                <td><b style="color:var(--emerald);">1 vụ</b></td>
+                <td><button class="btn btn-secondary btn-sm" onclick="filterDiscrepancy('Đâm đuôi')">Xem 1 vụ</button></td>
+              </tr>
+              <tr>
+                <td><b>Vòng xuyến / Đảo giao thông</b></td>
+                <td>14 vụ</td>
+                <td><span class="badge badge-amber">78.6%</span></td>
+                <td><span class="badge badge-amber">78.6%</span></td>
+                <td><span class="badge badge-amber">71.4%</span></td>
+                <td><b style="color:var(--amber);">2 vụ</b></td>
+                <td><button class="btn btn-secondary btn-sm" onclick="filterDiscrepancy('Vòng xuyến')">Xem 2 vụ</button></td>
+              </tr>
+              <tr>
+                <td><b>Người đi bộ / Xe đạp băng đường</b></td>
+                <td>16 vụ</td>
+                <td><span class="badge badge-emerald">93.8%</span></td>
+                <td><span class="badge badge-emerald">93.8%</span></td>
+                <td><span class="badge badge-emerald">87.5%</span></td>
+                <td><b style="color:var(--text-muted);">0 vụ</b></td>
+                <td><button class="btn btn-secondary btn-sm" disabled style="opacity:0.5;">0 vụ lệch</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 2: KIỂM TRA KẾT QUẢ KHÁC NHAU (RÀ SOÁT KHÁC BIỆT) ================= -->
+    <section id="tab-discrepancy" class="tab-pane">
+      <div class="screen-header">
+        <div>
+          <div class="screen-kicker">
+            <span>Kiểm tra kết quả khác nhau</span>
+            <span>•</span>
+            <span>Rà soát khác biệt</span>
+          </div>
+          <h1 class="screen-title">Kiểm tra vụ việc có kết quả phân tích khác nhau</h1>
+          <p class="screen-desc">
+            Reviewer mở các vụ việc mà <strong>Routing</strong> và <strong>Knowledge Base</strong> đưa ra mẫu xác định tỷ lệ lỗi khác nhau để tìm nguyên nhân, ghi nhận tình huống và tạo đề xuất chuẩn hóa quy tắc.
+          </p>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-primary btn-sm" onclick="openCreateProposalModal('auto')">
+            <span>+ Tạo đề xuất quy tắc từ rà soát</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Filter Controls -->
+      <div class="filter-bar">
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-discrepancy" placeholder="Tìm theo mã vụ việc, từ khóa lời khai, biển số, mã biểu đồ KNIA..." onkeyup="filterDiscrepancyTable()">
+        </div>
+        <select class="filter-select" id="filter-disc-category" onchange="filterDiscrepancyTable()">
+          <option value="">Tất cả loại tai nạn</option>
+          <option value="Ngã tư">Ngã tư không đèn / Có đèn</option>
+          <option value="Chuyển làn">Chuyển làn cùng chiều</option>
+          <option value="Vòng xuyến">Vòng xuyến</option>
+          <option value="Đâm đuôi">Đâm đuôi</option>
+        </select>
+        <select class="filter-select" id="filter-disc-diff" onchange="filterDiscrepancyTable()">
+          <option value="">Mức độ chênh lệch: Tất cả</option>
+          <option value="diff-model">Khác mẫu biểu đồ KNIA (Mẫu khác nhau)</option>
+          <option value="diff-ratio">Cùng mẫu nhưng lệch tỷ lệ lỗi ≥ 15%</option>
+        </select>
+        <select class="filter-select" id="filter-disc-status" onchange="filterDiscrepancyTable()">
+          <option value="">Trạng thái rà soát: Tất cả</option>
+          <option value="pending">Chưa rà soát (8)</option>
+          <option value="investigated">Đã tìm ra nguyên nhân (4)</option>
+          <option value="proposed">Đã tạo đề xuất quy tắc (2)</option>
+        </select>
+      </div>
+
+      <!-- Discrepancy Table -->
+      <div class="panel-box">
+        <div class="table-responsive">
+          <table class="data-table" id="discrepancy-table">
+            <thead>
+              <tr>
+                <th>Mã vụ việc</th>
+                <th>Loại tình huống</th>
+                <th>Kết quả Routing</th>
+                <th>Kết quả Knowledge Base</th>
+                <th>AI Lần đầu</th>
+                <th>Điều tra viên chốt</th>
+                <th>Chênh lệch &amp; Nguyên nhân</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Row 1 -->
+              <tr data-category="Ngã tư" data-diff="diff-model" data-status="pending">
+                <td>
+                  <b style="color:var(--cyan); font-family:var(--font-mono);">#AMS-2026-8821</b>
+                  <div style="font-size:11px; color:var(--text-dim);">07/11/2026 14:22</div>
+                </td>
+                <td>
+                  <b>Ngã tư không đèn</b>
+                  <div style="font-size:11.5px; color:var(--text-muted);">Xe con A rẽ trái vs Xe máy B đi thẳng</div>
+                </td>
+                <td>
+                  <span class="badge badge-primary">Chart 112</span>
+                  <div style="font-size:11.5px; font-weight:700;">70 : 30</div>
+                </td>
+                <td>
+                  <span class="badge badge-emerald">Chart 114</span>
+                  <div style="font-size:11.5px; font-weight:700;">60 : 40</div>
+                </td>
+                <td>
+                  <span class="badge badge-purple">Chart 112</span>
+                  <div style="font-size:11.5px;">70 : 30</div>
+                </td>
+                <td>
+                  <span class="badge badge-amber">Chart 114</span>
+                  <div style="font-size:11.5px; font-weight:800; color:var(--amber);">55 : 45</div>
+                </td>
+                <td>
+                  <span class="badge badge-rose">Khác mẫu (112 vs 114)</span>
+                  <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Lời khai: xe B đã vào giao lộ trước, đường lớn hơn</div>
+                </td>
+                <td>
+                  <span class="badge badge-rose">Chưa rà soát</span>
+                </td>
+                <td>
+                  <button class="btn btn-cyan btn-sm" onclick="inspectDiscrepancy('AMS-2026-8821')">Chi tiết &amp; Tạo đề xuất</button>
+                </td>
+              </tr>
+
+              <!-- Row 2 -->
+              <tr data-category="Chuyển làn" data-diff="diff-ratio" data-status="investigated">
+                <td>
+                  <b style="color:var(--cyan); font-family:var(--font-mono);">#AMS-2026-8794</b>
+                  <div style="font-size:11px; color:var(--text-dim);">06/11/2026 09:15</div>
+                </td>
+                <td>
+                  <b>Chuyển làn cùng chiều</b>
+                  <div style="font-size:11.5px; color:var(--text-muted);">Xe A chuyển làn đột ngột cắt mặt Xe B</div>
+                </td>
+                <td>
+                  <span class="badge badge-primary">Chart 252</span>
+                  <div style="font-size:11.5px; font-weight:700;">70 : 30</div>
+                </td>
+                <td>
+                  <span class="badge badge-emerald">Chart 252</span>
+                  <div style="font-size:11.5px; font-weight:700;">80 : 20</div>
+                </td>
+                <td>
+                  <span class="badge badge-purple">Chart 252</span>
+                  <div style="font-size:11.5px;">75 : 25</div>
+                </td>
+                <td>
+                  <span class="badge badge-amber">Chart 252</span>
+                  <div style="font-size:11.5px; font-weight:800; color:var(--amber);">85 : 15</div>
+                </td>
+                <td>
+                  <span class="badge badge-amber">Lệch +15%</span>
+                  <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Xe A bật xi nhan muộn &lt;30m trước khi tạt đầu</div>
+                </td>
+                <td>
+                  <span class="badge badge-amber">Đã tìm nguyên nhân</span>
+                </td>
+                <td>
+                  <button class="btn btn-cyan btn-sm" onclick="inspectDiscrepancy('AMS-2026-8794')">Chi tiết &amp; Tạo đề xuất</button>
+                </td>
+              </tr>
+
+              <!-- Row 3 -->
+              <tr data-category="Vòng xuyến" data-diff="diff-model" data-status="proposed">
+                <td>
+                  <b style="color:var(--cyan); font-family:var(--font-mono);">#AMS-2026-8650</b>
+                  <div style="font-size:11px; color:var(--text-dim);">04/11/2026 17:40</div>
+                </td>
+                <td>
+                  <b>Vòng xuyến trung tâm</b>
+                  <div style="font-size:11.5px; color:var(--text-muted);">Xe A đang trong vòng xuyến va chạm Xe B đang vào</div>
+                </td>
+                <td>
+                  <span class="badge badge-primary">Chart 311</span>
+                  <div style="font-size:11.5px; font-weight:700;">40 : 60</div>
+                </td>
+                <td>
+                  <span class="badge badge-emerald">Chart 314</span>
+                  <div style="font-size:11.5px; font-weight:700;">20 : 80</div>
+                </td>
+                <td>
+                  <span class="badge badge-purple">Chart 311</span>
+                  <div style="font-size:11.5px;">40 : 60</div>
+                </td>
+                <td>
+                  <span class="badge badge-amber">Chart 314</span>
+                  <div style="font-size:11.5px; font-weight:800; color:var(--amber);">20 : 80</div>
+                </td>
+                <td>
+                  <span class="badge badge-rose">Khác mẫu (311 vs 314)</span>
+                  <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Xe A đã hoàn thành 2/3 vòng xuyến, ưu tiên tuyệt đối</div>
+                </td>
+                <td>
+                  <span class="badge badge-emerald">Đã có đề xuất #PR-041</span>
+                </td>
+                <td>
+                  <button class="btn btn-secondary btn-sm" onclick="inspectDiscrepancy('AMS-2026-8650')">Xem đề xuất</button>
+                </td>
+              </tr>
+
+              <!-- Row 4 -->
+              <tr data-category="Ngã tư" data-diff="diff-model" data-status="pending">
+                <td>
+                  <b style="color:var(--cyan); font-family:var(--font-mono);">#AMS-2026-8512</b>
+                  <div style="font-size:11px; color:var(--text-dim);">03/11/2026 11:05</div>
+                </td>
+                <td>
+                  <b>Ngã tư có đèn tín hiệu</b>
+                  <div style="font-size:11.5px; color:var(--text-muted);">Xe A rẽ phải đèn đỏ gặp Xe B đi thẳng đèn xanh</div>
+                </td>
+                <td>
+                  <span class="badge badge-primary">Chart 103</span>
+                  <div style="font-size:11.5px; font-weight:700;">80 : 20</div>
+                </td>
+                <td>
+                  <span class="badge badge-emerald">Chart 105</span>
+                  <div style="font-size:11.5px; font-weight:700;">100 : 0</div>
+                </td>
+                <td>
+                  <span class="badge badge-purple">Chart 103</span>
+                  <div style="font-size:11.5px;">80 : 20</div>
+                </td>
+                <td>
+                  <span class="badge badge-amber">Chart 105</span>
+                  <div style="font-size:11.5px; font-weight:800; color:var(--amber);">90 : 10</div>
+                </td>
+                <td>
+                  <span class="badge badge-rose">Khác mẫu (103 vs 105)</span>
+                  <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Biển báo phụ cho phép rẽ phải khi đèn đỏ nhưng phải nhường</div>
+                </td>
+                <td>
+                  <span class="badge badge-rose">Chưa rà soát</span>
+                </td>
+                <td>
+                  <button class="btn btn-cyan btn-sm" onclick="inspectDiscrepancy('AMS-2026-8512')">Chi tiết &amp; Tạo đề xuất</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 3: TÌM KIẾM QUY TẮC (DANH SÁCH QUY TẮC) ================= -->
+    <section id="tab-rules" class="tab-pane">
+      <div class="screen-header">
+        <div>
+          <div class="screen-kicker">
+            <span>Tìm kiếm quy tắc</span>
+            <span>•</span>
+            <span>Danh sách quy tắc</span>
+          </div>
+          <h1 class="screen-title">Tìm quy tắc phân tích trong Knowledge Base</h1>
+          <p class="screen-desc">
+            Reviewer lọc và tìm các quy tắc theo <strong>trạng thái</strong>, <strong>loại vụ việc</strong>, <strong>trạng thái hiển thị</strong>, <strong>mẫu xác định tỷ lệ lỗi/loại vụ việc</strong> và <strong>từ khóa</strong> để tra cứu logic hoặc bảo trì hệ thống.
+          </p>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-primary btn-sm" onclick="switchMainTab('tab-create')">
+            <span>+ Tạo quy tắc mới</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Rules Search & Filter Bar -->
+      <div class="filter-bar">
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-rules" placeholder="Tìm theo tên quy tắc, câu mô tả lời khai, từ khóa nhận diện, mã rule..." onkeyup="filterRulesCatalog()">
+        </div>
+        <select class="filter-select" id="rule-status-filter" onchange="filterRulesCatalog()">
+          <option value="">Trạng thái: Tất cả</option>
+          <option value="active">Đang áp dụng (Active)</option>
+          <option value="paused">Tạm dừng (Paused)</option>
+          <option value="draft">Bản dự thảo (Draft)</option>
+          <option value="archived">Đã lưu trữ (Archived)</option>
+        </select>
+        <select class="filter-select" id="rule-type-filter" onchange="filterRulesCatalog()">
+          <option value="">Loại vụ việc: Tất cả</option>
+          <option value="intersection">Ngã tư (Intersection)</option>
+          <option value="lane-change">Chuyển làn (Lane change)</option>
+          <option value="rear-end">Đâm đuôi (Rear-end)</option>
+          <option value="roundabout">Vòng xuyến (Roundabout)</option>
+        </select>
+        <select class="filter-select" id="rule-visibility-filter" onchange="filterRulesCatalog()">
+          <option value="">Trạng thái hiển thị: Tất cả</option>
+          <option value="public">Hiển thị cho Điều tra viên</option>
+          <option value="internal">Ẩn nội bộ Knowledge Base</option>
+        </select>
+        <select class="filter-select" id="rule-chart-filter" onchange="filterRulesCatalog()">
+          <option value="">Mẫu xác định tỷ lệ lỗi</option>
+          <option value="chart-100">Nhóm Chart 101 - 150 (Ngã tư)</option>
+          <option value="chart-200">Nhóm Chart 201 - 260 (Chuyển làn)</option>
+          <option value="chart-300">Nhóm Chart 301 - 330 (Vòng xuyến/Lùi)</option>
+        </select>
+      </div>
+
+      <!-- Rules Table -->
+      <div class="panel-box">
+        <div class="table-responsive">
+          <table class="data-table" id="rules-catalog-table">
+            <thead>
+              <tr>
+                <th>Mã quy tắc</th>
+                <th>Tên quy tắc &amp; Câu mô tả ngữ cảnh</th>
+                <th>Phân loại</th>
+                <th>Mẫu KNIA liên kết</th>
+                <th>Từ khóa / Lời khai nhận diện</th>
+                <th>Số lần áp dụng</th>
+                <th>Độ khớp</th>
+                <th>Hiển thị</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Rule 1 -->
+              <tr data-status="active" data-type="lane-change" data-visibility="public" data-chart="chart-200">
+                <td>
+                  <b style="color:var(--cyan); font-family:var(--font-mono);">RULE-KNIA-252-01</b>
+                  <div style="font-size:11px; color:var(--text-dim);">Cập nhật: 01/11/2026</div>
+                </td>
+                <td>
+                  <b>Chuyển làn không báo hiệu hoặc xi nhan muộn</b>
+                  <div style="font-size:11.5px; color:var(--text-muted);">Tăng nặng +10% lỗi cho phương tiện chuyển làn nếu bật đèn dưới 30m trước vạch.</div>
+                </td>
+                <td><span class="badge badge-primary">Chuyển làn</span></td>
+                <td>
+                  <span class="badge badge-cyan">Chart 252</span>
+                  <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">Tỷ lệ: 80 : 20</div>
+                </td>
+                <td>
+                  <code style="font-size:11px; color:#fbcfe8;">xi_nhan_muon</code>, <code style="font-size:11px; color:#fbcfe8;">tat_dau</code>
+                </td>
+                <td><b>142 lần</b></td>
+                <td><span class="badge badge-emerald">94.8%</span></td>
+                <td><span class="badge badge-slate">Điều tra viên</span></td>
+                <td><span class="badge badge-emerald">Đang áp dụng</span></td>
+                <td><button class="btn btn-secondary btn-sm" onclick="showRuleDetails('RULE-KNIA-252-01')">Xem chi tiết</button></td>
+              </tr>
+
+              <!-- Rule 2 -->
+              <tr data-status="active" data-type="intersection" data-visibility="public" data-chart="chart-100">
+                <td>
+                  <b style="color:var(--cyan); font-family:var(--font-mono);">RULE-KNIA-114-02</b>
+                  <div style="font-size:11px; color:var(--text-dim);">Cập nhật: 25/10/2026</div>
+                </td>
+                <td>
+                  <b>Ngã tư không đèn: Ưu tiên đường lớn hơn rõ rệt</b>
+                  <div style="font-size:11.5px; color:var(--text-muted);">Xác định đường có lòng đường rộng hơn từ 1.5 lần trở lên được hưởng quyền ưu tiên.</div>
+                </td>
+                <td><span class="badge badge-primary">Ngã tư</span></td>
+                <td>
+                  <span class="badge badge-cyan">Chart 114</span>
+                  <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">Tỷ lệ: 60 : 40</div>
+                </td>
+                <td>
+                  <code style="font-size:11px; color:#fbcfe8;">duong_chinh</code>, <code style="font-size:11px; color:#fbcfe8;">duong_nhanh</code>
+                </td>
+                <td><b>210 lần</b></td>
+                <td><span class="badge badge-emerald">91.2%</span></td>
+                <td><span class="badge badge-slate">Điều tra viên</span></td>
+                <td><span class="badge badge-emerald">Đang áp dụng</span></td>
+                <td><button class="btn btn-secondary btn-sm" onclick="showRuleDetails('RULE-KNIA-114-02')">Xem chi tiết</button></td>
+              </tr>
+
+              <!-- Rule 3 -->
+              <tr data-status="active" data-type="roundabout" data-visibility="internal" data-chart="chart-300">
+                <td>
+                  <b style="color:var(--cyan); font-family:var(--font-mono);">RULE-KNIA-314-01</b>
+                  <div style="font-size:11px; color:var(--text-dim);">Cập nhật: 15/10/2026</div>
+                </td>
+                <td>
+                  <b>Quyền ưu tiên phương tiện đã vào vòng xuyến trước</b>
+                  <div style="font-size:11.5px; color:var(--text-muted);">Phương tiện đang lưu thông trong đảo giao thông được quyền ưu tiên đối với xe đang nhập làn.</div>
+                </td>
+                <td><span class="badge badge-primary">Vòng xuyến</span></td>
+                <td>
+                  <span class="badge badge-cyan">Chart 314</span>
+                  <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">Tỷ lệ: 20 : 80</div>
+                </td>
+                <td>
+                  <code style="font-size:11px; color:#fbcfe8;">trong_vong_xuyen</code>, <code style="font-size:11px; color:#fbcfe8;">nhap_lan</code>
+                </td>
+                <td><b>64 lần</b></td>
+                <td><span class="badge badge-emerald">88.6%</span></td>
+                <td><span class="badge badge-amber">Nội bộ KB</span></td>
+                <td><span class="badge badge-emerald">Đang áp dụng</span></td>
+                <td><button class="btn btn-secondary btn-sm" onclick="showRuleDetails('RULE-KNIA-314-01')">Xem chi tiết</button></td>
+              </tr>
+
+              <!-- Rule 4 -->
+              <tr data-status="paused" data-type="rear-end" data-visibility="internal" data-chart="chart-200">
+                <td>
+                  <b style="color:var(--cyan); font-family:var(--font-mono);">RULE-KNIA-205-PAUSE</b>
+                  <div style="font-size:11px; color:var(--text-dim);">Cập nhật: 05/10/2026</div>
+                </td>
+                <td>
+                  <b>Xe trước phanh gấp không lý do chính đáng</b>
+                  <div style="font-size:11.5px; color:var(--text-muted);">Điều chỉnh giảm -20% lỗi cho xe sau nếu xe trước phanh đột ngột khi đường thông thoáng.</div>
+                </td>
+                <td><span class="badge badge-primary">Đâm đuôi</span></td>
+                <td>
+                  <span class="badge badge-cyan">Chart 205</span>
+                  <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">Tỷ lệ: 70 : 30</div>
+                </td>
+                <td>
+                  <code style="font-size:11px; color:#fbcfe8;">phanh_gap_vo_co</code>, <code style="font-size:11px; color:#fbcfe8;">dung_xe_dot_ngot</code>
+                </td>
+                <td><b>18 lần</b></td>
+                <td><span class="badge badge-rose">68.2%</span></td>
+                <td><span class="badge badge-amber">Nội bộ KB</span></td>
+                <td><span class="badge badge-amber">Tạm dừng</span></td>
+                <td><button class="btn btn-secondary btn-sm" onclick="showRuleDetails('RULE-KNIA-205-PAUSE')">Xem chi tiết</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 4: TẠO ĐỀ XUẤT QUY TẮC (TẠO QUY TẮC) ================= -->
+    <section id="tab-create" class="tab-pane">
+      <div class="screen-header">
+        <div>
+          <div class="screen-kicker">
+            <span>Tạo đề xuất quy tắc</span>
+            <span>•</span>
+            <span>Tạo quy tắc</span>
+          </div>
+          <h1 class="screen-title">Ghi nhận tình huống &amp; Đề xuất quy tắc nghiệp vụ mới</h1>
+          <p class="screen-desc">
+            Reviewer ghi lại <strong>cách hiểu một câu mô tả hoặc lời khai</strong> và liên kết với loại tai nạn / nhánh tỷ lệ lỗi, hoặc ghi lại <strong>cách xử lý nghiệp vụ theo quy tắc riêng của Knowledge Base</strong> và tài liệu hướng dẫn chuẩn.
+          </p>
+        </div>
+      </div>
+
+      <!-- Mode Selector (A: Cách hiểu tình huống vs B: Cách xử lý nghiệp vụ) -->
+      <div style="display:flex; gap:16px; margin-bottom:20px;">
+        <button class="btn btn-primary" id="btn-mode-situation" onclick="switchCreateMode('situation')">
+          <span>🧠 (A) Đề xuất cách hiểu tình huống (Lời khai / Câu mô tả)</span>
+        </button>
+        <button class="btn btn-secondary" id="btn-mode-business" onclick="switchCreateMode('business')">
+          <span>⚖️ (B) Đề xuất cách xử lý nghiệp vụ (Quy tắc riêng Knowledge Base)</span>
+        </button>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1.5fr 1fr; gap:24px;">
+        <!-- Left: Proposal Form -->
+        <div class="panel-box">
+          <div class="panel-header">
+            <div class="panel-title" id="create-form-title">
+              <span>✍️ Form tạo đề xuất: Cách hiểu tình huống</span>
+            </div>
+            <span class="badge badge-cyan" id="create-mode-badge">Mode A: Situation Understanding</span>
+          </div>
+          <div class="panel-body">
+            <form id="form-create-rule" onsubmit="handleProposalSubmit(event)">
+              <div class="form-grid">
+                <div class="form-group full-width">
+                  <label class="form-label">Tên quy tắc đề xuất *</label>
+                  <input type="text" class="form-input" id="prop-title" required placeholder="Ví dụ: Xe B vào giao lộ trước khi đèn vàng nhấp nháy tại ngã tư không ưu tiên" value="Ngã tư không đèn: Nhận diện xe đã vào giao lộ trước qua mốc thời gian lời khai">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Loại tai nạn (Tai nạn giao thông) *</label>
+                  <select class="form-select" id="prop-accident-type" required onchange="updateSimPreview()">
+                    <option value="intersection">Ngã tư không có đèn tín hiệu</option>
+                    <option value="lane-change">Chuyển làn cùng chiều</option>
+                    <option value="roundabout">Vòng xuyến</option>
+                    <option value="rear-end">Đâm đuôi</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Mẫu xác định tỷ lệ lỗi liên kết (Chart KNIA) *</label>
+                  <select class="form-select" id="prop-chart" required onchange="updateSimPreview()">
+                    <option value="Chart 114">Chart KNIA 114 (Đường ưu tiên vs Đường nhánh - 60:40)</option>
+                    <option value="Chart 112">Chart KNIA 112 (Đường bình đẳng - 70:30)</option>
+                    <option value="Chart 252">Chart KNIA 252 (Chuyển làn cùng chiều - 80:20)</option>
+                    <option value="Chart 314">Chart KNIA 314 (Vòng xuyến ưu tiên - 20:80)</option>
+                  </select>
+                </div>
+
+                <!-- Field specific to Mode A -->
+                <div class="form-group full-width" id="grp-statement">
+                  <label class="form-label">Câu mô tả hoặc đoạn lời khai mẫu (Statement Text) *</label>
+                  <textarea class="form-textarea" id="prop-statement" rows="3" placeholder="Nhập nguyên văn câu lời khai của tài xế hoặc nhân chứng..." oninput="updateSimPreview()">"Tôi đã điều khiển xe máy đi vào ngã tư trước khi xe con lao tới, lúc tôi vào giữa giao lộ thì xe con từ phía đường bên phải mới tiến vào và đâm vào đuôi xe tôi."</textarea>
+                  <span class="form-hint">Hệ thống NLP/LLM sẽ trích xuất ngữ nghĩa và liên kết câu mô tả này với nhánh xác định tỷ lệ lỗi.</span>
+                </div>
+
+                <div class="form-group full-width">
+                  <label class="form-label">Từ khóa nhận diện &amp; Thực thể (Keywords / Entities) *</label>
+                  <input type="text" class="form-input" id="prop-keywords" placeholder="Cách nhau bằng dấu phẩy, ví dụ: da_vao_giao_lo_truoc, vao_giua_giao_lo, dam_vao_duoi" value="da_vao_giao_lo_truoc, vao_giua_giao_lo, den_giua_nga_tu" oninput="updateSimPreview()">
+                </div>
+
+                <!-- Fault adjustment -->
+                <div class="form-group">
+                  <label class="form-label">Tỷ lệ lỗi cơ sở (Base Ratio A : B)</label>
+                  <input type="text" class="form-input" id="prop-base-ratio" value="60 : 40" readonly style="background:rgba(255,255,255,0.02); color:var(--cyan); font-weight:700;">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Yếu tố điều chỉnh tỷ lệ lỗi (Fault Adjustment)</label>
+                  <select class="form-select" id="prop-adjust" onchange="updateSimPreview()">
+                    <option value="-10">-10% cho xe vào trước (Giảm nhẹ)</option>
+                    <option value="-5">-5% cho xe vào trước</option>
+                    <option value="0">Giữ nguyên tỷ lệ chuẩn</option>
+                    <option value="+10">+10% lỗi tăng nặng cho xe vào sau</option>
+                  </select>
+                </div>
+
+                <div class="form-group full-width">
+                  <label class="form-label">Căn cứ tài liệu hướng dẫn chuẩn (Guidebook Reference) *</label>
+                  <input type="text" class="form-input" id="prop-guide-ref" value="Tài liệu hướng dẫn KNIA Mục 2.3.1 (Trang 84), Án lệ Tòa án tối cao Hàn Quốc số 2021Da284192">
+                </div>
+
+                <div class="form-group full-width">
+                  <label class="form-label">Lý do đề xuất (Căn cứ từ khác biệt thực tế) *</label>
+                  <textarea class="form-textarea" id="prop-reason" rows="2" placeholder="Ghi rõ tại sao cần thêm quy tắc này...">Phát sinh từ 8 vụ việc phân kỳ tuần 45 (như vụ #AMS-2026-8821), routing mặc định gán Chart 112 (70:30) nhưng Điều tra viên luôn áp dụng Chart 114 (-10% điều chỉnh) khi lời khai có xác nhận đã vào giao lộ trước.</textarea>
+                </div>
+              </div>
+
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:24px; padding-top:16px; border-top:1px solid var(--border);">
+                <button type="button" class="btn btn-secondary" onclick="saveProposalDraft()">
+                  <span>💾 Lưu bản nháp (Draft)</span>
+                </button>
+                <div style="display:flex; gap:10px;">
+                  <button type="button" class="btn btn-secondary" onclick="resetProposalForm()">
+                    <span>Hủy</span>
+                  </button>
+                  <button type="submit" class="btn btn-primary">
+                    <span>🚀 Gửi đề xuất lên TFT phê duyệt</span>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Right: Real-time Simulation Preview -->
+        <div>
+          <div class="panel-box">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span>⚡ Live Simulation Preview</span>
+              </div>
+              <span class="badge badge-emerald">Giả lập tức thì</span>
+            </div>
+            <div class="panel-body">
+              <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">
+                Mô phỏng phản hồi của Knowledge Base khi tiếp nhận tình huống với quy tắc đề xuất:
+              </div>
+
+              <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:16px;">
+                <div style="font-size:11px; text-transform:uppercase; color:var(--text-dim); margin-bottom:6px;">Mẫu Chart nhận diện:</div>
+                <div style="font-size:18px; font-weight:800; color:var(--cyan); font-family:var(--font-mono);" id="sim-chart-name">Chart KNIA 114</div>
+                
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-top:12px; padding:10px; background:rgba(0,0,0,0.25); border-radius:8px;">
+                  <div>
+                    <div style="font-size:11px; color:var(--text-muted);">Tỷ lệ lỗi đề xuất (A : B):</div>
+                    <div style="font-size:18px; font-weight:800; color:var(--emerald);" id="sim-fault-ratio">50 : 50 (Có điều chỉnh)</div>
+                  </div>
+                  <span class="badge badge-emerald" id="sim-adjust-badge">-10% điều chỉnh</span>
+                </div>
+              </div>
+
+              <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">
+                <b>Từ khóa kích hoạt trích xuất:</b>
+              </div>
+              <div id="sim-tags-container" style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:16px;">
+                <span class="badge badge-purple">da_vao_giao_lo_truoc</span>
+                <span class="badge badge-purple">vao_giua_giao_lo</span>
+                <span class="badge badge-purple">den_giua_nga_tu</span>
+              </div>
+
+              <div style="padding:12px; background:rgba(37,99,235,0.08); border:1px solid rgba(37,99,235,0.25); border-radius:8px; font-size:11.5px; color:var(--text-muted); line-height:1.5;">
+                ℹ️ <strong>Quy tắc áp dụng:</strong> Đề xuất này sau khi gửi sẽ nằm ở trạng thái <code>CHỜ PHÊ DUYỆT</code> trong tab <strong>Phê duyệt đề xuất</strong>. Hệ thống <strong>không tự động áp dụng</strong> vào Knowledge Base sản xuất cho đến khi thành viên TFT phê duyệt chính thức.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 5: KIỂM TRA ĐỀ XUẤT TRƯỚC KHI ÁP DỤNG (PHÊ DUYỆT ĐỀ XUẤT) ================= -->
+    <section id="tab-approval" class="tab-pane">
+      <div class="screen-header">
+        <div>
+          <div class="screen-kicker">
+            <span>Kiểm tra đề xuất trước khi áp dụng</span>
+            <span>•</span>
+            <span>Phê duyệt đề xuất (TFT / Reviewer)</span>
+          </div>
+          <h1 class="screen-title">Kiểm tra đề xuất quy tắc &amp; Phê duyệt áp dụng</h1>
+          <p class="screen-desc">
+            Reviewer/TFT xem các đề xuất phát sinh từ những <strong>khác biệt lặp lại giữa AI, routing và quyết định của điều tra viên</strong>; quy tắc bảo mật: <strong>đề xuất không tự được áp dụng trước khi được duyệt</strong>.
+          </p>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-emerald btn-sm" onclick="runBatchRegressionTest()">
+            <span>🧪 Chạy kiểm thử hồi quy tất cả</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- TFT Policy Banner -->
+      <div style="background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.3); border-radius:12px; padding:14px 20px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; gap:16px;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <span style="font-size:22px;">🛡️</span>
+          <div>
+            <div style="font-size:13px; font-weight:700; color:var(--amber);">NGUYÊN TẮC QUẢN TRỊ AN TOÀN (AI GOVERNANCE POLICY):</div>
+            <div style="font-size:12px; color:var(--text-muted);">Mọi quy tắc mới hoặc sửa đổi đều bắt buộc kiểm thử hồi quy trên tập dữ liệu lịch sử để đảm bảo không gây suy giảm độ chính xác của các vụ việc đã chuẩn hóa.</div>
+          </div>
+        </div>
+        <span class="badge badge-amber">Bảo vệ môi trường Production</span>
+      </div>
+
+      <!-- Proposals List -->
+      <div class="panel-box">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>Danh sách đề xuất quy tắc chờ TFT phê duyệt</span>
+          </div>
+          <div style="display:flex; gap:10px; font-size:12px;">
+            <span class="badge badge-rose" id="badge-tab5-count">3 Đề xuất ưu tiên cao</span>
+            <span class="badge badge-slate">5 Đề xuất thông thường</span>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table" id="proposals-table">
+            <thead>
+              <tr>
+                <th>Mã đề xuất</th>
+                <th>Tên quy tắc &amp; Bối cảnh đề xuất</th>
+                <th>Nguồn phát sinh</th>
+                <th>Khác biệt lặp lại</th>
+                <th>Đánh giá tác động (Impact)</th>
+                <th>Kết quả kiểm thử</th>
+                <th>Trạng thái</th>
+                <th>Hành động phê duyệt</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Proposal 1 -->
+              <tr id="prop-row-1">
+                <td>
+                  <b style="color:var(--cyan); font-family:var(--font-mono);">#PROP-2026-088</b>
+                  <div style="font-size:11px; color:var(--text-dim);">Tạo: 08/11/2026 bởi Reviewer A</div>
+                </td>
+                <td>
+                  <b>Ngã tư không đèn: Xe vào giao lộ trước</b>
+                  <div style="font-size:11.5px; color:var(--text-muted);">Áp dụng Chart 114 (-10% lỗi) khi lời khai ghi nhận xe đã đến tâm giao lộ trước.</div>
+                </td>
+                <td><span class="badge badge-primary">Từ vụ #AMS-8821</span></td>
+                <td>
+                  <span class="badge badge-rose">Lặp lại 14 lần</span>
+                  <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">Giữa Routing và ĐTV</div>
+                </td>
+                <td>
+                  <div style="font-size:12px; font-weight:700; color:var(--emerald);">Tăng độ khớp +8.2%</div>
+                  <div style="font-size:11px; color:var(--text-dim);">Giảm 65% thời gian tranh luận</div>
+                </td>
+                <td>
+                  <span class="badge badge-emerald" id="status-test-1">Đạt 48/50 ca (96%)</span>
+                </td>
+                <td>
+                  <span class="badge badge-amber" id="badge-prop-1">Chờ TFT duyệt</span>
+                </td>
+                <td>
+                  <div style="display:flex; gap:6px;">
+                    <button class="btn btn-emerald btn-sm" onclick="approveProposal('PROP-2026-088', 1)">Phê duyệt &amp; Áp dụng</button>
+                    <button class="btn btn-secondary btn-sm" onclick="rejectProposal('PROP-2026-088', 1)">Từ chối</button>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Proposal 2 -->
+              <tr id="prop-row-2">
+                <td>
+                  <b style="color:var(--cyan); font-family:var(--font-mono);">#PROP-2026-087</b>
+                  <div style="font-size:11px; color:var(--text-dim);">Tạo: 07/11/2026 bởi Reviewer B</div>
+                </td>
+                <td>
+                  <b>Chuyển làn: Xi nhan dưới 30m trước vạch tạt đầu</b>
+                  <div style="font-size:11.5px; color:var(--text-muted);">Tăng lỗi phương tiện chuyển làn lên 85:15 nếu xe sau không kịp phản ứng.</div>
+                </td>
+                <td><span class="badge badge-primary">Từ vụ #AMS-8794</span></td>
+                <td>
+                  <span class="badge badge-amber">Lặp lại 9 lần</span>
+                  <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">Giữa KB và ĐTV</div>
+                </td>
+                <td>
+                  <div style="font-size:12px; font-weight:700; color:var(--emerald);">Tăng độ khớp +5.4%</div>
+                  <div style="font-size:11px; color:var(--text-dim);">Đã đối chiếu KNIA Chart 252</div>
+                </td>
+                <td>
+                  <span class="badge badge-emerald" id="status-test-2">Đạt 50/50 ca (100%)</span>
+                </td>
+                <td>
+                  <span class="badge badge-amber" id="badge-prop-2">Chờ TFT duyệt</span>
+                </td>
+                <td>
+                  <div style="display:flex; gap:6px;">
+                    <button class="btn btn-emerald btn-sm" onclick="approveProposal('PROP-2026-087', 2)">Phê duyệt &amp; Áp dụng</button>
+                    <button class="btn btn-secondary btn-sm" onclick="rejectProposal('PROP-2026-087', 2)">Từ chối</button>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Proposal 3 -->
+              <tr id="prop-row-3">
+                <td>
+                  <b style="color:var(--cyan); font-family:var(--font-mono);">#PROP-2026-085</b>
+                  <div style="font-size:11px; color:var(--text-dim);">Tạo: 05/11/2026 bởi Reviewer C</div>
+                </td>
+                <td>
+                  <b>Vòng xuyến: Ưu tiên xe đã di chuyển 2/3 đảo giao thông</b>
+                  <div style="font-size:11.5px; color:var(--text-muted);">Áp dụng Chart 314 (20:80) thay vì Chart 311 (40:60) cho xe đã vào sâu vòng xuyến.</div>
+                </td>
+                <td><span class="badge badge-primary">Từ vụ #AMS-8650</span></td>
+                <td>
+                  <span class="badge badge-amber">Lặp lại 6 lần</span>
+                  <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">Giữa AI 1st và ĐTV</div>
+                </td>
+                <td>
+                  <div style="font-size:12px; font-weight:700; color:var(--emerald);">Tăng độ khớp +4.1%</div>
+                  <div style="font-size:11px; color:var(--text-dim);">Giảm tranh chấp 2 bên</div>
+                </td>
+                <td>
+                  <span class="badge badge-slate" id="status-test-3">Chưa chạy kiểm thử</span>
+                </td>
+                <td>
+                  <span class="badge badge-amber" id="badge-prop-3">Chờ kiểm thử</span>
+                </td>
+                <td>
+                  <div style="display:flex; gap:6px;">
+                    <button class="btn btn-cyan btn-sm" onclick="runSingleRegressionTest(3)">Chạy kiểm thử 50 ca</button>
+                    <button class="btn btn-secondary btn-sm" onclick="rejectProposal('PROP-2026-085', 3)">Từ chối</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= MODAL: DISCREPANCY INSPECTOR (SO SÁNH CHI TIẾT & TẠO ĐỀ XUẤT) ================= -->
+  <div class="modal-backdrop" id="modal-discrepancy" onclick="if(event.target===this) closeModal('modal-discrepancy')">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div>
+          <span class="badge badge-rose" style="margin-bottom:4px;">Rà soát khác biệt phân tích</span>
+          <div class="modal-title" id="modal-disc-case-id">Vụ việc #AMS-2026-8821</div>
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-discrepancy')">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">
+          <strong>Tình huống:</strong> Va chạm tại ngã tư không có đèn tín hiệu giữa Xe ô tô con A (rẽ trái từ đường nhánh) và Xe mô tô B (đi thẳng trên trục đường chính).
+        </div>
+
+        <!-- 4-Column Side-by-Side Comparison -->
+        <div class="compare-grid">
+          <!-- Col 1: Routing -->
+          <div class="compare-card conflict">
+            <div class="compare-source">
+              <span>1. Routing Model</span>
+              <span class="badge badge-primary">Thuật toán</span>
+            </div>
+            <div class="compare-chart">Chart KNIA 112</div>
+            <div class="compare-fault">Tỷ lệ: 70 : 30</div>
+            <div class="compare-reason">
+              Nhận diện ngã tư đồng cấp bình đẳng, xe rẽ trái chịu 70% lỗi cơ bản.
+            </div>
+          </div>
+
+          <!-- Col 2: Knowledge Base -->
+          <div class="compare-card match">
+            <div class="compare-source">
+              <span>2. Knowledge Base</span>
+              <span class="badge badge-emerald">Quy chuẩn</span>
+            </div>
+            <div class="compare-chart">Chart KNIA 114</div>
+            <div class="compare-fault">Tỷ lệ: 60 : 40</div>
+            <div class="compare-reason">
+              Khớp đường có lòng đường rộng hơn từ 1.5 lần, chuyển sang mẫu đường ưu tiên.
+            </div>
+          </div>
+
+          <!-- Col 3: First AI -->
+          <div class="compare-card conflict">
+            <div class="compare-source">
+              <span>3. AI Lần Đầu</span>
+              <span class="badge badge-purple">Thị giác AI</span>
+            </div>
+            <div class="compare-chart">Chart KNIA 112</div>
+            <div class="compare-fault">Tỷ lệ: 70 : 30</div>
+            <div class="compare-reason">
+              Trích xuất keyframe không nhìn thấy rõ bề rộng mặt đường nhánh do góc quay hẹp.
+            </div>
+          </div>
+
+          <!-- Col 4: Investigator Final -->
+          <div class="compare-card match" style="border-color:rgba(245,158,11,0.5); background:rgba(245,158,11,0.06);">
+            <div class="compare-source">
+              <span style="color:var(--amber);">4. Điều Tra Viên</span>
+              <span class="badge badge-amber">Kết luận</span>
+            </div>
+            <div class="compare-chart" style="color:var(--amber);">Chart KNIA 114*</div>
+            <div class="compare-fault" style="color:var(--amber);">Tỷ lệ: 55 : 45</div>
+            <div class="compare-reason">
+              Chọn Chart 114 + áp dụng giảm nhẹ -5% cho xe máy do đã vào giao lộ trước.
+            </div>
+          </div>
+        </div>
+
+        <!-- Discrepancy Cause Breakdown -->
+        <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:16px;">
+          <h4 style="font-size:13.5px; font-weight:700; color:#fff; margin-bottom:8px;">🔎 Phân tích nguyên nhân chênh lệch từ Reviewer:</h4>
+          <ul style="font-size:12.5px; color:var(--text-muted); line-height:1.6; padding-left:18px;">
+            <li><strong>Mâu thuẫn phân loại:</strong> Routing Model dựa trên GPS tọa độ ngã tư chưa cập nhật thông tin cấp đường giao thông mới nâng cấp.</li>
+            <li><strong>Yếu tố lời khai bị bỏ qua:</strong> AI lần đầu chỉ quét video mà chưa liên kết đoạn lời khai của tài xế xe máy: <em>"Tôi đã vào giữa giao lộ trước"</em>.</li>
+            <li><strong>Quy tắc cần đề xuất:</strong> Bổ sung quy tắc nhận diện lời khai và liên kết tự động sang Chart 114 có yếu tố điều chỉnh khi có bằng chứng vào giao lộ trước.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('modal-discrepancy')">Đóng</button>
+        <button class="btn btn-primary" onclick="proceedToCreateProposalFromModal()">
+          <span>✍️ Tạo đề xuất quy tắc từ vụ việc này ➔</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- JavaScript Interactions -->
+  <script>
+    // Tab switching logic
+    function switchMainTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-tab-btn').forEach(el => el.classList.remove('active'));
+      
+      const targetPane = document.getElementById(tabId);
+      if (targetPane) targetPane.classList.add('active');
+
+      const targetBtn = document.getElementById('btn-' + tabId);
+      if (targetBtn) targetBtn.classList.add('active');
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Modal helpers
+    function openModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) modal.classList.add('active');
+    }
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) modal.classList.remove('active');
+    }
+
+    // Toast helper
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        toast.style.transition = 'all 0.3s';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    // Filter Discrepancy Table
+    function filterDiscrepancyTable() {
+      const query = document.getElementById('search-discrepancy').value.toLowerCase().trim();
+      const cat = document.getElementById('filter-disc-category').value;
+      const diff = document.getElementById('filter-disc-diff').value;
+      const status = document.getElementById('filter-disc-status').value;
+
+      const rows = document.querySelectorAll('#discrepancy-table tbody tr');
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        const rCat = row.getAttribute('data-category');
+        const rDiff = row.getAttribute('data-diff');
+        const rStatus = row.getAttribute('data-status');
+
+        let match = true;
+        if (query && !text.includes(query)) match = false;
+        if (cat && rCat !== cat) match = false;
+        if (diff && rDiff !== diff) match = false;
+        if (status && rStatus !== status) match = false;
+
+        row.style.display = match ? '' : 'none';
+      });
+    }
+
+    function filterDiscrepancy(categoryName) {
+      switchMainTab('tab-discrepancy');
+      document.getElementById('filter-disc-category').value = categoryName;
+      filterDiscrepancyTable();
+    }
+
+    // Filter Rules Catalog
+    function filterRulesCatalog() {
+      const query = document.getElementById('search-rules').value.toLowerCase().trim();
+      const status = document.getElementById('rule-status-filter').value;
+      const type = document.getElementById('rule-type-filter').value;
+      const vis = document.getElementById('rule-visibility-filter').value;
+      const chart = document.getElementById('rule-chart-filter').value;
+
+      const rows = document.querySelectorAll('#rules-catalog-table tbody tr');
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        const rStatus = row.getAttribute('data-status');
+        const rType = row.getAttribute('data-type');
+        const rVis = row.getAttribute('data-visibility');
+        const rChart = row.getAttribute('data-chart');
+
+        let match = true;
+        if (query && !text.includes(query)) match = false;
+        if (status && rStatus !== status) match = false;
+        if (type && rType !== type) match = false;
+        if (vis && rVis !== vis) match = false;
+        if (chart && rChart !== chart) match = false;
+
+        row.style.display = match ? '' : 'none';
+      });
+    }
+
+    // Inspect Discrepancy Modal
+    let currentInspectedCase = 'AMS-2026-8821';
+    function inspectDiscrepancy(caseId) {
+      currentInspectedCase = caseId;
+      document.getElementById('modal-disc-case-id').textContent = 'Vụ việc #' + caseId;
+      openModal('modal-discrepancy');
+    }
+
+    function proceedToCreateProposalFromModal() {
+      closeModal('modal-discrepancy');
+      switchMainTab('tab-create');
+      document.getElementById('prop-title').value = `Chuẩn hóa quy tắc giải quyết khác biệt từ vụ #${currentInspectedCase}`;
+      document.getElementById('prop-reason').value = `Phát sinh từ phân tích vụ việc #${currentInspectedCase}: Routing và KB đưa ra mẫu khác nhau do lời khai xe vào giao lộ trước.`;
+      showToast('Đã chuyển thông tin vụ việc sang form đề xuất quy tắc!', 'info');
+    }
+
+    // Create Rule Mode Switching (A: Situation vs B: Business)
+    function switchCreateMode(mode) {
+      const btnSit = document.getElementById('btn-mode-situation');
+      const btnBiz = document.getElementById('btn-mode-business');
+      const badge = document.getElementById('create-mode-badge');
+      const title = document.getElementById('create-form-title');
+      const grpStatement = document.getElementById('grp-statement');
+
+      if (mode === 'situation') {
+        btnSit.className = 'btn btn-primary';
+        btnBiz.className = 'btn btn-secondary';
+        badge.className = 'badge badge-cyan';
+        badge.textContent = 'Mode A: Đề xuất cách hiểu tình huống';
+        title.innerHTML = '<span>🧠 Form đề xuất: Cách hiểu tình huống (Lời khai / Câu mô tả)</span>';
+        grpStatement.style.display = '';
+      } else {
+        btnBiz.className = 'btn btn-primary';
+        btnSit.className = 'btn btn-secondary';
+        badge.className = 'badge badge-purple';
+        badge.textContent = 'Mode B: Cách xử lý nghiệp vụ';
+        title.innerHTML = '<span>⚖️ Form đề xuất: Cách xử lý nghiệp vụ theo quy tắc riêng Knowledge Base</span>';
+        grpStatement.style.display = 'none';
+      }
+    }
+
+    // Live Simulator Preview update
+    function updateSimPreview() {
+      const chart = document.getElementById('prop-chart').value;
+      const adjust = document.getElementById('prop-adjust').value;
+      const kws = document.getElementById('prop-keywords').value;
+
+      document.getElementById('sim-chart-name').textContent = chart;
+      
+      let baseA = 60, baseB = 40;
+      if (chart.includes('112')) { baseA = 70; baseB = 30; }
+      else if (chart.includes('252')) { baseA = 80; baseB = 20; }
+      else if (chart.includes('314')) { baseA = 20; baseB = 80; }
+
+      const adjNum = parseInt(adjust) || 0;
+      const finalA = Math.max(0, Math.min(100, baseA + adjNum));
+      const finalB = 100 - finalA;
+
+      document.getElementById('sim-fault-ratio').textContent = `${finalA} : ${finalB}`;
+      document.getElementById('sim-adjust-badge').textContent = adjNum !== 0 ? `${adjNum > 0 ? '+' : ''}${adjNum}% điều chỉnh` : 'Không điều chỉnh';
+
+      // Update tags
+      const container = document.getElementById('sim-tags-container');
+      container.innerHTML = '';
+      const tags = kws.split(',').map(s => s.trim()).filter(Boolean);
+      tags.forEach(t => {
+        const span = document.createElement('span');
+        span.className = 'badge badge-purple';
+        span.textContent = t;
+        container.appendChild(span);
+      });
+    }
+
+    // Proposal Submit
+    function handleProposalSubmit(e) {
+      e.preventDefault();
+      const title = document.getElementById('prop-title').value;
+      showToast(`Đã gửi đề xuất "${title}" lên TFT để chờ phê duyệt!`, 'success');
+      
+      // Update badge counts
+      const badgeApp = document.getElementById('badge-pending-proposals');
+      if (badgeApp) badgeApp.textContent = '9 chờ';
+
+      setTimeout(() => {
+        switchMainTab('tab-approval');
+      }, 1000);
+    }
+
+    function saveProposalDraft() {
+      showToast('Đã lưu bản dự thảo đề xuất quy tắc vào bộ nhớ tạm!', 'info');
+    }
+
+    function resetProposalForm() {
+      document.getElementById('form-create-rule').reset();
+      updateSimPreview();
+      showToast('Đã đặt lại form đề xuất.', 'info');
+    }
+
+    // Approval Actions
+    function approveProposal(propId, rowIdx) {
+      const row = document.getElementById(`prop-row-${rowIdx}`);
+      if (row) {
+        const badge = document.getElementById(`badge-prop-${rowIdx}`);
+        badge.className = 'badge badge-emerald';
+        badge.textContent = 'Đã phê duyệt & Áp dụng';
+        
+        const actionCell = row.querySelector('td:last-child');
+        actionCell.innerHTML = `<span class="badge badge-emerald">✓ Active in Production</span>`;
+      }
+      showToast(`Đề xuất ${propId} đã được phê duyệt và kích hoạt thành công trên Knowledge Base!`, 'success');
+    }
+
+    function rejectProposal(propId, rowIdx) {
+      const row = document.getElementById(`prop-row-${rowIdx}`);
+      if (row) {
+        const badge = document.getElementById(`badge-prop-${rowIdx}`);
+        badge.className = 'badge badge-rose';
+        badge.textContent = 'Đã từ chối';
+
+        const actionCell = row.querySelector('td:last-child');
+        actionCell.innerHTML = `<span class="badge badge-slate">Đã đóng</span>`;
+      }
+      showToast(`Đề xuất ${propId} đã bị từ chối và lưu lý do vào nhật ký kiểm toán.`, 'info');
+    }
+
+    function runSingleRegressionTest(rowIdx) {
+      const statusBadge = document.getElementById(`status-test-${rowIdx}`);
+      statusBadge.className = 'badge badge-amber';
+      statusBadge.textContent = 'Đang chạy kiểm thử 50 ca...';
+
+      setTimeout(() => {
+        statusBadge.className = 'badge badge-emerald';
+        statusBadge.textContent = 'Đạt 49/50 ca (98%)';
+        const badgeProp = document.getElementById(`badge-prop-${rowIdx}`);
+        badgeProp.className = 'badge badge-cyan';
+        badgeProp.textContent = 'Đủ điều kiện duyệt';
+
+        const actionCell = document.querySelector(`#prop-row-${rowIdx} td:last-child`);
+        actionCell.innerHTML = `
+          <div style="display:flex; gap:6px;">
+            <button class="btn btn-emerald btn-sm" onclick="approveProposal('PROP-2026-085', ${rowIdx})">Phê duyệt ngay</button>
+            <button class="btn btn-secondary btn-sm" onclick="rejectProposal('PROP-2026-085', ${rowIdx})">Từ chối</button>
+          </div>
+        `;
+        showToast('Kiểm thử hồi quy hoàn tất: Đạt 98% độ tương thích!', 'success');
+      }, 1200);
+    }
+
+    function runBatchRegressionTest() {
+      showToast('Đang khởi chạy bộ kiểm thử hồi quy 150 vụ việc lịch sử...', 'info');
+      setTimeout(() => {
+        showToast('Toàn bộ các đề xuất đang chờ đều vượt qua ngưỡng an toàn (≥95%)!', 'success');
+      }, 1500);
+    }
+
+    function showRuleDetails(ruleId) {
+      showToast(`Mở chi tiết quy tắc ${ruleId}`, 'info');
+    }
+
+    function updateQualityStats() {
+      const val = document.getElementById('quality-time-filter').value;
+      if (val === 'w44') {
+        document.getElementById('kpi-overall').textContent = '82.2%';
+        document.getElementById('kpi-routing-kb').textContent = '85.0%';
+      } else {
+        document.getElementById('kpi-overall').textContent = '84.6%';
+        document.getElementById('kpi-routing-kb').textContent = '88.5%';
+      }
+      showToast('Đã cập nhật số liệu theo khoảng thời gian chọn!', 'info');
+    }
+  </script>
+</body>
+</html>
