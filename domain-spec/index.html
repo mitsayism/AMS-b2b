@@ -1,0 +1,2517 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AMS B2B — Tài liệu Nghiệp vụ & Domain (Design Handoff)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #091423;
+      --bg-panel: #101e30;
+      --bg-card: #13243a;
+      --bg-card-hover: #172c46;
+      --border-subtle: #1e334a;
+      --border-main: #233e59;
+      --cyan-bright: #61d7eb;
+      --cyan-glow: #38bdf8;
+      --cyan-primary: #0ea5e9;
+      --emerald: #10b981;
+      --emerald-light: #34d399;
+      --amber: #f59e0b;
+      --amber-light: #fbbf24;
+      --rose: #f43f5e;
+      --rose-light: #fb7185;
+      --purple: #a855f7;
+      --text-main: #f4f8fe;
+      --text-secondary: #cbd5e1;
+      --text-muted: #8ba2b5;
+      --text-dim: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-deep);
+      color: var(--text-main);
+      font-family: 'Inter', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.55;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ================= TOP HEADER (SAME AS PROTOTYPE) ================= */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(11, 23, 39, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-main);
+      padding: 12px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: -0.02em;
+      color: #fff;
+    }
+
+    .brand-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--cyan-bright);
+      box-shadow: 0 0 12px var(--cyan-bright);
+    }
+
+    .brand-badge {
+      background: rgba(97, 215, 235, 0.12);
+      border: 1px solid rgba(97, 215, 235, 0.35);
+      color: var(--cyan-bright);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 999px;
+      letter-spacing: 0.04em;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 15px;
+      border-radius: 7px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      border: 1px solid var(--border-main);
+      background: var(--bg-card);
+      color: var(--text-main);
+    }
+
+    .btn:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--cyan-glow);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0ea5e9, #0284c7);
+      border-color: #38bdf8;
+      color: #fff;
+      box-shadow: 0 0 16px rgba(14, 165, 233, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+      box-shadow: 0 0 22px rgba(56, 189, 248, 0.5);
+    }
+
+    .btn.is-active {
+      background: rgba(14, 165, 233, 0.2);
+      border-color: var(--cyan-bright);
+      color: var(--cyan-bright);
+      box-shadow: 0 0 14px rgba(97, 215, 235, 0.25);
+    }
+
+    /* ================= MAIN CONTAINER ================= */
+    .page-container {
+      max-width: 1460px;
+      margin: 0 auto;
+      padding: 26px 28px 64px;
+    }
+
+    /* Section Roadmap Bar */
+    .doc-roadmap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 24px;
+      padding: 10px 14px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-main);
+      border-radius: 10px;
+      flex-wrap: wrap;
+    }
+
+    .roadmap-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 13px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      border: 1px solid transparent;
+    }
+
+    .roadmap-pill.active {
+      background: rgba(97, 215, 235, 0.13);
+      border-color: rgba(97, 215, 235, 0.4);
+      color: var(--cyan-bright);
+    }
+
+    .roadmap-pill .num {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .roadmap-pill.active .num {
+      background: var(--cyan-bright);
+      color: #061320;
+    }
+
+    .roadmap-sep {
+      color: var(--text-dim);
+      font-size: 12px;
+    }
+
+    /* ================= HERO & CONTEXT OVERVIEW ================= */
+    .section-eyebrow {
+      display: inline-block;
+      color: var(--cyan-bright);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .section-title-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .section-title {
+      font-size: clamp(22px, 2.2vw, 28px);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: var(--text-main);
+    }
+
+    .section-subtitle {
+      color: var(--text-muted);
+      font-size: 13.5px;
+      max-width: 880px;
+      margin-top: 4px;
+    }
+
+    .context-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .context-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-main);
+      border-radius: 10px;
+      padding: 18px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .context-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--cyan-bright);
+    }
+
+    .context-card.pain::before {
+      background: var(--amber);
+    }
+
+    .context-card.goal::before {
+      background: var(--emerald);
+    }
+
+    .context-card-head {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    .context-card p {
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .context-card ul {
+      list-style: none;
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .context-card li {
+      font-size: 12px;
+      color: var(--text-muted);
+      padding-left: 14px;
+      position: relative;
+    }
+
+    .context-card li::before {
+      content: '•';
+      position: absolute;
+      left: 2px;
+      color: var(--cyan-bright);
+      font-weight: 700;
+    }
+
+    /* ================= SWIMLANE PANEL ================= */
+    .swimlane-panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-main);
+      border-radius: 12px;
+      padding: 20px 22px 24px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+      margin-bottom: 24px;
+    }
+
+    .swimlane-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding-bottom: 16px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid var(--border-subtle);
+      flex-wrap: wrap;
+    }
+
+    .swimlane-toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .legend-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .legend-swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+    }
+
+    .legend-swatch.ams {
+      background: rgba(14, 165, 233, 0.22);
+      border: 1.5px solid var(--cyan-bright);
+      box-shadow: 0 0 10px rgba(97, 215, 235, 0.45);
+    }
+
+    .legend-swatch.manual {
+      background: var(--bg-card);
+      border: 1px solid var(--border-main);
+    }
+
+    .legend-swatch.ext {
+      background: rgba(245, 158, 11, 0.14);
+      border: 1px solid rgba(245, 158, 11, 0.5);
+    }
+
+    /* Live Playback Story Banner */
+    .story-narration-bar {
+      background: rgba(14, 165, 233, 0.1);
+      border: 1px solid rgba(97, 215, 235, 0.35);
+      border-radius: 8px;
+      padding: 11px 16px;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .story-narration-text {
+      font-size: 13px;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .story-step-badge {
+      background: var(--cyan-bright);
+      color: #061320;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 5px;
+      white-space: nowrap;
+    }
+
+    .story-dots {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .story-dot {
+      width: 24px;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.15);
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .story-dot.active {
+      background: var(--cyan-bright);
+      width: 36px;
+      box-shadow: 0 0 8px var(--cyan-bright);
+    }
+
+    /* ================= SWIMLANE BOARD GRID ================= */
+    .swimlane-scroll-wrapper {
+      display: none !important;
+      overflow-x: auto;
+      padding-bottom: 6px;
+    }
+
+    .swimlane-board {
+      min-width: 1260px;
+      display: grid;
+      grid-template-columns: 210px repeat(6, 1fr);
+      border: 1px solid var(--border-main);
+      border-radius: 10px;
+      background: #0b1626;
+      position: relative;
+    }
+
+    /* Column Headers (Steps 1 -> 6) */
+    .sl-col-header {
+      padding: 12px 12px;
+      background: #0e1c30;
+      border-bottom: 1px solid var(--border-main);
+      border-right: 1px solid var(--border-subtle);
+      text-align: left;
+      position: relative;
+      transition: all 0.25s;
+    }
+
+    .sl-col-header:last-child {
+      border-right: none;
+    }
+
+    .sl-col-header.corner {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: #0b1524;
+      border-right: 1px solid var(--border-main);
+    }
+
+    .sl-col-header .step-num {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10.5px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+    }
+
+    .sl-col-header .step-name {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.3;
+    }
+
+    .sl-col-header.ams-col {
+      background: linear-gradient(180deg, rgba(14, 165, 233, 0.16) 0%, rgba(14, 28, 48, 0.95) 100%);
+      border-top: 2px solid var(--cyan-bright);
+    }
+
+    .sl-col-header.ams-col .step-num {
+      color: var(--cyan-bright);
+    }
+
+    .sl-col-header.is-playing {
+      background: rgba(56, 189, 248, 0.22);
+      box-shadow: inset 0 0 18px rgba(97, 215, 235, 0.25);
+    }
+
+    /* Swimlane Row Label (Left Column) */
+    .sl-lane-label {
+      padding: 18px 16px;
+      border-right: 1px solid var(--border-main);
+      border-bottom: 1px solid var(--border-main);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 6px;
+      background: #0d192b;
+    }
+
+    .sl-lane-label.lane-adjuster {
+      background: linear-gradient(90deg, rgba(14, 165, 233, 0.12), #0d192b);
+    }
+
+    .sl-lane-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 4px;
+      width: fit-content;
+    }
+
+    .lane-customer .sl-lane-badge {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--emerald-light);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+
+    .lane-adjuster .sl-lane-badge {
+      background: rgba(97, 215, 235, 0.15);
+      color: var(--cyan-bright);
+      border: 1px solid rgba(97, 215, 235, 0.4);
+    }
+
+    .lane-counterpart .sl-lane-badge {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--amber-light);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+
+    .sl-lane-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.3;
+    }
+
+    .sl-lane-desc {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Swimlane Cells */
+    .sl-cell {
+      padding: 16px 11px;
+      border-right: 1px solid rgba(35, 62, 89, 0.55);
+      border-bottom: 1px solid var(--border-main);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      min-height: 148px;
+    }
+
+    .sl-cell.empty-cell {
+      background: repeating-linear-gradient(
+        -45deg,
+        rgba(15, 29, 48, 0.35),
+        rgba(15, 29, 48, 0.35) 8px,
+        rgba(11, 22, 38, 0.35) 8px,
+        rgba(11, 22, 38, 0.35) 16px
+      );
+    }
+
+    /* ================= AMS B2B HIGHLIGHT ZONE ================= */
+    .sl-cell.ams-zone {
+      background: rgba(14, 165, 233, 0.08);
+      border-top: 2px solid var(--cyan-bright);
+      border-bottom: 2px solid var(--cyan-bright);
+      padding-top: 34px;
+    }
+
+    .sl-cell.ams-zone-start {
+      border-left: 2px solid var(--cyan-bright);
+      border-top-left-radius: 8px;
+      border-bottom-left-radius: 8px;
+    }
+
+    .sl-cell.ams-zone-end {
+      border-right: 2px solid var(--cyan-bright);
+      border-top-right-radius: 8px;
+      border-bottom-right-radius: 8px;
+    }
+
+    .sl-cell.ams-zone-single {
+      border: 2px solid var(--cyan-bright);
+      border-radius: 8px;
+    }
+
+    .ams-zone-banner {
+      position: absolute;
+      top: 6px;
+      left: 10px;
+      z-index: 5;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(90deg, #0ea5e9, #06b6d4);
+      color: #04101c;
+      font-size: 10.5px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 999px;
+      letter-spacing: 0.03em;
+      box-shadow: 0 0 14px rgba(56, 189, 248, 0.6);
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    body.focus-ams .sl-node:not(.ams-node) {
+      opacity: 0.32;
+      filter: grayscale(40%);
+    }
+
+    body.focus-ams .sl-cell.ams-zone {
+      background: rgba(14, 165, 233, 0.16);
+      box-shadow: inset 0 0 24px rgba(56, 189, 248, 0.22);
+    }
+
+    /* ================= NODE CARDS INSIDE CELLS ================= */
+    .sl-node {
+      background: var(--bg-card);
+      border: 1px solid var(--border-main);
+      border-radius: 8px;
+      padding: 11px 12px;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      z-index: 2;
+    }
+
+    .sl-node:hover {
+      transform: translateY(-2px);
+      border-color: var(--cyan-glow);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .sl-node.ams-node {
+      background: linear-gradient(160deg, #132c47 0%, #0f2238 100%);
+      border-color: rgba(97, 215, 235, 0.55);
+      box-shadow: 0 4px 16px rgba(14, 165, 233, 0.16);
+    }
+
+    .sl-node.counterpart-node {
+      background: linear-gradient(160deg, #292118 0%, #1c1815 100%);
+      border-color: rgba(245, 158, 11, 0.5);
+    }
+
+    .sl-node.customer-node {
+      background: linear-gradient(160deg, #102a2a 0%, #0d2024 100%);
+      border-color: rgba(16, 185, 129, 0.45);
+    }
+
+    .sl-node.active-step {
+      border-color: #fff !important;
+      box-shadow: 0 0 0 2px var(--cyan-bright), 0 0 26px rgba(97, 215, 235, 0.65) !important;
+      transform: translateY(-3px) scale(1.015);
+    }
+
+    .node-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 5px;
+    }
+
+    .node-code {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-secondary);
+    }
+
+    .ams-node .node-code {
+      background: rgba(97, 215, 235, 0.2);
+      color: var(--cyan-bright);
+    }
+
+    .node-tag {
+      font-size: 9.5px;
+      font-weight: 700;
+      color: var(--cyan-bright);
+    }
+
+    .node-title {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 4px;
+      line-height: 1.35;
+    }
+
+    .node-desc {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    /* Animated Flow Arrows Between Nodes */
+    .flow-arrow-right {
+      position: absolute;
+      right: -13px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 6;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #0d1d31;
+      border: 1px solid var(--cyan-bright);
+      color: var(--cyan-bright);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      box-shadow: 0 0 10px rgba(97, 215, 235, 0.35);
+      animation: arrowPulse 1.8s infinite ease-in-out;
+    }
+
+    .flow-arrow-down {
+      position: absolute;
+      bottom: -13px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 6;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #0d1d31;
+      border: 1px solid var(--emerald-light);
+      color: var(--emerald-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.35);
+    }
+
+    .flow-arrow-up {
+      position: absolute;
+      top: -13px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 6;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #0d1d31;
+      border: 1px solid var(--cyan-bright);
+      color: var(--cyan-bright);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      box-shadow: 0 0 10px rgba(97, 215, 235, 0.45);
+    }
+
+    .flow-arrow-bidir {
+      position: absolute;
+      bottom: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 6;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #231b12;
+      border: 1px solid var(--amber-light);
+      color: var(--amber-light);
+      font-size: 10.5px;
+      font-weight: 800;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.35);
+      white-space: nowrap;
+    }
+
+    @keyframes arrowPulse {
+      0%, 100% {
+        box-shadow: 0 0 6px rgba(97, 215, 235, 0.3);
+      }
+      50% {
+        box-shadow: 0 0 16px rgba(97, 215, 235, 0.85);
+      }
+    }
+
+    /* ================= INTERACTIVE STEP INSPECTOR DRAWER BELOW SWIMLANE ================= */
+    .step-inspector {
+      margin-top: 18px;
+      background: #0c1829;
+      border: 1px solid var(--border-main);
+      border-radius: 10px;
+      padding: 18px 20px;
+      display: grid;
+      grid-template-columns: 1.15fr 1fr 1fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .inspector-col {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+
+    .inspector-col.ams-col-box {
+      background: linear-gradient(145deg, rgba(14, 165, 233, 0.12), rgba(16, 30, 48, 0.95));
+      border-color: rgba(97, 215, 235, 0.45);
+    }
+
+    .inspector-label {
+      font-size: 10.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .inspector-col.ams-col-box .inspector-label {
+      color: var(--cyan-bright);
+    }
+
+    .inspector-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .inspector-text {
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    /* ================= PART 2: ACTORS CARDS ================= */
+    .actors-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .actor-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-main);
+      border-radius: 10px;
+      padding: 16px 18px;
+      transition: all 0.2s;
+    }
+
+    .actor-card:hover {
+      border-color: var(--cyan-glow);
+      transform: translateY(-2px);
+    }
+
+    .actor-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .actor-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      background: rgba(97, 215, 235, 0.12);
+      border: 1px solid rgba(97, 215, 235, 0.3);
+    }
+
+    .actor-role-tag {
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.07);
+      color: var(--text-secondary);
+    }
+
+    .actor-card h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .actor-card p {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    @media (max-width: 1100px) {
+      .context-grid,
+      .step-inspector,
+      .actors-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  
+    /* ================= DRAG & DROP VERTICAL SWIMLANE BUILDER ================= */
+    .swimlane-dnd-container {
+      margin-top: 16px;
+      background: #091322;
+      border: 1px solid var(--border-main);
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.45);
+      position: relative;
+    }
+
+    .swimlane-dnd-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .swimlane-dnd-board {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      padding-bottom: 14px;
+      min-height: 540px;
+      align-items: stretch;
+      position: relative;
+    }
+
+    /* SVG Overlay on top of lanes */
+    .swimlane-svg-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 10;
+      overflow: visible;
+    }
+    .swimlane-svg-overlay path {
+      pointer-events: stroke;
+      cursor: pointer;
+      transition: stroke-width 0.2s, stroke 0.2s;
+    }
+    .swimlane-svg-overlay path:hover {
+      stroke-width: 3.5px !important;
+      stroke: #38bdf8 !important;
+      filter: drop-shadow(0 0 6px #38bdf8);
+    }
+
+    /* Label pills on arrows */
+    .swimlane-edge-pill {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      z-index: 20;
+      background: #0d1e34;
+      border: 1px solid #38bdf8;
+      color: #fff;
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s;
+    }
+    .swimlane-edge-pill:hover {
+      background: #0ea5e9;
+      transform: translate(-50%, -50%) scale(1.08);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
+    }
+    .swimlane-edge-pill.dash-pill {
+      border-style: dashed;
+      border-color: #fbbf24;
+      color: #fbbf24;
+    }
+
+    /* Vertical Columns (Lanes) */
+    .dnd-column {
+      flex: 1;
+      min-width: 290px;
+      max-width: 380px;
+      background: #0c182b;
+      border: 1.5px solid var(--border-main);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+      transition: all 0.2s;
+      position: relative;
+      z-index: 2;
+    }
+
+    .dnd-column.drag-over {
+      border-color: var(--cyan-bright);
+      background: rgba(14, 165, 233, 0.12);
+      box-shadow: 0 0 18px rgba(97, 215, 235, 0.35);
+    }
+
+    .dnd-column-head {
+      padding: 12px 14px;
+      background: #0e1e34;
+      border-bottom: 1.5px solid var(--border-main);
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .dnd-column-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .dnd-column-body {
+      padding: 14px 12px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-height: 420px;
+    }
+
+    /* Node Cards */
+    .dnd-node-card {
+      padding: 12px 14px;
+      border-radius: 8px;
+      cursor: grab;
+      user-select: none;
+      position: relative;
+      z-index: 5;
+      transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+    }
+    .dnd-node-card:active { cursor: grabbing; }
+    .dnd-node-card.dragging { opacity: 0.45; transform: scale(0.96); }
+
+    /* Node Types */
+    .dnd-node-card.act {
+      background: #0284c7;
+      border: 1.5px solid #38bdf8;
+      color: #ffffff;
+      border-radius: 6px;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+    }
+
+    .dnd-node-card.decision {
+      background: #d97706;
+      border: 1.5px solid #fbbf24;
+      color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 14px rgba(217, 119, 6, 0.35);
+    }
+    .dnd-node-card.decision::before {
+      content: '🔶 QUYẾT ĐỊNH';
+      display: block;
+      font-size: 9.5px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+      color: #fef3c7;
+    }
+
+    .dnd-node-card.start {
+      background: #059669;
+      border: 2px solid #34d399;
+      color: #ffffff;
+      border-radius: 999px;
+      text-align: center;
+      font-weight: 800;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+    }
+
+    .dnd-node-card.end {
+      background: #dc2626;
+      border: 2px solid #f87171;
+      color: #ffffff;
+      border-radius: 999px;
+      text-align: center;
+      font-weight: 800;
+      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
+    }
+
+    .dnd-node-card.is-editing {
+      box-shadow: 0 0 0 2px #fff, 0 0 16px #38bdf8 !important;
+      z-index: 100 !important;
+    }
+
+    /* Popover Dropdown */
+    .node-popover-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      width: 290px;
+      background: #0f223a;
+      border: 1.5px solid #38bdf8;
+      border-radius: 8px;
+      padding: 12px;
+      box-shadow: 0 14px 35px rgba(0,0,0,0.8), 0 0 14px rgba(56, 189, 248, 0.3);
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      text-align: left;
+      cursor: default;
+    }
+    .node-popover-dropdown::before {
+      content: '';
+      position: absolute;
+      top: -6px;
+      left: 20px;
+      width: 10px;
+      height: 10px;
+      background: #0f223a;
+      border-top: 1.5px solid #38bdf8;
+      border-left: 1.5px solid #38bdf8;
+      transform: rotate(45deg);
+    }
+    .popover-label {
+      font-size: 10.5px;
+      font-weight: 800;
+      color: #38bdf8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+      display: block;
+    }
+    .popover-input {
+      width: 100%;
+      background: #07101d;
+      border: 1px solid var(--border-main);
+      border-radius: 5px;
+      color: #fff;
+      padding: 6px 8px;
+      font-size: 11.5px;
+      outline: none;
+      font-family: inherit;
+    }
+    .popover-input:focus { border-color: #38bdf8; }
+    .popover-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-top: 4px;
+      padding-top: 6px;
+      border-top: 1px solid var(--border-subtle);
+    }
+    .popover-btn {
+      padding: 4px 10px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .popover-btn-save { background: #0ea5e9; color: #fff; border-color: #38bdf8; }
+    .popover-btn-delete { background: rgba(239, 68, 68, 0.2); color: #f87171; border-color: #ef4444; }
+    .popover-btn-close { background: #1e293b; color: #cbd5e1; }
+
+  
+    /* ================= BPMN VIEW TOGGLE & STYLES ================= */
+    .bpmn-lane-board-wrapper {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .bpmn-dnd-canvas {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      min-height: 480px;
+      padding-bottom: 12px;
+      position: relative;
+    }
+    .bpmn-dnd-lane {
+      flex: 1;
+      min-width: 280px;
+      max-width: 380px;
+      background: #0b172a;
+      border: 1.5px solid var(--border-main);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+    }
+    .bpmn-dnd-lane.drag-over {
+      border-color: var(--cyan-bright);
+      background: rgba(14, 165, 233, 0.12);
+    }
+    .bpmn-dnd-lane-head {
+      padding: 10px 14px;
+      background: #0e1e34;
+      border-bottom: 1.5px solid var(--border-main);
+      font-size: 12.5px;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .bpmn-dnd-lane-body {
+      padding: 14px 10px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .bpmn-dnd-node {
+      padding: 10px 12px;
+      border-radius: 6px;
+      cursor: grab;
+      user-select: none;
+      position: relative;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.4;
+      transition: all 0.15s;
+    }
+    .bpmn-dnd-node:active { cursor: grabbing; }
+    .bpmn-dnd-node.act {
+      background: #0284c7;
+      border: 1.5px solid #38bdf8;
+      color: #fff;
+    }
+    .bpmn-dnd-node.decision {
+      background: #d97706;
+      border: 1.5px solid #fbbf24;
+      color: #fff;
+      border-radius: 10px;
+    }
+    .bpmn-dnd-node.start {
+      background: #059669;
+      border: 2px solid #34d399;
+      color: #fff;
+      border-radius: 999px;
+      text-align: center;
+    }
+    .bpmn-dnd-node.end {
+      background: #dc2626;
+      border: 2px solid #f87171;
+      color: #fff;
+      border-radius: 999px;
+      text-align: center;
+    }
+    .bpmn-dnd-node.is-editing {
+      box-shadow: 0 0 0 2px #fff, 0 0 16px #38bdf8 !important;
+      z-index: 100 !important;
+    }
+    .bpmn-inline-popover {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      width: 280px;
+      background: #0f223a;
+      border: 1.5px solid #38bdf8;
+      border-radius: 8px;
+      padding: 12px;
+      box-shadow: 0 14px 35px rgba(0,0,0,0.8);
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      cursor: default;
+    }
+    .bpmn-inline-popover label {
+      font-size: 10.5px;
+      font-weight: 800;
+      color: #38bdf8;
+      text-transform: uppercase;
+    }
+    .bpmn-inline-popover textarea, .bpmn-inline-popover select {
+      width: 100%;
+      background: #07101d;
+      border: 1px solid var(--border-main);
+      border-radius: 4px;
+      color: #fff;
+      padding: 5px 8px;
+      font-size: 11.5px;
+      outline: none;
+      font-family: inherit;
+    }
+</style>
+</head>
+
+<body>
+
+  <!-- TOP HEADER -->
+  <header class="app-header">
+    <div class="brand-group">
+      <div class="brand-logo">
+        <span class="brand-dot"></span>
+        <span>VISUS × KNIA STUDIO</span>
+      </div>
+      <span class="brand-badge">📘 TÀI LIỆU NGHIỆP VỤ &amp; DOMAIN (DESIGN HANDOFF)</span>
+    </div>
+    <div class="header-actions">
+      <a href="../prototype/index.html" class="btn btn-primary">
+        <span>⚡ Mở Prototype AMS B2B</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="page-container">
+
+    <!-- ================= PHẦN 1: BỐI CẢNH & SWIMLANE ================= -->
+    <section>
+      <div class="section-title-row">
+        <div>
+          <span class="section-eyebrow">PHẦN 1 · DOMAIN OVERVIEW &amp; END-TO-END WORKFLOW</span>
+          <h1 class="section-title">FLOW NGHIỆP VỤ</h1>
+        </div>
+      </div>
+
+      <!-- SWIMLANE DIAGRAM PANEL -->
+      <div class="swimlane-panel">
+        <div class="swimlane-toolbar">
+          <div class="swimlane-toolbar-left">
+            <button type="button" class="btn btn-primary" id="btn-play-flow" onclick="togglePlayFlow()">
+              <span id="play-icon">▶</span>
+              <span id="play-label">Chạy mô phỏng hành trình (Bước 1 → 6)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- SWIMLANE 3 LANES x 6 STEPS -->
+        
+        <!-- ================= BPMN THEO LANE VIEW CONTAINER ================= -->
+        <div id="bpmn-lane-view-container" class="bpmn-lane-board-wrapper" style="margin-top:8px;">
+          <iframe
+            src="../prototype/swimlane-editor/index.html"
+            title="Swimlane Editor"
+            style="width:100%; height:680px; border:1px solid var(--border-main); border-radius:12px; background:#f8fafc; display:block;"
+          ></iframe>
+        </div>
+
+        <div class="swimlane-scroll-wrapper">
+          <div class="swimlane-board">
+
+            <!-- HEADER ROW -->
+            <div class="sl-col-header corner">
+              <span class="step-num" style="color:var(--cyan-bright);">SWIMLANE 3 BÊN</span>
+              <span class="step-name">Đối tượng \ 6 Bước quy trình</span>
+            </div>
+
+            <div class="sl-col-header" id="col-head-1" onclick="selectStep(1)" style="cursor:pointer;">
+              <div class="step-num">BƯỚC 1</div>
+              <div class="step-name">1. Xảy ra va chạm &amp; Gửi video</div>
+            </div>
+
+            <div class="sl-col-header ams-col is-playing" id="col-head-2" onclick="selectStep(2)" style="cursor:pointer;">
+              <div class="step-num">✨ BƯỚC 2 · AMS B2B</div>
+              <div class="step-name">2. Xem video dựng lại tình tiết</div>
+            </div>
+
+            <div class="sl-col-header ams-col" id="col-head-3" onclick="selectStep(3)" style="cursor:pointer;">
+              <div class="step-num">✨ BƯỚC 3 · AMS B2B</div>
+              <div class="step-name">3. Tra cứu sách KNIA tìm mã Chart</div>
+            </div>
+
+            <div class="sl-col-header ams-col" id="col-head-4" onclick="selectStep(4)" style="cursor:pointer;">
+              <div class="step-num">✨ BƯỚC 4 · AMS B2B</div>
+              <div class="step-name">4. Soi từng khung hình tìm lý lẽ tăng/giảm lỗi</div>
+            </div>
+
+            <div class="sl-col-header ams-col" id="col-head-5" onclick="selectStep(5)" style="cursor:pointer;">
+              <div class="step-num">✨ BƯỚC 5 · ĐÀM PHÁN</div>
+              <div class="step-name">5. Đàm phán chốt tỷ lệ với BH đối phương</div>
+            </div>
+
+            <div class="sl-col-header ams-col" id="col-head-6" onclick="selectStep(6)" style="cursor:pointer;">
+              <div class="step-num">✨ BƯỚC 6 · AMS B2B</div>
+              <div class="step-name">6. Lập báo cáo &amp; Thông báo kết quả cho KH</div>
+            </div>
+
+            <!-- ================= LANE 1: KHÁCH HÀNG BÊN TA ================= -->
+            <div class="sl-lane-label lane-customer">
+              <span class="sl-lane-badge">LANE 1 · KHÁCH HÀNG</span>
+              <div class="sl-lane-title">👤 Khách hàng bên ta (Xe 자차)</div>
+              <div class="sl-lane-desc">Chủ xe mua bảo hiểm của công ty ta, người gửi video và nhận kết quả cuối cùng.</div>
+            </div>
+
+            <!-- Lane 1 - Step 1 -->
+            <div class="sl-cell">
+              <div class="sl-node customer-node" data-step="1" onclick="selectStep(1)">
+                <div class="node-head">
+                  <span class="node-code">1A · Khởi phát</span>
+                  <span class="node-tag" style="color:var(--emerald-light);">Gửi Blackbox</span>
+                </div>
+                <div class="node-title">Xảy ra va chạm &amp; Gửi video</div>
+                <div class="node-desc">
+                  Khách hàng gửi file video hộp đen (cam trước/sau) kèm thông tin vụ tai nạn cho công ty bảo hiểm bên ta.
+                </div>
+              </div>
+              <div class="flow-arrow-down" title="Chuyển hồ sơ & video xuống Giám định viên bên ta">↓</div>
+            </div>
+
+            <!-- Lane 1 - Steps 2, 3, 4, 5 (Empty) -->
+            <div class="sl-cell empty-cell"></div>
+            <div class="sl-cell empty-cell"></div>
+            <div class="sl-cell empty-cell"></div>
+            <div class="sl-cell empty-cell"></div>
+
+            <!-- Lane 1 - Step 6 -->
+            <div class="sl-cell">
+              <div class="sl-node customer-node" data-step="6" onclick="selectStep(6)">
+                <div class="node-head">
+                  <span class="node-code">6B · Kết quả</span>
+                  <span class="node-tag" style="color:var(--emerald-light);">KakaoTalk / PDF</span>
+                </div>
+                <div class="node-title">Nhận thông báo &amp; Xem Báo cáo</div>
+                <div class="node-desc">
+                  Khách hàng nhận tin nhắn KakaoTalk/SMS giải trình tỷ lệ lỗi cuối cùng và mở xem Báo cáo PDF trên điện thoại.
+                </div>
+              </div>
+            </div>
+
+            <!-- ================= LANE 2: GIÁM ĐỊNH VIÊN BÊN TA (USER CHÍNH) ================= -->
+            <div class="sl-lane-label lane-adjuster">
+              <span class="sl-lane-badge">LANE 2 · USER CHÍNH</span>
+              <div class="sl-lane-title">🧑‍💼 Giám định viên bên ta</div>
+              <div class="sl-lane-desc">Người trực tiếp sử dụng hệ thống <b>AMS B2B</b> để phân tích, đàm phán và lập báo cáo.</div>
+            </div>
+
+            <!-- Lane 2 - Step 1 -->
+            <div class="sl-cell">
+              <div class="sl-node" data-step="1" onclick="selectStep(1)">
+                <div class="node-head">
+                  <span class="node-code">1B · Tiếp nhận</span>
+                </div>
+                <div class="node-title">Tạo hồ sơ &amp; Tải video lên</div>
+                <div class="node-desc">
+                  Giám định viên tiếp nhận yêu cầu bồi thường và tải video tai nạn lên hệ thống để bắt đầu xử lý.
+                </div>
+              </div>
+              <div class="flow-arrow-right" title="Đưa video vào AMS B2B phân tích">→</div>
+            </div>
+
+            <!-- Lane 2 - Step 2 (AMS B2B ZONE START) -->
+            <div class="sl-cell ams-zone ams-zone-start">
+              <div class="ams-zone-banner">✨ AMS B2B sẽ hỗ trợ phần này (Bước 2 → Bước 6)</div>
+              <div class="sl-node ams-node active-step" data-step="2" onclick="selectStep(2)">
+                <div class="node-head">
+                  <span class="node-code">BƯỚC 2</span>
+                  <span class="node-tag">AI Video + Tình tiết</span>
+                </div>
+                <div class="node-title">Xem video dựng lại tình tiết</div>
+                <div class="node-desc">
+                  <b>AMS B2B</b> tự động đọc video, tách Keyframes trước-trong-sau va chạm và liệt kê các tình tiết để GĐV xác nhận.
+                </div>
+              </div>
+              <div class="flow-arrow-right">→</div>
+            </div>
+
+            <!-- Lane 2 - Step 3 (AMS B2B ZONE MIDDLE) -->
+            <div class="sl-cell ams-zone">
+              <div class="sl-node ams-node" data-step="3" onclick="selectStep(3)">
+                <div class="node-head">
+                  <span class="node-code">BƯỚC 3</span>
+                  <span class="node-tag">Gợi ý Chart KNIA</span>
+                </div>
+                <div class="node-title">Tra cứu sách KNIA tìm mã Chart</div>
+                <div class="node-desc">
+                  <b>AMS B2B</b> tự động đối chiếu tình tiết với luật KNIA, đề xuất Top mã Chart kèm <b>Độ khớp (%)</b> &amp; <b>Tỷ lệ lỗi cơ sở</b>.
+                </div>
+              </div>
+              <div class="flow-arrow-right">→</div>
+            </div>
+
+            <!-- Lane 2 - Step 4 (AMS B2B ZONE MIDDLE) -->
+            <div class="sl-cell ams-zone">
+              <div class="sl-node ams-node" data-step="4" onclick="selectStep(4)">
+                <div class="node-head">
+                  <span class="node-code">BƯỚC 4</span>
+                  <span class="node-tag">Trích xuất Bằng chứng</span>
+                </div>
+                <div class="node-title">Soi khung hình tìm lý lẽ tăng/giảm lỗi</div>
+                <div class="node-desc">
+                  <b>AMS B2B</b> trích xuất frame chứng cứ và chuẩn bị sẵn 2 cột: <b>Lập luận bảo vệ KH (↓)</b> vs <b>Lập luận đối phương (↑)</b>.
+                </div>
+              </div>
+              <div class="flow-arrow-right">→</div>
+            </div>
+
+            <!-- Lane 2 - Step 5 (AMS B2B ZONE MIDDLE) -->
+            <div class="sl-cell ams-zone">
+              <div class="sl-node ams-node" data-step="5" onclick="selectStep(5)">
+                <div class="node-head">
+                  <span class="node-code">BƯỚC 5A</span>
+                  <span class="node-tag">Bàn đàm phán</span>
+                </div>
+                <div class="node-title">Đàm phán chốt tỷ lệ với BH đối phương</div>
+                <div class="node-desc">
+                  GĐV dùng bộ bằng chứng &amp; lập luận từ AMS B2B để thương lượng, tích chọn trạng thái <b>Đồng thuận / Loại trừ</b> và tính tỷ lệ realtime.
+                </div>
+              </div>
+              <div class="flow-arrow-bidir" title="Đàm phán qua lại giữa 2 bên bảo hiểm">⇅ Thương lượng 2 bên</div>
+              <div class="flow-arrow-right">→</div>
+            </div>
+
+            <!-- Lane 2 - Step 6 (AMS B2B ZONE END) -->
+            <div class="sl-cell ams-zone ams-zone-end">
+              <div class="flow-arrow-up" title="Gửi thông báo & PDF lên cho Khách hàng">↑</div>
+              <div class="sl-node ams-node" data-step="6" onclick="selectStep(6)">
+                <div class="node-head">
+                  <span class="node-code">BƯỚC 6A</span>
+                  <span class="node-tag">Báo cáo &amp; Kakao</span>
+                </div>
+                <div class="node-title">Lập báo cáo &amp; Thông báo cho KH</div>
+                <div class="node-desc">
+                  <b>AMS B2B</b> tự động tổng hợp dự thảo Báo cáo giám định 5 phần (PDF) và tạo bản tin thông báo gửi cho khách hàng.
+                </div>
+              </div>
+            </div>
+
+            <!-- ================= LANE 3: GIÁM ĐỊNH VIÊN BẢO HIỂM ĐỐI PHƯƠNG / HỘI ĐỒNG PHÂN XỬ ================= -->
+            <div class="sl-lane-label lane-counterpart">
+              <span class="sl-lane-badge">LANE 3 · ĐỐI PHƯƠNG</span>
+              <div class="sl-lane-title">🏢 GĐV Bảo hiểm đối phương (hoặc 자분심)</div>
+              <div class="sl-lane-desc">Đại diện bảo vệ cho xe đối phương (대차), hoặc Hội đồng phân xử tranh chấp KNIA (자분심).</div>
+            </div>
+
+            <!-- Lane 3 - Steps 1, 2, 3, 4 (Empty) -->
+            <div class="sl-cell empty-cell"></div>
+            <div class="sl-cell empty-cell"></div>
+            <div class="sl-cell empty-cell"></div>
+            <div class="sl-cell empty-cell"></div>
+
+            <!-- Lane 3 - Step 5 -->
+            <div class="sl-cell">
+              <div class="sl-node counterpart-node" data-step="5" onclick="selectStep(5)">
+                <div class="node-head">
+                  <span class="node-code">5B · Phản biện</span>
+                  <span class="node-tag" style="color:var(--amber-light);">합의 / 자분심</span>
+                </div>
+                <div class="node-title">Đưa lập luận phía đối phương &amp; Chốt</div>
+                <div class="node-desc">
+                  Đưa ra các yếu tố nhằm tăng lỗi cho khách hàng ta. Hai bên <b>Chốt thỏa thuận (합의)</b> hoặc đưa ra <b>Hội đồng phân xử (자분심)</b>.
+                </div>
+              </div>
+            </div>
+
+            <!-- Lane 3 - Step 6 (Empty) -->
+            <div class="sl-cell empty-cell"></div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= PHẦN 2: CÁC ĐỐI TƯỢNG THAM GIA (ACTORS) ================= -->
+    <section>
+      <span class="section-eyebrow">PHẦN 2 · KEY ACTORS &amp; MENTAL MODEL CHO DESIGN</span>
+      <h2 class="section-title" style="font-size:21px;">4 Đối tượng Tham gia trong Luồng Bồi thường</h2>
+      <div class="actors-grid">
+        <div class="actor-card">
+          <div class="actor-top">
+            <span class="actor-icon">🧑‍💼</span>
+          </div>
+          <h3>1. Giám định viên bên ta (Claims Adjuster)</h3>
+          <p>
+            Người trực tiếp ngồi trước màn hình <b>AMS B2B</b>. Có quyền kiểm식 tình tiết AI nhận diện, chọn mã Chart
+            KNIA, bật/tắt các mục lập luận khi đàm phán và ký duyệt báo cáo PDF gửi khách hàng.
+          </p>
+        </div>
+
+        <div class="actor-card">
+          <div class="actor-top">
+            <span class="actor-icon" style="background:rgba(16,185,129,0.12); border-color:rgba(16,185,129,0.35);">🚗</span>
+          </div>
+          <h3>2. Khách hàng bên ta (Xe 자차 / Xe A)</h3>
+          <p>
+            Chủ hợp đồng bảo hiểm của công ty ta. Trên giao diện Thương lượng, mọi yếu tố giúp <b>giảm tỷ lệ lỗi cho
+              khách hàng (↓)</b> luôn được hiển thị bằng <b>màu Xanh lá (Lập luận bảo vệ khách hàng)</b>.
+          </p>
+        </div>
+
+        <div class="actor-card">
+          <div class="actor-top">
+            <span class="actor-icon" style="background:rgba(245,158,11,0.12); border-color:rgba(245,158,11,0.35);">🏢</span>
+          </div>
+          <h3>3. Bảo hiểm đối phương &amp; Xe đối phương (대차)</h3>
+          <p>
+            Phía bên kia bàn đàm phán. Họ sẽ đưa ra các lập luận làm <b>tăng tỷ lệ lỗi của khách hàng ta (↑)</b> — được
+            hiển thị ở cột bên phải bằng <b>màu Đỏ/Cam (Lập luận đối phương có thể đưa ra)</b>.
+          </p>
+        </div>
+
+        <div class="actor-card">
+          <div class="actor-top">
+            <span class="actor-icon">🤖</span>
+          </div>
+          <h3>4. Hệ thống AMS B2B (AI Agent)</h3>
+          <p>
+            Hoạt động song song ở cột giữa (5 bước phân tích) và cột phải (AI Chat Phân Tích): tự động trích xuất chứng
+            cứ từ video, trả lời câu hỏi nghiệp vụ của Giám định viên và tính toán tỷ lệ lỗi theo thời gian thực.
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const STEP_DATA = {
+      1: {
+        badge: 'BƯỚC 1 · TIẾP NHẬN HỒ SƠ & VIDEO',
+        title: 'Bước 1: Xảy ra va chạm & Gửi video hộp đen (Blackbox)',
+        narration: '<b>Xảy ra va chạm & Gửi video:</b> Khách hàng gửi file video hộp đen (Blackbox) và thông tin vụ tai nạn cho Giám định viên bên ta để khởi tạo hồ sơ vụ việc.',
+        desc: 'Sau khi va chạm xảy ra, khách hàng trích xuất video từ camera hành trình (trước/sau xe) gửi cho công ty bảo hiểm bên ta. Giám định viên tạo hồ sơ vụ việc mới và tải video lên hệ thống.',
+        manual: 'Nhận file video rời rạc qua email/tin nhắn, lưu vào thư mục máy tính cá nhân và nhập thông tin hồ sơ thủ công.',
+        ams: '<b>Màn Danh sách & Modal Tạo vụ việc mới (#SCR-CASE-LIST):</b> Hỗ trợ tải lên tối đa 4 nguồn video (Trước xe KH, Sau xe KH, Xe đối phương, CCTV), kiểm tra định dạng/dung lượng tự động và khởi tạo hồ sơ ngay lập tức.'
+      },
+      2: {
+        badge: 'BƯỚC 2 · ✨ AMS B2B HỖ TRỢ',
+        title: 'Bước 2: Xem video dựng lại tình tiết va chạm',
+        narration: '<b>Xem video dựng lại tình tiết:</b> Thay vì Giám định viên phải tự xem đi xem lại video, AMS B2B tự động đọc video hộp đen, nhận diện làn đường, đèn tín hiệu và tách các mốc thời gian va chạm.',
+        desc: 'Từ video hộp đen khách hàng gửi, Giám định viên cần xác định bối cảnh đường (loại giao lộ, số làn, đèn tín hiệu), hướng di chuyển của 2 xe và mốc giây xảy ra va chạm.',
+        manual: 'Giám định viên phải mở trình phát video thông thường, tự tua đi tua lại hàng chục lần qua các góc cam và ghi chép tay từng tình tiết ra giấy.',
+        ams: '<b>Bước 1 & Bước 2 trên màn Chi tiết (#SCR-CASE-DETAIL):</b> AMS B2B tự động quét video, đánh dấu vạch đỏ <b>Mốc va chạm</b>, cắt sẵn Keyframes (Trước - Trong - Sau va chạm) và liệt kê các tình tiết AI nhận diện để Giám định viên xác nhận.'
+      },
+      3: {
+        badge: 'BƯỚC 3 · ✨ AMS B2B HỖ TRỢ',
+        title: 'Bước 3: Tra cứu sách KNIA tìm mã Chart & Tỷ lệ lỗi cơ sở',
+        narration: '<b>Tra cứu sách KNIA tìm mã Chart:</b> AMS B2B tự động đối chiếu các tình tiết đã xác nhận với bộ quy chuẩn KNIA để xếp hạng Top biểu đồ phù hợp nhất kèm Tỷ lệ lỗi cơ sở.',
+        desc: 'Dựa trên diễn biến vừa dựng lại (ví dụ: tông đuôi cùng chiều, hay đi thẳng vs rẽ trái tại ngã tư không đèn), Giám định viên phải tìm đúng mã Biểu đồ (도표) trong sách KNIA để lấy Tỷ lệ lỗi cơ sở (Base Fault).',
+        manual: 'Phải lật tra cứu trong cuốn tiêu chuẩn KNIA dày 600 trang với hàng trăm mã biểu đồ, rất dễ nhầm lẫn giữa các biểu đồ có điều kiện gần giống nhau.',
+        ams: '<b>Bước 3 — Chọn biểu đồ (#SCR-CASE-DETAIL):</b> AMS B2B tự động đề xuất Top Chart có <b>Độ khớp (%)</b> cao nhất, cho phép <b>So sánh 2 Chart cạnh nhau</b> và hiển thị rõ điều kiện nào Khớp / Mâu thuẫn.'
+      },
+      4: {
+        badge: 'BƯỚC 4 · ✨ AMS B2B HỖ TRỢ',
+        title: 'Bước 4: Soi từng khung hình tìm lý lẽ tăng/giảm lỗi',
+        narration: '<b>Soi từng khung hình tìm lý lẽ tăng/giảm lỗi:</b> AMS B2B tự động trích xuất khung hình bằng chứng theo Chart đã chọn và chuẩn bị sẵn 2 cột Lập luận bảo vệ khách hàng vs Lập luận đối phương.',
+        desc: 'Tỷ lệ lỗi cơ sở trong Chart KNIA chưa phải là kết quả cuối cùng. Giám định viên phải soi kỹ video để tìm các yếu tố điều chỉnh (가감요소: vào giao lộ trước, xe trước phanh gấp, không bật xi-nhan...) nhằm giảm lỗi cho khách hàng.',
+        manual: 'Phải tự chụp màn hình từng frame video, tự tra bảng yếu tố cộng/trừ của KNIA và tự suy đoán xem phía bảo hiểm đối phương sẽ bắt bẻ điểm nào.',
+        ams: '<b>Bước 3 (Bằng chứng) & Bước 4 (Hai cột lập luận):</b> Khi chọn Chart, AMS B2B tự động sinh bộ khung hình bằng chứng (click là tua video tới đúng giây đó) và chia sẵn 2 cột: <b>Lập luận bảo vệ khách hàng (↓)</b> và <b>Lập luận đối phương có thể đưa ra (↑)</b>.'
+      },
+      5: {
+        badge: 'BƯỚC 5 · ✨ AMS B2B HỖ TRỢ TRÊN BÀN ĐÀM PHÁN',
+        title: 'Bước 5: Đàm phán chốt tỷ lệ với Bảo hiểm đối phương',
+        narration: '<b>Đàm phán chốt tỷ lệ với Bảo hiểm đối phương:</b> Giám định viên bên ta dùng bộ bằng chứng từ AMS B2B để thương lượng với GĐV đối phương, chuyển trạng thái từng mục và xem tỷ lệ lỗi cập nhật tức thì.',
+        desc: 'Giám định viên bên ta và Giám định viên Bảo hiểm đối phương trao đổi để thống nhất áp dụng hay loại trừ từng yếu tố tăng/giảm lỗi. Nếu không đạt thỏa thuận (합의), vụ việc sẽ đưa ra Hội đồng phân xử KNIA (자분심).',
+        manual: 'Tính nhẩm tỷ lệ cộng/trừ thủ công khi đang gọi điện đàm phán, khó hình dung ngay nếu nhượng bộ hoặc thắng thêm 1 mục thì tỷ lệ lỗi sẽ dịch chuyển bao nhiêu %.',
+        ams: '<b>Bước 4 — Thương lượng tỷ lệ (#nego-stage):</b> Cung cấp thanh 3 ô số trực quan (<b>Nếu ta được công nhận thêm 1 mục</b> | <b>Tỷ lệ hiện tại · Đã đồng thuận</b> | <b>Nếu đối phương được công nhận thêm 1 mục</b>) và cập nhật tỷ lệ tức thì khi đổi trạng thái từng mục.'
+      },
+      6: {
+        badge: 'BƯỚC 6 · ✨ AMS B2B HỖ TRỢ',
+        title: 'Bước 6: Lập báo cáo giám định & Thông báo kết quả cho Khách hàng',
+        narration: '<b>Lập báo cáo & Thông báo kết quả cho Khách hàng:</b> Sau khi chốt tỷ lệ lỗi, AMS B2B tự động tạo dự thảo Báo cáo PDF chuẩn 5 phần và soạn tin nhắn KakaoTalk/SMS kèm bản xem trước trên điện thoại để gửi cho khách hàng.',
+        desc: 'Sau khi có kết quả đàm phán, Giám định viên phải lập Báo cáo giám định chính thức lưu hồ sơ và gửi tin nhắn giải trình kết quả rõ ràng để khách hàng bên ta hiểu và đồng thuận.',
+        manual: 'Copy-paste ảnh chụp màn hình và gõ lại toàn bộ nội dung vào file Word/PDF, sau đó tự soạn tin nhắn giải thích cho khách hàng.',
+        ams: '<b>Bước 5 — Tạo báo cáo và gửi thông báo:</b> Tự động điền sẵn Báo cáo giám định 5 phần (hỗ trợ lưu đa phiên bản v1, v2) và dựng sẵn khung xem trước tin nhắn trên màn hình điện thoại (KakaoTalk / SMS) để gửi ngay cho khách hàng.'
+      }
+    };
+
+    let currentStep = 2;
+    let playInterval = null;
+
+    function selectStep(step) {
+      currentStep = step;
+      const data = STEP_DATA[step];
+      if (!data) return;
+
+      document.querySelectorAll('.sl-node').forEach(el => {
+        el.classList.toggle('active-step', Number(el.dataset.step) === step);
+      });
+      document.querySelectorAll('.sl-col-header[id^="col-head-"]').forEach((el, idx) => {
+        el.classList.toggle('is-playing', (idx + 1) === step);
+      });
+      document.querySelectorAll('.story-dot').forEach((el, idx) => {
+        el.classList.toggle('active', (idx + 1) === step);
+      });
+
+      // Nội dung diễn giải chi tiết đã bỏ khỏi bản handoff; chỉ giữ tương tác trên sơ đồ.
+    }
+
+    function togglePlayFlow() {
+      const btn = document.getElementById('btn-play-flow');
+      const icon = document.getElementById('play-icon');
+      const label = document.getElementById('play-label');
+
+      if (playInterval) {
+        clearInterval(playInterval);
+        playInterval = null;
+        btn.classList.remove('is-active');
+        icon.textContent = '▶';
+        label.textContent = 'Chạy mô phỏng hành trình (Bước 1 → 6)';
+        return;
+      }
+
+      btn.classList.add('is-active');
+      icon.textContent = '⏸';
+      label.textContent = 'Đang chạy mô phỏng... (Bấm để dừng)';
+      selectStep(1);
+      playInterval = setInterval(() => {
+        const next = currentStep >= 6 ? 1 : currentStep + 1;
+        selectStep(next);
+      }, 3200);
+    }
+
+    function toggleFocusAms() {
+      const btn = document.getElementById('btn-focus-ams');
+      const active = document.body.classList.toggle('focus-ams');
+      btn.classList.toggle('is-active', active);
+    }
+  </script>
+
+  <script>
+    // ================= DRAG AND DROP VERTICAL SWIMLANE CONTROLLER =================
+    const SWIMLANE_INITIAL = {
+      lanes: [
+        { id: 'lane_customer', title: '👤 Khách hàng bên ta', color: '#10b981' },
+        { id: 'lane_adjuster', title: '🧑‍💼 Giám định viên bên ta (AMS B2B)', color: '#0ea5e9' },
+        { id: 'lane_counterpart', title: '🏢 Giám định viên bảo hiểm đối phương', color: '#f59e0b' }
+      ],
+      nodes: [
+        { id: 'N_START', type: 'start', text: 'Bắt đầu', lane: 'lane_customer' },
+        { id: 'C1', type: 'act', text: '1. Gửi video camera hành trình & Lời khai', lane: 'lane_customer' },
+        { id: 'C2', type: 'act', text: '6. Nhận kết quả và Báo cáo bồi thường', lane: 'lane_customer' },
+        { id: 'N_END', type: 'end', text: 'Kết thúc', lane: 'lane_customer' },
+
+        { id: 'A1', type: 'act', text: '2. Tiếp nhận video & Dựng lại diễn biến', lane: 'lane_adjuster' },
+        { id: 'A2', type: 'act', text: '3. Tra cứu sách luật: Tỷ lệ gốc (30:70)', lane: 'lane_adjuster' },
+        { id: 'A3', type: 'act', text: '4. Soi từng khung hình tìm lý do Tăng/Giảm lỗi:<br/>• Cãi giảm lỗi cho khách (-10%)<br/>• Phòng đối phương bắt bẻ (+10%)', lane: 'lane_adjuster' },
+        { id: 'GW', type: 'decision', text: 'Hai bên đã thống nhất<br/>tỷ lệ lỗi cuối cùng chưa?', lane: 'lane_adjuster' },
+        { id: 'A4', type: 'act', text: '5. Hoàn tất kết quả, xuất Báo cáo PDF & Thông báo', lane: 'lane_adjuster' },
+
+        { id: 'B1', type: 'act', text: 'Thương lượng & Phản biện<br/>(Đòi tăng thêm lỗi cho xe ta)', lane: 'lane_counterpart' },
+        { id: 'CP_COURT', type: 'act', text: 'Đưa lên Hội đồng phân xử KNIA hoặc ra Tòa<br/>(Khi 2 bên bế tắc không ai chịu ai)', lane: 'lane_counterpart' }
+      ],
+      edges: [
+        { from: 'N_START', to: 'C1', style: 'solid', text: '' },
+        { from: 'C1', to: 'A1', style: 'dash', text: 'Gửi video' },
+        { from: 'A1', to: 'A2', style: 'solid', text: '' },
+        { from: 'A2', to: 'A3', style: 'solid', text: '' },
+        { from: 'A3', to: 'GW', style: 'solid', text: '' },
+        { from: 'A3', to: 'B1', style: 'dash', text: 'Đưa bằng chứng' },
+        { from: 'B1', to: 'GW', style: 'dash', text: 'Phản hồi' },
+        { from: 'GW', to: 'A3', style: 'solid', text: 'Chưa thống nhất (Cãi tiếp)' },
+        { from: 'GW', to: 'A4', style: 'solid', text: 'Đã thống nhất (Chốt tỷ lệ)' },
+        { from: 'GW', to: 'CP_COURT', style: 'solid', text: 'Bế tắc tranh chấp' },
+        { from: 'CP_COURT', to: 'A4', style: 'solid', text: 'Có phán quyết' },
+        { from: 'A4', to: 'C2', style: 'dash', text: 'Báo cáo & Tiền đền bù' },
+        { from: 'C2', to: 'N_END', style: 'solid', text: '' }
+      ]
+    };
+
+    let swimlaneState = JSON.parse(JSON.stringify(SWIMLANE_INITIAL));
+    try {
+      const saved = localStorage.getItem('ams-domain-swimlane-dnd-state');
+      if (saved) swimlaneState = JSON.parse(saved);
+    } catch (_) {}
+
+    let activeEditingNodeId = null;
+    let draggedNodeId = null;
+
+    function saveSwimlaneState() {
+      try {
+        localStorage.setItem('ams-domain-swimlane-dnd-state', JSON.stringify(swimlaneState));
+      } catch (_) {}
+    }
+
+    function renderSwimlaneBoard() {
+      const board = document.getElementById('swimlane-dnd-board');
+      if (!board) return;
+      board.innerHTML = '';
+
+      swimlaneState.lanes.forEach(lane => {
+        const col = document.createElement('div');
+        col.className = 'dnd-column';
+        col.dataset.laneId = lane.id;
+
+        col.innerHTML = `
+          <div class="dnd-column-head">
+            <span class="dnd-column-title">
+              <span style="width:8px; height:8px; border-radius:50%; background:${lane.color || '#0ea5e9'};"></span>
+              <span>${lane.title}</span>
+            </span>
+            ${swimlaneState.lanes.length > 3 ? `<button class="btn btn-sm" style="padding:1px 6px; font-size:10px; color:#ef4444;" onclick="removeLane('${lane.id}')">✕</button>` : ''}
+          </div>
+          <div class="dnd-column-body" data-lane-id="${lane.id}"></div>
+        `;
+
+        const body = col.querySelector('.dnd-column-body');
+        
+        body.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          col.classList.add('drag-over');
+        });
+        body.addEventListener('dragleave', () => col.classList.remove('drag-over'));
+        body.addEventListener('drop', (e) => {
+          e.preventDefault();
+          col.classList.remove('drag-over');
+          if (draggedNodeId) {
+            const node = swimlaneState.nodes.find(n => n.id === draggedNodeId);
+            if (node && node.lane !== lane.id) {
+              node.lane = lane.id;
+              saveSwimlaneState();
+              renderSwimlaneBoard();
+            }
+          }
+        });
+
+        const laneNodes = swimlaneState.nodes.filter(n => n.lane === lane.id);
+        laneNodes.forEach(node => {
+          const card = document.createElement('div');
+          const isEditing = (activeEditingNodeId === node.id);
+          card.className = `dnd-node-card ${node.type} ${isEditing ? 'is-editing' : ''}`;
+          card.draggable = true;
+          card.id = `dnd-${node.id}`;
+
+          card.innerHTML = `
+            <div style="font-size:12.5px; font-weight:700; line-height:1.4;">${node.text}</div>
+            <div style="font-size:9.5px; opacity:0.75; margin-top:5px; display:flex; justify-content:space-between;">
+              <span>#${node.id}</span>
+              <span>👆 Click để sửa</span>
+            </div>
+          `;
+
+          if (isEditing) {
+            const popover = document.createElement('div');
+            popover.className = 'node-popover-dropdown';
+            popover.onclick = (e) => e.stopPropagation();
+
+            popover.innerHTML = `
+              <div>
+                <span class="popover-label">Sửa nội dung chữ:</span>
+                <textarea id="popover-text-${node.id}" class="popover-input" style="height:55px; resize:vertical;">${node.text.replace(/<br\s*\/?>/gi, '\n')}</textarea>
+              </div>
+
+              <div>
+                <span class="popover-label">Đổi loại ký hiệu &amp; Màu sắc:</span>
+                <select id="popover-type-${node.id}" class="popover-input">
+                  <option value="act" ${node.type === 'act' ? 'selected' : ''}>Act Node (Hình chữ nhật · Màu Xanh)</option>
+                  <option value="decision" ${node.type === 'decision' ? 'selected' : ''}>Decision Node (Hình thoi · Màu Vàng)</option>
+                  <option value="start" ${node.type === 'start' ? 'selected' : ''}>Start Node (Hình tròn · Màu Xanh lá)</option>
+                  <option value="end" ${node.type === 'end' ? 'selected' : ''}>End Node (Hình tròn kép · Màu Đỏ)</option>
+                </select>
+              </div>
+
+              <div>
+                <span class="popover-label">Chuyển sang Lane:</span>
+                <select id="popover-lane-${node.id}" class="popover-input">
+                  ${swimlaneState.lanes.map(l => `
+                    <option value="${l.id}" ${l.id === node.lane ? 'selected' : ''}>${l.title}</option>
+                  `).join('')}
+                </select>
+              </div>
+
+              <div class="popover-actions">
+                <button type="button" class="popover-btn popover-btn-delete" onclick="deleteNodeInline('${node.id}', event)">🗑️ Xóa</button>
+                <div style="display:flex; gap:5px;">
+                  <button type="button" class="popover-btn popover-btn-close" onclick="closeInlinePopover(event)">Đóng</button>
+                  <button type="button" class="popover-btn popover-btn-save" onclick="saveInlinePopover('${node.id}', event)">💾 Lưu</button>
+                </div>
+              </div>
+            `;
+            card.appendChild(popover);
+          }
+
+          card.addEventListener('click', (e) => {
+            e.stopPropagation();
+            activeEditingNodeId = (activeEditingNodeId === node.id) ? null : node.id;
+            renderSwimlaneBoard();
+          });
+
+          card.addEventListener('dragstart', (e) => {
+            draggedNodeId = node.id;
+            card.classList.add('dragging');
+            e.dataTransfer.setData('text/plain', node.id);
+          });
+          card.addEventListener('dragend', () => {
+            card.classList.remove('dragging');
+            draggedNodeId = null;
+          });
+
+          body.appendChild(card);
+        });
+
+        board.appendChild(col);
+      });
+
+      renderSwimlaneEdges();
+      setTimeout(drawLiveSwimlaneArrows, 50);
+    }
+
+    document.addEventListener('click', (e) => {
+      if (activeEditingNodeId && !e.target.closest('.dnd-node-card')) {
+        activeEditingNodeId = null;
+        renderSwimlaneBoard();
+      }
+    });
+
+    function closeInlinePopover(e) {
+      if (e) e.stopPropagation();
+      activeEditingNodeId = null;
+      renderSwimlaneBoard();
+    }
+
+    function saveInlinePopover(nodeId, e) {
+      if (e) e.stopPropagation();
+      const node = swimlaneState.nodes.find(n => n.id === nodeId);
+      if (!node) return;
+
+      const txt = document.getElementById(`popover-text-${nodeId}`);
+      const typ = document.getElementById(`popover-type-${nodeId}`);
+      const lan = document.getElementById(`popover-lane-${nodeId}`);
+
+      if (txt) node.text = txt.value.trim().replace(/\n/g, '<br/>');
+      if (typ) node.type = typ.value;
+      if (lan) node.lane = lan.value;
+
+      activeEditingNodeId = null;
+      saveSwimlaneState();
+      renderSwimlaneBoard();
+    }
+
+    function deleteNodeInline(nodeId, e) {
+      if (e) e.stopPropagation();
+      if (confirm('Xóa node này khỏi sơ đồ?')) {
+        swimlaneState.nodes = swimlaneState.nodes.filter(n => n.id !== nodeId);
+        swimlaneState.edges = swimlaneState.edges.filter(ed => ed.from !== nodeId && ed.to !== nodeId);
+        activeEditingNodeId = null;
+        saveSwimlaneState();
+        renderSwimlaneBoard();
+      }
+    }
+
+    function drawLiveSwimlaneArrows() {
+      const board = document.getElementById('swimlane-dnd-board');
+      if (!board) return;
+
+      let svg = document.getElementById('swimlane-arrows-svg');
+      let labelsContainer = document.getElementById('swimlane-arrows-labels');
+
+      if (!svg) {
+        svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.id = 'swimlane-arrows-svg';
+        svg.className = 'swimlane-svg-overlay';
+        board.appendChild(svg);
+      }
+
+      if (!labelsContainer) {
+        labelsContainer = document.createElement('div');
+        labelsContainer.id = 'swimlane-arrows-labels';
+        board.appendChild(labelsContainer);
+      }
+
+      const boardRect = board.getBoundingClientRect();
+      const sWidth = Math.max(board.scrollWidth, board.clientWidth);
+      const sHeight = Math.max(board.scrollHeight, board.clientHeight);
+
+      svg.setAttribute('viewBox', `0 0 ${sWidth} ${sHeight}`);
+      svg.style.width = `${sWidth}px`;
+      svg.style.height = `${sHeight}px`;
+
+      svg.innerHTML = `
+        <defs>
+          <marker id="arrow-solid" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#38bdf8" />
+          </marker>
+          <marker id="arrow-dash" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#fbbf24" />
+          </marker>
+        </defs>
+      `;
+      labelsContainer.innerHTML = '';
+
+      swimlaneState.edges.forEach((edge, idx) => {
+        const fromEl = document.getElementById(`dnd-${edge.from}`);
+        const toEl = document.getElementById(`dnd-${edge.to}`);
+        if (!fromEl || !toEl) return;
+
+        const rFrom = fromEl.getBoundingClientRect();
+        const rTo = toEl.getBoundingClientRect();
+
+        const fromX = (rFrom.left - boardRect.left) + board.scrollLeft;
+        const fromY = (rFrom.top - boardRect.top) + board.scrollTop;
+        const toX = (rTo.left - boardRect.left) + board.scrollLeft;
+        const toY = (rTo.top - boardRect.top) + board.scrollTop;
+
+        let startPoint, endPoint;
+        const isSameLane = Math.abs(fromX - toX) < 80;
+
+        if (isSameLane) {
+          if (fromY < toY) {
+            startPoint = [fromX + rFrom.width / 2, fromY + rFrom.height];
+            endPoint = [toX + rTo.width / 2, toY];
+          } else {
+            startPoint = [fromX + rFrom.width, fromY + rFrom.height / 2];
+            endPoint = [toX + rTo.width, toY + rTo.height / 2];
+          }
+        } else {
+          if (fromX < toX) {
+            startPoint = [fromX + rFrom.width, fromY + rFrom.height / 2];
+            endPoint = [toX, toY + rTo.height / 2];
+          } else {
+            startPoint = [fromX, fromY + rFrom.height / 2];
+            endPoint = [toX + rTo.width, toY + rTo.height / 2];
+          }
+        }
+
+        let d = '';
+        let midX = (startPoint[0] + endPoint[0]) / 2;
+        let midY = (startPoint[1] + endPoint[1]) / 2;
+
+        if (isSameLane && fromY >= toY) {
+          const offset = 40;
+          d = `M ${startPoint[0]} ${startPoint[1]} C ${startPoint[0] + offset} ${startPoint[1]}, ${endPoint[0] + offset} ${endPoint[1]}, ${endPoint[0]} ${endPoint[1]}`;
+          midX = startPoint[0] + offset;
+          midY = (startPoint[1] + endPoint[1]) / 2;
+        } else {
+          const dx = Math.abs(endPoint[0] - startPoint[0]) * 0.5;
+          d = `M ${startPoint[0]} ${startPoint[1]} C ${startPoint[0] + (endPoint[0] > startPoint[0] ? dx : -dx)} ${startPoint[1]}, ${endPoint[0] - (endPoint[0] > startPoint[0] ? dx : -dx)} ${endPoint[1]}, ${endPoint[0]} ${endPoint[1]}`;
+        }
+
+        const isDash = (edge.style === 'dash');
+        const strokeColor = isDash ? '#fbbf24' : '#38bdf8';
+        const marker = isDash ? 'url(#arrow-dash)' : 'url(#arrow-solid)';
+
+        const pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        pathEl.setAttribute('d', d);
+        pathEl.setAttribute('fill', 'none');
+        pathEl.setAttribute('stroke', strokeColor);
+        pathEl.setAttribute('stroke-width', '2');
+        if (isDash) pathEl.setAttribute('stroke-dasharray', '5 4');
+        pathEl.setAttribute('marker-end', marker);
+
+        pathEl.onclick = (e) => {
+          e.stopPropagation();
+          editEdgeInline(idx);
+        };
+        svg.appendChild(pathEl);
+
+        const pill = document.createElement('div');
+        pill.className = `swimlane-edge-pill ${isDash ? 'dash-pill' : ''}`;
+        pill.style.left = `${midX}px`;
+        pill.style.top = `${midY}px`;
+        pill.innerHTML = `<span>${edge.text || (isDash ? 'Line đứt' : 'Line')}</span> <span>✏️</span>`;
+        pill.onclick = (e) => {
+          e.stopPropagation();
+          editEdgeInline(idx);
+        };
+        labelsContainer.appendChild(pill);
+      });
+    }
+
+    function editEdgeInline(idx) {
+      const edge = swimlaneState.edges[idx];
+      if (!edge) return;
+      const newText = prompt(`Sửa chữ hiển thị trên đường nối (${edge.from} → ${edge.to}):`, edge.text || '');
+      if (newText !== null) {
+        edge.text = newText.trim();
+        const toggleStyle = confirm(`Đổi kiểu đường nối này sang ${edge.style === 'solid' ? 'NÉT ĐỨT' : 'NÉT LIỀN'}?\n(OK = Đổi, Cancel = Giữ nguyên)`);
+        if (toggleStyle) {
+          edge.style = (edge.style === 'solid') ? 'dash' : 'solid';
+        }
+        saveSwimlaneState();
+        renderSwimlaneBoard();
+      }
+    }
+
+    function renderSwimlaneEdges() {
+      const container = document.getElementById('swimlane-edge-list');
+      if (!container) return;
+      container.innerHTML = swimlaneState.edges.map((edge, idx) => `
+        <div style="background:#091423; border:1px solid var(--border-subtle); border-radius:6px; padding:7px 10px; font-size:11px;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:4px; color:var(--text-muted);">
+            <span><b>${edge.from} → ${edge.to}</b></span>
+            <button style="background:none; border:none; color:#ef4444; cursor:pointer;" onclick="deleteEdge(${idx})">✕</button>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <select class="form-control" style="font-size:10px; padding:2px 4px; width:110px;" onchange="updateEdgeStyle(${idx}, this.value)">
+              <option value="solid" ${edge.style === 'solid' ? 'selected' : ''}>Line liền (-->)</option>
+              <option value="dash" ${edge.style === 'dash' ? 'selected' : ''}>Line đứt (-.->)</option>
+            </select>
+            <input type="text" class="form-control" style="font-size:10.5px; padding:2px 6px; flex:1;" placeholder="Chữ trên line..." value="${edge.text}" oninput="updateEdgeText(${idx}, this.value)" />
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function updateEdgeStyle(idx, val) {
+      swimlaneState.edges[idx].style = val;
+      saveSwimlaneState();
+      setTimeout(drawLiveSwimlaneArrows, 50);
+    }
+
+    function updateEdgeText(idx, val) {
+      swimlaneState.edges[idx].text = val.trim();
+      saveSwimlaneState();
+      setTimeout(drawLiveSwimlaneArrows, 50);
+    }
+
+    function deleteEdge(idx) {
+      if (confirm('Xóa đường nối này?')) {
+        swimlaneState.edges.splice(idx, 1);
+        saveSwimlaneState();
+        renderSwimlaneBoard();
+      }
+    }
+
+    function openAddLanePrompt() {
+      const title = prompt('Nhập tên cho Lane mới (ví dụ: Hội đồng phân xử / Tòa án):');
+      if (!title || !title.trim()) return;
+      const id = 'lane_' + Date.now();
+      swimlaneState.lanes.push({
+        id: id,
+        title: title.trim(),
+        color: '#a855f7'
+      });
+      saveSwimlaneState();
+      renderSwimlaneBoard();
+    }
+
+    function removeLane(id) {
+      if (confirm('Xóa Lane này và di chuyển các node trong lane về Lane 2?')) {
+        swimlaneState.nodes.forEach(n => {
+          if (n.lane === id) n.lane = 'lane_adjuster';
+        });
+        swimlaneState.lanes = swimlaneState.lanes.filter(l => l.id !== id);
+        saveSwimlaneState();
+        renderSwimlaneBoard();
+      }
+    }
+
+    function openAddNodeQuick() {
+      const newId = 'N_' + Math.floor(Math.random() * 899 + 100);
+      const newNode = {
+        id: newId,
+        type: 'act',
+        text: 'Nội dung bước mới...',
+        lane: swimlaneState.lanes[1] ? swimlaneState.lanes[1].id : swimlaneState.lanes[0].id
+      };
+      swimlaneState.nodes.push(newNode);
+      activeEditingNodeId = newId;
+      saveSwimlaneState();
+      renderSwimlaneBoard();
+    }
+
+    function openAddEdgePrompt() {
+      const from = prompt('Nhập ID node bắt đầu (ví dụ: A3, GW, C1):');
+      if (!from) return;
+      const to = prompt('Nhập ID node kết thúc (ví dụ: B1, A4):');
+      if (!to) return;
+      const text = prompt('Nhập chữ hiển thị trên line (tùy chọn, để trống nếu không có):') || '';
+      swimlaneState.edges.push({
+        from: from.trim(),
+        to: to.trim(),
+        style: 'solid',
+        text: text.trim()
+      });
+      saveSwimlaneState();
+      renderSwimlaneBoard();
+    }
+
+    function resetSwimlaneDefault() {
+      if (confirm('Khôi phục toàn bộ các Lane, Node và Line về mặc định?')) {
+        swimlaneState = JSON.parse(JSON.stringify(SWIMLANE_INITIAL));
+        activeEditingNodeId = null;
+        saveSwimlaneState();
+        renderSwimlaneBoard();
+      }
+    }
+
+    function copySwimlaneMermaid() {
+      let code = 'flowchart TD\n';
+      swimlaneState.lanes.forEach(l => {
+        code += '    subgraph ' + l.id.toUpperCase() + ' ["' + l.title + '"]\n';
+        const lNodes = swimlaneState.nodes.filter(n => n.lane === l.id);
+        lNodes.forEach(n => {
+          let sStart = '[';
+          let sEnd = ']';
+          let cls = 'actNode';
+          if (n.type === 'start') { sStart = '(('; sEnd = '))'; cls = 'startNode'; }
+          else if (n.type === 'end') { sStart = '((('; sEnd = ')))'; cls = 'endNode'; }
+          else if (n.type === 'decision') { sStart = '{'; sEnd = '}'; cls = 'decisionNode'; }
+          code += '        ' + n.id + sStart + '"' + n.text + '"' + sEnd + ':::' + cls + '\n';
+        });
+        code += '    end\n\n';
+      });
+
+      code += '    %% EDGES\n';
+      swimlaneState.edges.forEach(e => {
+        const textPart = e.text ? '|"' + e.text + '"| ' : ' ';
+        if (e.style === 'dash') {
+          code += '    ' + e.from + ' -.->' + textPart + e.to + '\n';
+        } else {
+          code += '    ' + e.from + ' -->' + textPart + e.to + '\n';
+        }
+      });
+
+      code += '\n    classDef startNode fill:#10b981,stroke:#059669,stroke-width:3px,color:#ffffff,font-weight:bold;\n';
+      code += '    classDef endNode fill:#ef4444,stroke:#b91c1c,stroke-width:4px,color:#ffffff,font-weight:bold;\n';
+      code += '    classDef actNode fill:#0284c7,stroke:#38bdf8,stroke-width:2px,color:#ffffff;\n';
+      code += '    classDef decisionNode fill:#d97706,stroke:#fbbf24,stroke-width:2px,color:#ffffff,font-weight:bold;\n';
+
+      navigator.clipboard.writeText(code).then(() => {
+        alert('Đã sao chép mã Mermaid của sơ đồ kéo thả vào bộ nhớ tạm!');
+      });
+    }
+
+    // Auto-init on page load
+    setTimeout(renderSwimlaneBoard, 80);
+    window.addEventListener('resize', drawLiveSwimlaneArrows);
+  
+    // ================= BPMN THEO LANE DND LOGIC =================
+    const BPMN_LANE_DEFAULTS = {
+      lanes: [
+        { id: 'lane_customer', title: 'Khách hàng bên ta', color: '#10b981' },
+        { id: 'lane_adjuster', title: 'Giám định viên bên ta', color: '#0ea5e9' },
+        { id: 'lane_counterpart', title: 'Giám định viên bảo hiểm đối phương', color: '#f59e0b' }
+      ],
+      nodes: [
+        { id: 'C_START', type: 'start', text: 'Gửi vụ việc', lane: 'lane_customer' },
+        { id: 'C_RES', type: 'act', text: 'Nhận kết quả', lane: 'lane_customer' },
+
+        { id: 'A_REC', type: 'act', text: 'Tiếp nhận vụ việc', lane: 'lane_adjuster' },
+        { id: 'A_ANA', type: 'act', text: 'Phân tích tình huống', lane: 'lane_adjuster' },
+        { id: 'A_CHT', type: 'act', text: 'Xác định chart và tỷ lệ lỗi cơ sở', lane: 'lane_adjuster' },
+        { id: 'A_PRP', type: 'act', text: 'Chuẩn bị căn cứ thương lượng', lane: 'lane_adjuster' },
+        { id: 'A_GW', type: 'decision', text: 'Đã thống nhất tỷ lệ?<br><small>Có → hoàn tất<br>Chưa → tiếp tục thương lượng</small>', lane: 'lane_adjuster' },
+        { id: 'A_END', type: 'act', text: 'Hoàn tất kết quả và thông báo', lane: 'lane_adjuster' },
+
+        { id: 'B_NEGO', type: 'decision', text: 'Phản hồi và thống nhất', lane: 'lane_counterpart' }
+      ]
+    };
+
+    let bpmnLaneData = JSON.parse(JSON.stringify(BPMN_LANE_DEFAULTS));
+    try {
+      const saved = localStorage.getItem('ams-domain-bpmn-lanes-state');
+      if (saved) bpmnLaneData = JSON.parse(saved);
+    } catch (_) {}
+
+    let bpmnActiveEditId = null;
+    let bpmnDragId = null;
+
+    function saveBpmnLanes() {
+      try { localStorage.setItem('ams-domain-bpmn-lanes-state', JSON.stringify(bpmnLaneData)); } catch (_) {}
+    }
+
+    function setDomainFlowView(view) {
+      const isBpmn = (view === 'bpmn');
+      const bpmnContainer = document.getElementById('bpmn-lane-view-container');
+      const matrixContainer = document.querySelector('.swimlane-scroll-wrapper');
+      const btnMatrix = document.getElementById('btn-view-matrix');
+      const btnBpmn = document.getElementById('btn-view-bpmn');
+
+      if (bpmnContainer) bpmnContainer.style.display = isBpmn ? 'flex' : 'none';
+      if (matrixContainer) matrixContainer.style.display = isBpmn ? 'none' : 'block';
+
+      if (btnMatrix) {
+        btnMatrix.className = isBpmn ? 'btn btn-sm' : 'btn btn-sm active';
+        btnMatrix.style.background = isBpmn ? '' : 'rgba(14,165,233,0.2)';
+        btnMatrix.style.borderColor = isBpmn ? '' : 'var(--cyan-bright)';
+        btnMatrix.style.color = isBpmn ? '' : 'var(--cyan-bright)';
+      }
+      if (btnBpmn) {
+        btnBpmn.className = isBpmn ? 'btn btn-sm active' : 'btn btn-sm';
+        btnBpmn.style.background = isBpmn ? 'rgba(14,165,233,0.2)' : '';
+        btnBpmn.style.borderColor = isBpmn ? 'var(--cyan-bright)' : '';
+        btnBpmn.style.color = isBpmn ? 'var(--cyan-bright)' : '';
+      }
+
+      if (isBpmn) renderBpmnLanes();
+    }
+
+    function renderBpmnLanes() {
+      const container = document.getElementById('bpmn-dnd-canvas');
+      if (!container) return;
+      container.innerHTML = '';
+
+      bpmnLaneData.lanes.forEach(lane => {
+        const col = document.createElement('div');
+        col.className = 'bpmn-dnd-lane';
+        col.dataset.laneId = lane.id;
+
+        col.innerHTML = `
+          <div class="bpmn-dnd-lane-head">
+            <span style="display:flex; align-items:center; gap:6px;">
+              <span style="width:8px; height:8px; border-radius:50%; background:${lane.color || '#0ea5e9'};"></span>
+              <span>${lane.title}</span>
+            </span>
+            ${bpmnLaneData.lanes.length > 3 ? `<button style="background:none; border:none; color:#ef4444; font-size:12px; cursor:pointer;" onclick="removeBpmnLane('${lane.id}')">✕</button>` : ''}
+          </div>
+          <div class="bpmn-dnd-lane-body" data-lane-id="${lane.id}"></div>
+        `;
+
+        const body = col.querySelector('.bpmn-dnd-lane-body');
+
+        body.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          col.classList.add('drag-over');
+        });
+        body.addEventListener('dragleave', () => col.classList.remove('drag-over'));
+        body.addEventListener('drop', (e) => {
+          e.preventDefault();
+          col.classList.remove('drag-over');
+          if (bpmnDragId) {
+            const node = bpmnLaneData.nodes.find(n => n.id === bpmnDragId);
+            if (node && node.lane !== lane.id) {
+              node.lane = lane.id;
+              saveBpmnLanes();
+              renderBpmnLanes();
+            }
+          }
+        });
+
+        const laneNodes = bpmnLaneData.nodes.filter(n => n.lane === lane.id);
+        laneNodes.forEach(node => {
+          const card = document.createElement('div');
+          const isEdit = (bpmnActiveEditId === node.id);
+          card.className = `bpmn-dnd-node ${node.type} ${isEdit ? 'is-editing' : ''}`;
+          card.draggable = true;
+          card.id = `bpmn-node-${node.id}`;
+
+          card.innerHTML = `
+            <div>${node.text}</div>
+            <div style="font-size:9.5px; opacity:0.7; margin-top:4px; display:flex; justify-content:space-between;">
+              <span>#${node.id}</span>
+              <span>👆 Click sửa</span>
+            </div>
+          `;
+
+          if (isEdit) {
+            const popover = document.createElement('div');
+            popover.className = 'bpmn-inline-popover';
+            popover.onclick = (e) => e.stopPropagation();
+
+            popover.innerHTML = `
+              <div>
+                <label>Nội dung chữ:</label>
+                <textarea id="bpmn-txt-${node.id}" style="height:50px;">${node.text.replace(/<br\s*\/?>/gi, '\n')}</textarea>
+              </div>
+              <div>
+                <label>Loại Ký hiệu &amp; Màu sắc:</label>
+                <select id="bpmn-typ-${node.id}">
+                  <option value="act" ${node.type === 'act' ? 'selected' : ''}>Act Node (Hình chữ nhật · Màu Xanh)</option>
+                  <option value="decision" ${node.type === 'decision' ? 'selected' : ''}>Decision Node (Hình thoi · Màu Vàng)</option>
+                  <option value="start" ${node.type === 'start' ? 'selected' : ''}>Start Node (Hình tròn · Màu Xanh lá)</option>
+                  <option value="end" ${node.type === 'end' ? 'selected' : ''}>End Node (Hình tròn kép · Màu Đỏ)</option>
+                </select>
+              </div>
+              <div style="display:flex; justify-content:space-between; margin-top:4px;">
+                <button type="button" style="background:#ef4444; border:none; color:#fff; padding:3px 8px; border-radius:4px; font-size:11px; cursor:pointer;" onclick="deleteBpmnNode('${node.id}', event)">🗑️ Xóa</button>
+                <div style="display:flex; gap:4px;">
+                  <button type="button" style="background:#1e293b; border:none; color:#cbd5e1; padding:3px 8px; border-radius:4px; font-size:11px; cursor:pointer;" onclick="closeBpmnPopover(event)">Đóng</button>
+                  <button type="button" style="background:#0ea5e9; border:none; color:#fff; padding:3px 8px; border-radius:4px; font-size:11px; cursor:pointer;" onclick="saveBpmnPopover('${node.id}', event)">💾 Lưu</button>
+                </div>
+              </div>
+            `;
+            card.appendChild(popover);
+          }
+
+          card.addEventListener('click', (e) => {
+            e.stopPropagation();
+            bpmnActiveEditId = (bpmnActiveEditId === node.id) ? null : node.id;
+            renderBpmnLanes();
+          });
+
+          card.addEventListener('dragstart', (e) => {
+            bpmnDragId = node.id;
+            card.style.opacity = '0.5';
+            e.dataTransfer.setData('text/plain', node.id);
+          });
+          card.addEventListener('dragend', () => {
+            card.style.opacity = '1';
+            bpmnDragId = null;
+          });
+
+          body.appendChild(card);
+        });
+
+        container.appendChild(col);
+      });
+    }
+
+    document.addEventListener('click', (e) => {
+      if (bpmnActiveEditId && !e.target.closest('.bpmn-dnd-node')) {
+        bpmnActiveEditId = null;
+        renderBpmnLanes();
+      }
+    });
+
+    function closeBpmnPopover(e) {
+      if (e) e.stopPropagation();
+      bpmnActiveEditId = null;
+      renderBpmnLanes();
+    }
+
+    function saveBpmnPopover(id, e) {
+      if (e) e.stopPropagation();
+      const node = bpmnLaneData.nodes.find(n => n.id === id);
+      if (!node) return;
+      const txt = document.getElementById(`bpmn-txt-${id}`);
+      const typ = document.getElementById(`bpmn-typ-${id}`);
+      if (txt) node.text = txt.value.trim().replace(/\n/g, '<br/>');
+      if (typ) node.type = typ.value;
+
+      bpmnActiveEditId = null;
+      saveBpmnLanes();
+      renderBpmnLanes();
+    }
+
+    function deleteBpmnNode(id, e) {
+      if (e) e.stopPropagation();
+      if (confirm('Xóa node này?')) {
+        bpmnLaneData.nodes = bpmnLaneData.nodes.filter(n => n.id !== id);
+        bpmnActiveEditId = null;
+        saveBpmnLanes();
+        renderBpmnLanes();
+      }
+    }
+
+    function addBpmnLanePrompt() {
+      const name = prompt('Nhập tên cho Lane mới:');
+      if (!name || !name.trim()) return;
+      bpmnLaneData.lanes.push({
+        id: 'lane_' + Date.now(),
+        title: name.trim(),
+        color: '#a855f7'
+      });
+      saveBpmnLanes();
+      renderBpmnLanes();
+    }
+
+    function removeBpmnLane(id) {
+      if (confirm('Xóa Lane này và di chuyển các node về Làn 2?')) {
+        bpmnLaneData.nodes.forEach(n => {
+          if (n.lane === id) n.lane = 'lane_adjuster';
+        });
+        bpmnLaneData.lanes = bpmnLaneData.lanes.filter(l => l.id !== id);
+        saveBpmnLanes();
+        renderBpmnLanes();
+      }
+    }
+
+    function addBpmnNodePrompt() {
+      const id = 'N_' + Math.floor(Math.random() * 899 + 100);
+      bpmnLaneData.nodes.push({
+        id: id,
+        type: 'act',
+        text: 'Nội dung bước mới...',
+        lane: bpmnLaneData.lanes[1] ? bpmnLaneData.lanes[1].id : bpmnLaneData.lanes[0].id
+      });
+      bpmnActiveEditId = id;
+      saveBpmnLanes();
+      renderBpmnLanes();
+    }
+
+    function resetBpmnLanesDefault() {
+      if (confirm('Khôi phục toàn bộ các Lane và Node BPMN về mặc định?')) {
+        bpmnLaneData = JSON.parse(JSON.stringify(BPMN_LANE_DEFAULTS));
+        bpmnActiveEditId = null;
+        saveBpmnLanes();
+        renderBpmnLanes();
+      }
+    }
+
+    // Default to BPMN view on page load
+    setTimeout(() => { setDomainFlowView('bpmn'); }, 150);
+
+</script>
+
+</body>
+
+</html>
+
