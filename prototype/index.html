@@ -6783,11 +6783,22 @@
         <div class="modal-header"><span id="new-case-title">Tạo vụ việc mới</span><button type="button"
             class="btn btn-secondary btn-sm" onclick="closeNewCaseModal()" aria-label="Đóng">✕</button></div>
         <div class="modal-body case-form">
-          <label>Tên vụ việc <input class="chat-input" id="new-case-name" maxlength="80" required
-              placeholder="Ví dụ: Va chạm tại ngã tư Gangnam"></label>
-          <label>Tên khách hàng <input class="chat-input" id="new-case-customer" maxlength="80" required
-              placeholder="Tên người được bảo hiểm"></label>
-          <label>Thời điểm tai nạn <input class="chat-input" id="new-case-date" type="datetime-local" required></label>
+          <label><span>Mã hợp đồng <span style="color:#f87171">*</span></span><input class="chat-input" id="new-case-policy" maxlength="50" required
+              placeholder="Ví dụ: DEMO-001, POL-2026-001" oninput="handlePolicyCodeInput(this.value)"></label>
+          <div class="case-form-row">
+            <label><span>Biển số xe <span style="color:#f87171">*</span></span><input class="chat-input" id="new-case-plate" maxlength="30" required
+                placeholder="Tự điền theo mã HĐ"></label>
+            <label><span>Tên khách hàng <span style="color:#f87171">*</span></span><input class="chat-input" id="new-case-customer" maxlength="80" required
+                placeholder="Tự điền theo mã HĐ"></label>
+          </div>
+          <div class="case-form-row">
+            <label><span>Thời điểm tai nạn <span style="color:#f87171">*</span></span><input class="chat-input" id="new-case-date" type="datetime-local" required></label>
+            <label><span>Vị trí tai nạn</span><input class="chat-input" id="new-case-location" maxlength="120"
+                placeholder="Tùy chọn"></label>
+          </div>
+          <label><span>Tên vụ việc</span><input class="chat-input" id="new-case-name" maxlength="80"
+              placeholder="Tùy chọn (tự tạo nếu để trống)"></label>
+          <div style="font-size:12px;font-weight:600;color:#e2e8f0;margin-top:4px;">Video tai nạn <span style="color:#f87171">*</span> <span style="font-weight:400;color:#94a3b8;">(Bắt buộc ít nhất 1 video)</span></div>
           <div class="case-form-row">
             <label class="video-drop">Trước xe khách hàng <input id="new-case-video" type="file" accept=".mp4,.mov,.avi,.mkv,video/*" onchange="showCaseVideoName(this)"><span>Nhấn chọn hoặc thả video</span></label>
             <label class="video-drop">Sau xe khách hàng <input id="new-case-video-1" type="file" accept=".mp4,.mov,.avi,.mkv,video/*" onchange="showCaseVideoName(this)"><span>Nhấn chọn hoặc thả video</span></label>
@@ -6796,11 +6807,6 @@
             <label class="video-drop">Xe đối phương <input id="new-case-video-2" type="file" accept=".mp4,.mov,.avi,.mkv,video/*" onchange="showCaseVideoName(this)"><span>Nhấn chọn hoặc thả video</span></label>
             <label class="video-drop">CCTV <input id="new-case-video-3" type="file" accept=".mp4,.mov,.avi,.mkv,video/*" onchange="showCaseVideoName(this)"><span>Nhấn chọn hoặc thả video</span></label>
           </div>
-          <label>Địa điểm <input class="chat-input" id="new-case-location" maxlength="120"
-              placeholder="Tùy chọn"></label>
-          <div class="case-form-row"><label>Biển số xe <input class="chat-input" id="new-case-plate" maxlength="30"
-                placeholder="Tùy chọn"></label><label>Số hợp đồng <input class="chat-input" id="new-case-policy"
-                maxlength="50" placeholder="Tùy chọn"></label></div>
           <p id="new-case-error" role="alert" style="color:#ffb2bd;font-size:12px;display:none;"></p>
         </div>
         <div class="modal-footer"><button type="button" class="btn btn-secondary"
@@ -8156,6 +8162,27 @@
       date: '2026-11-04T14:30', location: 'Seoul · Teheran-ro',
       plate: 'DEMO-1234', policy: 'DEMO-001'
     };
+    const POLICY_DIRECTORY = {
+      'DEMO-001': { plate: 'DEMO-1234', customer: 'Khách hàng mẫu' },
+      'POL-2026-001': { plate: '12가 3456', customer: 'Kim Min-jun' },
+      'POL-2026-002': { plate: '34나 7890', customer: 'Lee Seo-yeon' },
+      'POL-2026-003': { plate: '56다 1122', customer: 'Park Ji-hoon' }
+    };
+    function handlePolicyCodeInput(rawPolicy) {
+      const code = String(rawPolicy || '').trim().toUpperCase();
+      if (!code) return;
+      let match = POLICY_DIRECTORY[code];
+      if (!match) {
+        const existing = Object.values(STATE.cases || {}).find(c => String(c.policyNo || '').trim().toUpperCase() === code);
+        if (existing && existing.vehicleNo && existing.customer) {
+          match = { plate: existing.vehicleNo, customer: existing.customer };
+        }
+      }
+      if (match) {
+        document.getElementById('new-case-plate').value = match.plate;
+        document.getElementById('new-case-customer').value = match.customer;
+      }
+    }
     const DEMO_ANALYSIS = JSON.parse(JSON.stringify({
       videoName: 'Video mẫu · DEMO',
       videoDuration: STATE.cases['10'].videoDuration,
@@ -8366,7 +8393,7 @@
         document.getElementById(`new-case-${field}`).value = value;
       }
       document.getElementById('modal-new-case').classList.add('open');
-      document.getElementById('new-case-name').focus();
+      document.getElementById('new-case-policy').focus();
     }
 
     function showCaseVideoName(input) {
@@ -8401,13 +8428,22 @@
       event.preventDefault();
       const submit = event.currentTarget.querySelector('[type="submit"]');
       if (submit.disabled) return;
-      const name = document.getElementById('new-case-name').value.trim();
+      const policy = document.getElementById('new-case-policy').value.trim();
+      const plate = document.getElementById('new-case-plate').value.trim();
       const customer = document.getElementById('new-case-customer').value.trim();
       const date = document.getElementById('new-case-date').value;
+      const location = document.getElementById('new-case-location').value.trim();
+      const rawName = document.getElementById('new-case-name').value.trim();
+      const name = rawName || (location ? `Va chạm tại ${location}` : `Hồ sơ ${plate}`);
       const files = [0, 1, 2, 3].map(i => document.getElementById(i ? `new-case-video-${i}` : 'new-case-video').files[0] || null);
       const video = files.some(Boolean);
-      if (!name || !customer || !date || Number.isNaN(new Date(date).getTime())) {
-        document.getElementById('new-case-error').textContent = 'Cần nhập tên vụ việc, khách hàng và thời điểm.';
+      if (!policy || !plate || !customer || !date || Number.isNaN(new Date(date).getTime())) {
+        document.getElementById('new-case-error').textContent = 'Cần nhập đầy đủ Mã hợp đồng, Biển số xe, Tên khách hàng và Thời điểm tai nạn.';
+        document.getElementById('new-case-error').style.display = 'block';
+        return;
+      }
+      if (!video) {
+        document.getElementById('new-case-error').textContent = 'Vui lòng tải lên ít nhất 1 video tai nạn để tiếp tục.';
         document.getElementById('new-case-error').style.display = 'block';
         return;
       }
