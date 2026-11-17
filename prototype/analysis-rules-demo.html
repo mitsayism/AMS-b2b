@@ -924,7 +924,582 @@
       width: 0%;
       transition: width 0.3s ease;
     }
-  </style>
+  
+
+/* ==========================================================================
+   TAB 2: QUẢN LÝ QUY TẮC TỶ LỆ LỖI (SCOPED CSS FROM USER MOCKUP)
+   ========================================================================== */
+#tab-rules {
+  --bg: #070d15;
+  --sf: #101b28;
+  --sf2: #0c1520;
+  --ink: #e8f0f7;
+  --mut: #93a4b5;
+  --line: #233447;
+  --ac: #2fc8f0;
+  --acs: #0f2a36;
+  --navy: #e8f0f7;
+  --navy-bg: #101b28;
+  --red: #ff6b6b;
+  --amb: #f0a93a;
+  --grn: #46c487;
+  color: var(--ink);
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+}
+
+#tab-rules .rule-app {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--bg);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 170px);
+}
+
+#tab-rules .top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 18px;
+  background: var(--sf);
+  border-bottom: 1px solid var(--line);
+}
+#tab-rules .top h1 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+#tab-rules .view {
+  display: flex;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+}
+#tab-rules .view button {
+  border: 0;
+  background: none;
+  padding: 7px 14px;
+  color: var(--mut);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+#tab-rules .view button.on {
+  background: var(--acs);
+  color: var(--ac);
+  font-weight: 700;
+}
+#tab-rules .search-input {
+  flex: 1;
+  min-width: 180px;
+  max-width: 340px;
+  padding: 7px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--sf2);
+  color: var(--ink);
+  font-size: 13px;
+  outline: none;
+}
+#tab-rules .search-input::placeholder {
+  color: var(--mut);
+}
+#tab-rules .search-input:focus {
+  border-color: var(--ac);
+}
+#tab-rules .ver {
+  margin-left: auto;
+  color: var(--mut);
+  font-size: 13px;
+  font-family: ui-monospace, Menlo, monospace;
+}
+
+#tab-rules .ws {
+  display: none;
+  flex: 1;
+  min-height: 0;
+  grid-template-columns: 260px minmax(0, 1fr) 340px;
+}
+#tab-rules .ws.on {
+  display: grid;
+}
+#tab-rules .col {
+  overflow: auto;
+  min-width: 0;
+  max-height: calc(100vh - 225px);
+}
+#tab-rules .left {
+  background: var(--sf);
+  border-right: 1px solid var(--line);
+  padding: 14px 10px;
+}
+#tab-rules .right {
+  background: var(--sf);
+  border-left: 1px solid var(--line);
+  padding: 16px 16px;
+}
+#tab-rules .mid {
+  padding: 18px 22px;
+  background: var(--bg);
+}
+#tab-rules .lbl {
+  display: block;
+  font: 600 11px/1 ui-monospace, Menlo, monospace;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--mut);
+  margin-bottom: 10px;
+}
+#tab-rules .tree {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+#tab-rules .tree li {
+  padding: 6px 8px;
+  border-radius: 6px;
+  color: var(--mut);
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.12s ease;
+}
+#tab-rules .tree li:hover {
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--ink);
+}
+#tab-rules .tree .l1 {
+  color: var(--ink);
+  font-weight: 700;
+}
+#tab-rules .tree .l2 { padding-left: 18px; }
+#tab-rules .tree .l3 { padding-left: 30px; }
+#tab-rules .tree .l4 { padding-left: 42px; }
+#tab-rules .tree li.on {
+  background: var(--acs);
+  color: var(--ac);
+  font-weight: 700;
+}
+
+#tab-rules .code {
+  font: 700 11px/1 ui-monospace, Menlo, monospace;
+  padding: 4px 7px;
+  border-radius: 3px;
+  background: var(--navy);
+  color: var(--navy-bg);
+  white-space: nowrap;
+}
+#tab-rules .code.o {
+  background: none;
+  color: var(--mut);
+  border: 1px solid var(--line);
+}
+#tab-rules .tag {
+  font: 600 11px/1 ui-monospace, monospace;
+  padding: 4px 8px;
+  border-radius: 3px;
+  border: 1px solid var(--line);
+  color: var(--mut);
+  white-space: nowrap;
+}
+#tab-rules .tag.a {
+  border-color: var(--ac);
+  color: var(--ac);
+  background: var(--acs);
+}
+#tab-rules .tag.w {
+  border-color: var(--amb);
+  color: var(--amb);
+}
+#tab-rules .head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+#tab-rules .mid h2 {
+  font-size: 22px;
+  letter-spacing: -.01em;
+  margin-bottom: 4px;
+  color: #fff;
+  font-weight: 700;
+}
+#tab-rules .card {
+  background: var(--sf);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  margin-top: 14px;
+  overflow: hidden;
+}
+#tab-rules .card > h3 {
+  font-size: 13px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  background: var(--sf2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+  font-weight: 600;
+}
+#tab-rules .card .b {
+  padding: 14px 16px;
+}
+#tab-rules .top2 {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 16px;
+  align-items: center;
+}
+#tab-rules .ratio {
+  display: flex;
+  height: 34px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  font-weight: 700;
+}
+#tab-rules .ratio i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-style: normal;
+}
+#tab-rules .ratio .a {
+  width: 0%;
+  background: var(--sf2);
+  color: var(--mut);
+  min-width: 34px;
+  transition: width 0.2s ease;
+}
+#tab-rules .ratio .b {
+  flex: 1;
+  background: var(--ac);
+  color: #04202b;
+}
+#tab-rules table {
+  width: 100%;
+  border-collapse: collapse;
+}
+#tab-rules th {
+  font: 600 11px/1 ui-monospace, monospace;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--mut);
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  background: var(--sf2);
+}
+#tab-rules td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+}
+#tab-rules tr:last-child td {
+  border-bottom: 0;
+}
+#tab-rules .val {
+  font: 700 13px ui-monospace, monospace;
+}
+#tab-rules .val.p { color: var(--red); }
+#tab-rules .val.n { color: var(--mut); font-weight: 500; }
+#tab-rules .txt p {
+  color: var(--ink);
+  margin-top: 6px;
+  line-height: 1.6;
+  font-size: 13px;
+}
+#tab-rules .txt h4 {
+  margin: 14px 0 0;
+  font: 600 12px/1 ui-monospace, monospace;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ac);
+}
+#tab-rules .txt h4:first-child { margin-top: 0; }
+#tab-rules .lk {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  background: var(--sf2);
+}
+#tab-rules .lk b {
+  display: block;
+  margin-bottom: 4px;
+  color: #fff;
+  font-size: 13px;
+}
+#tab-rules .lk .row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+#tab-rules .lk.sh {
+  border-color: var(--ac);
+  background: var(--acs);
+}
+#tab-rules .mock-btn {
+  width: 100%;
+  padding: 8px;
+  border: 1px dashed var(--ac);
+  border-radius: 6px;
+  background: none;
+  color: var(--ac);
+  font-weight: 700;
+  margin-bottom: 16px;
+  cursor: pointer;
+}
+#tab-rules .mock-btn:hover {
+  background: var(--acs);
+}
+#tab-rules .warn {
+  padding: 12px;
+  border: 1px solid var(--amb);
+  border-left-width: 4px;
+  border-radius: 8px;
+  margin-top: 6px;
+  background: rgba(199, 122, 5, 0.08);
+}
+#tab-rules .warn b {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--amb);
+}
+#tab-rules .empty {
+  padding: 12px;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  color: var(--mut);
+  text-align: center;
+  margin-bottom: 8px;
+}
+#tab-rules .tabs {
+  display: flex;
+  gap: 2px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 4px;
+}
+#tab-rules .tabs button {
+  border: 0;
+  background: none;
+  padding: 9px 12px;
+  color: var(--mut);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  cursor: pointer;
+  font-size: 13px;
+}
+#tab-rules .tabs button.on {
+  color: var(--ac);
+  border-color: var(--ac);
+  font-weight: 700;
+}
+#tab-rules .sq {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+#tab-rules .sq div {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: var(--sf2);
+}
+#tab-rules .sq b {
+  display: block;
+  font-size: 22px;
+  letter-spacing: -.02em;
+  color: #fff;
+}
+#tab-rules .note {
+  font-size: 12px;
+  color: var(--mut);
+  margin-top: 12px;
+  line-height: 1.5;
+}
+#tab-rules .rl {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+#tab-rules .rl li {
+  padding: 9px 10px;
+  border-radius: 6px;
+  display: grid;
+  gap: 3px;
+  color: var(--mut);
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+#tab-rules .rl li:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+#tab-rules .rl li b {
+  color: var(--ink);
+  font-size: 13px;
+}
+#tab-rules .rl li.on {
+  background: var(--acs);
+}
+#tab-rules .rl li.on b {
+  color: var(--ac);
+}
+#tab-rules .pane { display: none; }
+#tab-rules .pane.on { display: block; }
+#tab-rules .edbtn {
+  margin-left: auto;
+  padding: 7px 14px;
+  border: 1px solid var(--ac);
+  border-radius: 6px;
+  background: var(--acs);
+  color: var(--ac);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+#tab-rules .edbtn:hover {
+  background: var(--ac);
+  color: #04202b;
+}
+#tab-rules .bar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  margin: 0 0 14px;
+  background: #18283d;
+  color: #fff;
+  border: 1px solid var(--ac);
+  border-radius: 8px;
+}
+#tab-rules .bar[hidden], #tab-rules .mock-toast[hidden] {
+  display: none !important;
+}
+#tab-rules .bar b { color: inherit; }
+#tab-rules .bar input {
+  flex: 1;
+  min-width: 180px;
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--sf);
+  color: var(--ink);
+  font-size: 13px;
+}
+#tab-rules .ba { display: flex; gap: 8px; }
+#tab-rules .ba button {
+  padding: 7px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--sf);
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 13px;
+}
+#tab-rules .ba .pri {
+  background: var(--ac);
+  border-color: var(--ac);
+  color: #04202b;
+  font-weight: 700;
+}
+#tab-rules .ba button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+#tab-rules .ei {
+  display: none;
+  gap: 8px;
+  align-items: center;
+  margin-top: 10px;
+}
+#tab-rules.edit .ei, #tab-rules .edit .ei {
+  display: flex;
+}
+#tab-rules .ei input {
+  width: 64px;
+  padding: 5px 8px;
+  border: 1px solid var(--ac);
+  border-radius: 6px;
+  background: var(--sf);
+  color: var(--ink);
+}
+#tab-rules .edit [contenteditable] {
+  outline: 1px dashed var(--ac);
+  outline-offset: 2px;
+  border-radius: 4px;
+  background: var(--acs);
+}
+#tab-rules .edit [contenteditable]:focus {
+  outline: 2px solid var(--ac);
+}
+#tab-rules .edit .src {
+  cursor: pointer;
+}
+#tab-rules .xd button, #tab-rules .rm {
+  border: 0;
+  background: none;
+  color: var(--red);
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+#tab-rules .addrow {
+  margin: 10px 12px 12px;
+  padding: 7px 12px;
+  border: 1px dashed var(--ac);
+  border-radius: 6px;
+  background: none;
+  color: var(--ac);
+  font-weight: 700;
+  cursor: pointer;
+  display: block;
+}
+#tab-rules .gone {
+  opacity: .45;
+  text-decoration: line-through;
+}
+#tab-rules .mock-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  background: #1e293b;
+  color: #f8fafc;
+  border: 1px solid var(--ac);
+  padding: 10px 18px;
+  border-radius: 8px;
+  z-index: 99999;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+@media (max-width: 1150px) {
+  #tab-rules .ws.on { grid-template-columns: 240px minmax(0, 1fr); }
+  #tab-rules .right { display: none; }
+}
+@media (max-width: 760px) {
+  #tab-rules .ws.on { display: block; }
+  #tab-rules .right { display: block; border-left: 0; border-top: 1px solid var(--line); }
+  #tab-rules .top2 { grid-template-columns: 1fr; }
+}
+
+</style>
 </head>
 <body>
 
@@ -963,8 +1538,8 @@
         <span class="tab-count">Đối soát</span>
       </button>
       <button class="nav-tab-btn" onclick="switchMainTab('tab-rules')" id="btn-tab-rules">
-        <span>Danh sách quy tắc</span>
-        <span class="tab-count" id="badge-rules-count">48 quy tắc</span>
+        <span>Quy tắc tỷ lệ lỗi</span>
+        <span class="tab-count" id="badge-rules-count">Bản 10 · 6/2023</span>
       </button>
       <button class="nav-tab-btn" onclick="switchMainTab('tab-discrepancy')" id="btn-tab-discrepancy">
         <span>Vụ lệch kết quả</span>
@@ -1317,223 +1892,289 @@
       </div>
     </section>
 
-<!-- ================= TAB 2: DANH SÁCH QUY TẮC NGHIỆP VỤ ================= -->
+<!-- ================= TAB 2: QUẢN LÝ QUY TẮC TỶ LỆ LỖI ================= -->
     <section id="tab-rules" class="tab-pane">
-      <div class="screen-header">
-        <div>
-          <h1 class="screen-title" style="margin:0; font-size:20px; font-weight:700; color:#fff;">DANH SÁCH QUY TẮC</h1>
-          <p class="screen-desc" style="margin-top:4px; font-size:13px; color:var(--text-muted);">
-            Quản lý các quy tắc nghiệp vụ định lượng tỷ lệ lỗi và liên kết biểu đồ KNIA áp dụng trong phân tích bồi thường.
-          </p>
+      <div class="rule-app">
+        <!-- TOP CONTROLS -->
+        <header class="top">
+          <h1>Quy tắc tỷ lệ lỗi</h1>
+          <div class="view" role="group" aria-label="Góc nhìn">
+            <button class="on" id="btn-view-s" data-v="s" onclick="switchMockupView('s')">Theo tình huống</button>
+            <button id="btn-view-r" data-v="r" onclick="switchMockupView('r')">Theo quy tắc</button>
+          </div>
+          <input type="text" class="search-input" id="mock-search-input" placeholder="Tìm theo mã, mã cũ, tên tình huống, điều luật…" oninput="handleMockupSearch(this.value)" />
+          <span class="ver">Bản sửa đổi lần 10 · 6/2023</span>
+        </header>
+
+        <!-- VIEW 1: THEO TÌNH HUỐNG -->
+        <div class="ws on" id="vs">
+          <!-- Col 1: Left Tree -->
+          <nav class="col left" aria-label="Phân cấp tình huống">
+            <span class="lbl">Phân cấp</span>
+            <ul class="tree" id="mock-situation-tree">
+              <li onclick="showToast('Chương 1: Xe với người đi bộ (Đang mở rộng)', 'info')">Chương 1 · Xe với người đi bộ</li>
+              <li class="l1">▾ Chương 2 · Xe với xe</li>
+              <li class="l2">▾ Giao lộ (có ngã ba, ngã tư…)</li>
+              <li class="l3">▾ Hai bên có đèn tín hiệu</li>
+              <li class="l4" onclick="selectMockSituation(this, '차1')"><span class="code o">차1</span>Đi thẳng – đi thẳng</li>
+              <li class="l4 on" onclick="selectMockSituation(this, '차1-1')"><span class="code">차1-1</span>Xanh – đỏ</li>
+              <li class="l3" onclick="selectMockSituation(this, '차2')"><span class="code o">차2</span>Đi thẳng – rẽ trái</li>
+              <li class="l3" onclick="selectMockSituation(this, '차3')"><span class="code o">차3</span>Đi thẳng – rẽ trái (bên hông)</li>
+              <li class="l2" onclick="showToast('Đang cập nhật nhóm Xe đi ngược chiều', 'info')">▸ Xe đi ngược chiều</li>
+              <li class="l2" onclick="showToast('Đang cập nhật nhóm Xe cùng chiều', 'info')">▸ Xe cùng chiều</li>
+              <li onclick="showToast('Chương 3: Xe với xe đạp (Đang cập nhật)', 'info')">Chương 3 · Xe với xe đạp</li>
+            </ul>
+          </nav>
+
+          <!-- Col 2: Mid Section -->
+          <section class="col mid" id="mock-mid-col">
+            <!-- Edit Bar -->
+            <div class="bar" id="mock-bar" hidden>
+              <div style="display:flex;gap:8px;align-items:center">
+                <b>Đang chỉnh sửa</b>
+                <span class="tag a" id="mock-cnt">0 thay đổi</span>
+              </div>
+              <input id="mock-why" placeholder="Lý do thay đổi (bắt buộc khi gửi duyệt)" oninput="updateMockupDirty()">
+              <div class="ba">
+                <button type="button" id="mock-cancel" onclick="exitMockupEdit(false)">Hủy</button>
+                <button type="button" id="mock-draft" onclick="saveMockupEdit(false)">Lưu nháp</button>
+                <button type="button" id="mock-sub" class="pri" disabled onclick="saveMockupEdit(true)">Gửi duyệt</button>
+              </div>
+            </div>
+            <div class="mock-toast" id="mock-toast" hidden></div>
+
+            <!-- Head -->
+            <div class="head">
+              <span class="code" id="mock-chart-badge">차1-1</span>
+              <span class="tag" id="mock-chart-oldcode">Mã cũ: 201 · 301 · 302</span>
+              <span class="tag a" id="mock-st">Đang áp dụng</span>
+              <button class="edbtn" id="mock-edbtn" onclick="enterMockupEdit()">✎ Chỉnh sửa</button>
+            </div>
+            <h2 id="mock-chart-title">Xe xanh đi thẳng – xe đỏ đi thẳng</h2>
+            <p style="color:var(--mut)" id="mock-chart-sub">Giao lộ hai bên có đèn tín hiệu · xe kia vào từ bên hông</p>
+
+            <!-- Card 1: Vai trò và tỷ lệ cơ bản -->
+            <div class="card">
+              <h3>Vai trò và tỷ lệ lỗi cơ bản</h3>
+              <div class="b top2">
+                <svg viewBox="0 0 200 150" width="100%" role="img" aria-label="Sơ đồ giao lộ: xe A đi thẳng đèn xanh, xe B đi thẳng đèn đỏ" style="border-radius:6px; background:var(--sf2); border:1px solid var(--line);">
+                  <rect x="80" y="0" width="40" height="150" fill="var(--sf2)" stroke="var(--line)"/>
+                  <rect x="0" y="55" width="200" height="40" fill="var(--sf2)" stroke="var(--line)"/>
+                  <rect x="81" y="56" width="38" height="38" fill="var(--sf)"/>
+                  <path d="M100 140V104" stroke="var(--ac)" stroke-width="4" marker-end="url(#mock-h)" fill="none"/>
+                  <path d="M10 75H70" stroke="var(--red)" stroke-width="4" marker-end="url(#mock-h)" fill="none" stroke-dasharray="6 4"/>
+                  <defs><marker id="mock-h" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto"><path d="M0 0L6 3L0 6z" fill="currentColor"/></marker></defs>
+                  <text x="108" y="130" font-size="12" font-weight="700" fill="var(--ac)">A</text>
+                  <text x="14" y="68" font-size="12" font-weight="700" fill="var(--red)">B</text>
+                </svg>
+                <div>
+                  <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+                    <span id="label-role-a"><b>A</b> · xanh, đi thẳng</span>
+                    <span id="label-role-b"><b>B</b> · đỏ, đi thẳng</span>
+                  </div>
+                  <div class="ratio">
+                    <i class="a" id="mock-ratio-a" style="width:0%;">0</i>
+                    <i class="b" id="mock-ratio-b">100</i>
+                  </div>
+                  <div class="ei" id="mock-ratio-edit-row">
+                    <span>Chỉnh tỷ lệ A</span>
+                    <input id="mock-ra" type="number" min="0" max="100" value="0" oninput="changeMockRatio(this.value)">
+                    <span>: B <b id="mock-rb">100</b></span>
+                  </div>
+                  <p class="note" id="mock-ratio-note">Tỷ lệ lỗi cơ bản A 0 : B 100. Có thể cộng trừ theo quan hệ nhân quả với tai nạn và mức thiệt hại.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2: Ví dụ điều chỉnh tỷ lệ lỗi -->
+            <div class="card">
+              <h3>Ví dụ điều chỉnh tỷ lệ lỗi <span class="tag" id="mock-factors-count">4 liên kết yếu tố</span></h3>
+              <table id="mock-factors-table">
+                <thead>
+                  <tr>
+                    <th>Bên</th>
+                    <th>Yếu tố</th>
+                    <th>Điều chỉnh</th>
+                    <th>Nguồn</th>
+                  </tr>
+                </thead>
+                <tbody id="mock-factors-tbody">
+                  <tr>
+                    <td><span class="code o">A</span></td>
+                    <td class="editable-col">Lỗi rõ rệt</td>
+                    <td class="val p editable-col">+10</td>
+                    <td><span class="tag a src" onclick="toggleFactorSource(this)">Bộ dùng chung · Ch.2</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="code o">A</span></td>
+                    <td class="editable-col">Lỗi nghiêm trọng</td>
+                    <td class="val p editable-col">+20</td>
+                    <td><span class="tag a src" onclick="toggleFactorSource(this)">Bộ dùng chung · Ch.2</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="code o">B</span></td>
+                    <td class="editable-col">Lỗi nghiêm trọng</td>
+                    <td class="val p editable-col">+20</td>
+                    <td><span class="tag a src" onclick="toggleFactorSource(this)">Bộ dùng chung · Ch.2</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="code o">B</span></td>
+                    <td class="editable-col">Lỗi rõ rệt</td>
+                    <td class="val n editable-col">Không áp dụng</td>
+                    <td><span class="tag w src" onclick="toggleFactorSource(this)">Ghi đè tại tình huống</span></td>
+                  </tr>
+                </tbody>
+              </table>
+              <div id="mock-addrow-container" style="display:none; padding:10px 12px;">
+                <button type="button" class="mock-btn addrow" style="margin:0;" onclick="addMockFactorRow()">+ Thêm yếu tố điều chỉnh</button>
+              </div>
+            </div>
+
+            <!-- Card 3: Nội dung diễn giải -->
+            <div class="card">
+              <h3>Nội dung diễn giải</h3>
+              <div class="b txt" id="mock-narrative-box">
+                <h4>Tình huống</h4>
+                <p class="editable-col">Tại giao lộ có tín hiệu điều khiển, hai xe đi trên hai đường khác nhau. Xe A vào giao lộ khi đèn xanh và đi thẳng, xe B vào khi đèn đỏ và đi thẳng, hai xe va chạm.</p>
+                <h4>Giải thích tỷ lệ cơ bản</h4>
+                <p class="editable-col">Cả hai tài xế đều tin vào tín hiệu. Xe A không có lý do để lường trước xe B vượt đèn đỏ, nên lỗi quy cho xe B.</p>
+                <h4>Giải thích yếu tố điều chỉnh</h4>
+                <p class="editable-col">Tham chiếu phần giải thích yếu tố điều chỉnh của Chương 2 (bộ dùng chung).</p>
+                <h4>Lưu ý khi áp dụng</h4>
+                <p class="editable-col">Không áp dụng khi va chạm với xe đang dừng tạm trong giao lộ. Đèn hỏng hoặc chỉ nhấp nháy được xem là giao lộ không có điều khiển. Tín hiệu được xác định tại thời điểm xe vào giao lộ (qua vạch dừng).</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Col 3: Right Aside -->
+          <aside class="col right" aria-label="Quy tắc đã liên kết" id="mock-side-col">
+            <span class="lbl">Quy tắc đã liên kết · 4</span>
+            <button class="mock-btn" onclick="showToast('Thêm quy tắc mới từ thư viện KNIA', 'info')">+ Thêm quy tắc từ thư viện</button>
+
+            <span class="lbl">Điều luật</span>
+            <div class="lk">
+              <b>Luật Giao thông đường bộ, Điều 5</b>
+              <div class="row"><span class="tag a">Căn cứ</span><span class="tag">Dùng ở nhiều tình huống</span></div>
+            </div>
+            <div class="lk">
+              <b>Luật Giao thông đường bộ, Điều 25 (khoản 5)</b>
+              <div class="row"><span class="tag a">Căn cứ</span></div>
+            </div>
+            <div class="lk">
+              <b>Quy tắc thi hành, Phụ lục 2 · ý nghĩa tín hiệu</b>
+              <div class="row"><span class="tag">Tham chiếu</span><span class="tag">Dùng ở nhiều tình huống</span></div>
+            </div>
+
+            <span class="lbl" style="margin-top:16px">Bộ yếu tố điều chỉnh</span>
+            <div class="lk sh">
+              <b>Bộ dùng chung · Chương 2</b>
+              <div class="row"><span class="tag a">Dùng chung</span><span class="tag w">Có 1 dòng bị ghi đè</span></div>
+            </div>
+
+            <span class="lbl" style="margin-top:16px">Án lệ</span>
+            <div class="empty">Chưa gắn án lệ nào</div>
+
+            <div class="warn">
+              <b>Sửa quy tắc dùng chung?</b>
+              <span style="color:var(--mut)">Thay đổi sẽ ảnh hưởng mọi tình huống đang liên kết. Hệ thống sẽ liệt kê để rà soát trước khi lưu.</span>
+            </div>
+          </aside>
         </div>
-        <div style="display:flex; gap:10px; align-items:center;">
-          <button type="button" class="btn btn-primary btn-sm" onclick="openCreateRuleSimpleModal()">
-            <span>＋ Tạo quy tắc mới</span>
-          </button>
-        </div>
-      </div>
 
-      <!-- Rules Search & Filter Bar -->
-      <div class="filter-bar">
-        <div class="search-input-wrap">
-          <input type="text" id="search-rules-catalog" placeholder="Tìm theo tên quy tắc, tình huống áp dụng, từ khóa nhận diện, mã rule..." oninput="filterRulesCatalogTable()">
-        </div>
-        <select class="filter-select" id="rule-cat-filter" onchange="filterRulesCatalogTable()">
-          <option value="">Tất cả loại tai nạn</option>
-          <option value="Ngã tư">Ngã tư không đèn / Có đèn</option>
-          <option value="Chuyển làn">Chuyển làn cùng chiều</option>
-          <option value="Đâm đuôi">Đâm đuôi (Rear-end)</option>
-          <option value="Vòng xuyến">Vòng xuyến</option>
-          <option value="Người đi bộ">Người đi bộ / Xe đạp</option>
-        </select>
-        <select class="filter-select" id="rule-status-filter-simple" onchange="filterRulesCatalogTable()">
-          <option value="">Tất cả trạng thái</option>
-          <option value="active">Đang áp dụng</option>
-          <option value="paused">Tạm dừng</option>
-          <option value="draft">Bản nháp</option>
-        </select>
-        <select class="filter-select" id="rule-chart-filter-simple" onchange="filterRulesCatalogTable()">
-          <option value="">Tất cả Chart KNIA</option>
-          <option value="112">Chart 112 (Ngã tư cùng độ rộng)</option>
-          <option value="114">Chart 114 (Ngã tư đường ưu tiên)</option>
-          <option value="252">Chart 252 (Chuyển làn tạt đầu)</option>
-          <option value="314">Chart 314 (Vòng xuyến)</option>
-          <option value="205">Chart 205 (Đâm đuôi phanh gấp)</option>
-        </select>
-      </div>
+        <!-- VIEW 2: THEO QUY TẮC -->
+        <div class="ws" id="vr">
+          <!-- Col 1: Left Library -->
+          <nav class="col left" aria-label="Thư viện quy tắc">
+            <span class="lbl">Thư viện quy tắc</span>
+            <div class="tabs" style="margin:0 0 8px">
+              <button class="on" id="mock-libtab-law" onclick="switchMockLibTab(this, 'law')">Điều luật</button>
+              <button id="mock-libtab-factors" onclick="switchMockLibTab(this, 'factors')">Bộ yếu tố</button>
+              <button id="mock-libtab-cases" onclick="switchMockLibTab(this, 'cases')">Án lệ</button>
+            </div>
+            <ul class="rl" id="mock-rules-list">
+              <li class="on" onclick="selectMockRuleItem(this, 'law-5')"><b>Luật GTĐB, Điều 5</b><span>Nghĩa vụ tuân theo tín hiệu</span></li>
+              <li onclick="selectMockRuleItem(this, 'law-25')"><b>Luật GTĐB, Điều 25 (khoản 5)</b><span>Cách đi qua giao lộ</span></li>
+              <li onclick="selectMockRuleItem(this, 'annex-2')"><b>Quy tắc thi hành, Phụ lục 2</b><span>Ý nghĩa của tín hiệu</span></li>
+              <li onclick="selectMockRuleItem(this, 'law-27')"><b>Luật GTĐB, Điều 27</b><span>Bảo vệ người đi bộ</span></li>
+              <li onclick="selectMockRuleItem(this, 'law-48')"><b>Luật GTĐB, Điều 48</b><span>Nghĩa vụ lái xe an toàn</span></li>
+            </ul>
+          </nav>
 
-      <!-- Bảng Danh sách quy tắc chuẩn 6 cột nghiệp vụ -->
-      <div class="panel-box">
-        <div class="table-responsive">
-          <table class="data-table" id="rules-simple-table">
-            <thead>
-              <tr>
-                <th style="min-width:210px;">1. Tên quy tắc</th>
-                <th style="min-width:150px;">2. Nguồn KNIA / Tài liệu</th>
-                <th style="min-width:125px;">3. Chart liên quan</th>
-                <th style="min-width:280px;">4. Điều kiện áp dụng</th>
-                <th style="min-width:160px;">5. Tỷ lệ lỗi tham chiếu</th>
-                <th style="min-width:115px;">6. Trạng thái</th>
-                <th style="min-width:110px;">Thao tác</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Rule 1 -->
-              <tr data-cat="Chuyển làn" data-status="active" data-chart="252" data-rule-id="RULE-KNIA-252-01">
-                <td>
-                  <b style="color:var(--cyan); font-family:var(--font-mono);">RULE-KNIA-252-01</b>
-                  <div style="font-weight:600; color:#fff; margin-top:2px; font-size:13px;">Chuyển làn không bật xi-nhan trước 30m</div>
-                </td>
-                <td>
-                  <span class="badge badge-emerald">KNIA Sách 2024</span>
-                  <div style="font-size:11.5px; color:var(--text-muted); margin-top:3px;">Điều 31-3 (Án lệ 18/2023)</div>
-                </td>
-                <td>
-                  <span class="badge badge-primary">차252 (차31-3)</span>
-                  <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">Chuyển làn cùng chiều</div>
-                </td>
-                <td>
-                  <div style="font-size:12px; color:#cbd5e1; line-height:1.45;">
-                    Phương tiện chuyển làn đường nhưng camera ghi nhận không bật đèn tín hiệu báo rẽ trước thời điểm bắt đầu chuyển làn tối thiểu 30m hoặc 3 giây.
-                  </div>
-                </td>
-                <td>
-                  <b style="color:var(--rose);">+10% lỗi Xe chuyển làn</b>
-                  <div style="font-size:11.5px; color:var(--text-dim); margin-top:2px;">Cơ sở 80:20 ➔ 90:10</div>
-                </td>
-                <td>
-                  <span class="badge badge-emerald" id="status-badge-RULE-KNIA-252-01">Đang áp dụng</span>
-                </td>
-                <td>
-                  <button class="btn btn-secondary btn-sm" onclick="showRuleDetails('RULE-KNIA-252-01')">Xem chi tiết</button>
-                </td>
-              </tr>
+          <!-- Col 2: Mid Section -->
+          <section class="col mid">
+            <div class="head">
+              <span class="tag" id="vr-badge-type">Điều luật</span>
+              <span class="tag a" id="vr-badge-status">Đang hiệu lực</span>
+            </div>
+            <h2 id="vr-title">Luật Giao thông đường bộ, Điều 5</h2>
+            <p style="color:var(--mut)" id="vr-sub">Nghĩa vụ tuân theo tín hiệu hoặc chỉ dẫn</p>
 
-              <!-- Rule 2 -->
-              <tr data-cat="Ngã tư" data-status="active" data-chart="114" data-rule-id="RULE-KNIA-114-02">
-                <td>
-                  <b style="color:var(--cyan); font-family:var(--font-mono);">RULE-KNIA-114-02</b>
-                  <div style="font-weight:600; color:#fff; margin-top:2px; font-size:13px;">Ưu tiên đường lớn hơn tại ngã tư không đèn</div>
-                </td>
-                <td>
-                  <span class="badge badge-emerald">KNIA Sách 2024</span>
-                  <div style="font-size:11.5px; color:var(--text-muted); margin-top:3px;">Điều 114 // Luật GTĐB Đ.24</div>
-                </td>
-                <td>
-                  <span class="badge badge-primary">차114 (114-1)</span>
-                  <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">Đường ưu tiên</div>
-                </td>
-                <td>
-                  <div style="font-size:12px; color:#cbd5e1; line-height:1.45;">
-                    Xe đi từ đường nhánh vào ngã tư có bề rộng lòng đường xe kia lớn hơn từ 1.5 lần trở lên; không phân biệt rẽ phải hay đi thẳng.
-                  </div>
-                </td>
-                <td>
-                  <b style="color:var(--cyan);">60 : 40 (Xe nhánh 60%)</b>
-                  <div style="font-size:11.5px; color:var(--text-dim); margin-top:2px;">Cơ sở tiêu chuẩn</div>
-                </td>
-                <td>
-                  <span class="badge badge-emerald" id="status-badge-RULE-KNIA-114-02">Đang áp dụng</span>
-                </td>
-                <td>
-                  <button class="btn btn-secondary btn-sm" onclick="showRuleDetails('RULE-KNIA-114-02')">Xem chi tiết</button>
-                </td>
-              </tr>
+            <div class="card">
+              <h3>Nội dung</h3>
+              <div class="b txt">
+                <p id="vr-content">Người đi bộ, người điều khiển phương tiện khi tham gia giao thông phải tuân theo tín hiệu hoặc chỉ dẫn của thiết bị an toàn giao thông và của người có thẩm quyền điều khiển giao thông.</p>
+              </div>
+            </div>
 
-              <!-- Rule 3 -->
-              <tr data-cat="Ngã tư" data-status="active" data-chart="112" data-rule-id="RULE-KNIA-112-01">
-                <td>
-                  <b style="color:var(--cyan); font-family:var(--font-mono);">RULE-KNIA-112-01</b>
-                  <div style="font-weight:600; color:#fff; margin-top:2px; font-size:13px;">Xe B đã vào giao lộ trước tại ngã tư cùng độ rộng</div>
-                </td>
-                <td>
-                  <span class="badge badge-emerald">KNIA Sách 2024</span>
-                  <div style="font-size:11.5px; color:var(--text-muted); margin-top:3px;">Điều 112 // Án lệ Seoul 2021</div>
-                </td>
-                <td>
-                  <span class="badge badge-primary">차112 (112-1)</span>
-                  <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">Đường cùng bề rộng</div>
-                </td>
-                <td>
-                  <div style="font-size:12px; color:#cbd5e1; line-height:1.45;">
-                    Phương tiện bánh trước đã vượt qua vạch dừng hoặc tâm giao lộ trước phương tiện kia ít nhất 0.5 giây với tốc độ an toàn &lt;40km/h.
-                  </div>
-                </td>
-                <td>
-                  <b style="color:var(--emerald);">-15% lỗi cho xe vào trước</b>
-                  <div style="font-size:11.5px; color:var(--text-dim); margin-top:2px;">Cơ sở 60:40 ➔ 45:55</div>
-                </td>
-                <td>
-                  <span class="badge badge-emerald" id="status-badge-RULE-KNIA-112-01">Đang áp dụng</span>
-                </td>
-                <td>
-                  <button class="btn btn-secondary btn-sm" onclick="showRuleDetails('RULE-KNIA-112-01')">Xem chi tiết</button>
-                </td>
-              </tr>
+            <div class="card">
+              <h3>Áp dụng ở các tình huống <span class="tag w">Dữ liệu minh họa</span></h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Mã</th>
+                    <th>Tình huống</th>
+                    <th>Vai trò</th>
+                    <th>Điều chỉnh liên quan</th>
+                  </tr>
+                </thead>
+                <tbody id="vr-situations-tbody">
+                  <tr>
+                    <td><span class="code">차1-1</span></td>
+                    <td>Xanh – đỏ</td>
+                    <td><span class="tag a">Căn cứ</span></td>
+                    <td class="val p">A +10 / +20 · B +20</td>
+                  </tr>
+                  <tr>
+                    <td><span class="code">차2</span></td>
+                    <td>Đi thẳng – rẽ trái (đối diện)</td>
+                    <td><span class="tag a">Căn cứ</span></td>
+                    <td class="val n">Xem chi tiết</td>
+                  </tr>
+                  <tr>
+                    <td><span class="code">차3</span></td>
+                    <td>Đi thẳng – rẽ trái (bên hông)</td>
+                    <td><span class="tag">Tham chiếu</span></td>
+                    <td class="val n">Xem chi tiết</td>
+                  </tr>
+                  <tr>
+                    <td><span class="code">차4</span></td>
+                    <td>Rẽ trái – rẽ phải</td>
+                    <td><span class="tag">Tham chiếu</span></td>
+                    <td class="val n">Xem chi tiết</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
 
-              <!-- Rule 4 -->
-              <tr data-cat="Vòng xuyến" data-status="active" data-chart="314" data-rule-id="RULE-KNIA-314-01">
-                <td>
-                  <b style="color:var(--cyan); font-family:var(--font-mono);">RULE-KNIA-314-01</b>
-                  <div style="font-weight:600; color:#fff; margin-top:2px; font-size:13px;">Quyền ưu tiên phương tiện đã vào sâu &gt;2/3 vòng xuyến</div>
-                </td>
-                <td>
-                  <span class="badge badge-emerald">KNIA Sách 2024</span>
-                  <div style="font-size:11.5px; color:var(--text-muted); margin-top:3px;">Điều 314 // Án lệ Seoul</div>
-                </td>
-                <td>
-                  <span class="badge badge-primary">차314</span>
-                  <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">Vòng xuyến</div>
-                </td>
-                <td>
-                  <div style="font-size:12px; color:#cbd5e1; line-height:1.45;">
-                    Phương tiện đã lưu thông hoàn thành &gt; 2/3 vòng xuyến có quyền ưu tiên đối với phương tiện đang từ các nhánh nhập vào đảo.
-                  </div>
-                </td>
-                <td>
-                  <b style="color:var(--amber);">20 : 80 (Xe nhập xuyến 80%)</b>
-                  <div style="font-size:11.5px; color:var(--text-dim); margin-top:2px;">Ưu tiên tuyệt đối</div>
-                </td>
-                <td>
-                  <span class="badge badge-emerald" id="status-badge-RULE-KNIA-314-01">Đang áp dụng</span>
-                </td>
-                <td>
-                  <button class="btn btn-secondary btn-sm" onclick="showRuleDetails('RULE-KNIA-314-01')">Xem chi tiết</button>
-                </td>
-              </tr>
-
-              <!-- Rule 5 -->
-              <tr data-cat="Đâm đuôi" data-status="paused" data-chart="205" data-rule-id="RULE-KNIA-205-01">
-                <td>
-                  <b style="color:var(--cyan); font-family:var(--font-mono);">RULE-KNIA-205-01</b>
-                  <div style="font-weight:600; color:#fff; margin-top:2px; font-size:13px;">Xe trước phanh gấp không lý do chính đáng</div>
-                </td>
-                <td>
-                  <span class="badge badge-slate">Biên bản Hòa giải</span>
-                  <div style="font-size:11.5px; color:var(--text-muted); margin-top:3px;">QĐ số 45/2025/HG</div>
-                </td>
-                <td>
-                  <span class="badge badge-primary">차205</span>
-                  <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">Đâm đuôi</div>
-                </td>
-                <td>
-                  <div style="font-size:12px; color:#cbd5e1; line-height:1.45;">
-                    Xe đi trước phanh đột ngột khi mặt đường phía trước hoàn toàn thông thoáng, không có chướng ngại vật hay tình huống khẩn cấp.
-                  </div>
-                </td>
-                <td>
-                  <b style="color:var(--rose);">-20% lỗi cho xe sau</b>
-                  <div style="font-size:11.5px; color:var(--text-dim); margin-top:2px;">Cơ sở 100:0 ➔ 80:20</div>
-                </td>
-                <td>
-                  <span class="badge badge-amber" id="status-badge-RULE-KNIA-205-01">Tạm dừng</span>
-                </td>
-                <td>
-                  <button class="btn btn-secondary btn-sm" onclick="showRuleDetails('RULE-KNIA-205-01')">Xem chi tiết</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <!-- Col 3: Right Aside -->
+          <aside class="col right" aria-label="Tác động">
+            <span class="lbl">Tác động khi sửa</span>
+            <div class="sq">
+              <div><b id="vr-stat-cases">4</b><span style="color:var(--mut)">tình huống liên kết</span></div>
+              <div><b id="vr-stat-chapters">2</b><span style="color:var(--mut)">chương bị ảnh hưởng</span></div>
+            </div>
+            <div class="warn" style="margin-top:14px">
+              <b>Cần rà soát sau khi sửa</b>
+              <span style="color:var(--mut)">Các tình huống liên kết sẽ chuyển sang trạng thái “Cần rà soát” cho tới khi được duyệt lại.</span>
+            </div>
+            <span class="lbl" style="margin-top:18px">Phát hiện bất thường</span>
+            <div class="lk">
+              <b>Có tình huống chưa gắn án lệ</b>
+              <span style="color:var(--mut)">Gợi ý bổ sung căn cứ.</span>
+            </div>
+            <p class="note">Số liệu ở góc nhìn này là minh họa. Chỉ tình huống 차1-1 dùng nội dung thật từ tài liệu.</p>
+          </aside>
         </div>
       </div>
     </section>
@@ -3728,6 +4369,274 @@
     if (!picking && form.hidden) void sync();
   }, 15000);
 })();
+
+
+  // ==========================================================================
+  // TAB 2: QUẢN LÝ QUY TẮC TỶ LỆ LỖI (MOCKUP INTERACTION ENGINE)
+  // ==========================================================================
+  let mockDirtyCount = new Set();
+  let mockMidSnapshot = '';
+  let mockSideSnapshot = '';
+
+  function switchMockupView(view) {
+    const btnS = document.getElementById('btn-view-s');
+    const btnR = document.getElementById('btn-view-r');
+    const wsS = document.getElementById('vs');
+    const wsR = document.getElementById('vr');
+
+    if (view === 's') {
+      btnS?.classList.add('on');
+      btnR?.classList.remove('on');
+      wsS?.classList.add('on');
+      wsR?.classList.remove('on');
+    } else {
+      btnR?.classList.add('on');
+      btnS?.classList.remove('on');
+      wsR?.classList.add('on');
+      wsS?.classList.remove('on');
+    }
+  }
+
+  function changeMockRatio(val) {
+    val = Math.max(0, Math.min(100, parseInt(val, 10) || 0));
+    const ratioA = document.getElementById('mock-ratio-a');
+    const ratioB = document.getElementById('mock-ratio-b');
+    const rb = document.getElementById('mock-rb');
+    const note = document.getElementById('mock-ratio-note');
+
+    if (ratioA && ratioB) {
+      ratioA.style.width = val + '%';
+      ratioA.textContent = val;
+      ratioB.textContent = 100 - val;
+      if (rb) rb.textContent = 100 - val;
+      if (note) note.textContent = `Tỷ lệ lỗi cơ bản A ${val} : B ${100 - val}. Có thể cộng trừ theo quan hệ nhân quả với tai nạn và mức thiệt hại.`;
+    }
+    mockDirtyCount.add('ratio');
+    updateMockupDirty();
+  }
+
+  function enterMockupEdit() {
+    const mid = document.getElementById('mock-mid-col');
+    const side = document.getElementById('mock-side-col');
+    const bar = document.getElementById('mock-bar');
+    const edbtn = document.getElementById('mock-edbtn');
+    const addrowBox = document.getElementById('mock-addrow-container');
+
+    if (!mid) return;
+    mockMidSnapshot = mid.innerHTML;
+    mockSideSnapshot = side ? side.innerHTML : '';
+    mockDirtyCount.clear();
+
+    mid.classList.add('edit');
+    if (bar) bar.hidden = false;
+    if (edbtn) edbtn.hidden = true;
+    if (addrowBox) addrowBox.style.display = 'block';
+
+    // Make editable fields
+    mid.querySelectorAll('.editable-col').forEach(el => {
+      el.contentEditable = 'true';
+      el.addEventListener('input', () => {
+        mockDirtyCount.add(el);
+        updateMockupDirty();
+      });
+    });
+
+    // Add delete buttons to factor table rows
+    const thead = mid.querySelector('#mock-factors-table thead tr');
+    if (thead && !thead.querySelector('.xd-head')) {
+      thead.insertAdjacentHTML('beforeend', '<th class="xd-head" style="width:36px;"></th>');
+    }
+    mid.querySelectorAll('#mock-factors-tbody tr').forEach(r => {
+      if (!r.querySelector('.xd-cell')) {
+        r.insertAdjacentHTML('beforeend', '<td class="xd-cell"><button type="button" class="rm-row-btn" onclick="removeMockFactorRow(this)" title="Xóa dòng" style="color:var(--red);border:0;background:none;cursor:pointer;font-weight:700;">✕</button></td>');
+      }
+    });
+
+    // Add unlink buttons to side links
+    if (side) {
+      side.querySelectorAll('.lk').forEach(l => {
+        if (!l.querySelector('.rm-lk-btn')) {
+          l.insertAdjacentHTML('beforeend', '<button type="button" class="rm-lk-btn rm" onclick="toggleMockUnlink(this)" style="margin-top:6px;font-size:11.5px;color:var(--red);background:none;border:0;cursor:pointer;">Gỡ liên kết</button>');
+        }
+      });
+    }
+
+    updateMockupDirty();
+  }
+
+  function updateMockupDirty() {
+    const cnt = document.getElementById('mock-cnt');
+    const sub = document.getElementById('mock-sub');
+    const why = document.getElementById('mock-why');
+
+    if (cnt) cnt.textContent = `${mockDirtyCount.size} thay đổi`;
+    if (sub && why) {
+      sub.disabled = !(mockDirtyCount.size > 0 && why.value.trim().length > 0);
+    }
+  }
+
+  function toggleFactorSource(el) {
+    const mid = document.getElementById('mock-mid-col');
+    if (!mid || !mid.classList.contains('edit')) return;
+    const isShared = el.textContent.includes('Bộ dùng chung');
+    el.textContent = isShared ? 'Ghi đè tại tình huống' : 'Bộ dùng chung · Ch.2';
+    el.className = 'tag src ' + (isShared ? 'w' : 'a');
+    mockDirtyCount.add(el);
+    updateMockupDirty();
+  }
+
+  function toggleMockUnlink(btn) {
+    const lk = btn.closest('.lk');
+    if (!lk) return;
+    lk.classList.toggle('gone');
+    btn.textContent = lk.classList.contains('gone') ? 'Hoàn tác' : 'Gỡ liên kết';
+    if (lk.classList.contains('gone')) {
+      mockDirtyCount.add(lk);
+    } else {
+      mockDirtyCount.delete(lk);
+    }
+    updateMockupDirty();
+  }
+
+  function addMockFactorRow() {
+    const tbody = document.getElementById('mock-factors-tbody');
+    if (!tbody) return;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span class="code o" contenteditable="true">A</span></td>
+      <td class="editable-col" contenteditable="true">Yếu tố mới</td>
+      <td class="val p editable-col" contenteditable="true">+0</td>
+      <td><span class="tag w src" onclick="toggleFactorSource(this)">Ghi đè tại tình huống</span></td>
+      <td class="xd-cell"><button type="button" class="rm-row-btn" onclick="removeMockFactorRow(this)" title="Xóa dòng" style="color:var(--red);border:0;background:none;cursor:pointer;font-weight:700;">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+    mockDirtyCount.add('add-' + Date.now());
+    updateMockupDirty();
+  }
+
+  function removeMockFactorRow(btn) {
+    const tr = btn.closest('tr');
+    if (tr) {
+      tr.remove();
+      mockDirtyCount.add('del-' + Date.now());
+      updateMockupDirty();
+    }
+  }
+
+  function exitMockupEdit(save) {
+    const mid = document.getElementById('mock-mid-col');
+    const side = document.getElementById('mock-side-col');
+    const bar = document.getElementById('mock-bar');
+    const edbtn = document.getElementById('mock-edbtn');
+    const addrowBox = document.getElementById('mock-addrow-container');
+
+    if (!mid) return;
+    if (!save && mockMidSnapshot) {
+      mid.innerHTML = mockMidSnapshot;
+      if (side && mockSideSnapshot) side.innerHTML = mockSideSnapshot;
+    }
+
+    mid.classList.remove('edit');
+    if (bar) bar.hidden = true;
+    if (edbtn) edbtn.hidden = false;
+    if (addrowBox) addrowBox.style.display = 'none';
+
+    mid.querySelectorAll('.editable-col').forEach(el => el.removeAttribute('contenteditable'));
+    mid.querySelectorAll('.xd-head, .xd-cell').forEach(el => el.remove());
+    if (side) side.querySelectorAll('.rm-lk-btn').forEach(el => el.remove());
+
+    mockDirtyCount.clear();
+  }
+
+  function saveMockupEdit(submitApproval) {
+    const stBadge = document.getElementById('mock-st');
+    exitMockupEdit(true);
+
+    if (stBadge) {
+      stBadge.className = 'tag w';
+      stBadge.textContent = submitApproval ? 'Chờ duyệt' : 'Bản nháp';
+    }
+
+    showToast(
+      submitApproval
+        ? 'Đã gửi duyệt thay đổi quy tắc. Phiên bản mới sẽ có hiệu lực sau khi được cấp quản lý phê chuẩn.'
+        : 'Đã lưu bản nháp quy tắc tỷ lệ lỗi. Chưa áp dụng vào luồng tính toán.',
+      submitApproval ? 'success' : 'info'
+    );
+  }
+
+  function selectMockSituation(el, code) {
+    document.querySelectorAll('#mock-situation-tree li').forEach(li => li.classList.remove('on'));
+    el.classList.add('on');
+
+    const badge = document.getElementById('mock-chart-badge');
+    const title = document.getElementById('mock-chart-title');
+    const sub = document.getElementById('mock-chart-sub');
+    const oldCode = document.getElementById('mock-chart-oldcode');
+
+    if (code === '차1-1') {
+      if (badge) badge.textContent = '차1-1';
+      if (oldCode) oldCode.textContent = 'Mã cũ: 201 · 301 · 302';
+      if (title) title.textContent = 'Xe xanh đi thẳng – xe đỏ đi thẳng';
+      if (sub) sub.textContent = 'Giao lộ hai bên có đèn tín hiệu · xe kia vào từ bên hông';
+      changeMockRatio(0);
+    } else if (code === '차1') {
+      if (badge) badge.textContent = '차1';
+      if (oldCode) oldCode.textContent = 'Mã cũ: 200 · 300';
+      if (title) title.textContent = 'Xe đi thẳng – Xe đi thẳng cùng hướng';
+      if (sub) sub.textContent = 'Giao lộ có tín hiệu điều khiển · cả hai xe đi thẳng';
+      changeMockRatio(50);
+    } else if (code === '차2') {
+      if (badge) badge.textContent = '차2';
+      if (oldCode) oldCode.textContent = 'Mã cũ: 203 · 305';
+      if (title) title.textContent = 'Xe đi thẳng – Xe rẽ trái (đối diện)';
+      if (sub) sub.textContent = 'Giao lộ có đèn tín hiệu xanh chung · xe rẽ trái phải nhường xe đi thẳng';
+      changeMockRatio(80);
+    } else if (code === '차3') {
+      if (badge) badge.textContent = '차3';
+      if (oldCode) oldCode.textContent = 'Mã cũ: 204 · 306';
+      if (title) title.textContent = 'Xe đi thẳng – Xe rẽ trái (bên hông)';
+      if (sub) sub.textContent = 'Giao lộ hai bên có đèn tín hiệu · xe rẽ trái vào từ đường giao nhau';
+      changeMockRatio(70);
+    }
+  }
+
+  function switchMockLibTab(btn, tab) {
+    document.querySelectorAll('#vr .tabs button').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    showToast(`Đã chuyển sang thư mục: ${btn.textContent}`, 'info');
+  }
+
+  function selectMockRuleItem(el, id) {
+    document.querySelectorAll('#mock-rules-list li').forEach(li => li.classList.remove('on'));
+    el.classList.add('on');
+
+    const title = document.getElementById('vr-title');
+    const sub = document.getElementById('vr-sub');
+    const content = document.getElementById('vr-content');
+
+    const titleText = el.querySelector('b')?.textContent || '';
+    const subText = el.querySelector('span')?.textContent || '';
+    if (title) title.textContent = titleText;
+    if (sub) sub.textContent = subText;
+    if (content) {
+      content.textContent = `Quy định tại ${titleText}: Người tham gia giao thông có trách nhiệm chấp hành nghiêm túc quy định và hướng dẫn của cơ quan thẩm quyền và hệ thống báo hiệu đường bộ.`;
+    }
+  }
+
+  function handleMockupSearch(query) {
+    query = (query || '').toLowerCase().trim();
+    const treeItems = document.querySelectorAll('#mock-situation-tree li');
+    treeItems.forEach(li => {
+      const text = li.textContent.toLowerCase();
+      if (!query || text.includes(query)) {
+        li.style.display = '';
+      } else if (!li.classList.contains('l1') && !li.classList.contains('l2') && !li.classList.contains('l3')) {
+        li.style.display = 'none';
+      }
+    });
+  }
+
 </script>
 
 </body>
