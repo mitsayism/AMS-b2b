@@ -2432,6 +2432,35 @@
     0%, 100% { outline-color: #38bdf8; }
     50% { outline-color: #f59e0b; }
   }
+  
+  #dc-hover-inspector {
+    position: absolute;
+    pointer-events: none;
+    z-index: 99998;
+    border: 1.5px solid #06b6d4;
+    background: rgba(6, 182, 212, 0.12);
+    border-radius: 4px;
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.35);
+    display: none;
+  }
+  #dc-hover-inspector .dc-hover-tag {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    margin-bottom: 3px;
+    background: #06b6d4;
+    color: #04121e;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    white-space: nowrap;
+    max-width: 320px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  }
+
   body.dc-picking, body.dc-picking * {
     cursor: crosshair !important;
   }
@@ -2584,8 +2613,39 @@
   const activeModal = () => document.querySelector('.modal-backdrop.active');
   const activeRoot = () => activeModal() || document.querySelector('.tab-pane.active') || document.body;
 
-  // Smart Component Title Resolver
-  const resolveComponentTitle = el => {
+  // Smart Component & Text-Line Title Resolver (Gắn đến từng dòng text)
+  const getSpecificTextTarget = (el, clientX, clientY) => {
+    let target = el;
+    let bounds = el.getBoundingClientRect();
+    let textSnippet = '';
+
+    // If caretRangeFromPoint is supported, find exact text node or line
+    if (document.caretRangeFromPoint) {
+      const range = document.caretRangeFromPoint(clientX, clientY);
+      if (range && range.startContainer && range.startContainer.nodeType === Node.TEXT_NODE) {
+        const textNode = range.startContainer;
+        if (textNode.parentElement && textNode.parentElement !== document.body) {
+          target = textNode.parentElement;
+        }
+        const textRange = document.createRange();
+        textRange.selectNodeContents(textNode);
+        const textRect = textRange.getBoundingClientRect();
+        if (textRect.width > 4 && textRect.height > 4) {
+          bounds = textRect;
+        }
+        textSnippet = textNode.textContent.trim();
+      }
+    }
+
+    if (!textSnippet) {
+      textSnippet = (target.innerText || target.textContent || '').trim();
+    }
+    textSnippet = textSnippet.replace(/\s+/g, ' ');
+
+    return { target, bounds, textSnippet };
+  };
+
+  const resolveComponentTitle = (el, textSnippet) => {
     if (!el || el === document.body) return 'Toàn màn hình Quản lý quy tắc';
 
     // 1. Modal context
@@ -2601,65 +2661,53 @@
       tabPrefix = `[${tabName}] `;
     }
 
-    // 3. Closest functional container
-    let comp = '';
-    if (el.closest('.app-header')) {
-      comp = 'Header thanh điều hướng';
-    } else if (el.closest('.tab-bar-container')) {
-      const btn = el.closest('.nav-tab-btn, button');
-      comp = btn ? `Tab: ${btn.textContent.trim().replace(/\s+/g, ' ')}` : 'Thanh chuyển tab chính';
-    } else if (el.closest('.kpi-card')) {
-      const kpi = el.closest('.kpi-card');
-      const label = kpi.querySelector('.kpi-label')?.textContent.trim() || kpi.querySelector('div')?.textContent.trim();
-      comp = label ? `KPI: ${label}` : 'Thẻ KPI';
+    // 3. Container Context
+    let container = '';
+    const kpi = el.closest('.kpi-card');
+    const tr = el.closest('tr');
+    const panelBox = el.closest('.panel-box');
+    const formGrp = el.closest('.form-group, .form-row');
+
+    if (kpi) {
+      const kpiName = kpi.querySelector('.kpi-label span')?.textContent.trim() || 'KPI';
+      container = `KPI (${kpiName})`;
+    } else if (tr) {
+      const caseCode = tr.querySelector('b[style*="font-mono"]')?.textContent.trim() || tr.dataset?.category || '';
+      container = caseCode ? `Vụ việc ${caseCode}` : 'Bảng dữ liệu';
     } else if (el.closest('.filter-bar')) {
-      comp = 'Thanh tìm kiếm & Bộ lọc';
-    } else if (el.closest('.table-card, table')) {
-      const wrap = el.closest('.table-card') || el.closest('table').parentElement;
-      const title = wrap.querySelector('h3, .card-title, .screen-title')?.textContent.trim();
-      const th = el.closest('th');
-      const tr = el.closest('tr');
-      if (th) {
-        comp = `Bảng - Cột "${th.textContent.trim()}"`;
-      } else if (tr && tr.dataset?.ruleId) {
-        comp = `Hàng quy tắc ${tr.dataset.ruleId}`;
-      } else {
-        comp = title ? `Bảng: ${title}` : 'Bảng dữ liệu';
-      }
-    } else if (el.closest('.form-group, .form-row')) {
-      const grp = el.closest('.form-group, .form-row');
-      const label = grp.querySelector('label, .form-label')?.textContent.trim();
-      comp = label ? `Trường nhập "${label}"` : 'Biểu mẫu';
-    } else if (el.closest('.modal-header')) {
-      comp = 'Tiêu đề Modal';
-    } else if (el.closest('.modal-footer')) {
-      comp = 'Thanh nút bấm Modal';
+      container = 'Thanh bộ lọc';
+    } else if (formGrp) {
+      const lbl = formGrp.querySelector('label')?.textContent.trim() || '';
+      container = lbl ? `Trường "${lbl}"` : 'Biểu mẫu';
+    } else if (panelBox) {
+      const pTitle = panelBox.querySelector('.panel-title')?.textContent.trim() || '';
+      container = pTitle ? `Khối: ${pTitle}` : 'Khung nội dung';
     }
 
-    // 4. Element specific
-    let elem = '';
-    if (el.tagName === 'BUTTON') {
-      elem = `Nút "${el.textContent.trim().replace(/\s+/g, ' ').slice(0, 30)}"`;
-    } else if (el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'TEXTAREA') {
-      const placeholder = el.placeholder || el.name || el.id;
-      elem = placeholder ? `Ô nhập "${placeholder.slice(0, 25)}"` : `Ô nhập ${el.tagName.toLowerCase()}`;
-    } else if (/^H[1-6]$/.test(el.tagName)) {
-      elem = `Tiêu đề "${el.textContent.trim().replace(/\s+/g, ' ').slice(0, 30)}"`;
-    } else if (el.classList.contains('badge')) {
-      elem = `Badge "${el.textContent.trim()}"`;
+    // 4. Specific text element descriptor
+    let lineType = 'Dòng text';
+    if (el.tagName === 'BUTTON') lineType = 'Nút';
+    else if (el.classList.contains('badge')) lineType = 'Badge';
+    else if (/^H[1-6]$/.test(el.tagName)) lineType = 'Tiêu đề';
+    else if (el.classList.contains('kpi-value')) lineType = 'Chỉ số';
+    else if (el.classList.contains('kpi-footer') || el.classList.contains('kpi-sub')) lineType = 'Dòng ghi chú';
+    else if (el.tagName === 'TH') lineType = 'Tiêu đề cột';
+    else if (el.tagName === 'LABEL') lineType = 'Nhãn';
+
+    let snippet = (textSnippet || el.innerText || el.textContent || '').trim().replace(/\s+/g, ' ');
+    if (snippet.length > 55) {
+      snippet = snippet.slice(0, 52) + '...';
     }
 
+    const textPart = snippet ? `${lineType}: "${snippet}"` : lineType;
     let full = '';
+
     if (modalPrefix) {
-      full = modalPrefix + (comp || elem || 'Vị trí trong modal');
+      full = `${modalPrefix}${container ? container + ' > ' : ''}${textPart}`;
     } else if (tabPrefix) {
-      if (comp && elem && !comp.includes(elem)) {
-        full = `${tabPrefix}${comp} - ${elem}`;
-      } else {
-        full = `${tabPrefix}${comp || elem || 'Khu vực nội dung'}`;
-      }
+      full = `${tabPrefix}${container ? container + ' > ' : ''}${textPart}`;
     } else {
-      full = comp ? `${comp}${elem ? ' - ' + elem : ''}` : (elem || el.id || 'Thành phần UI');
+      full = `${container ? container + ' > ' : ''}${textPart}`;
     }
 
     return full.replace(/\s+/g, ' ').trim();
@@ -2685,6 +2733,32 @@
       if (!el) return null;
     }
     return el;
+  };
+
+  // Hover Inspector Box for Picking Mode
+  let hoverInspector = null;
+  const showHoverBox = (rect, label) => {
+    if (!hoverInspector) {
+      hoverInspector = document.createElement('div');
+      hoverInspector.id = 'dc-hover-inspector';
+      hoverInspector.innerHTML = '<span class="dc-hover-tag"></span>';
+      document.body.append(hoverInspector);
+    }
+    const pageX = window.scrollX || window.pageXOffset;
+    const pageY = window.scrollY || window.pageYOffset;
+    Object.assign(hoverInspector.style, {
+      display: 'block',
+      left: `${rect.left + pageX - 2}px`,
+      top: `${rect.top + pageY - 2}px`,
+      width: `${rect.width + 4}px`,
+      height: `${rect.height + 4}px`
+    });
+    const tag = hoverInspector.querySelector('.dc-hover-tag');
+    if (tag) tag.textContent = label || 'Dòng text';
+  };
+
+  const hideHoverBox = () => {
+    if (hoverInspector) hoverInspector.style.display = 'none';
   };
 
   // Draw markers & regions
@@ -2715,13 +2789,14 @@
       item.className = 'dc-note';
       item.classList.toggle('dc-open', openNoteId === note.id);
 
+      // Marker coordinate
       const x = Math.max(0, rect.left + pageX + rect.width * (note.x ?? 0.5) - 12);
       const y = Math.max(0, rect.top + pageY + rect.height * (note.y ?? 0.5) - 12);
 
       item.style.left = `${x}px`;
       item.style.top = `${y}px`;
 
-      // Region outline
+      // Region outline (ôm sát từng dòng text hoặc selection box)
       const region = document.createElement('div');
       region.className = 'dc-region';
       const selReg = note.region;
@@ -2739,11 +2814,13 @@
           height: `${rh}px`
         });
       } else {
+        // Tightly wrap the specific text line element
         Object.assign(region.style, {
-          left: `${rect.left + pageX - x}px`,
-          top: `${rect.top + pageY - y}px`,
-          width: `${rect.width}px`,
-          height: `${rect.height}px`
+          left: `${rect.left + pageX - x - 2}px`,
+          top: `${rect.top + pageY - y - 2}px`,
+          width: `${rect.width + 4}px`,
+          height: `${rect.height + 4}px`,
+          borderRadius: '4px'
         });
       }
 
@@ -2854,13 +2931,11 @@
   };
 
   const focusNote = note => {
-    // Switch tab if needed
     if (note.tab && note.tab !== 'global' && note.tab !== currentTab()) {
       if (typeof window.switchMainTab === 'function') {
         window.switchMainTab(note.tab);
       }
     }
-    // Open modal if needed
     if (note.modalId) {
       if (typeof window.openModal === 'function') {
         window.openModal(note.modalId);
@@ -2929,10 +3004,22 @@
     startPicking();
   };
 
+  // Real-time hover preview in picking mode
+  document.addEventListener('pointermove', event => {
+    if (!picking || event.target.closest('#design-comments, #design-comments-toggle, .dc-note, #dc-hover-inspector')) {
+      hideHoverBox();
+      return;
+    }
+    const info = getSpecificTextTarget(event.target, event.clientX, event.clientY);
+    const title = resolveComponentTitle(info.target, info.textSnippet);
+    showHoverBox(info.bounds, title);
+  }, true);
+
   // Pointer drag selection
   document.addEventListener('pointerdown', event => {
     if (!picking || event.button !== 0 || event.target.closest('#design-comments, #design-comments-toggle, .dc-note')) return;
 
+    hideHoverBox();
     const startX = event.clientX, startY = event.clientY;
     const scope = event.target;
     let selection = null;
@@ -2975,7 +3062,7 @@
         height: h / (bounds.height || 1)
       };
 
-      const title = resolveComponentTitle(scope) + ' (Vùng chọn)';
+      const title = resolveComponentTitle(scope) + ' (Vùng khoanh)';
       const curModal = activeModal();
 
       if (redrawing) {
@@ -3017,24 +3104,26 @@
     window.addEventListener('pointercancel', finish, true);
   }, true);
 
-  // Click single element
+  // Click single element or precise text line
   document.addEventListener('click', event => {
     if (!picking || event.target.closest('#design-comments, #design-comments-toggle, .dc-note')) return;
 
     event.preventDefault();
     event.stopImmediatePropagation();
     picking = false;
+    hideHoverBox();
     document.body.classList.remove('dc-picking');
 
-    const el = event.target;
+    const info = getSpecificTextTarget(event.target, event.clientX, event.clientY);
+    const targetEl = info.target;
     const root = activeRoot();
-    const bounds = el.getBoundingClientRect();
-    const title = resolveComponentTitle(el);
+    const bounds = targetEl.getBoundingClientRect();
+    const title = resolveComponentTitle(targetEl, info.textSnippet);
     const curModal = activeModal();
 
     if (redrawing) {
       target.title = title;
-      target.path = pathFor(el, root);
+      target.path = pathFor(targetEl, root);
       target.region = null;
       titleInput.value = title;
       redrawing = false;
@@ -3045,10 +3134,10 @@
         tab: currentTab(),
         modalId: curModal ? curModal.id : null,
         rootId: root.id || 'body',
-        path: pathFor(el, root),
+        path: pathFor(targetEl, root),
         title: title,
-        x: bounds.width ? 0.5 : 0,
-        y: bounds.height ? 0.5 : 0,
+        x: bounds.width ? (event.clientX - bounds.left) / bounds.width : 0.5,
+        y: bounds.height ? (event.clientY - bounds.top) / bounds.height : 0.5,
         createdAt: new Date().toISOString()
       };
       editing = null;
@@ -3056,7 +3145,7 @@
       input.value = '';
     }
 
-    document.getElementById('dc-location-label').textContent = 'Component được chọn:';
+    document.getElementById('dc-location-label').textContent = 'Dòng / Component được chọn:';
     document.getElementById('dc-redraw').hidden = true;
     form.hidden = false;
     panel.hidden = false;
@@ -3165,6 +3254,7 @@
     if (e.key === 'Escape' && picking) {
       picking = false;
       redrawing = false;
+      hideHoverBox();
       document.body.classList.remove('dc-picking');
       panel.hidden = false;
       toggle.setAttribute('aria-expanded', 'true');
