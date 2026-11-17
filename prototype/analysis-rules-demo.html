@@ -886,7 +886,7 @@
   <main class="content-area">
 
     <!-- ================= TAB 1: THEO DÕI CHẤT LƯỢNG PHÂN TÍCH (MÀN HÌNH HIỆU QUẢ) ================= -->
-    <section id="tab-quality" class="tab-pane active">
+        <section id="tab-quality" class="tab-pane active">
       <div class="screen-header">
         <div>
           <div class="screen-kicker">
@@ -894,9 +894,9 @@
             <span>•</span>
             <span>Màn hình hiệu quả</span>
           </div>
-          <h1 class="screen-title">Xem mức độ khớp giữa các kết quả phân tích</h1>
+          <h1 class="screen-title">Hiệu quả gợi ý của AI so với Điều tra viên</h1>
           <p class="screen-desc">
-            Reviewer so sánh kết quả của <strong>Routing model</strong>, <strong>Knowledge Base</strong>, <strong>AI lần đầu</strong> và <strong>Quyết định của điều tra viên</strong> theo thời gian gần đây hoặc theo từng tuần để phát hiện sai lệch và nâng cao chất lượng tự động hóa.
+            Theo dõi mức độ chấp thuận của Điều tra viên đối với kết quả do AI đề xuất theo thời gian và theo từng nhóm tai nạn để phát hiện sai lệch và cải tiến quy tắc.
           </p>
         </div>
         <div style="display:flex; gap:10px; align-items:center;">
@@ -913,204 +913,133 @@
         </div>
       </div>
 
-      <!-- KPI Summary Cards -->
+      <!-- KPI Summary Cards: Focused on AI vs Investigator -->
       <div class="kpi-grid">
         <div class="kpi-card">
           <div class="kpi-label">
-            <span>ĐỘ KHỚP TỔNG THỂ (OVERALL)</span>
+            <span>TỶ LỆ CHẤP THUẬN NGAY LẦN ĐẦU</span>
             <span class="badge badge-emerald">Mục tiêu ≥80%</span>
           </div>
           <div class="kpi-value-row">
-            <span class="kpi-value" id="kpi-overall">84.6%</span>
-            <span class="kpi-sub up">▲ +2.4% vs tuần trước</span>
-          </div>
-          <div class="kpi-footer">Tính trên 142 vụ việc đã hoàn tất thẩm định tuần 45</div>
-        </div>
-
-        <div class="kpi-card">
-          <div class="kpi-label">
-            <span>ROUTING VS KNOWLEDGE BASE</span>
-            <span class="badge badge-cyan">Hệ thống</span>
-          </div>
-          <div class="kpi-value-row">
-            <span class="kpi-value" id="kpi-routing-kb">88.5%</span>
-            <span class="kpi-sub up">▲ 126/142 vụ cùng mẫu</span>
-          </div>
-          <div class="kpi-footer">16 vụ có sự phân kỳ giữa thuật toán routing và KB</div>
-        </div>
-
-        <div class="kpi-card">
-          <div class="kpi-label">
-            <span>AI LẦN ĐẦU VS ĐIỀU TRA VIÊN</span>
-            <span class="badge badge-primary">Nghiệp vụ</span>
-          </div>
-          <div class="kpi-value-row">
             <span class="kpi-value" id="kpi-ai-investigator">81.2%</span>
-            <span class="kpi-sub up">▲ +3.1%</span>
+            <span class="kpi-sub up">▲ +3.1% vs tuần trước</span>
           </div>
-          <div class="kpi-footer">Điều tra viên chấp nhận tỷ lệ lỗi AI đề xuất ngay lần đầu</div>
+          <div class="kpi-footer">Điều tra viên chấp thuận 100% tỷ lệ lỗi AI đề xuất ngay lần đầu</div>
         </div>
 
         <div class="kpi-card">
           <div class="kpi-label">
-            <span>SỐ VỤ CÓ KHÁC BIỆT CẦN XỬ LÝ</span>
-            <span class="badge badge-rose">Cần rà soát</span>
+            <span>TỔNG SỐ VỤ ĐÃ THẨM ĐỊNH</span>
+            <span class="badge badge-cyan">Tuần 45</span>
           </div>
           <div class="kpi-value-row">
-            <span class="kpi-value" style="color:var(--rose);">14 vụ</span>
-            <span class="kpi-sub down">▼ -3 vụ</span>
+            <span class="kpi-value" id="kpi-total-cases">142 vụ</span>
+            <span class="kpi-sub up">▲ +3 vụ vs tuần trước</span>
+          </div>
+          <div class="kpi-footer">Hồ sơ đã hoàn tất xác định tỷ lệ lỗi trong tuần</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-label">
+            <span>SỐ VỤ ĐỒNG THUẬN HOÀN TOÀN</span>
+            <span class="badge badge-emerald">Tự động hóa</span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" id="kpi-match-cases" style="color:var(--emerald);">115 vụ</span>
+            <span class="kpi-sub up">▲ 81.2%</span>
+          </div>
+          <div class="kpi-footer">AI gợi ý khớp hoàn toàn quyết định của điều tra viên</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-label">
+            <span>SỐ VỤ KHÁC BIỆT CẦN RÀ SOÁT</span>
+            <span class="badge badge-rose">Cần xử lý</span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" id="kpi-diff-cases" style="color:var(--rose);">14 vụ</span>
+            <span class="kpi-sub down">▼ -3 vụ vs tuần trước</span>
           </div>
           <div class="kpi-footer">Đã chuyển sang tab <strong>Rà soát khác biệt</strong> để tìm nguyên nhân</div>
         </div>
       </div>
 
-      <!-- Weekly Trend & 4-Way Concordance Breakdown -->
-      <div style="display:grid; grid-template-columns: 1.4fr 1fr; gap:20px; margin-bottom:24px;">
-        <!-- Left: Weekly Trend Chart -->
-        <div class="panel-box">
-          <div class="panel-header">
-            <div class="panel-title">
-              <span>📈 Xu hướng độ khớp 4 nguồn phân tích theo tuần</span>
-            </div>
-            <div style="display:flex; gap:12px; font-size:11.5px; color:var(--text-muted);">
-              <span style="display:inline-flex; align-items:center; gap:4px;"><span style="width:10px; height:10px; background:#3b82f6; border-radius:2px;"></span> Routing</span>
-              <span style="display:inline-flex; align-items:center; gap:4px;"><span style="width:10px; height:10px; background:#10b981; border-radius:2px;"></span> Knowledge Base</span>
-              <span style="display:inline-flex; align-items:center; gap:4px;"><span style="width:10px; height:10px; background:#8b5cf6; border-radius:2px;"></span> AI Lần đầu</span>
-              <span style="display:inline-flex; align-items:center; gap:4px;"><span style="width:10px; height:10px; background:#f59e0b; border-radius:2px;"></span> Điều tra viên</span>
-            </div>
+      <!-- Weekly Acceptance Trend: Streamlined 1-Metric Chart -->
+      <div class="panel-box" style="margin-bottom:24px;">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>📈 Xu hướng tỷ lệ Điều tra viên chấp thuận gợi ý AI theo tuần</span>
           </div>
-          <div class="panel-body">
-            <div class="weekly-chart-wrap">
-              <div class="week-col">
-                <div class="week-label">Tuần 42</div>
-                <div class="week-bar-container">
-                  <div class="source-bar bar-routing" style="height:76%;" data-tip="Routing: 76%"></div>
-                  <div class="source-bar bar-kb" style="height:78%;" data-tip="KB: 78%"></div>
-                  <div class="source-bar bar-ai" style="height:74%;" data-tip="AI 1st: 74%"></div>
-                  <div class="source-bar bar-final" style="height:81%;" data-tip="Final: 81%"></div>
-                </div>
-                <div class="week-match-rate">78.5%</div>
-                <div style="font-size:11px; color:var(--text-dim);">128 vụ việc</div>
-              </div>
-
-              <div class="week-col">
-                <div class="week-label">Tuần 43</div>
-                <div class="week-bar-container">
-                  <div class="source-bar bar-routing" style="height:80%;" data-tip="Routing: 80%"></div>
-                  <div class="source-bar bar-kb" style="height:82%;" data-tip="KB: 82%"></div>
-                  <div class="source-bar bar-ai" style="height:77%;" data-tip="AI 1st: 77%"></div>
-                  <div class="source-bar bar-final" style="height:83%;" data-tip="Final: 83%"></div>
-                </div>
-                <div class="week-match-rate">80.5%</div>
-                <div style="font-size:11px; color:var(--text-dim);">135 vụ việc</div>
-              </div>
-
-              <div class="week-col">
-                <div class="week-label">Tuần 44</div>
-                <div class="week-bar-container">
-                  <div class="source-bar bar-routing" style="height:83%;" data-tip="Routing: 83%"></div>
-                  <div class="source-bar bar-kb" style="height:85%;" data-tip="KB: 85%"></div>
-                  <div class="source-bar bar-ai" style="height:79%;" data-tip="AI 1st: 79%"></div>
-                  <div class="source-bar bar-final" style="height:86%;" data-tip="Final: 86%"></div>
-                </div>
-                <div class="week-match-rate">82.2%</div>
-                <div style="font-size:11px; color:var(--text-dim);">139 vụ việc</div>
-              </div>
-
-              <div class="week-col" style="border-color:rgba(56,189,248,0.4); background:rgba(56,189,248,0.04);">
-                <div class="week-label" style="color:var(--cyan);">Tuần 45 (Hiện tại)</div>
-                <div class="week-bar-container">
-                  <div class="source-bar bar-routing" style="height:88%;" data-tip="Routing: 88%"></div>
-                  <div class="source-bar bar-kb" style="height:90%;" data-tip="KB: 90%"></div>
-                  <div class="source-bar bar-ai" style="height:83%;" data-tip="AI 1st: 83%"></div>
-                  <div class="source-bar bar-final" style="height:89%;" data-tip="Final: 89%"></div>
-                </div>
-                <div class="week-match-rate" style="color:var(--emerald);">84.6%</div>
-                <div style="font-size:11px; color:var(--cyan); font-weight:600;">142 vụ việc</div>
-              </div>
-            </div>
-            <div style="font-size:12px; color:var(--text-muted); line-height:1.5; padding:10px; background:rgba(0,0,0,0.2); border-radius:8px;">
-              💡 <strong>Nhận định chất lượng của Reviewer:</strong> Sau khi áp dụng 3 quy tắc bổ sung về chuyển làn không xi nhan ở Tuần 44, độ khớp giữa Knowledge Base và Quyết định Điều tra viên đã tăng <strong>+2.4%</strong>. Khác biệt hiện tập trung chủ yếu ở nhóm tai nạn ngã tư không đèn và vòng xuyến.
-            </div>
+          <div style="font-size:12px; color:var(--text-muted);">
+            <span style="display:inline-flex; align-items:center; gap:6px;">
+              <span style="width:12px; height:12px; background:var(--emerald); border-radius:3px;"></span>
+              Tỷ lệ đồng thuận ngay lần đầu (Mục tiêu ≥80%)
+            </span>
           </div>
         </div>
+        <div class="panel-body">
+          <div class="weekly-chart-wrap" style="grid-template-columns: repeat(4, 1fr); max-width:900px; margin:0 auto 16px;">
+            <div class="week-col">
+              <div class="week-label">Tuần 42</div>
+              <div class="week-bar-container" style="justify-content:center;">
+                <div class="source-bar" style="height:74%; width:32px; background:linear-gradient(to top, #059669, #10b981);" data-tip="Chấp thuận: 74%"></div>
+              </div>
+              <div class="week-match-rate">74.0%</div>
+              <div style="font-size:11px; color:var(--text-dim);">128 vụ việc</div>
+            </div>
 
-        <!-- Right: 4-Way Source Concordance Matrix -->
-        <div class="panel-box">
-          <div class="panel-header">
-            <div class="panel-title">
-              <span>🎯 Ma trận đối chiếu 4 nguồn (Concordance)</span>
+            <div class="week-col">
+              <div class="week-label">Tuần 43</div>
+              <div class="week-bar-container" style="justify-content:center;">
+                <div class="source-bar" style="height:77%; width:32px; background:linear-gradient(to top, #059669, #10b981);" data-tip="Chấp thuận: 77%"></div>
+              </div>
+              <div class="week-match-rate">77.0%</div>
+              <div style="font-size:11px; color:var(--text-dim);">135 vụ việc</div>
+            </div>
+
+            <div class="week-col">
+              <div class="week-label">Tuần 44</div>
+              <div class="week-bar-container" style="justify-content:center;">
+                <div class="source-bar" style="height:79%; width:32px; background:linear-gradient(to top, #059669, #10b981);" data-tip="Chấp thuận: 79%"></div>
+              </div>
+              <div class="week-match-rate">79.0%</div>
+              <div style="font-size:11px; color:var(--text-dim);">139 vụ việc</div>
+            </div>
+
+            <div class="week-col" style="border-color:rgba(16,185,129,0.5); background:rgba(16,185,129,0.05);">
+              <div class="week-label" style="color:var(--emerald); font-weight:700;">Tuần 45 (Hiện tại)</div>
+              <div class="week-bar-container" style="justify-content:center;">
+                <div class="source-bar" style="height:81.2%; width:32px; background:linear-gradient(to top, #10b981, #34d399); box-shadow:0 0 12px rgba(16,185,129,0.4);" data-tip="Chấp thuận: 81.2%"></div>
+              </div>
+              <div class="week-match-rate" style="color:var(--emerald); font-size:16px;">81.2%</div>
+              <div style="font-size:11px; color:var(--emerald); font-weight:600;">142 vụ việc</div>
             </div>
           </div>
-          <div class="panel-body" style="padding:12px;">
-            <table class="data-table" style="font-size:12px;">
-              <thead>
-                <tr>
-                  <th>Cặp so sánh</th>
-                  <th>Độ khớp</th>
-                  <th>Chênh lệch TB</th>
-                  <th>Đánh giá</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><b>Routing ↔ Knowledge Base</b></td>
-                  <td><span class="badge badge-emerald">88.5%</span></td>
-                  <td>±3.2% lỗi</td>
-                  <td><span class="badge badge-slate">Đồng thuận cao</span></td>
-                </tr>
-                <tr>
-                  <td><b>Knowledge Base ↔ Điều tra viên</b></td>
-                  <td><span class="badge badge-emerald">85.4%</span></td>
-                  <td>±4.5% lỗi</td>
-                  <td><span class="badge badge-slate">Đạt chuẩn</span></td>
-                </tr>
-                <tr>
-                  <td><b>AI Lần đầu ↔ Điều tra viên</b></td>
-                  <td><span class="badge badge-cyan">81.2%</span></td>
-                  <td>±6.8% lỗi</td>
-                  <td><span class="badge badge-slate">Cần hoàn thiện</span></td>
-                </tr>
-                <tr>
-                  <td><b>Routing ↔ Điều tra viên</b></td>
-                  <td><span class="badge badge-amber">79.0%</span></td>
-                  <td>±8.4% lỗi</td>
-                  <td><span class="badge badge-amber">Phân kỳ lặp lại</span></td>
-                </tr>
-              </tbody>
-            </table>
 
-            <div style="margin-top:16px; padding:12px; background:rgba(245,158,11,0.06); border:1px solid rgba(245,158,11,0.2); border-radius:8px;">
-              <div style="font-size:12px; font-weight:700; color:var(--amber); margin-bottom:4px;">Vùng phân kỳ trọng điểm:</div>
-              <div style="font-size:11.5px; color:var(--text-muted); line-height:1.45;">
-                Routing đưa ra mẫu Chart 112 (ngã tư bình đẳng) nhưng Điều tra viên chọn Chart 114 (ưu tiên đường lớn) do lời khai ghi nhận xe B đi từ đường nhánh.
-              </div>
-              <button class="btn btn-primary btn-sm" style="margin-top:8px; width:100%;" onclick="switchMainTab('tab-discrepancy')">
-                <span>Rà soát 14 vụ phân kỳ ngay ➔</span>
-              </button>
-            </div>
+          <div style="font-size:12.5px; color:var(--text-muted); line-height:1.55; padding:12px 16px; background:rgba(0,0,0,0.25); border-radius:8px; border:1px solid rgba(255,255,255,0.06);">
+            💡 <strong>Nhận định chất lượng từ Reviewer:</strong> Sau khi bổ sung 3 quy tắc điều chỉnh lỗi chuyển làn ở Tuần 44, tỷ lệ Điều tra viên chấp thuận phán quyết của AI ngay lần đầu đã vượt mốc <strong>80%</strong> (đạt 81.2%). Hiện tại <strong>14 vụ việc có khác biệt</strong> tập trung chủ yếu ở ngã tư không đèn và vòng xuyến, cần rà soát để hoàn thiện thêm quy tắc.
           </div>
         </div>
       </div>
 
-      <!-- Breakdown by Accident Category -->
+      <!-- Breakdown by Accident Category: AI vs Investigator -->
       <div class="panel-box">
         <div class="panel-header">
           <div class="panel-title">
-            <span>📑 Phân bố độ khớp theo Loại tai nạn (Tuần 45)</span>
+            <span>📑 Phân bố độ khớp theo Loại tai nạn: AI đề xuất vs Điều tra viên (Tuần 45)</span>
           </div>
-          <span style="font-size:12px; color:var(--text-muted);">Tổng cộng 6 nhóm nghiệp vụ</span>
+          <span style="font-size:12px; color:var(--text-muted);">Tổng cộng 142 vụ trên 5 nhóm va chạm chính</span>
         </div>
         <div class="table-responsive">
           <table class="data-table">
             <thead>
               <tr>
                 <th>Loại tai nạn</th>
-                <th>Số vụ tuần 45</th>
-                <th>Routing ↔ KB</th>
-                <th>KB ↔ Điều tra viên</th>
-                <th>AI 1st ↔ Điều tra viên</th>
+                <th>Tổng số vụ</th>
+                <th>Số vụ đồng thuận (AI = ĐTV)</th>
+                <th>Tỷ lệ chấp thuận</th>
                 <th>Số vụ lệch</th>
+                <th>Đánh giá</th>
                 <th>Hành động</th>
               </tr>
             </thead>
@@ -1118,47 +1047,47 @@
               <tr>
                 <td><b>Ngã tư không có đèn tín hiệu</b></td>
                 <td>46 vụ</td>
-                <td><span class="badge badge-amber">76.1%</span></td>
-                <td><span class="badge badge-amber">78.3%</span></td>
+                <td><b style="color:var(--emerald);">34 vụ</b></td>
                 <td><span class="badge badge-rose">73.9%</span></td>
-                <td><b style="color:var(--rose);">8 vụ</b></td>
-                <td><button class="btn btn-secondary btn-sm" onclick="filterDiscrepancy('Ngã tư không đèn')">Xem 8 vụ</button></td>
+                <td><b style="color:var(--rose);">8 vụ lệch</b></td>
+                <td><span class="badge badge-amber">Cần tạo quy tắc</span></td>
+                <td><button class="btn btn-primary btn-sm" onclick="filterDiscrepancy('Ngã tư')">Xem 8 vụ lệch</button></td>
               </tr>
               <tr>
                 <td><b>Chuyển làn cùng chiều</b></td>
                 <td>38 vụ</td>
-                <td><span class="badge badge-emerald">92.1%</span></td>
-                <td><span class="badge badge-emerald">89.5%</span></td>
+                <td><b style="color:var(--emerald);">33 vụ</b></td>
                 <td><span class="badge badge-emerald">86.8%</span></td>
-                <td><b style="color:var(--text-muted);">3 vụ</b></td>
-                <td><button class="btn btn-secondary btn-sm" onclick="filterDiscrepancy('Chuyển làn')">Xem 3 vụ</button></td>
+                <td><b style="color:var(--text-muted);">3 vụ lệch</b></td>
+                <td><span class="badge badge-slate">Đạt chuẩn</span></td>
+                <td><button class="btn btn-secondary btn-sm" onclick="filterDiscrepancy('Chuyển làn')">Xem 3 vụ lệch</button></td>
               </tr>
               <tr>
                 <td><b>Đâm đuôi (Rear-end)</b></td>
                 <td>28 vụ</td>
-                <td><span class="badge badge-emerald">96.4%</span></td>
-                <td><span class="badge badge-emerald">96.4%</span></td>
+                <td><b style="color:var(--emerald);">26 vụ</b></td>
                 <td><span class="badge badge-emerald">92.9%</span></td>
-                <td><b style="color:var(--emerald);">1 vụ</b></td>
-                <td><button class="btn btn-secondary btn-sm" onclick="filterDiscrepancy('Đâm đuôi')">Xem 1 vụ</button></td>
+                <td><b style="color:var(--emerald);">1 vụ lệch</b></td>
+                <td><span class="badge badge-slate">Xuất sắc</span></td>
+                <td><button class="btn btn-secondary btn-sm" onclick="filterDiscrepancy('Đâm đuôi')">Xem 1 vụ lệch</button></td>
               </tr>
               <tr>
                 <td><b>Vòng xuyến / Đảo giao thông</b></td>
                 <td>14 vụ</td>
-                <td><span class="badge badge-amber">78.6%</span></td>
-                <td><span class="badge badge-amber">78.6%</span></td>
+                <td><b style="color:var(--emerald);">10 vụ</b></td>
                 <td><span class="badge badge-amber">71.4%</span></td>
-                <td><b style="color:var(--amber);">2 vụ</b></td>
-                <td><button class="btn btn-secondary btn-sm" onclick="filterDiscrepancy('Vòng xuyến')">Xem 2 vụ</button></td>
+                <td><b style="color:var(--amber);">2 vụ lệch</b></td>
+                <td><span class="badge badge-amber">Cần tạo quy tắc</span></td>
+                <td><button class="btn btn-primary btn-sm" onclick="filterDiscrepancy('Vòng xuyến')">Xem 2 vụ lệch</button></td>
               </tr>
               <tr>
                 <td><b>Người đi bộ / Xe đạp băng đường</b></td>
                 <td>16 vụ</td>
-                <td><span class="badge badge-emerald">93.8%</span></td>
-                <td><span class="badge badge-emerald">93.8%</span></td>
+                <td><b style="color:var(--emerald);">14 vụ</b></td>
                 <td><span class="badge badge-emerald">87.5%</span></td>
-                <td><b style="color:var(--text-muted);">0 vụ</b></td>
-                <td><button class="btn btn-secondary btn-sm" disabled style="opacity:0.5;">0 vụ lệch</button></td>
+                <td><b style="color:var(--text-muted);">0 vụ lệch</b></td>
+                <td><span class="badge badge-slate">Ổn định</span></td>
+                <td><button class="btn btn-secondary btn-sm" disabled style="opacity:0.4;">0 vụ lệch</button></td>
               </tr>
             </tbody>
           </table>
@@ -1167,7 +1096,7 @@
     </section>
 
     <!-- ================= TAB 2: KIỂM TRA KẾT QUẢ KHÁC NHAU (RÀ SOÁT KHÁC BIỆT) ================= -->
-    <section id="tab-discrepancy" class="tab-pane">
+        <section id="tab-discrepancy" class="tab-pane">
       <div class="screen-header">
         <div>
           <div class="screen-kicker">
@@ -1175,14 +1104,14 @@
             <span>•</span>
             <span>Rà soát khác biệt</span>
           </div>
-          <h1 class="screen-title">Kiểm tra vụ việc có kết quả phân tích khác nhau</h1>
+          <h1 class="screen-title">Danh sách vụ việc có khác biệt giữa AI và Điều tra viên</h1>
           <p class="screen-desc">
-            Reviewer mở các vụ việc mà <strong>Routing</strong> và <strong>Knowledge Base</strong> đưa ra mẫu xác định tỷ lệ lỗi khác nhau để tìm nguyên nhân, ghi nhận tình huống và tạo đề xuất chuẩn hóa quy tắc.
+            Xem lại các vụ việc mà Điều tra viên đã chỉnh sửa lại mẫu chart hoặc tỷ lệ lỗi so với gợi ý ban đầu của AI để tìm nguyên nhân và tạo quy tắc bổ sung.
           </p>
         </div>
         <div style="display:flex; gap:10px;">
           <button class="btn btn-primary btn-sm" onclick="openCreateProposalModal('auto')">
-            <span>+ Tạo đề xuất quy tắc từ rà soát</span>
+            <span>+ Tạo quy tắc từ rà soát</span>
           </button>
         </div>
       </div>
@@ -1200,33 +1129,31 @@
           <option value="Đâm đuôi">Đâm đuôi</option>
         </select>
         <select class="filter-select" id="filter-disc-diff" onchange="filterDiscrepancyTable()">
-          <option value="">Mức độ chênh lệch: Tất cả</option>
-          <option value="diff-model">Khác mẫu biểu đồ KNIA (Mẫu khác nhau)</option>
-          <option value="diff-ratio">Cùng mẫu nhưng lệch tỷ lệ lỗi ≥ 15%</option>
+          <option value="">Tất cả loại chênh lệch</option>
+          <option value="diff-model">Khác mẫu Chart</option>
+          <option value="diff-ratio">Lệch tỷ lệ lỗi (&gt;10%)</option>
         </select>
         <select class="filter-select" id="filter-disc-status" onchange="filterDiscrepancyTable()">
-          <option value="">Trạng thái rà soát: Tất cả</option>
-          <option value="pending">Chưa rà soát (8)</option>
-          <option value="investigated">Đã tìm ra nguyên nhân (4)</option>
-          <option value="proposed">Đã tạo đề xuất quy tắc (2)</option>
+          <option value="">Tất cả trạng thái</option>
+          <option value="pending">Chưa rà soát</option>
+          <option value="investigated">Đang xem xét</option>
+          <option value="proposed">Đã tạo quy tắc</option>
         </select>
       </div>
 
-      <!-- Discrepancy Table -->
+      <!-- Discrepancy Table: Clean 2-Way Comparison (AI vs Investigator) -->
       <div class="panel-box">
         <div class="table-responsive">
           <table class="data-table" id="discrepancy-table">
             <thead>
               <tr>
-                <th>Mã vụ việc</th>
-                <th>Loại tình huống</th>
-                <th>Kết quả Routing</th>
-                <th>Kết quả Knowledge Base</th>
-                <th>AI Lần đầu</th>
-                <th>Điều tra viên chốt</th>
-                <th>Chênh lệch &amp; Nguyên nhân</th>
-                <th>Trạng thái</th>
-                <th>Thao tác</th>
+                <th style="min-width:140px;">Mã vụ việc</th>
+                <th style="min-width:180px;">Loại tình huống</th>
+                <th style="min-width:130px;">AI Đề xuất</th>
+                <th style="min-width:140px;">Điều tra viên chốt</th>
+                <th>Chênh lệch &amp; Lý do con người sửa</th>
+                <th style="min-width:110px;">Trạng thái</th>
+                <th style="min-width:130px;">Thao tác</th>
               </tr>
             </thead>
             <tbody>
@@ -1242,29 +1169,23 @@
                 </td>
                 <td>
                   <span class="badge badge-primary">Chart 112</span>
-                  <div style="font-size:11.5px; font-weight:700;">70 : 30</div>
-                </td>
-                <td>
-                  <span class="badge badge-emerald">Chart 114</span>
-                  <div style="font-size:11.5px; font-weight:700;">60 : 40</div>
-                </td>
-                <td>
-                  <span class="badge badge-purple">Chart 112</span>
-                  <div style="font-size:11.5px;">70 : 30</div>
+                  <div style="font-size:12px; font-weight:700; color:#fff; margin-top:3px;">70 : 30</div>
                 </td>
                 <td>
                   <span class="badge badge-amber">Chart 114</span>
-                  <div style="font-size:11.5px; font-weight:800; color:var(--amber);">55 : 45</div>
+                  <div style="font-size:12px; font-weight:800; color:var(--amber); margin-top:3px;">55 : 45</div>
                 </td>
                 <td>
-                  <span class="badge badge-rose">Khác mẫu (112 vs 114)</span>
-                  <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Lời khai: xe B đã vào giao lộ trước, đường lớn hơn</div>
+                  <span class="badge badge-rose">Đổi mẫu (112 ➔ 114)</span>
+                  <div style="font-size:11.5px; color:var(--text-muted); margin-top:3px;">
+                    Điều tra viên đổi sang Chart 114 do lời khai xe B đã vào giao lộ trước, lòng đường lớn hơn 1.5 lần.
+                  </div>
                 </td>
                 <td>
                   <span class="badge badge-rose">Chưa rà soát</span>
                 </td>
                 <td>
-                  <button class="btn btn-cyan btn-sm" onclick="inspectDiscrepancy('AMS-2026-8821')">Chi tiết &amp; Tạo đề xuất</button>
+                  <button class="btn btn-cyan btn-sm" onclick="inspectDiscrepancy('AMS-2026-8821')">Chi tiết &amp; Tạo quy tắc</button>
                 </td>
               </tr>
 
@@ -1280,29 +1201,23 @@
                 </td>
                 <td>
                   <span class="badge badge-primary">Chart 252</span>
-                  <div style="font-size:11.5px; font-weight:700;">70 : 30</div>
-                </td>
-                <td>
-                  <span class="badge badge-emerald">Chart 252</span>
-                  <div style="font-size:11.5px; font-weight:700;">80 : 20</div>
-                </td>
-                <td>
-                  <span class="badge badge-purple">Chart 252</span>
-                  <div style="font-size:11.5px;">75 : 25</div>
+                  <div style="font-size:12px; font-weight:700; color:#fff; margin-top:3px;">70 : 30</div>
                 </td>
                 <td>
                   <span class="badge badge-amber">Chart 252</span>
-                  <div style="font-size:11.5px; font-weight:800; color:var(--amber);">85 : 15</div>
+                  <div style="font-size:12px; font-weight:800; color:var(--amber); margin-top:3px;">85 : 15</div>
                 </td>
                 <td>
-                  <span class="badge badge-amber">Lệch +15%</span>
-                  <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Xe A bật xi nhan muộn &lt;30m trước khi tạt đầu</div>
+                  <span class="badge badge-amber">Lệch +15% lỗi</span>
+                  <div style="font-size:11.5px; color:var(--text-muted); margin-top:3px;">
+                    Cùng Chart 252 nhưng điều tra viên tăng 15% lỗi xe A do bật xi nhan muộn &lt;30m trước khi tạt đầu.
+                  </div>
                 </td>
                 <td>
-                  <span class="badge badge-amber">Đã tìm nguyên nhân</span>
+                  <span class="badge badge-amber">Đang xem xét</span>
                 </td>
                 <td>
-                  <button class="btn btn-cyan btn-sm" onclick="inspectDiscrepancy('AMS-2026-8794')">Chi tiết &amp; Tạo đề xuất</button>
+                  <button class="btn btn-cyan btn-sm" onclick="inspectDiscrepancy('AMS-2026-8794')">Chi tiết &amp; Tạo quy tắc</button>
                 </td>
               </tr>
 
@@ -1318,29 +1233,23 @@
                 </td>
                 <td>
                   <span class="badge badge-primary">Chart 311</span>
-                  <div style="font-size:11.5px; font-weight:700;">40 : 60</div>
-                </td>
-                <td>
-                  <span class="badge badge-emerald">Chart 314</span>
-                  <div style="font-size:11.5px; font-weight:700;">20 : 80</div>
-                </td>
-                <td>
-                  <span class="badge badge-purple">Chart 311</span>
-                  <div style="font-size:11.5px;">40 : 60</div>
+                  <div style="font-size:12px; font-weight:700; color:#fff; margin-top:3px;">40 : 60</div>
                 </td>
                 <td>
                   <span class="badge badge-amber">Chart 314</span>
-                  <div style="font-size:11.5px; font-weight:800; color:var(--amber);">20 : 80</div>
+                  <div style="font-size:12px; font-weight:800; color:var(--amber); margin-top:3px;">20 : 80</div>
                 </td>
                 <td>
-                  <span class="badge badge-rose">Khác mẫu (311 vs 314)</span>
-                  <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Xe A đã hoàn thành 2/3 vòng xuyến, ưu tiên tuyệt đối</div>
+                  <span class="badge badge-rose">Đổi mẫu (311 ➔ 314)</span>
+                  <div style="font-size:11.5px; color:var(--text-muted); margin-top:3px;">
+                    Xe A đã hoàn thành 2/3 vòng xuyến, điều tra viên xác định được ưu tiên tuyệt đối.
+                  </div>
                 </td>
                 <td>
-                  <span class="badge badge-emerald">Đã có đề xuất #PR-041</span>
+                  <span class="badge badge-emerald">Đã có quy tắc #R-041</span>
                 </td>
                 <td>
-                  <button class="btn btn-secondary btn-sm" onclick="inspectDiscrepancy('AMS-2026-8650')">Xem đề xuất</button>
+                  <button class="btn btn-secondary btn-sm" onclick="inspectDiscrepancy('AMS-2026-8650')">Xem chi tiết</button>
                 </td>
               </tr>
 
@@ -1356,29 +1265,23 @@
                 </td>
                 <td>
                   <span class="badge badge-primary">Chart 103</span>
-                  <div style="font-size:11.5px; font-weight:700;">80 : 20</div>
-                </td>
-                <td>
-                  <span class="badge badge-emerald">Chart 105</span>
-                  <div style="font-size:11.5px; font-weight:700;">100 : 0</div>
-                </td>
-                <td>
-                  <span class="badge badge-purple">Chart 103</span>
-                  <div style="font-size:11.5px;">80 : 20</div>
+                  <div style="font-size:12px; font-weight:700; color:#fff; margin-top:3px;">80 : 20</div>
                 </td>
                 <td>
                   <span class="badge badge-amber">Chart 105</span>
-                  <div style="font-size:11.5px; font-weight:800; color:var(--amber);">90 : 10</div>
+                  <div style="font-size:12px; font-weight:800; color:var(--amber); margin-top:3px;">100 : 0</div>
                 </td>
                 <td>
-                  <span class="badge badge-rose">Khác mẫu (103 vs 105)</span>
-                  <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Biển báo phụ cho phép rẽ phải khi đèn đỏ nhưng phải nhường</div>
+                  <span class="badge badge-rose">Đổi mẫu (103 ➔ 105)</span>
+                  <div style="font-size:11.5px; color:var(--text-muted); margin-top:3px;">
+                    Điều tra viên xác định giao lộ cấm rẽ phải khi đèn đỏ, xe A chịu 100% lỗi thay vì 80%.
+                  </div>
                 </td>
                 <td>
                   <span class="badge badge-rose">Chưa rà soát</span>
                 </td>
                 <td>
-                  <button class="btn btn-cyan btn-sm" onclick="inspectDiscrepancy('AMS-2026-8512')">Chi tiết &amp; Tạo đề xuất</button>
+                  <button class="btn btn-cyan btn-sm" onclick="inspectDiscrepancy('AMS-2026-8512')">Chi tiết &amp; Tạo quy tắc</button>
                 </td>
               </tr>
             </tbody>
@@ -1894,11 +1797,11 @@
   </main>
 
   <!-- ================= MODAL: DISCREPANCY INSPECTOR (SO SÁNH CHI TIẾT & TẠO ĐỀ XUẤT) ================= -->
-  <div class="modal-backdrop" id="modal-discrepancy" onclick="if(event.target===this) closeModal('modal-discrepancy')">
-    <div class="modal-container">
+    <div class="modal-backdrop" id="modal-discrepancy" onclick="if(event.target===this) closeModal('modal-discrepancy')">
+    <div class="modal-container" style="max-width:850px;">
       <div class="modal-header">
         <div>
-          <span class="badge badge-rose" style="margin-bottom:4px;">Rà soát khác biệt phân tích</span>
+          <span class="badge badge-rose" style="margin-bottom:4px;">Rà soát khác biệt kết quả</span>
           <div class="modal-title" id="modal-disc-case-id">Vụ việc #AMS-2026-8821</div>
         </div>
         <button class="modal-close" onclick="closeModal('modal-discrepancy')">✕</button>
@@ -1906,71 +1809,45 @@
 
       <div class="modal-body">
         <div style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">
-          <strong>Tình huống:</strong> Va chạm tại ngã tư không có đèn tín hiệu giữa Xe ô tô con A (rẽ trái từ đường nhánh) và Xe mô tô B (đi thẳng trên trục đường chính).
+          <strong>Bối cảnh vụ việc:</strong> Va chạm tại ngã tư không có đèn tín hiệu giữa Xe ô tô con A (rẽ trái từ đường nhánh) và Xe mô tô B (đi thẳng trên trục đường chính).
         </div>
 
-        <!-- 4-Column Side-by-Side Comparison -->
-        <div class="compare-grid">
-          <!-- Col 1: Routing -->
-          <div class="compare-card conflict">
-            <div class="compare-source">
-              <span>1. Routing Model</span>
-              <span class="badge badge-primary">Thuật toán</span>
+        <!-- 2-Column Side-by-Side Comparison: AI vs Investigator -->
+        <div class="compare-grid" style="grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:20px;">
+          <!-- Col 1: AI Proposal -->
+          <div class="compare-card conflict" style="padding:16px; border-radius:10px;">
+            <div class="compare-source" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <span style="font-weight:700; color:#38bdf8; font-size:14px;">🤖 1. AI Đề Xuất (Lần đầu)</span>
+              <span class="badge badge-primary">Mô hình AI</span>
             </div>
-            <div class="compare-chart">Chart KNIA 112</div>
-            <div class="compare-fault">Tỷ lệ: 70 : 30</div>
-            <div class="compare-reason">
-              Nhận diện ngã tư đồng cấp bình đẳng, xe rẽ trái chịu 70% lỗi cơ bản.
-            </div>
-          </div>
-
-          <!-- Col 2: Knowledge Base -->
-          <div class="compare-card match">
-            <div class="compare-source">
-              <span>2. Knowledge Base</span>
-              <span class="badge badge-emerald">Quy chuẩn</span>
-            </div>
-            <div class="compare-chart">Chart KNIA 114</div>
-            <div class="compare-fault">Tỷ lệ: 60 : 40</div>
-            <div class="compare-reason">
-              Khớp đường có lòng đường rộng hơn từ 1.5 lần, chuyển sang mẫu đường ưu tiên.
+            <div class="compare-chart" style="font-size:18px; font-weight:800; color:#fff; margin-bottom:6px;">Chart KNIA 112</div>
+            <div class="compare-fault" style="font-size:16px; font-weight:700; color:var(--cyan); margin-bottom:10px;">Tỷ lệ lỗi: 70% : 30%</div>
+            <div class="compare-reason" style="font-size:12px; color:var(--text-muted); line-height:1.5;">
+              AI quét video camera hành trình nhận diện đây là ngã tư đồng cấp bình đẳng; xác định xe con A rẽ trái nên áp dụng mẫu Chart 112 với tỷ lệ 70:30.
             </div>
           </div>
 
-          <!-- Col 3: First AI -->
-          <div class="compare-card conflict">
-            <div class="compare-source">
-              <span>3. AI Lần Đầu</span>
-              <span class="badge badge-purple">Thị giác AI</span>
+          <!-- Col 2: Investigator Final -->
+          <div class="compare-card match" style="padding:16px; border-radius:10px; border-color:rgba(245,158,11,0.5); background:rgba(245,158,11,0.06);">
+            <div class="compare-source" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <span style="font-weight:700; color:var(--amber); font-size:14px;">👤 2. Điều Tra Viên (Chốt)</span>
+              <span class="badge badge-amber">Kết luận cuối</span>
             </div>
-            <div class="compare-chart">Chart KNIA 112</div>
-            <div class="compare-fault">Tỷ lệ: 70 : 30</div>
-            <div class="compare-reason">
-              Trích xuất keyframe không nhìn thấy rõ bề rộng mặt đường nhánh do góc quay hẹp.
-            </div>
-          </div>
-
-          <!-- Col 4: Investigator Final -->
-          <div class="compare-card match" style="border-color:rgba(245,158,11,0.5); background:rgba(245,158,11,0.06);">
-            <div class="compare-source">
-              <span style="color:var(--amber);">4. Điều Tra Viên</span>
-              <span class="badge badge-amber">Kết luận</span>
-            </div>
-            <div class="compare-chart" style="color:var(--amber);">Chart KNIA 114*</div>
-            <div class="compare-fault" style="color:var(--amber);">Tỷ lệ: 55 : 45</div>
-            <div class="compare-reason">
-              Chọn Chart 114 + áp dụng giảm nhẹ -5% cho xe máy do đã vào giao lộ trước.
+            <div class="compare-chart" style="font-size:18px; font-weight:800; color:var(--amber); margin-bottom:6px;">Chart KNIA 114*</div>
+            <div class="compare-fault" style="font-size:16px; font-weight:700; color:var(--amber); margin-bottom:10px;">Tỷ lệ lỗi: 55% : 45%</div>
+            <div class="compare-reason" style="font-size:12px; color:var(--text-muted); line-height:1.5;">
+              Điều tra viên đổi sang Chart 114 (đường ưu tiên) do đối chiếu lời khai và biên bản công an: đường xe B rộng hơn 1.5 lần, đồng thời giảm -5% lỗi cho xe B vì đã vào giao lộ trước.
             </div>
           </div>
         </div>
 
         <!-- Discrepancy Cause Breakdown -->
         <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:16px;">
-          <h4 style="font-size:13.5px; font-weight:700; color:#fff; margin-bottom:8px;">🔎 Phân tích nguyên nhân chênh lệch từ Reviewer:</h4>
+          <h4 style="font-size:13.5px; font-weight:700; color:#fff; margin-bottom:8px;">🔎 Phân tích chênh lệch &amp; Đề xuất giải pháp:</h4>
           <ul style="font-size:12.5px; color:var(--text-muted); line-height:1.6; padding-left:18px;">
-            <li><strong>Mâu thuẫn phân loại:</strong> Routing Model dựa trên GPS tọa độ ngã tư chưa cập nhật thông tin cấp đường giao thông mới nâng cấp.</li>
-            <li><strong>Yếu tố lời khai bị bỏ qua:</strong> AI lần đầu chỉ quét video mà chưa liên kết đoạn lời khai của tài xế xe máy: <em>"Tôi đã vào giữa giao lộ trước"</em>.</li>
-            <li><strong>Quy tắc cần đề xuất:</strong> Bổ sung quy tắc nhận diện lời khai và liên kết tự động sang Chart 114 có yếu tố điều chỉnh khi có bằng chứng vào giao lộ trước.</li>
+            <li><strong>Chênh lệch:</strong> Đổi mẫu Chart (112 ➔ 114) và chênh lệch <strong>15% tỷ lệ lỗi</strong> giữa AI đề xuất và Điều tra viên chốt.</li>
+            <li><strong>Nguyên nhân:</strong> AI lần đầu chỉ dựa vào camera góc hẹp nên không nhận diện được bề rộng lòng đường lớn hơn, đồng thời chưa đọc dữ liệu lời khai xe máy đã vào giao lộ trước.</li>
+            <li><strong>Hành động cải tiến:</strong> Tạo quy tắc mới để tự động liên kết dữ liệu lời khai cấp đường ưu tiên vào AI, giúp các vụ tương tự tự động chọn đúng Chart 114.</li>
           </ul>
         </div>
       </div>
