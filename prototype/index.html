@@ -13654,255 +13654,923 @@ function renderInternalReportTab(c) {
 
   
   </script>
+<!-- ================= MODERN DESIGN COMMENTS SYSTEM ================= -->
 <style>
-  #design-comments-toggle { position:fixed; right:156px; bottom:20px; z-index:99990; border:0; border-radius:24px; padding:12px 18px; background:#22d3ee; color:#082032; font-weight:700; cursor:pointer; box-shadow:0 5px 24px #0008; }
-  #design-comments { position:fixed; right:20px; bottom:76px; width:min(360px,calc(100vw - 40px)); max-height:70vh; overflow:auto; z-index:99991; padding:16px; border:1px solid #31516b; border-radius:12px; background:#0e1c2c; color:#e2e8f0; box-shadow:0 10px 35px #0009; font:14px/1.45 system-ui,sans-serif; }
-  #design-comments[hidden] { display:none; }
-  #design-comments:has(#dc-form:not([hidden])) > .dc-intro, #design-comments:has(#dc-form:not([hidden])) > .dc-toolbar { display:none; }
-  #design-comments h2 { margin:0 0 8px; font-size:16px; color:#fff; }
-  #design-comments p { margin:7px 0; color:#a9bdce; font-size:12px; }
-  #design-comments button { cursor:pointer; padding:7px 10px; border:1px solid #38546b; border-radius:6px; background:#162b3d; color:#cce7f1; }
-  #design-comments textarea, #design-comments input { width:100%; box-sizing:border-box; padding:8px; margin:8px 0; border:1px solid #38546b; border-radius:6px; background:#081523; color:#fff; font:inherit; }
-  #design-comments textarea { min-height:75px; resize:vertical; }
-  #design-comments .dc-actions { display:flex; gap:6px; flex-wrap:wrap; }
-  #design-comments .dc-item { padding:10px 0; border-top:1px solid #294157; overflow-wrap:anywhere; }
-  #design-comments .dc-item p { white-space:pre-wrap; color:#e2e8f0; font-size:13px; }
-  .dc-note { position:fixed; z-index:99989; font:13px/1.4 system-ui,sans-serif; }
-  .dc-marker { width:22px; height:22px; padding:0; font-size:11px; border:2px solid #fff; border-radius:50%; background:#0891b2; color:#fff; font-weight:700; cursor:grab; touch-action:none; }
-  .dc-detail { display:none; position:absolute; left:0; top:100%; width:240px; max-width:calc(100vw - 44px); max-height:50vh; overflow:auto; padding:12px; border:1px solid #22d3ee; border-radius:9px; background:#10273a; color:#e2e8f0; box-shadow:0 5px 20px #0008; overflow-wrap:anywhere; }
-  .dc-note:not(.dc-closed):hover .dc-detail, .dc-note:not(.dc-closed):focus-within .dc-detail, .dc-note.dc-open .dc-detail { display:block; }
-  .dc-region { display:none; position:absolute; box-sizing:border-box; border:2px dashed #22d3ee; border-radius:5px; background:#22d3ee14; pointer-events:none; }
-  .dc-selection { position:fixed; z-index:99992; box-sizing:border-box; border:2px dashed #22d3ee; background:#22d3ee20; pointer-events:none; }
-  .dc-note:not(.dc-closed):hover .dc-region, .dc-note:not(.dc-closed):focus-within .dc-region, .dc-note.dc-open .dc-region, .dc-note.dc-preview .dc-region { display:block; }
-  .dc-note.dc-dragging .dc-region { display:none; }
-  .dc-note.dc-dragging .dc-detail { display:none; } .dc-note.dc-dragging .dc-marker { cursor:grabbing; }
-  .dc-note.dc-right .dc-detail { left:auto; right:0; } .dc-note.dc-bottom .dc-detail { top:auto; bottom:100%; }
-  .dc-detail strong { color:#fff; } .dc-detail p { white-space:pre-wrap; margin:6px 0 10px; } .dc-detail button { background:none; border:0; color:#67e8f9; cursor:pointer; padding:2px 12px 2px 0; }
-  body.dc-picking, body.dc-picking * { cursor:crosshair !important; }
+  #design-comments-toggle {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 99990;
+    border: 0;
+    border-radius: 28px;
+    padding: 11px 18px;
+    background: linear-gradient(135deg, #06b6d4, #0284c7);
+    color: #04121e;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(6, 182, 212, 0.4), 0 2px 6px rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  #design-comments-toggle:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(6, 182, 212, 0.5);
+  }
+  #design-comments-toggle .dc-badge {
+    background: #04121e;
+    color: #38bdf8;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 10px;
+  }
+  #design-comments {
+    position: fixed;
+    right: 24px;
+    bottom: 80px;
+    width: min(400px, calc(100vw - 32px));
+    max-height: 75vh;
+    overflow-y: auto;
+    z-index: 99991;
+    padding: 16px;
+    border: 1px solid #1e3a5a;
+    border-radius: 12px;
+    background: #09131f;
+    color: #e2e8f0;
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(56, 189, 248, 0.2);
+    font: 13px/1.45 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  }
+  #design-comments[hidden] { display: none; }
+  #design-comments h2 {
+    margin: 0 0 6px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  #design-comments .dc-intro {
+    margin: 4px 0 10px;
+    color: #94a3b8;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+  #design-comments p { margin: 6px 0; }
+  #design-comments button {
+    cursor: pointer;
+    padding: 6px 11px;
+    border: 1px solid #1e3a5a;
+    border-radius: 7px;
+    background: #112236;
+    color: #e0f2fe;
+    font-size: 12px;
+    font-weight: 600;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  #design-comments button:hover {
+    background: #19334f;
+    border-color: #0284c7;
+  }
+  #design-comments .dc-btn-primary {
+    background: #0284c7;
+    border-color: #38bdf8;
+    color: #fff;
+  }
+  #design-comments .dc-btn-primary:hover {
+    background: #0369a1;
+  }
+  #design-comments .dc-btn-danger {
+    color: #f87171;
+    border-color: rgba(248, 113, 113, 0.35);
+  }
+  #design-comments .dc-btn-danger:hover {
+    background: rgba(239, 68, 68, 0.15);
+  }
+  #design-comments textarea, #design-comments input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 10px;
+    margin: 6px 0;
+    border: 1px solid #1e3a5a;
+    border-radius: 7px;
+    background: #060e18;
+    color: #f8fafc;
+    font: inherit;
+    font-size: 12.5px;
+  }
+  #design-comments textarea:focus, #design-comments input:focus {
+    outline: none;
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+  }
+  #design-comments textarea {
+    min-height: 75px;
+    resize: vertical;
+  }
+  #design-comments .dc-actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  #design-comments .dc-list {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 48vh;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  #design-comments .dc-list::-webkit-scrollbar {
+    width: 5px;
+  }
+  #design-comments .dc-list::-webkit-scrollbar-thumb {
+    background: #1e3a5a;
+    border-radius: 4px;
+  }
+  #design-comments .dc-list::-webkit-scrollbar-thumb:hover {
+    background: #0284c7;
+  }
+  #design-comments .dc-item {
+    background: #0f2034;
+    border: 1px solid #1a3754;
+    border-radius: 9px;
+    padding: 9px 11px;
+    position: relative;
+    transition: border-color 0.15s;
+  }
+  #design-comments .dc-item:hover {
+    border-color: #0284c7;
+  }
+  #design-comments .dc-item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  #design-comments .dc-item-title {
+    font-weight: 700;
+    color: #38bdf8;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    word-break: break-word;
+  }
+  #design-comments .dc-item-num {
+    background: #0284c7;
+    color: #fff;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  #design-comments .dc-item-text {
+    font-size: 12px;
+    color: #cbd5e1;
+    white-space: pre-wrap;
+    margin: 4px 0 6px;
+    line-height: 1.4;
+    word-break: break-word;
+  }
+  #design-comments .dc-item-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: #64748b;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding-top: 4px;
+    margin-top: 4px;
+  }
+  #design-comments .dc-item-btns {
+    display: flex;
+    gap: 4px;
+  }
+  #design-comments .dc-item-btns button {
+    padding: 3px 6px;
+    font-size: 11px;
+  }
+  .dc-note {
+    position: absolute;
+    z-index: 99989;
+    font: 13px/1.4 'Inter', system-ui, sans-serif;
+  }
+  .dc-note.dc-hidden { display: none !important; }
+  .dc-pin {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #06b6d4, #0284c7);
+    color: #04121e;
+    font-weight: 800;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(6,182,212,0.5), 0 0 0 2px #fff;
+    transition: transform 0.15s;
+    user-select: none;
+  }
+  .dc-pin:hover {
+    transform: scale(1.18);
+  }
+  .dc-note-body {
+    position: absolute;
+    top: 32px;
+    left: 0;
+    width: 260px;
+    background: #09131f;
+    border: 1px solid #1e3a5a;
+    border-radius: 9px;
+    padding: 10px 12px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.7);
+    color: #e2e8f0;
+    display: none;
+  }
+  .dc-note.dc-open .dc-note-body {
+    display: block;
+  }
+  .dc-note-body h4 {
+    margin: 0 0 4px;
+    font-size: 12.5px;
+    color: #38bdf8;
+    font-weight: 700;
+  }
+  .dc-note-body p {
+    margin: 0 0 8px;
+    font-size: 12px;
+    color: #cbd5e1;
+    line-height: 1.4;
+    white-space: pre-wrap;
+  }
+
+  /* Region / Selection Boxes */
+  .dc-region {
+    position: absolute;
+    border: 2px dashed #38bdf8;
+    background: rgba(56, 189, 248, 0.12);
+    border-radius: 6px;
+    pointer-events: none;
+    z-index: 99988;
+  }
+  #dc-drag-box {
+    position: fixed;
+    border: 2px dashed #06b6d4;
+    background: rgba(6, 182, 212, 0.2);
+    border-radius: 6px;
+    pointer-events: none;
+    z-index: 99999;
+    display: none;
+  }
+  #dc-hover-inspector {
+    position: fixed;
+    border: 2px solid #06b6d4;
+    background: rgba(6, 182, 212, 0.12);
+    border-radius: 4px;
+    pointer-events: none;
+    z-index: 99998;
+    display: none;
+    transition: all 0.05s ease-out;
+  }
+  #dc-hover-label {
+    position: absolute;
+    bottom: calc(100% + 4px);
+    left: 0;
+    background: #04121e;
+    color: #38bdf8;
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    border: 1px solid #0284c7;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  body.dc-picking {
+    cursor: crosshair !important;
+  }
+  body.dc-picking * {
+    cursor: crosshair !important;
+  }
 </style>
-<button id="design-comments-toggle" type="button" aria-expanded="false">💬 Ghi chú nghiệp vụ</button>
-<aside id="design-comments" hidden aria-label="Ghi chú nghiệp vụ">
-  <h2>Ghi chú nghiệp vụ</h2>
-  <p class="dc-intro">Kéo để khoanh vùng hoặc nhấn chọn vị trí, rồi nhập nội dung.</p>
-  <p id="dc-sync-status" role="status">Đang kết nối ghi chú chung…</p>
-  <div class="dc-actions dc-toolbar"><button id="dc-pick" type="button">＋ Chọn vị trí</button><button id="dc-export" type="button">Xuất Markdown</button></div>
-  <div id="dc-form" hidden><p id="dc-location"></p><input id="dc-title" aria-label="Tiêu đề ghi chú" placeholder="Tiêu đề"><textarea id="dc-text" aria-label="Giải thích" placeholder="Giải thích nghiệp vụ..."></textarea><div class="dc-actions"><button id="dc-redraw" type="button" hidden>Vẽ lại vùng</button><button id="dc-save" type="button">Lưu ghi chú</button><button id="dc-cancel" type="button">Hủy</button></div></div>
+
+<button id="design-comments-toggle" type="button" aria-expanded="false">
+  <span>💬 Ghi chú thiết kế</span>
+  <span class="dc-badge" id="dc-count-badge">0</span>
+</button>
+
+<aside id="design-comments" hidden aria-label="Ghi chú thiết kế">
+  <h2>
+    <span>Ghi chú thiết kế UI/UX</span>
+    <button type="button" id="dc-close-panel" style="padding:2px 8px; font-size:14px; background:none; border:none; color:#94a3b8; cursor:pointer;" title="Đóng panel">✕</button>
+  </h2>
+  <p class="dc-intro">
+    Kéo chuột để khoanh vùng chữ nhật, hoặc di chuột đến tiêu đề/nút/dòng chữ cụ thể để gắn ghi chú chính xác.
+  </p>
+
+  <div class="dc-actions dc-toolbar" id="dc-main-toolbar" style="margin-top:10px;">
+    <button id="dc-pick" class="dc-btn-primary" type="button">＋ Thêm ghi chú</button>
+    <button id="dc-export-md" type="button" title="Tải file Markdown chứa toàn bộ ghi chú">Xuất Markdown</button>
+    <button id="dc-export-json" type="button" title="Tải JSON để gửi AI sửa">Tải JSON</button>
+    <button id="dc-clear-all" class="dc-btn-danger" type="button" title="Xóa toàn bộ ghi chú đã sửa">Xóa tất cả</button>
+  </div>
+
+  <!-- Form nhập comment -->
+  <div id="dc-form" hidden style="margin-top:10px; background:#0f2034; padding:12px; border-radius:8px; border:1px solid #1e3a5a;">
+    <div style="font-size:11px; color:#94a3b8; margin-bottom:4px;" id="dc-location-label">Component được chọn:</div>
+    <input id="dc-title" aria-label="Tên component" placeholder="Tên component / vị trí..." style="font-weight:600; color:#38bdf8;">
+    <textarea id="dc-text" aria-label="Góp ý thiết kế" placeholder="Mô tả chi tiết sửa, xóa hoặc đổi giao diện component này..."></textarea>
+    <div class="dc-actions" style="margin-top:6px;">
+      <button id="dc-save" class="dc-btn-primary" type="button">Lưu ghi chú</button>
+      <button id="dc-redraw" type="button" hidden>Chọn lại vị trí</button>
+      <button id="dc-cancel" type="button">Hủy</button>
+    </div>
+  </div>
+
+  <!-- Danh sách comment -->
+  <div class="dc-list" id="dc-notes-list">
+    <!-- Render dynamically -->
+  </div>
 </aside>
+
+<!-- Inspector Elements -->
+<div id="dc-drag-box"></div>
+<div id="dc-hover-inspector">
+  <span id="dc-hover-label">Vùng chọn</span>
+</div>
+
 <script>
 (() => {
-  const key = 'ams-b2b-design-comments-v1';
+  const key = 'ams-b2b-prototype-comments-v1';
   const panel = document.getElementById('design-comments');
   const toggle = document.getElementById('design-comments-toggle');
+  const countBadge = document.getElementById('dc-count-badge');
   const form = document.getElementById('dc-form');
   const input = document.getElementById('dc-text');
   const titleInput = document.getElementById('dc-title');
+  const listContainer = document.getElementById('dc-notes-list');
+  const dragBox = document.getElementById('dc-drag-box');
+  const hoverInspector = document.getElementById('dc-hover-inspector');
+  const hoverLabel = document.getElementById('dc-hover-label');
+
   let notes = [];
-  try { notes = JSON.parse(localStorage.getItem(key) || '[]'); if (!Array.isArray(notes)) notes = []; } catch (_) {}
+  try {
+    notes = JSON.parse(localStorage.getItem(key) || '[]');
+    if (!Array.isArray(notes)) notes = [];
+  } catch (_) {}
+
   let picking = false, target = null, editing = null, openNoteId = null, redrawing = false;
   const endpoint = 'https://ktiuyqtvspdreyupxuve.supabase.co/rest/v1/prototype_comments';
   const apiKey = 'sb_publishable_GPRgAzD7HnW6t_meh9QfXA_rQMN12MD';
-  const queueKey = `${key}-pending`, migratedKey = `${key}-shared-migrated`;
-  let pending = [], previous = new Map(notes.map(note => [String(note.id), JSON.stringify(note)])), syncing = false;
-  try { pending = JSON.parse(localStorage.getItem(queueKey) || '[]'); if (!Array.isArray(pending)) pending = []; } catch (_) {}
-  const status = message => { document.getElementById('dc-sync-status').textContent = message; };
+  const queueKey = `${key}-pending`;
+  let pending = [];
+  try {
+    pending = JSON.parse(localStorage.getItem(queueKey) || '[]');
+    if (!Array.isArray(pending)) pending = [];
+  } catch (_) {}
+
+  let previous = new Map(notes.map(n => [String(n.id), JSON.stringify(n)]));
+  let syncing = false;
+
   const request = async (url, options = {}) => {
-    const response = await fetch(url, { ...options, headers: { apikey:apiKey, 'Content-Type':'application/json', ...(options.headers || {}) } });
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        apikey: apiKey,
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+        ...(options.headers || {})
+      }
+    });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     return response;
   };
+
   const sync = async () => {
     if (syncing) return;
     syncing = true;
     try {
-      if (!localStorage.getItem(migratedKey)) {
-        const initial = notes.map(note => ({id:String(note.id), data:note}));
-        if (initial.length) await request(`${endpoint}?on_conflict=id`, {method:'POST', headers:{Prefer:'resolution=ignore-duplicates'}, body:JSON.stringify(initial)});
-        localStorage.setItem(migratedKey, '1');
-      }
       while (pending.length) {
-        const operation = pending[0];
-        if (operation.data) await request(`${endpoint}?on_conflict=id`, {method:'POST', headers:{Prefer:'resolution=merge-duplicates'}, body:JSON.stringify({id:operation.id, data:operation.data})});
-        else await request(`${endpoint}?id=eq.${encodeURIComponent(operation.id)}`, {method:'DELETE'});
-        pending.shift(); localStorage.setItem(queueKey, JSON.stringify(pending));
+        const op = pending[0];
+        if (op.data) {
+          await request(`${endpoint}?on_conflict=id`, {
+            method: 'POST',
+            headers: { Prefer: 'resolution=merge-duplicates' },
+            body: JSON.stringify({ id: String(op.id), data: op.data })
+          });
+        } else {
+          await request(`${endpoint}?id=eq.${encodeURIComponent(op.id)}`, { method: 'DELETE' });
+        }
+        pending.shift();
+        localStorage.setItem(queueKey, JSON.stringify(pending));
       }
-      const rows = await (await request(`${endpoint}?select=id,data&order=id.asc`)).json();
-      if (!pending.length && !picking && form.hidden) {
-        notes = rows.map(row => row.data).filter(note => note && note.id != null);
-        previous = new Map(notes.map(note => [String(note.id), JSON.stringify(note)]));
-        localStorage.setItem(key, JSON.stringify(notes));
-        draw();
-      }
-      status('Đã đồng bộ ghi chú chung.');
-    } catch (_) { status('Chưa kết nối được ghi chú chung. Thay đổi đang lưu tạm trên trình duyệt.'); }
-    finally { syncing = false; }
-  };
-  const save = () => {
-    try {
-      const current = new Map(notes.map(note => [String(note.id), JSON.stringify(note)]));
-      for (const [id, data] of current) if (previous.get(id) !== data) pending.push({id, data:JSON.parse(data)});
-      for (const id of previous.keys()) if (!current.has(id)) pending.push({id, data:null});
-      localStorage.setItem(queueKey, JSON.stringify(pending));
-      localStorage.setItem(key, JSON.stringify(notes)); previous = current;
-      status('Đang đồng bộ ghi chú…'); void sync(); return true;
-    } catch (_) { alert('Không thể lưu ghi chú trên trình duyệt này.'); return false; }
-  };
-  const screen = () => document.querySelector('.view-screen.active');
-  const currentTab = () => { const view = STATE.cases[STATE.currentCaseId]?.analysisView; return view === 'reasoning' ? 'charts' : view; };
-  const currentVideoMode = () => STATE.cases[STATE.currentCaseId]?.videoMode || 'single';
-  const commentVideoMode = () => screen()?.id === 'SCR-CASE-DETAIL' ? currentVideoMode() : null;
-  const commentTab = el => screen()?.id === 'SCR-CASE-DETAIL' && el.closest('#col-center-analysis') && !el.closest('#analysis-steps') ? currentTab() : null;
-  const activeRoot = () => [...document.querySelectorAll('.modal-backdrop[id]')]
-    .filter(el => el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden')
-    .sort((a, b) => (parseInt(getComputedStyle(a).zIndex, 10) || 0) - (parseInt(getComputedStyle(b).zIndex, 10) || 0))
-    .at(-1) || screen();
-  const commentRoot = el => el.closest('.modal-backdrop[id]') || (screen()?.contains(el) ? screen() : null);
-  const pathFor = (el, root) => {
-    const path = [];
-    while (el && el !== root) { const parent = el.parentElement; if (!parent) return ''; path.unshift([...parent.children].indexOf(el)); el = parent; }
-    return el === root ? path.join('.') : '';
-  };
-  const resolve = note => { let el = document.getElementById(note.rootId || note.screen); if (!el || !el.getClientRects().length || getComputedStyle(el).visibility === 'hidden') return null; for (const index of note.path.split('.').filter(Boolean)) { el = el.children[Number(index)]; if (!el) return null; } return el; };
-  const visibleScope = el => {
-    if (!el || !el.getClientRects().length || getComputedStyle(el).visibility === 'hidden') return false;
-    for (let parent = el.parentElement; parent; parent = parent.parentElement) {
-      if (parent.tagName === 'DETAILS' && !parent.open && !parent.querySelector(':scope > summary')?.contains(el)) return false;
-      if (parent.hidden || getComputedStyle(parent).display === 'none' || getComputedStyle(parent).visibility === 'hidden') return false;
-    }
-    return true;
-  };
-  const draw = () => {
-    document.querySelectorAll('.dc-note').forEach(el => el.remove());
-    notes.forEach((note, index) => {
-      if (screen()?.id !== note.screen || (note.rootId || note.screen) !== activeRoot()?.id) return;
-      if (note.tab && note.tab !== currentTab()) return;
-      if (note.videoMode && note.videoMode !== currentVideoMode()) return;
-      const el = resolve(note); if (!visibleScope(el)) return;
-      const selectedRegion = editing === note.id && target?.region ? target.region : note.region;
-      const scope = selectedRegion?.scopePath != null ? resolve({rootId:selectedRegion.rootId, path:selectedRegion.scopePath}) : null;
-      if (selectedRegion?.scopePath != null && !visibleScope(scope)) return;
-      const rect = el.getBoundingClientRect(); if (rect.bottom < 0 || rect.top > innerHeight || rect.right < 0 || rect.left > innerWidth) return;
-      const item = document.createElement('div'); item.className = 'dc-note';
-      item.classList.toggle('dc-open', openNoteId === note.id);
-      item.classList.toggle('dc-preview', editing === note.id && !form.hidden);
-      const x = Math.max(0, Math.min(innerWidth - 22, rect.left + rect.width * (note.x ?? 0)));
-      const y = Math.max(0, Math.min(innerHeight - 22, rect.top + rect.height * (note.y ?? 0)));
-      item.style.left = `${x}px`; item.style.top = `${y}px`;
-      const region = document.createElement('div'); region.className = 'dc-region'; region.setAttribute('aria-hidden', 'true');
-      const regionRoot = selectedRegion && document.getElementById(selectedRegion.rootId);
-      const base = (scope || regionRoot)?.getBoundingClientRect();
-      const box = base ? {left:base.left + selectedRegion.left * (selectedRegion.relative ? base.width : 1), top:base.top + selectedRegion.top * (selectedRegion.relative ? base.height : 1), width:selectedRegion.width * (selectedRegion.relative ? base.width : 1), height:selectedRegion.height * (selectedRegion.relative ? base.height : 1)} : rect;
-      Object.assign(region.style, { left:`${box.left - x}px`, top:`${box.top - y}px`, width:`${box.width}px`, height:`${box.height}px` });
-      item.classList.toggle('dc-right', x + 264 > innerWidth); item.classList.toggle('dc-bottom', y > innerHeight / 2);
-      const marker = document.createElement('button'); marker.type = 'button'; marker.className = 'dc-marker'; marker.textContent = index + 1; marker.setAttribute('aria-label', `Xem ghi chú ${index + 1}`);
-      marker.setAttribute('aria-expanded', String(openNoteId === note.id));
-      marker.onclick = event => {
-        event.stopPropagation();
-        const wasOpen = openNoteId === note.id;
-        document.querySelectorAll('.dc-note.dc-open').forEach(el => { el.classList.remove('dc-open'); el.querySelector('.dc-marker')?.setAttribute('aria-expanded', 'false'); });
-        openNoteId = wasOpen ? null : note.id;
-        item.classList.toggle('dc-open', !wasOpen); item.classList.toggle('dc-closed', wasOpen);
-        marker.setAttribute('aria-expanded', String(!wasOpen));
-      };
-      item.addEventListener('mouseleave', () => item.classList.remove('dc-closed'));
-      marker.title = 'Kéo để di chuyển ghi chú';
-      marker.addEventListener('pointerdown', event => {
-        if (event.button !== 0) return;
-        const startX = event.clientX, startY = event.clientY, originX = x, originY = y;
-        let moved = false;
-        marker.setPointerCapture(event.pointerId);
-        marker.onpointermove = move => {
-          if (!moved && Math.hypot(move.clientX - startX, move.clientY - startY) < 4) return;
-          moved = true; item.classList.add('dc-dragging');
-          item.style.left = `${Math.max(0, Math.min(innerWidth - 22, originX + move.clientX - startX))}px`;
-          item.style.top = `${Math.max(0, Math.min(innerHeight - 22, originY + move.clientY - startY))}px`;
-        };
-        const finish = end => {
-          marker.onpointermove = marker.onpointerup = marker.onpointercancel = null;
-          item.classList.remove('dc-dragging');
-          if (!moved) return;
-          if (end.type !== 'pointercancel') {
-            item.style.pointerEvents = 'none';
-            const destination = document.elementFromPoint(end.clientX, end.clientY);
-            const root = destination && commentRoot(destination);
-            item.style.pointerEvents = '';
-            if (root && root === activeRoot() && destination && root.contains(destination)) {
-              const bounds = destination.getBoundingClientRect();
-              Object.assign(note, { screen:screen().id, rootId:root.id, tab:commentTab(destination), videoMode:commentVideoMode(), path:pathFor(destination, root), x:bounds.width ? (end.clientX - bounds.left) / bounds.width : 0, y:bounds.height ? (end.clientY - bounds.top) / bounds.height : 0 });
-              save();
-            }
-          }
+
+      const res = await request(`${endpoint}?select=*`);
+      if (res && res.ok) {
+        const rows = await res.json();
+        const serverNotes = rows
+          .map(r => r.data)
+          .filter(d => d && (d.page === 'prototype-main' || d.screen || (!d.page && !String(d.id).startsWith('rules_'))));
+        
+        if (JSON.stringify(serverNotes) !== JSON.stringify(notes)) {
+          notes = serverNotes;
+          localStorage.setItem(key, JSON.stringify(notes));
+          renderList();
           draw();
-        };
-        marker.onpointerup = finish; marker.onpointercancel = finish;
-      });
-      const detail = document.createElement('div'); detail.className = 'dc-detail';
-      const title = document.createElement('strong'); title.textContent = note.title || note.label || 'Ghi chú';
-      const text = document.createElement('p'); text.textContent = note.text;
-      const actions = document.createElement('div'); actions.className = 'dc-actions';
-      const edit = document.createElement('button'); edit.textContent = 'Sửa'; edit.onclick = () => { editing = note.id; target = { ...note }; document.getElementById('dc-redraw').hidden = false; titleInput.value = note.title || note.label || ''; input.value = note.text; document.getElementById('dc-location').textContent = `Sửa ghi chú`; form.hidden = false; panel.hidden = false; toggle.setAttribute('aria-expanded', 'true'); titleInput.focus(); };
-      const del = document.createElement('button'); del.textContent = 'Xóa'; del.onclick = () => { if (confirm('Xóa ghi chú này?')) { notes = notes.filter(n => n.id !== note.id); save(); draw(); } };
-      actions.append(edit, del); detail.append(title, text, actions); item.append(region, marker, detail); document.body.append(item);
+        }
+      }
+    } catch (e) {
+      // Offline fallback
+    } finally {
+      syncing = false;
+    }
+  };
+
+  const currentScreenEl = () => {
+    const list = document.getElementById('SCR-CASE-LIST');
+    const detail = document.getElementById('SCR-CASE-DETAIL');
+    const notify = document.getElementById('SCR-CUSTOMER-NOTIFY');
+    const log = document.getElementById('SCR-ACTIVITY-LOG');
+
+    if (detail && !detail.hidden && detail.classList.contains('active')) return detail;
+    if (notify && !notify.hidden && notify.classList.contains('active')) return notify;
+    if (log && !log.hidden && log.classList.contains('active')) return log;
+    if (list && !list.hidden) return list;
+    return document.body;
+  };
+
+  const currentScreenName = () => {
+    const sc = currentScreenEl();
+    if (sc.id === 'SCR-CASE-LIST') return 'Danh sách vụ việc';
+    if (sc.id === 'SCR-CASE-DETAIL') {
+      const caseCode = document.querySelector('.case-code, .header-case-id')?.textContent || '#CS-2026';
+      return `Chi tiết vụ việc (${caseCode.trim()})`;
+    }
+    if (sc.id === 'SCR-CUSTOMER-NOTIFY') return 'Thông báo khách hàng';
+    if (sc.id === 'SCR-ACTIVITY-LOG') return 'Nhật ký hoạt động';
+    return 'Màn hình Prototype';
+  };
+
+  const activeModalEl = () => {
+    const modals = [...document.querySelectorAll('.modal-backdrop, .modal')];
+    return modals.filter(m => {
+      const s = window.getComputedStyle(m);
+      return s.display !== 'none' && s.visibility !== 'hidden' && (m.classList.contains('active') || !m.hidden);
+    }).pop() || null;
+  };
+
+  const getSpecificTextTarget = (el, clientX, clientY) => {
+    if (!el || el === document.body) return null;
+
+    // Check specific text / button / card elements
+    const specificSelector = 'h1, h2, h3, h4, h5, button, label, select, input, .card, .panel, .badge, .tag, table th, table td, tr, .tab-btn, .step-item';
+    const specific = el.closest(specificSelector) || el;
+    const rect = specific.getBoundingClientRect();
+    
+    let label = specific.tagName.toLowerCase();
+    if (['h1','h2','h3','h4'].includes(label)) label = 'Tiêu đề';
+    else if (label === 'button') label = 'Nút bấm';
+    else if (label === 'label') label = 'Nhãn';
+    else if (label === 'input') label = 'Ô nhập';
+    else if (label === 'select') label = 'Menu chọn';
+    else if (specific.classList.contains('card')) label = 'Khối thẻ';
+    else if (specific.classList.contains('panel')) label = 'Bảng dữ liệu';
+    else if (specific.tagName === 'TD' || specific.tagName === 'TH') label = 'Ô bảng';
+    else label = 'Thành phần';
+
+    let textPreview = (specific.textContent || '').trim().replace(/\s+/g, ' ');
+    if (textPreview.length > 40) textPreview = textPreview.slice(0, 37) + '...';
+
+    return {
+      element: specific,
+      rect,
+      label,
+      title: textPreview ? `[${label}] ${textPreview}` : `[${label}]`
+    };
+  };
+
+  const hideHoverBox = () => {
+    if (hoverInspector) hoverInspector.style.display = 'none';
+  };
+
+  const showHoverBox = (rect, labelText) => {
+    if (!hoverInspector) return;
+    hoverInspector.style.display = 'block';
+    hoverInspector.style.top = rect.top + 'px';
+    hoverInspector.style.left = rect.left + 'px';
+    hoverInspector.style.width = rect.width + 'px';
+    hoverInspector.style.height = rect.height + 'px';
+    if (hoverLabel) hoverLabel.textContent = labelText;
+  };
+
+  const saveNote = (note) => {
+    if (editing) {
+      notes = notes.map(n => n.id === editing.id ? { ...note, id: editing.id, createdAt: editing.createdAt } : n);
+    } else {
+      note.id = 'proto_' + Date.now() + Math.random().toString(36).substr(2, 4);
+      note.createdAt = new Date().toISOString();
+      notes.push(note);
+    }
+    localStorage.setItem(key, JSON.stringify(notes));
+    pending.push({ id: note.id, data: note });
+    localStorage.setItem(queueKey, JSON.stringify(pending));
+    sync();
+    renderList();
+    draw();
+  };
+
+  const deleteNote = (id) => {
+    notes = notes.filter(n => n.id !== id);
+    localStorage.setItem(key, JSON.stringify(notes));
+    pending.push({ id: id, data: null });
+    localStorage.setItem(queueKey, JSON.stringify(pending));
+    sync();
+    renderList();
+    draw();
+  };
+
+  const renderList = () => {
+    if (!listContainer) return;
+    const sc = currentScreenEl();
+    const modal = activeModalEl();
+
+    // Filter notes relevant to current screen
+    const visibleNotes = notes.filter(n => {
+      if (modal) return n.modalId === modal.id;
+      return !n.modalId && (n.screen === sc.id || !n.screen);
+    });
+
+    if (countBadge) {
+      countBadge.textContent = notes.length;
+      countBadge.style.display = notes.length > 0 ? 'inline-block' : 'none';
+    }
+
+    listContainer.innerHTML = '';
+    if (notes.length === 0) {
+      listContainer.innerHTML = '<div style="text-align:center; color:#64748b; padding:16px 0; font-size:12px;">Chưa có ghi chú nào.<br>Bấm <b>＋ Thêm ghi chú</b> rồi click/kéo chọn component trên màn hình.</div>';
+      return;
+    }
+
+    notes.forEach((n, idx) => {
+      const item = document.createElement('div');
+      item.className = 'dc-item';
+      item.innerHTML = `
+        <div class="dc-item-header">
+          <span class="dc-item-title">
+            <span class="dc-item-num">${idx + 1}</span>
+            <span>${n.title || 'Ghi chú'}</span>
+          </span>
+          <span style="font-size:10px; color:#64748b;">${n.screenName || ''}</span>
+        </div>
+        <div class="dc-item-text">${n.text}</div>
+        <div class="dc-item-footer">
+          <span>${n.createdAt ? new Date(n.createdAt).toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'}) : ''}</span>
+          <div class="dc-item-btns">
+            <button type="button" class="dc-btn-delete" style="color:#f87171;" onclick="window.__dc_delete('${n.id}')">Xóa</button>
+          </div>
+        </div>
+      `;
+      item.onclick = (e) => {
+        if (e.target.tagName === 'BUTTON') return;
+        highlightNoteOnScreen(n.id);
+      };
+      listContainer.appendChild(item);
     });
   };
-  document.addEventListener('click', event => {
-    if (event.target.closest('.dc-note')) return;
-    openNoteId = null;
-    document.querySelectorAll('.dc-note.dc-open').forEach(el => { el.classList.remove('dc-open'); el.querySelector('.dc-marker')?.setAttribute('aria-expanded', 'false'); });
+
+  window.__dc_delete = (id) => {
+    deleteNote(id);
+  };
+
+  const draw = () => {
+    // Remove existing notes & regions from DOM
+    document.querySelectorAll('.dc-note, .dc-region').forEach(el => el.remove());
+
+    const sc = currentScreenEl();
+    const modal = activeModalEl();
+    const rootEl = modal || sc;
+
+    notes.forEach((n, idx) => {
+      // Check screen / modal visibility
+      if (modal) {
+        if (n.modalId !== modal.id) return;
+      } else {
+        if (n.modalId || (n.screen && n.screen !== sc.id)) return;
+      }
+
+      // 1. Draw Region if rectangle exists
+      if (n.region) {
+        const reg = document.createElement('div');
+        reg.className = 'dc-region';
+        reg.id = 'dc-reg-' + n.id;
+        const rootRect = rootEl.getBoundingClientRect();
+        
+        reg.style.top = (rootRect.top + window.scrollY + n.region.top * rootRect.height) + 'px';
+        reg.style.left = (rootRect.left + window.scrollX + n.region.left * rootRect.width) + 'px';
+        reg.style.width = (n.region.width * rootRect.width) + 'px';
+        reg.style.height = (n.region.height * rootRect.height) + 'px';
+        document.body.appendChild(reg);
+      }
+
+      // 2. Draw Pin Marker
+      const pinContainer = document.createElement('div');
+      pinContainer.className = 'dc-note' + (openNoteId === n.id ? ' dc-open' : '');
+      pinContainer.id = 'dc-pin-' + n.id;
+      
+      const rootRect = rootEl.getBoundingClientRect();
+      const pinTop = rootRect.top + window.scrollY + (n.y * rootRect.height);
+      const pinLeft = rootRect.left + window.scrollX + (n.x * rootRect.width);
+      
+      pinContainer.style.top = pinTop + 'px';
+      pinContainer.style.left = pinLeft + 'px';
+
+      pinContainer.innerHTML = `
+        <div class="dc-pin" title="${n.title}: ${n.text}">${idx + 1}</div>
+        <div class="dc-note-body">
+          <h4>${n.title || 'Ghi chú'}</h4>
+          <p>${n.text}</p>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:10px; color:#64748b;">${n.screenName || ''}</span>
+            <button type="button" style="padding:2px 6px; font-size:11px; color:#f87171; background:none; border:1px solid rgba(248,113,113,0.3); border-radius:4px; cursor:pointer;" onclick="window.__dc_delete('${n.id}')">Xóa</button>
+          </div>
+        </div>
+      `;
+
+      const pinEl = pinContainer.querySelector('.dc-pin');
+      pinEl.onclick = (e) => {
+        e.stopPropagation();
+        openNoteId = openNoteId === n.id ? null : n.id;
+        draw();
+      };
+
+      document.body.appendChild(pinContainer);
+    });
+  };
+
+  const highlightNoteOnScreen = (id) => {
+    openNoteId = id;
+    draw();
+    const pin = document.getElementById('dc-pin-' + id);
+    if (pin) {
+      pin.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      pin.querySelector('.dc-pin')?.animate([
+        { transform: 'scale(1)' },
+        { transform: 'scale(1.45)' },
+        { transform: 'scale(1)' }
+      ], { duration: 400, iterations: 2 });
+    }
+  };
+
+  // Toggle Panel
+  toggle.onclick = (e) => {
+    e.stopPropagation();
+    const isHidden = panel.hidden;
+    panel.hidden = !isHidden;
+    toggle.setAttribute('aria-expanded', String(!isHidden));
+    if (!panel.hidden) {
+      renderList();
+      draw();
+    }
+  };
+
+  document.getElementById('dc-close-panel').onclick = () => {
+    panel.hidden = true;
+    toggle.setAttribute('aria-expanded', 'false');
+  };
+
+  // Start Picking
+  document.getElementById('dc-pick').onclick = () => {
+    picking = true;
+    document.body.classList.add('dc-picking');
+    panel.hidden = true;
+  };
+
+  // Drag region & Hover inspector logic
+  let isDragging = false;
+  let dragStartX = 0, dragStartY = 0;
+
+  document.addEventListener('mousemove', (e) => {
+    if (!picking) return;
+
+    if (isDragging) {
+      // Update rubber band box
+      const currentX = e.clientX, currentY = e.clientY;
+      const left = Math.min(dragStartX, currentX);
+      const top = Math.min(dragStartY, currentY);
+      const width = Math.abs(currentX - dragStartX);
+      const height = Math.abs(currentY - dragStartY);
+
+      dragBox.style.display = 'block';
+      dragBox.style.left = left + 'px';
+      dragBox.style.top = top + 'px';
+      dragBox.style.width = width + 'px';
+      dragBox.style.height = height + 'px';
+      hideHoverBox();
+      return;
+    }
+
+    // Hover inspector preview
+    if (e.target.closest('#design-comments, #design-comments-toggle, .dc-note')) {
+      hideHoverBox();
+      return;
+    }
+
+    const info = getSpecificTextTarget(e.target, e.clientX, e.clientY);
+    if (info) {
+      showHoverBox(info.rect, info.title);
+    } else {
+      hideHoverBox();
+    }
   });
-  toggle.onclick = () => { panel.hidden = !panel.hidden; toggle.setAttribute('aria-expanded', String(!panel.hidden)); draw(); };
-  document.getElementById('dc-pick').onclick = () => { redrawing = false; picking = true; document.body.classList.add('dc-picking'); panel.hidden = true; toggle.setAttribute('aria-expanded', 'false'); };
-  document.getElementById('dc-redraw').onclick = () => { redrawing = true; picking = true; document.body.classList.add('dc-picking'); panel.hidden = true; toggle.setAttribute('aria-expanded', 'false'); };
-  document.addEventListener('pointerdown', event => {
-    if (!picking || event.button !== 0 || event.target.closest('#design-comments, #design-comments-toggle, .dc-note')) return;
-    const root = commentRoot(event.target);
-    if (!root || root !== activeRoot() || (redrawing && root.id !== (target.rootId || target.screen))) return;
-    const startX = event.clientX, startY = event.clientY, scope = event.target;
-    let selection = null;
-    const move = e => {
-      if (!selection && Math.hypot(e.clientX - startX, e.clientY - startY) < 5) return;
-      if (!selection) { selection = document.createElement('div'); selection.className = 'dc-selection'; document.body.append(selection); }
-      Object.assign(selection.style, { left:`${Math.min(startX, e.clientX)}px`, top:`${Math.min(startY, e.clientY)}px`, width:`${Math.abs(e.clientX - startX)}px`, height:`${Math.abs(e.clientY - startY)}px` });
+
+  document.addEventListener('mousedown', (e) => {
+    if (!picking) return;
+    if (e.target.closest('#design-comments, #design-comments-toggle, .dc-note')) return;
+
+    isDragging = true;
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+    hideHoverBox();
+  });
+
+  document.addEventListener('mouseup', (e) => {
+    if (!picking || !isDragging) return;
+    isDragging = false;
+    dragBox.style.display = 'none';
+
+    const dragEndX = e.clientX, dragEndY = e.clientY;
+    const width = Math.abs(dragEndX - dragStartX);
+    const height = Math.abs(dragEndY - dragStartY);
+
+    const sc = currentScreenEl();
+    const modal = activeModalEl();
+    const rootEl = modal || sc;
+    const rootRect = rootEl.getBoundingClientRect();
+
+    let targetData = {};
+
+    if (width > 20 && height > 20) {
+      // DRAG REGION DETECTED
+      const left = Math.min(dragStartX, dragEndX) - rootRect.left;
+      const top = Math.min(dragStartY, dragEndY) - rootRect.top;
+
+      targetData = {
+        page: 'prototype-main',
+        screen: sc.id,
+        screenName: currentScreenName(),
+        modalId: modal ? modal.id : null,
+        title: 'Vùng được khoanh',
+        x: Math.max(0, Math.min(1, left / rootRect.width)),
+        y: Math.max(0, Math.min(1, top / rootRect.height)),
+        region: {
+          left: Math.max(0, Math.min(1, left / rootRect.width)),
+          top: Math.max(0, Math.min(1, top / rootRect.height)),
+          width: Math.min(1, width / rootRect.width),
+          height: Math.min(1, height / rootRect.height)
+        }
+      };
+    } else {
+      // POINT CLICK DETECTED
+      const info = getSpecificTextTarget(e.target, dragEndX, dragEndY);
+      const clickLeft = dragEndX - rootRect.left;
+      const clickTop = dragEndY - rootRect.top;
+
+      targetData = {
+        page: 'prototype-main',
+        screen: sc.id,
+        screenName: currentScreenName(),
+        modalId: modal ? modal.id : null,
+        title: info ? info.title : 'Thành phần giao diện',
+        x: Math.max(0, Math.min(1, clickLeft / rootRect.width)),
+        y: Math.max(0, Math.min(1, clickTop / rootRect.height))
+      };
+    }
+
+    picking = false;
+    document.body.classList.remove('dc-picking');
+    hideHoverBox();
+
+    // Open Form
+    target = targetData;
+    panel.hidden = false;
+    form.hidden = false;
+    document.getElementById('dc-location-label').textContent = 'Vị trí: ' + targetData.title;
+    titleInput.value = targetData.title;
+    input.value = '';
+    input.focus();
+  });
+
+  // Form Save
+  document.getElementById('dc-save').onclick = () => {
+    const textVal = input.value.trim();
+    if (!textVal) {
+      alert('Vui lòng nhập nội dung ghi chú.');
+      input.focus();
+      return;
+    }
+
+    const note = {
+      ...(target || {}),
+      title: titleInput.value.trim() || target.title,
+      text: textVal
     };
-    const finish = e => {
-      window.removeEventListener('pointermove', move, true); window.removeEventListener('pointerup', finish, true); window.removeEventListener('pointercancel', finish, true);
-      if (!selection) return;
-      selection.remove();
-      if (e.type === 'pointercancel') return;
-      let regionScope = scope;
-      const endScope = document.elementFromPoint(e.clientX, e.clientY);
-      while (regionScope !== root && endScope && !regionScope.contains(endScope)) regionScope = regionScope.parentElement;
-      const bounds = regionScope.getBoundingClientRect(), left = Math.min(startX, e.clientX), top = Math.min(startY, e.clientY);
-      const region = {rootId:root.id, scopePath:pathFor(regionScope, root), relative:true, left:(left - bounds.left) / (bounds.width || 1), top:(top - bounds.top) / (bounds.height || 1), width:Math.abs(e.clientX - startX) / (bounds.width || 1), height:Math.abs(e.clientY - startY) / (bounds.height || 1)};
-      if (redrawing) { target.region = region; target.tab = commentTab(scope); target.videoMode = commentVideoMode(); redrawing = false; }
-      else { target = { screen:screen().id, rootId:root.id, tab:commentTab(scope), videoMode:commentVideoMode(), screenName:root.querySelector('h1,h2,.modal-header')?.textContent.trim() || root.id, path:pathFor(scope, root), x:bounds.width ? (left - bounds.left) / bounds.width : 0, y:bounds.height ? (top - bounds.top) / bounds.height : 0, label:'Vùng được chọn', region }; editing = null; titleInput.value = ''; input.value = ''; document.getElementById('dc-redraw').hidden = true; }
-      picking = false; document.body.classList.remove('dc-picking');
-      document.getElementById('dc-location').textContent = 'Vùng được chọn'; form.hidden = false; panel.hidden = false; toggle.setAttribute('aria-expanded','true'); titleInput.focus(); draw();
-      const blockClick = click => { click.preventDefault(); click.stopImmediatePropagation(); }; document.addEventListener('click', blockClick, {capture:true, once:true});
-      setTimeout(() => document.removeEventListener('click', blockClick, true), 0);
-    };
-    window.addEventListener('pointermove', move, true); window.addEventListener('pointerup', finish, true); window.addEventListener('pointercancel', finish, true);
-  }, true);
-  document.addEventListener('click', event => {
-    if (!picking || event.target.closest('#design-comments, #design-comments-toggle, .dc-note')) return;
-    if (redrawing) { event.preventDefault(); event.stopImmediatePropagation(); return; }
-    event.preventDefault(); event.stopImmediatePropagation(); picking = false; document.body.classList.remove('dc-picking');
-    const root = commentRoot(event.target); if (!screen() || !root || root !== activeRoot()) { alert('Hãy chọn một vị trí trong màn hình hoặc popup hiện tại.'); return; }
-    const el = event.target;
-    const rect = el.getBoundingClientRect();
-    target = { screen:screen().id, rootId:root.id, tab:commentTab(el), videoMode:commentVideoMode(), screenName:root.querySelector('h1,h2,.modal-header')?.textContent.trim() || root.id, path:pathFor(el,root), x:rect.width ? (event.clientX - rect.left) / rect.width : 0, y:rect.height ? (event.clientY - rect.top) / rect.height : 0, label:(el.getAttribute('aria-label') || el.innerText || el.placeholder || el.tagName).trim().replace(/\s+/g,' ').slice(0,80) };
-    editing = null; titleInput.value = ''; input.value = ''; document.getElementById('dc-redraw').hidden = true; document.getElementById('dc-location').textContent = `Vị trí: ${target.label}`; form.hidden = false; panel.hidden = false; toggle.setAttribute('aria-expanded','true'); titleInput.focus();
-  }, true);
-  document.getElementById('dc-cancel').onclick = () => { form.hidden = true; target = null; editing = null; draw(); };
-  document.getElementById('dc-save').onclick = () => { const text = input.value.trim(), title = titleInput.value.trim(); if (!target || !title || !text) { (title ? input : titleInput).focus(); return; } if (editing) { const note = notes.find(n => n.id === editing); if (note) Object.assign(note, {title, text, region:target.region, tab:target.tab}); } else notes.push({ ...target, id:Date.now() + Math.random(), title, text }); if (save()) { form.hidden = true; target = null; draw(); } };
-  document.getElementById('dc-export').onclick = () => { const content = '# Ghi chú nghiệp vụ\n\n' + notes.map((n,i) => `## ${i + 1}. ${n.title || n.label}\n\nMàn: ${n.screenName} (${n.screen})\n\n${n.text}\n`).join('\n'); const url = URL.createObjectURL(new Blob([content], {type:'text/markdown;charset=utf-8'})); const a = document.createElement('a'); a.href = url; a.download = 'ghi-chu-nghiep-vu.md'; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); };
-  let scheduled = false; const refresh = () => { if (!scheduled) { scheduled = true; requestAnimationFrame(() => { scheduled = false; draw(); }); } };
-  window.addEventListener('scroll', event => { if (!(event.target instanceof Element) || !event.target.closest('.dc-note, #design-comments')) refresh(); }, true); window.addEventListener('resize', refresh);
-  new MutationObserver(records => { if (records.some(r => r.target instanceof Element && !r.target.closest('#design-comments, .dc-note') && (r.type === 'attributes' || r.target.closest('.view-screen, .modal-backdrop')))) refresh(); }).observe(document.body, {subtree:true, childList:true, attributes:true, attributeFilter:['class','style','hidden','open']});
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && picking) { picking = false; redrawing = false; document.body.classList.remove('dc-picking'); panel.hidden = false; toggle.setAttribute('aria-expanded','true'); } });
+
+    saveNote(note);
+    form.hidden = true;
+    target = null;
+    editing = null;
+  };
+
+  // Form Cancel
+  document.getElementById('dc-cancel').onclick = () => {
+    form.hidden = true;
+    target = null;
+    editing = null;
+  };
+
+  // Clear all notes
+  document.getElementById('dc-clear-all').onclick = () => {
+    if (confirm('Bạn có chắc chắn muốn xóa toàn bộ ghi chú trên màn hình này?')) {
+      notes.forEach(n => {
+        pending.push({ id: n.id, data: null });
+      });
+      notes = [];
+      localStorage.setItem(key, JSON.stringify([]));
+      localStorage.setItem(queueKey, JSON.stringify(pending));
+      sync();
+      renderList();
+      draw();
+    }
+  };
+
+  // Export Markdown
+  document.getElementById('dc-export-md').onclick = () => {
+    let md = '# GHI CHÚ THIẾT KẾ UI/UX PROTOTYPE\n\n';
+    notes.forEach((n, idx) => {
+      md += `### ${idx + 1}. ${n.title}\n`;
+      md += `- **Màn hình:** ${n.screenName || n.screen || 'Chung'}\n`;
+      md += `- **Nội dung:** ${n.text}\n`;
+      md += `- **Thời gian:** ${n.createdAt || ''}\n\n`;
+    });
+    const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `ghi-chu-thiet-ke-prototype-${Date.now()}.md`;
+    a.click();
+  };
+
+  // Export JSON
+  document.getElementById('dc-export-json').onclick = () => {
+    const blob = new Blob([JSON.stringify(notes, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `ghi-chu-prototype-${Date.now()}.json`;
+    a.click();
+  };
+
+  // Escape key cancels picking
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && picking) {
+      picking = false;
+      isDragging = false;
+      dragBox.style.display = 'none';
+      hideHoverBox();
+      document.body.classList.remove('dc-picking');
+      panel.hidden = false;
+    }
+  });
+
+  // Re-draw pins when screen changes or modal opens
+  const observer = new MutationObserver(() => {
+    if (!picking) {
+      renderList();
+      draw();
+    }
+  });
+  observer.observe(document.body, { attributes: true, subtree: true, attributeFilter: ['class', 'style', 'hidden'] });
+
+  // Initial draw & sync
+  renderList();
   draw();
   void sync();
-  setInterval(() => { if (!picking && form.hidden) void sync(); }, 15000);
+  setInterval(() => {
+    if (!picking && form.hidden) void sync();
+  }, 15000);
 })();
 </script>
+
 </body>
 </html>
