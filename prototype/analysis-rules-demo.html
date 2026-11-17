@@ -8,6 +8,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
+    /* Knowledge Base stays compact: actions and data first, no explanatory copy. */
+    .screen-desc { display:none !important; }
+    .module-badge { display:none; }
     :root {
       --bg-deep: #070f1e;
       --bg-panel: #0d1a2d;
@@ -840,10 +843,10 @@
     </div>
     <div class="header-right">
       <a href="./index.html" class="header-btn" title="Mở Bàn làm việc phân tích">
-        <span>⚡ Workbench</span>
+        <span>Workbench</span>
       </a>
       <a href="../domain-spec/index.html" class="header-btn" title="Tài liệu nghiệp vụ &amp; Swimlane">
-        <span>📑 Domain Spec</span>
+        <span>Domain Spec</span>
       </a>
       <div class="user-pill">
         <div class="user-avatar">RV</div>
@@ -856,29 +859,25 @@
   <div class="tab-bar-container">
     <nav class="tab-nav">
       <button class="nav-tab-btn active" onclick="switchMainTab('tab-quality')" id="btn-tab-quality">
-        <span>📊 Màn hình hiệu quả</span>
+        <span>Màn hình hiệu quả</span>
         <span class="tab-count">Theo dõi</span>
       </button>
       <button class="nav-tab-btn" onclick="switchMainTab('tab-discrepancy')" id="btn-tab-discrepancy">
-        <span>🔍 Rà soát khác biệt</span>
+        <span>Rà soát khác biệt</span>
         <span class="tab-count alert" id="badge-discrepancy-count">14 vụ</span>
       </button>
       <button class="nav-tab-btn" onclick="switchMainTab('tab-rules')" id="btn-tab-rules">
-        <span>📋 Danh sách quy tắc</span>
+        <span>Danh sách quy tắc</span>
         <span class="tab-count">48 active</span>
       </button>
       <button class="nav-tab-btn" onclick="switchMainTab('tab-create')" id="btn-tab-create">
-        <span>✍️ Tạo quy tắc</span>
+        <span>Tạo quy tắc</span>
         <span class="tab-count">+ Đề xuất</span>
-      </button>
-      <button class="nav-tab-btn" onclick="switchMainTab('tab-approval')" id="btn-tab-approval">
-        <span>⚖️ Phê duyệt đề xuất</span>
-        <span class="tab-count alert" id="badge-pending-proposals">8 chờ</span>
       </button>
     </nav>
     <div class="tab-bar-actions">
       <button class="btn btn-primary btn-sm" onclick="switchMainTab('tab-create')">
-        <span>+ Tạo đề xuất mới</span>
+        <span>+ Tạo quy tắc mới</span>
       </button>
     </div>
   </div>
@@ -1082,7 +1081,7 @@
             </table>
 
             <div style="margin-top:16px; padding:12px; background:rgba(245,158,11,0.06); border:1px solid rgba(245,158,11,0.2); border-radius:8px;">
-              <div style="font-size:12px; font-weight:700; color:var(--amber); margin-bottom:4px;">⚠️ Vùng phân kỳ trọng điểm:</div>
+              <div style="font-size:12px; font-weight:700; color:var(--amber); margin-bottom:4px;">Vùng phân kỳ trọng điểm:</div>
               <div style="font-size:11.5px; color:var(--text-muted); line-height:1.45;">
                 Routing đưa ra mẫu Chart 112 (ngã tư bình đẳng) nhưng Điều tra viên chọn Chart 114 (ưu tiên đường lớn) do lời khai ghi nhận xe B đi từ đường nhánh.
               </div>
@@ -1191,7 +1190,6 @@
       <!-- Filter Controls -->
       <div class="filter-bar">
         <div class="search-input-wrap">
-          <span class="search-icon">🔍</span>
           <input type="text" id="search-discrepancy" placeholder="Tìm theo mã vụ việc, từ khóa lời khai, biển số, mã biểu đồ KNIA..." onkeyup="filterDiscrepancyTable()">
         </div>
         <select class="filter-select" id="filter-disc-category" onchange="filterDiscrepancyTable()">
@@ -1413,7 +1411,6 @@
       <!-- Rules Search & Filter Bar -->
       <div class="filter-bar">
         <div class="search-input-wrap">
-          <span class="search-icon">🔍</span>
           <input type="text" id="search-rules" placeholder="Tìm theo tên quy tắc, câu mô tả lời khai, từ khóa nhận diện, mã rule..." onkeyup="filterRulesCatalog()">
         </div>
         <select class="filter-select" id="rule-status-filter" onchange="filterRulesCatalog()">
@@ -1572,7 +1569,7 @@
       <div class="screen-header">
         <div>
           <div class="screen-kicker">
-            <span>Tạo đề xuất quy tắc</span>
+          <span>Tạo quy tắc</span>
             <span>•</span>
             <span>Tạo quy tắc</span>
           </div>
@@ -1586,10 +1583,10 @@
       <!-- Mode Selector (A: Cách hiểu tình huống vs B: Cách xử lý nghiệp vụ) -->
       <div style="display:flex; gap:16px; margin-bottom:20px;">
         <button class="btn btn-primary" id="btn-mode-situation" onclick="switchCreateMode('situation')">
-          <span>🧠 (A) Đề xuất cách hiểu tình huống (Lời khai / Câu mô tả)</span>
+          <span>Cách hiểu tình huống</span>
         </button>
         <button class="btn btn-secondary" id="btn-mode-business" onclick="switchCreateMode('business')">
-          <span>⚖️ (B) Đề xuất cách xử lý nghiệp vụ (Quy tắc riêng Knowledge Base)</span>
+          <span>Cách xử lý nghiệp vụ</span>
         </button>
       </div>
 
@@ -1598,7 +1595,7 @@
         <div class="panel-box">
           <div class="panel-header">
             <div class="panel-title" id="create-form-title">
-              <span>✍️ Form tạo đề xuất: Cách hiểu tình huống</span>
+              <span>Thông tin quy tắc</span>
             </div>
             <span class="badge badge-cyan" id="create-mode-badge">Mode A: Situation Understanding</span>
           </div>
@@ -1671,14 +1668,14 @@
 
               <div style="display:flex; justify-content:space-between; align-items:center; margin-top:24px; padding-top:16px; border-top:1px solid var(--border);">
                 <button type="button" class="btn btn-secondary" onclick="saveProposalDraft()">
-                  <span>💾 Lưu bản nháp (Draft)</span>
+                  <span>Lưu bản nháp</span>
                 </button>
                 <div style="display:flex; gap:10px;">
                   <button type="button" class="btn btn-secondary" onclick="resetProposalForm()">
                     <span>Hủy</span>
                   </button>
                   <button type="submit" class="btn btn-primary">
-                    <span>🚀 Gửi đề xuất lên TFT phê duyệt</span>
+                    <span>Lưu và kích hoạt</span>
                   </button>
                 </div>
               </div>
@@ -1691,7 +1688,7 @@
           <div class="panel-box">
             <div class="panel-header">
               <div class="panel-title">
-                <span>⚡ Live Simulation Preview</span>
+                <span>Xem trước kết quả</span>
               </div>
               <span class="badge badge-emerald">Giả lập tức thì</span>
             </div>
@@ -1723,7 +1720,7 @@
               </div>
 
               <div style="padding:12px; background:rgba(37,99,235,0.08); border:1px solid rgba(37,99,235,0.25); border-radius:8px; font-size:11.5px; color:var(--text-muted); line-height:1.5;">
-                ℹ️ <strong>Quy tắc áp dụng:</strong> Đề xuất này sau khi gửi sẽ nằm ở trạng thái <code>CHỜ PHÊ DUYỆT</code> trong tab <strong>Phê duyệt đề xuất</strong>. Hệ thống <strong>không tự động áp dụng</strong> vào Knowledge Base sản xuất cho đến khi thành viên TFT phê duyệt chính thức.
+                Quy tắc được lưu với trạng thái <strong>Đang dùng</strong> sau khi kích hoạt.
               </div>
             </div>
           </div>
@@ -1731,8 +1728,8 @@
       </div>
     </section>
 
-    <!-- ================= TAB 5: KIỂM TRA ĐỀ XUẤT TRƯỚC KHI ÁP DỤNG (PHÊ DUYỆT ĐỀ XUẤT) ================= -->
-    <section id="tab-approval" class="tab-pane">
+    <!-- Legacy approval markup retained for reference; not part of the current Reviewer flow. -->
+    <section id="tab-approval" class="tab-pane" style="display:none!important">
       <div class="screen-header">
         <div>
           <div class="screen-kicker">
@@ -1755,7 +1752,6 @@
       <!-- TFT Policy Banner -->
       <div style="background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.3); border-radius:12px; padding:14px 20px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; gap:16px;">
         <div style="display:flex; align-items:center; gap:12px;">
-          <span style="font-size:22px;">🛡️</span>
           <div>
             <div style="font-size:13px; font-weight:700; color:var(--amber);">NGUYÊN TẮC QUẢN TRỊ AN TOÀN (AI GOVERNANCE POLICY):</div>
             <div style="font-size:12px; color:var(--text-muted);">Mọi quy tắc mới hoặc sửa đổi đều bắt buộc kiểm thử hồi quy trên tập dữ liệu lịch sử để đảm bảo không gây suy giảm độ chính xác của các vụ việc đã chuẩn hóa.</div>
@@ -1982,7 +1978,7 @@
       <div class="modal-footer">
         <button class="btn btn-secondary" onclick="closeModal('modal-discrepancy')">Đóng</button>
         <button class="btn btn-primary" onclick="proceedToCreateProposalFromModal()">
-          <span>✍️ Tạo đề xuất quy tắc từ vụ việc này ➔</span>
+          <span>Tạo quy tắc từ vụ việc này →</span>
         </button>
       </div>
     </div>
@@ -2118,14 +2114,14 @@
         btnBiz.className = 'btn btn-secondary';
         badge.className = 'badge badge-cyan';
         badge.textContent = 'Mode A: Đề xuất cách hiểu tình huống';
-        title.innerHTML = '<span>🧠 Form đề xuất: Cách hiểu tình huống (Lời khai / Câu mô tả)</span>';
+        title.textContent = 'Thông tin quy tắc: Cách hiểu tình huống';
         grpStatement.style.display = '';
       } else {
         btnBiz.className = 'btn btn-primary';
         btnSit.className = 'btn btn-secondary';
         badge.className = 'badge badge-purple';
         badge.textContent = 'Mode B: Cách xử lý nghiệp vụ';
-        title.innerHTML = '<span>⚖️ Form đề xuất: Cách xử lý nghiệp vụ theo quy tắc riêng Knowledge Base</span>';
+        title.textContent = 'Thông tin quy tắc: Cách xử lý nghiệp vụ';
         grpStatement.style.display = 'none';
       }
     }
@@ -2166,15 +2162,8 @@
     function handleProposalSubmit(e) {
       e.preventDefault();
       const title = document.getElementById('prop-title').value;
-      showToast(`Đã gửi đề xuất "${title}" lên TFT để chờ phê duyệt!`, 'success');
-      
-      // Update badge counts
-      const badgeApp = document.getElementById('badge-pending-proposals');
-      if (badgeApp) badgeApp.textContent = '9 chờ';
-
-      setTimeout(() => {
-        switchMainTab('tab-approval');
-      }, 1000);
+      showToast(`Đã lưu quy tắc "${title}" và kích hoạt.`, 'success');
+      setTimeout(() => switchMainTab('tab-rules'), 700);
     }
 
     function saveProposalDraft() {
@@ -2187,7 +2176,7 @@
       showToast('Đã đặt lại form đề xuất.', 'info');
     }
 
-    // Approval Actions
+    // Legacy approval handlers retained for existing demo data.
     function approveProposal(propId, rowIdx) {
       const row = document.getElementById(`prop-row-${rowIdx}`);
       if (row) {
@@ -2262,3 +2251,4 @@
   </script>
 </body>
 </html>
+
