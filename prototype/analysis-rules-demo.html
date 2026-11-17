@@ -2476,10 +2476,8 @@
     <span>Ghi chú thiết kế UI/UX</span>
     <button type="button" id="dc-close-panel" style="padding:2px 8px; font-size:14px; background:none; border:none; color:#94a3b8;">✕</button>
   </h2>
-  <p class="dc-intro">Bấm "＋ Thêm ghi chú" rồi nhấp hoặc kéo khoanh vùng bất kỳ component nào để để lại yêu cầu sửa/xóa design.</p>
-  <p id="dc-sync-status" style="font-size:11px; color:#38bdf8; margin:4px 0 8px;">Đang kết nối ghi chú chung…</p>
   
-  <div class="dc-actions dc-toolbar" id="dc-main-toolbar">
+  <div class="dc-actions dc-toolbar" id="dc-main-toolbar" style="margin-top:10px;">
     <button id="dc-pick" class="dc-btn-primary" type="button">＋ Thêm ghi chú</button>
     <button id="dc-export-md" type="button" title="Tải file Markdown chứa toàn bộ ghi chú">Xuất Markdown</button>
     <button id="dc-export-json" type="button" title="Tải JSON để gửi AI sửa">Tải JSON</button>
@@ -2535,7 +2533,7 @@
   let previous = new Map(notes.map(n => [String(n.id), JSON.stringify(n)]));
   let syncing = false;
 
-  const setStatus = msg => { if (statusEl) statusEl.textContent = msg; };
+  const setStatus = () => {};
 
   const request = async (url, options = {}) => {
     const response = await fetch(url, {
@@ -2874,7 +2872,6 @@
     listContainer.innerHTML = '';
 
     if (!notes.length) {
-      listContainer.innerHTML = '<div style="color:#64748b; font-size:12px; text-align:center; padding:16px 0;">Chưa có ghi chú nào. Bấm "＋ Thêm ghi chú" để bắt đầu!</div>';
       return;
     }
 
