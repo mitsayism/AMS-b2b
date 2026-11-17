@@ -870,10 +870,7 @@
         <span>Danh sách quy tắc</span>
         <span class="tab-count">48 active</span>
       </button>
-      <button class="nav-tab-btn" onclick="switchMainTab('tab-create')" id="btn-tab-create">
-        <span>Tạo quy tắc</span>
-        <span class="tab-count">+ Đề xuất</span>
-      </button>
+
     </nav>
     <div class="tab-bar-actions">
       <button class="btn btn-primary btn-sm" onclick="switchMainTab('tab-create')">
@@ -913,54 +910,46 @@
         </div>
       </div>
 
-      <!-- KPI Summary Cards: Focused on AI vs Investigator -->
+      <!-- KPI Summary Cards: Clean and Focused -->
       <div class="kpi-grid">
         <div class="kpi-card">
           <div class="kpi-label">
             <span>TỶ LỆ CHẤP THUẬN NGAY LẦN ĐẦU</span>
-            <span class="badge badge-emerald">Mục tiêu ≥80%</span>
           </div>
           <div class="kpi-value-row">
             <span class="kpi-value" id="kpi-ai-investigator">81.2%</span>
             <span class="kpi-sub up">▲ +3.1% vs tuần trước</span>
           </div>
-          <div class="kpi-footer">Điều tra viên chấp thuận 100% tỷ lệ lỗi AI đề xuất ngay lần đầu</div>
         </div>
 
         <div class="kpi-card">
           <div class="kpi-label">
             <span>TỔNG SỐ VỤ ĐÃ THẨM ĐỊNH</span>
-            <span class="badge badge-cyan">Tuần 45</span>
           </div>
           <div class="kpi-value-row">
             <span class="kpi-value" id="kpi-total-cases">142 vụ</span>
             <span class="kpi-sub up">▲ +3 vụ vs tuần trước</span>
           </div>
-          <div class="kpi-footer">Hồ sơ đã hoàn tất xác định tỷ lệ lỗi trong tuần</div>
         </div>
 
         <div class="kpi-card">
           <div class="kpi-label">
             <span>SỐ VỤ ĐỒNG THUẬN HOÀN TOÀN</span>
-            <span class="badge badge-emerald">Tự động hóa</span>
           </div>
           <div class="kpi-value-row">
             <span class="kpi-value" id="kpi-match-cases" style="color:var(--emerald);">115 vụ</span>
             <span class="kpi-sub up">▲ 81.2%</span>
           </div>
-          <div class="kpi-footer">AI gợi ý khớp hoàn toàn quyết định của điều tra viên</div>
         </div>
 
         <div class="kpi-card">
           <div class="kpi-label">
             <span>SỐ VỤ KHÁC BIỆT CẦN RÀ SOÁT</span>
-            <span class="badge badge-rose">Cần xử lý</span>
           </div>
           <div class="kpi-value-row">
             <span class="kpi-value" id="kpi-diff-cases" style="color:var(--rose);">14 vụ</span>
             <span class="kpi-sub down">▼ -3 vụ vs tuần trước</span>
           </div>
-          <div class="kpi-footer">Đã chuyển sang tab <strong>Rà soát khác biệt</strong> để tìm nguyên nhân</div>
         </div>
       </div>
 
@@ -1099,20 +1088,10 @@
         <section id="tab-discrepancy" class="tab-pane">
       <div class="screen-header">
         <div>
-          <div class="screen-kicker">
-            <span>Kiểm tra kết quả khác nhau</span>
-            <span>•</span>
-            <span>Rà soát khác biệt</span>
-          </div>
           <h1 class="screen-title">Danh sách vụ việc có khác biệt giữa AI và Điều tra viên</h1>
           <p class="screen-desc">
             Xem lại các vụ việc mà Điều tra viên đã chỉnh sửa lại mẫu chart hoặc tỷ lệ lỗi so với gợi ý ban đầu của AI để tìm nguyên nhân và tạo quy tắc bổ sung.
           </p>
-        </div>
-        <div style="display:flex; gap:10px;">
-          <button class="btn btn-primary btn-sm" onclick="openCreateProposalModal('auto')">
-            <span>+ Tạo quy tắc từ rà soát</span>
-          </button>
         </div>
       </div>
 
@@ -1147,10 +1126,11 @@
           <table class="data-table" id="discrepancy-table">
             <thead>
               <tr>
-                <th style="min-width:140px;">Mã vụ việc</th>
-                <th style="min-width:180px;">Loại tình huống</th>
-                <th style="min-width:130px;">AI Đề xuất</th>
-                <th style="min-width:140px;">Điều tra viên chốt</th>
+                <th style="min-width:125px;">Mã vụ việc</th>
+                <th style="min-width:120px;">Thời gian</th>
+                <th style="min-width:170px;">Loại tình huống</th>
+                <th style="min-width:120px;">AI Đề xuất</th>
+                <th style="min-width:130px;">Điều tra viên chốt</th>
                 <th>Chênh lệch &amp; Lý do con người sửa</th>
                 <th style="min-width:110px;">Trạng thái</th>
                 <th style="min-width:130px;">Thao tác</th>
@@ -1161,7 +1141,9 @@
               <tr data-category="Ngã tư" data-diff="diff-model" data-status="pending">
                 <td>
                   <b style="color:var(--cyan); font-family:var(--font-mono);">#AMS-2026-8821</b>
-                  <div style="font-size:11px; color:var(--text-dim);">07/11/2026 14:22</div>
+                </td>
+                <td>
+                  <span style="font-size:12px; color:var(--text-dim);">07/11/2026 14:22</span>
                 </td>
                 <td>
                   <b>Ngã tư không đèn</b>
@@ -1193,7 +1175,9 @@
               <tr data-category="Chuyển làn" data-diff="diff-ratio" data-status="investigated">
                 <td>
                   <b style="color:var(--cyan); font-family:var(--font-mono);">#AMS-2026-8794</b>
-                  <div style="font-size:11px; color:var(--text-dim);">06/11/2026 09:15</div>
+                </td>
+                <td>
+                  <span style="font-size:12px; color:var(--text-dim);">06/11/2026 09:15</span>
                 </td>
                 <td>
                   <b>Chuyển làn cùng chiều</b>
@@ -1225,7 +1209,9 @@
               <tr data-category="Vòng xuyến" data-diff="diff-model" data-status="proposed">
                 <td>
                   <b style="color:var(--cyan); font-family:var(--font-mono);">#AMS-2026-8650</b>
-                  <div style="font-size:11px; color:var(--text-dim);">04/11/2026 17:40</div>
+                </td>
+                <td>
+                  <span style="font-size:12px; color:var(--text-dim);">04/11/2026 17:40</span>
                 </td>
                 <td>
                   <b>Vòng xuyến trung tâm</b>
@@ -1257,7 +1243,9 @@
               <tr data-category="Ngã tư" data-diff="diff-model" data-status="pending">
                 <td>
                   <b style="color:var(--cyan); font-family:var(--font-mono);">#AMS-2026-8512</b>
-                  <div style="font-size:11px; color:var(--text-dim);">03/11/2026 11:05</div>
+                </td>
+                <td>
+                  <span style="font-size:12px; color:var(--text-dim);">03/11/2026 11:05</span>
                 </td>
                 <td>
                   <b>Ngã tư có đèn tín hiệu</b>
