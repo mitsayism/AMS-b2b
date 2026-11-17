@@ -1892,6 +1892,142 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
   align-items: baseline;
 }
 
+
+/* ==========================================================================
+   FEEDBACK COMMENT IMPROVEMENTS CSS (CALENDAR POPOVER & ACCIDENT VIEWS)
+   ========================================================================== */
+.week-cal-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 320px;
+  background: #09131f;
+  border: 1px solid var(--border);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.65), 0 0 0 1px rgba(6,182,212,0.15);
+  border-radius: 10px;
+  z-index: 1000;
+  padding: 12px;
+  font-family: inherit;
+}
+.week-cal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--cyan);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 8px;
+}
+.week-cal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.week-cal-item {
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.week-cal-item:hover {
+  background: rgba(6,182,212,0.1);
+  border-color: rgba(6,182,212,0.3);
+}
+.week-cal-item.selected {
+  background: rgba(6,182,212,0.15);
+  border-color: var(--cyan);
+}
+.week-cal-mini {
+  background: rgba(0,0,0,0.3);
+  border-radius: 6px;
+  padding: 8px 10px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.mini-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+  text-align: center;
+  font-size: 10px;
+}
+.m-day-h {
+  color: var(--text-dim);
+  font-weight: 700;
+  padding-bottom: 2px;
+}
+.m-day {
+  padding: 3px 0;
+  border-radius: 3px;
+  color: #cbd5e1;
+}
+.m-day.muted {
+  color: #475569;
+}
+.m-day.selected {
+  background: var(--cyan);
+  color: #04121e;
+  font-weight: 700;
+}
+
+/* Accident View Mode Toggle */
+.view-mode-pill-group {
+  display: inline-flex;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px;
+  padding: 2px;
+  gap: 2px;
+}
+.view-mode-pill-group .q-toggle-btn {
+  padding: 4px 11px;
+  font-size: 11.5px;
+  font-weight: 600;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.view-mode-pill-group .q-toggle-btn:hover {
+  color: #fff;
+}
+.view-mode-pill-group .q-toggle-btn.active {
+  background: #0284c7;
+  color: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+/* Narrative Edit Mode */
+.narrative-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  background: #060e18;
+  color: #f8fafc;
+  border: 1px solid var(--cyan);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 60px;
+  margin-top: 4px;
+  margin-bottom: 10px;
+}
+.narrative-textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(6,182,212,0.25);
+}
+
 </style>
 </head>
 <body>
@@ -1959,8 +2095,60 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
             <button type="button" class="btn-week-step" id="btn-prev-week" onclick="stepWeek(-1)" style="background:none; border:none; color:var(--text-muted); padding:6px 12px; border-radius:6px; cursor:pointer; font-size:16px; font-weight:bold; display:flex; align-items:center; justify-content:center; transition:all 0.15s ease;" title="Tuần trước">
               ‹
             </button>
-            <div id="week-range-display" style="padding:4px 14px; font-size:13px; font-weight:600; color:#f8fafc; text-align:center; min-width:160px; user-select:none;">
-              04/11 - 10/11 Tháng 11
+            <div style="position:relative;">
+              <div id="week-range-display" onclick="toggleWeekDropdown(event)" style="padding:5px 14px; font-size:13px; font-weight:600; color:#f8fafc; text-align:center; min-width:180px; user-select:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; border-radius:6px; transition:all 0.15s ease;" title="Bấm để mở lịch chọn khoảng thời gian">
+                <span style="font-size:13px;">📅</span>
+                <span id="week-range-text">04/11 - 10/11 Tháng 11</span>
+                <span style="font-size:10px; color:var(--text-muted);">▼</span>
+              </div>
+              <!-- Dropdown Calendar Popover -->
+              <div id="week-calendar-dropdown" class="week-cal-popover" style="display:none;">
+                <div class="week-cal-header">
+                  <span>CHỌN TUẦN / THỜI GIAN ĐỐI SOÁT</span>
+                  <button type="button" onclick="closeWeekDropdown()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:13px;">✕</button>
+                </div>
+                <div class="week-cal-list">
+                  <div class="week-cal-item" onclick="selectWeekIndex(3)" id="witem-3">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <b style="color:#fff; font-size:12.5px;">04/11 - 10/11 Tháng 11</b>
+                      <span class="badge badge-cyan" style="font-size:10px;">Tuần này (Hiện tại)</span>
+                    </div>
+                    <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">14 vụ đã chốt · Khớp 81.2% · ±8.5%</div>
+                  </div>
+                  <div class="week-cal-item" onclick="selectWeekIndex(2)" id="witem-2">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <b style="color:#fff; font-size:12.5px;">28/10 - 03/11 Tháng 11</b>
+                      <span style="font-size:10.5px; color:var(--text-dim);">Tuần trước</span>
+                    </div>
+                    <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">15 vụ đã chốt · Khớp 79.0% · ±8.9%</div>
+                  </div>
+                  <div class="week-cal-item" onclick="selectWeekIndex(1)" id="witem-1">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <b style="color:#fff; font-size:12.5px;">21/10 - 27/10 Tháng 10</b>
+                    </div>
+                    <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">16 vụ đã chốt · Khớp 77.0% · ±9.2%</div>
+                  </div>
+                  <div class="week-cal-item" onclick="selectWeekIndex(0)" id="witem-0">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <b style="color:#fff; font-size:12.5px;">14/10 - 20/10 Tháng 10</b>
+                    </div>
+                    <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">18 vụ đã chốt · Khớp 74.0% · ±9.8%</div>
+                  </div>
+                </div>
+                <!-- Mini Month Calendar Preview -->
+                <div class="week-cal-mini">
+                  <div style="display:flex; justify-content:space-between; font-size:11.5px; font-weight:700; color:var(--cyan); margin-bottom:6px;">
+                    <span>Tháng 11/2026</span>
+                    <span style="color:var(--text-dim); font-size:10.5px;">Tuần 45</span>
+                  </div>
+                  <div class="mini-cal-grid">
+                    <span class="m-day-h">T2</span><span class="m-day-h">T3</span><span class="m-day-h">T4</span><span class="m-day-h">T5</span><span class="m-day-h">T6</span><span class="m-day-h">T7</span><span class="m-day-h">CN</span>
+                    <span class="m-day muted">27</span><span class="m-day muted">28</span><span class="m-day muted">29</span><span class="m-day muted">30</span><span class="m-day muted">31</span><span class="m-day">1</span><span class="m-day">2</span>
+                    <span class="m-day">3</span><span class="m-day selected">4</span><span class="m-day selected">5</span><span class="m-day selected">6</span><span class="m-day selected">7</span><span class="m-day selected">8</span><span class="m-day selected">9</span>
+                    <span class="m-day selected">10</span><span class="m-day">11</span><span class="m-day">12</span><span class="m-day">13</span><span class="m-day">14</span><span class="m-day">15</span><span class="m-day">16</span>
+                  </div>
+                </div>
+              </div>
             </div>
             <button type="button" class="btn-week-step" id="btn-next-week" onclick="stepWeek(1)" style="background:none; border:none; color:var(--text-muted); padding:6px 12px; border-radius:6px; cursor:pointer; font-size:16px; font-weight:bold; display:flex; align-items:center; justify-content:center; transition:all 0.15s ease;" title="Tuần sau">
               ›
@@ -2065,13 +2253,24 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
 
       <!-- Breakdown by Accident Category: AI vs Investigator -->
       <div class="panel-box">
-        <div class="panel-header">
+        <div class="panel-header" style="display:flex; justify-content:space-between; align-items:center;">
           <div class="panel-title">
             <span>📑 Phân bố độ khớp theo Loại tai nạn: AI đề xuất vs Điều tra viên</span>
           </div>
+          <div class="view-mode-pill-group">
+            <button type="button" class="q-toggle-btn active" id="btn-accident-overview" onclick="switchAccidentView('overview')">
+              📊 Xem tổng quan
+            </button>
+            <button type="button" class="q-toggle-btn" id="btn-accident-detailed" onclick="switchAccidentView('detailed')">
+              📑 Xem chi tiết theo loại tai nạn
+            </button>
+          </div>
         </div>
 
-        <!-- 2 Biểu đồ đặt cạnh nhau: Biểu đồ cột phân bố + Biểu đồ Donut cơ cấu -->
+        
+        <!-- CHẾ ĐỘ 1: XEM TỔNG QUAN -->
+        <div id="accident-view-overview">
+<!-- 2 Biểu đồ đặt cạnh nhau: Biểu đồ cột phân bố + Biểu đồ Donut cơ cấu -->
         <div style="display:grid; grid-template-columns: 1.35fr 1fr; gap:16px; padding:16px; background:rgba(0,0,0,0.18); border-bottom:1px solid rgba(255,255,255,0.06);">
           <!-- Biểu đồ cột bên trái: Tỷ lệ chấp thuận theo từng loại tai nạn -->
           <div style="background:rgba(15,23,42,0.6); padding:14px 18px; border-radius:10px; border:1px solid rgba(255,255,255,0.07);">
@@ -2282,7 +2481,62 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
             </tbody>
           </table>
         </div>
-      </div>
+      
+        </div>
+
+        <!-- CHẾ ĐỘ 2: XEM CHI TIẾT THEO LOẠI TAI NẠN (CẢ BIỂU ĐỒ VÀ BẢNG) -->
+        <div id="accident-view-detailed" style="display:none; padding:16px; background:rgba(0,0,0,0.18); border-bottom:1px solid rgba(255,255,255,0.06);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-size:12px; color:var(--text-muted); font-weight:600;">Lọc theo loại:</span>
+              <select class="filter-select" id="detail-accident-filter" onchange="filterAccidentDetailTable(this.value)" style="min-width:180px;">
+                <option value="all">Tất cả loại tai nạn (5 loại)</option>
+                <option value="Ngã tư không đèn">Ngã tư không đèn</option>
+                <option value="Chuyển làn cùng chiều">Chuyển làn cùng chiều</option>
+                <option value="Đâm đuôi (Rear-end)">Đâm đuôi (Rear-end)</option>
+                <option value="Vòng xuyến">Vòng xuyến</option>
+                <option value="Người đi bộ / Xe đạp">Người đi bộ / Xe đạp</option>
+              </select>
+            </div>
+            <div style="display:flex; gap:12px; font-size:11.5px;">
+              <span style="display:flex; align-items:center; gap:4px;"><span style="width:10px; height:10px; background:var(--emerald); border-radius:2px;"></span> Khớp hoàn toàn (0pp)</span>
+              <span style="display:flex; align-items:center; gap:4px;"><span style="width:10px; height:10px; background:var(--amber); border-radius:2px;"></span> Lệch nhẹ (≤5pp)</span>
+              <span style="display:flex; align-items:center; gap:4px;"><span style="width:10px; height:10px; background:var(--rose); border-radius:2px;"></span> Lệch đáng kể (>5pp)</span>
+            </div>
+          </div>
+
+          <!-- BIỂU ĐỒ PHÂN BỐ ĐỘ KHỚP CHI TIẾT (Stacked Bar Chart theo từng loại) -->
+          <div style="background:rgba(15,23,42,0.6); padding:14px 18px; border-radius:10px; border:1px solid rgba(255,255,255,0.07); margin-bottom:14px;">
+            <div style="font-size:12.5px; font-weight:700; color:#e2e8f0; margin-bottom:12px; display:flex; justify-content:space-between;">
+              <span>📊 Biểu đồ cơ cấu sai lệch: Khớp hoàn toàn vs Lệch ≤5pp vs Lệch >5pp</span>
+              <span style="font-size:11px; color:var(--cyan);">Đơn vị: Số vụ việc</span>
+            </div>
+            <div id="detailed-bars-container" style="display:flex; flex-direction:column; gap:10px;">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+
+          <!-- BẢNG SỐ LIỆU CHI TIẾT TỪNG LOẠI TAI NẠN -->
+          <div class="table-responsive" style="border:1px solid rgba(255,255,255,0.08); border-radius:8px; overflow:hidden;">
+            <table class="table" style="margin:0; width:100%; border-collapse:collapse;">
+              <thead>
+                <tr style="background:rgba(0,0,0,0.3); font-size:11px; text-transform:uppercase; color:var(--text-muted); letter-spacing:0.04em;">
+                  <th style="padding:10px 14px; text-align:left;">Loại tai nạn</th>
+                  <th style="padding:10px 10px; text-align:center;">Tổng số vụ</th>
+                  <th style="padding:10px 10px; text-align:center; color:var(--emerald);">Khớp hoàn toàn</th>
+                  <th style="padding:10px 10px; text-align:center; color:var(--amber);">Lệch ≤5pp</th>
+                  <th style="padding:10px 10px; text-align:center; color:var(--rose);">Lệch >5pp</th>
+                  <th style="padding:10px 10px; text-align:center;">Tỷ lệ chấp thuận</th>
+                  <th style="padding:10px 14px; text-align:left;">Đánh giá &amp; Hành động đề xuất</th>
+                </tr>
+              </thead>
+              <tbody id="detail-accident-tbody" style="font-size:12px;">
+                <!-- Rendered by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+</div>
     </section>
 
 <!-- ================= TAB 2: QUẢN LÝ QUY TẮC TỶ LỆ LỖI ================= -->
@@ -2494,8 +2748,16 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
             </div>
 
             <!-- Card 3: Nội dung diễn giải -->
-            <div class="card">
-              <h3>Nội dung diễn giải và điều kiện áp dụng</h3>
+            <div class="card" id="card-narrative-container">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <h3 style="margin:0;">Nội dung diễn giải và điều kiện áp dụng</h3>
+                <div style="display:flex; gap:8px; align-items:center;">
+                  <span id="narrative-save-badge" class="autosave-tag" style="font-size:11px; color:var(--emerald); opacity:0; transition:opacity 0.2s;">✓ Đã lưu thay đổi</span>
+                  <button type="button" class="mock-btn" id="btn-narrative-toggle" onclick="toggleNarrativeEdit()" style="font-size:11.5px; padding:3px 10px; cursor:pointer;">
+                    ✏️ Sửa nội dung
+                  </button>
+                </div>
+              </div>
               <div class="b txt" id="mock-narrative-box">
                 <h4>Tình huống áp dụng</h4>
                 <p class="editable-col" id="narrative-situation">Tại giao lộ có tín hiệu điều khiển, hai xe đi trên hai đường khác nhau. Xe A vào giao lộ khi đèn xanh và đi thẳng, xe B vào khi đèn đỏ và đi thẳng, hai xe va chạm.</p>
@@ -3361,8 +3623,13 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
 
     function updateWeekDisplay() {
       const w = WEEKS_DATA[currentWeekIndex];
-      const disp = document.getElementById('week-range-display');
-      if (disp) disp.textContent = w.label;
+      const textEl = document.getElementById('week-range-text');
+      if (textEl && w) {
+        textEl.textContent = w.label;
+      } else {
+        const disp = document.getElementById('week-range-display');
+        if (disp && w) disp.textContent = w.label;
+      }
 
       const prevBtn = document.getElementById('btn-prev-week');
       const nextBtn = document.getElementById('btn-next-week');
@@ -7180,6 +7447,271 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
   window.addEventListener('DOMContentLoaded', () => {
     renderComparisonTable();
   });
+
+
+
+  // ==========================================================================
+  // FEEDBACK IMPLEMENTATIONS: CALENDAR POPOVER, ACCIDENT VIEWS, NARRATIVE EDIT
+  // ==========================================================================
+
+  // 1. CALENDAR POPOVER LOGIC
+  function toggleWeekDropdown(e) {
+    if (e) e.stopPropagation();
+    const dropdown = document.getElementById('week-calendar-dropdown');
+    if (!dropdown) return;
+    const isShown = dropdown.style.display === 'block';
+    dropdown.style.display = isShown ? 'none' : 'block';
+    if (!isShown) {
+      // Highlight current selected week
+      for (let i = 0; i < 4; i++) {
+        const item = document.getElementById('witem-' + i);
+        if (item) {
+          if (i === currentWeekIndex) item.classList.add('selected');
+          else item.classList.remove('selected');
+        }
+      }
+    }
+  }
+
+  function closeWeekDropdown() {
+    const dropdown = document.getElementById('week-calendar-dropdown');
+    if (dropdown) dropdown.style.display = 'none';
+  }
+
+  function selectWeekIndex(idx) {
+    if (idx < 0 || idx >= WEEKS_DATA.length) return;
+    currentWeekIndex = idx;
+    updateWeekDisplay();
+    closeWeekDropdown();
+  }
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#week-range-display') && !e.target.closest('#week-calendar-dropdown')) {
+      closeWeekDropdown();
+    }
+  });
+
+  // Update week range text element when week changes
+  const origUpdateWeekDisplay = typeof updateWeekDisplay === 'function' ? updateWeekDisplay : null;
+  updateWeekDisplay = function() {
+    if (origUpdateWeekDisplay) origUpdateWeekDisplay();
+    const w = WEEKS_DATA[currentWeekIndex];
+    const textEl = document.getElementById('week-range-text');
+    if (textEl && w) textEl.textContent = w.label;
+  };
+
+  // 2. ACCIDENT TYPES OVERVIEW VS DETAILED (BIỂU ĐỒ & BẢNG CHI TIẾT)
+  const ACCIDENT_DETAILS_DATA = [
+    {
+      category: 'Ngã tư không đèn',
+      total: 46,
+      matched: 34,
+      lightDiff: 7,
+      heavyDiff: 5,
+      approvalRate: '73.9%',
+      targetStatus: 'alert',
+      recommendation: 'Lệch chủ yếu do thứ tự vào giao lộ và xe rẽ phải. Đề xuất: Bổ sung trích xuất camera góc rộng ngã tư.'
+    },
+    {
+      category: 'Chuyển làn cùng chiều',
+      total: 38,
+      matched: 33,
+      lightDiff: 4,
+      heavyDiff: 1,
+      approvalRate: '86.8%',
+      targetStatus: 'good',
+      recommendation: 'Đạt mục tiêu (≥80%). Sai lệch tập trung ở mốc thời gian bật đèn xi-nhan trước khi lấn vạch.'
+    },
+    {
+      category: 'Đâm đuôi (Rear-end)',
+      total: 28,
+      matched: 26,
+      lightDiff: 2,
+      heavyDiff: 0,
+      approvalRate: '92.9%',
+      targetStatus: 'good',
+      recommendation: 'Khớp rất cao. Tình huống tông đuôi xe dừng đèn đỏ hoặc thiếu cự ly được AI nhận diện chuẩn xác.'
+    },
+    {
+      category: 'Vòng xuyến',
+      total: 14,
+      matched: 10,
+      lightDiff: 3,
+      heavyDiff: 1,
+      approvalRate: '71.4%',
+      targetStatus: 'alert',
+      recommendation: 'Khó khăn khi xác định xe nào đã vào tâm đảo an toàn trước. Đề xuất kiểm tra mốc thời gian vào đảo.'
+    },
+    {
+      category: 'Người đi bộ / Xe đạp',
+      total: 16,
+      matched: 14,
+      lightDiff: 2,
+      heavyDiff: 0,
+      approvalRate: '87.5%',
+      targetStatus: 'good',
+      recommendation: 'Đạt chuẩn an toàn bảo vệ đối tượng yếu thế. Vạch sang đường cho người đi bộ được nhận diện rõ.'
+    }
+  ];
+
+  function switchAccidentView(mode) {
+    const btnOverview = document.getElementById('btn-accident-overview');
+    const btnDetailed = document.getElementById('btn-accident-detailed');
+    const viewOverview = document.getElementById('accident-view-overview');
+    const viewDetailed = document.getElementById('accident-view-detailed');
+
+    if (mode === 'detailed') {
+      if (btnOverview) btnOverview.classList.remove('active');
+      if (btnDetailed) btnDetailed.classList.add('active');
+      if (viewOverview) viewOverview.style.display = 'none';
+      if (viewDetailed) viewDetailed.style.display = 'block';
+      renderAccidentDetailed('all');
+    } else {
+      if (btnOverview) btnOverview.classList.add('active');
+      if (btnDetailed) btnDetailed.classList.remove('active');
+      if (viewOverview) viewOverview.style.display = 'block';
+      if (viewDetailed) viewDetailed.style.display = 'none';
+    }
+  }
+
+  function filterAccidentDetailTable(category) {
+    renderAccidentDetailed(category);
+  }
+
+  function renderAccidentDetailed(filterCat) {
+    const tbody = document.getElementById('detail-accident-tbody');
+    const barsContainer = document.getElementById('detailed-bars-container');
+    if (!tbody || !barsContainer) return;
+
+    const items = (filterCat && filterCat !== 'all') 
+      ? ACCIDENT_DETAILS_DATA.filter(item => item.category === filterCat)
+      : ACCIDENT_DETAILS_DATA;
+
+    // 1. Render Detailed Stacked Bars
+    barsContainer.innerHTML = '';
+    items.forEach(item => {
+      const pMatch = ((item.matched / item.total) * 100).toFixed(1);
+      const pLight = ((item.lightDiff / item.total) * 100).toFixed(1);
+      const pHeavy = ((item.heavyDiff / item.total) * 100).toFixed(1);
+
+      const barRow = document.createElement('div');
+      barRow.innerHTML = `
+        <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+          <span style="font-weight:600; color:#e2e8f0;">${item.category} (${item.total} vụ)</span>
+          <span style="font-weight:700; color:${parseFloat(item.approvalRate) >= 80 ? 'var(--emerald)' : 'var(--rose)'};">
+            Tỷ lệ chấp thuận: ${item.approvalRate}
+          </span>
+        </div>
+        <div style="height:10px; background:rgba(255,255,255,0.06); border-radius:5px; overflow:hidden; display:flex;">
+          <div style="height:100%; width:${pMatch}%; background:var(--emerald);" title="Khớp hoàn toàn: ${item.matched} vụ (${pMatch}%)"></div>
+          <div style="height:100%; width:${pLight}%; background:var(--amber);" title="Lệch nhẹ ≤5pp: ${item.lightDiff} vụ (${pLight}%)"></div>
+          <div style="height:100%; width:${pHeavy}%; background:var(--rose);" title="Lệch >5pp: ${item.heavyDiff} vụ (${pHeavy}%)"></div>
+        </div>
+      `;
+      barsContainer.appendChild(barRow);
+    });
+
+    // 2. Render Detailed Table
+    tbody.innerHTML = '';
+    items.forEach(item => {
+      const tr = document.createElement('tr');
+      tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+      const isGood = parseFloat(item.approvalRate) >= 80;
+
+      tr.innerHTML = `
+        <td style="padding:10px 14px; font-weight:600; color:#fff;">
+          ${item.category}
+        </td>
+        <td style="padding:10px 10px; text-align:center; font-family:var(--font-mono); font-weight:600;">
+          ${item.total}
+        </td>
+        <td style="padding:10px 10px; text-align:center; font-family:var(--font-mono); color:var(--emerald); font-weight:700;">
+          ${item.matched} (${((item.matched/item.total)*100).toFixed(0)}%)
+        </td>
+        <td style="padding:10px 10px; text-align:center; font-family:var(--font-mono); color:var(--amber); font-weight:700;">
+          ${item.lightDiff}
+        </td>
+        <td style="padding:10px 10px; text-align:center; font-family:var(--font-mono); color:var(--rose); font-weight:700;">
+          ${item.heavyDiff}
+        </td>
+        <td style="padding:10px 10px; text-align:center;">
+          <span class="tag ${isGood ? '' : 'w'}" style="font-weight:700; font-family:var(--font-mono); font-size:11.5px;">
+            ${item.approvalRate}
+          </span>
+        </td>
+        <td style="padding:10px 14px; color:var(--text-muted); font-size:11.5px; line-height:1.4;">
+          ${item.recommendation}
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // 3. EDITABLE NARRATIVE & LEGAL CONDITIONS IN TAB 2
+  let isNarrativeEditing = false;
+
+  function toggleNarrativeEdit() {
+    const btn = document.getElementById('btn-narrative-toggle');
+    const badge = document.getElementById('narrative-save-badge');
+    const pSituation = document.getElementById('narrative-situation');
+    const pBase = document.getElementById('narrative-base');
+    const pFactor = document.getElementById('narrative-factor');
+
+    if (!isNarrativeEditing) {
+      // ENTER EDIT MODE
+      isNarrativeEditing = true;
+      if (btn) {
+        btn.innerHTML = '💾 Lưu thay đổi';
+        btn.style.background = '#0284c7';
+        btn.style.color = '#fff';
+      }
+
+      if (pSituation) {
+        const val = pSituation.textContent.trim();
+        pSituation.outerHTML = `<textarea class="narrative-textarea" id="narrative-situation">${val}</textarea>`;
+      }
+      if (pBase) {
+        const val = pBase.textContent.trim();
+        pBase.outerHTML = `<textarea class="narrative-textarea" id="narrative-base">${val}</textarea>`;
+      }
+      if (pFactor) {
+        const val = pFactor.textContent.trim();
+        pFactor.outerHTML = `<textarea class="narrative-textarea" id="narrative-factor">${val}</textarea>`;
+      }
+    } else {
+      // SAVE CHANGES
+      isNarrativeEditing = false;
+      const tSituation = document.getElementById('narrative-situation');
+      const tBase = document.getElementById('narrative-base');
+      const tFactor = document.getElementById('narrative-factor');
+
+      const valSituation = tSituation ? tSituation.value.trim() : '';
+      const valBase = tBase ? tBase.value.trim() : '';
+      const valFactor = tFactor ? tFactor.value.trim() : '';
+
+      if (tSituation) {
+        tSituation.outerHTML = `<p class="editable-col" id="narrative-situation">${valSituation}</p>`;
+      }
+      if (tBase) {
+        tBase.outerHTML = `<p class="editable-col" id="narrative-base">${valBase}</p>`;
+      }
+      if (tFactor) {
+        tFactor.outerHTML = `<p class="editable-col" id="narrative-factor">${valFactor}</p>`;
+      }
+
+      if (btn) {
+        btn.innerHTML = '✏️ Sửa nội dung';
+        btn.style.background = '';
+        btn.style.color = '';
+      }
+
+      // Show save notification
+      if (badge) {
+        badge.style.opacity = '1';
+        setTimeout(() => { badge.style.opacity = '0'; }, 2500);
+      }
+    }
+  }
 
 </script>
 
