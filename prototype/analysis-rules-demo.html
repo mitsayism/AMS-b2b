@@ -886,25 +886,21 @@
         <section id="tab-quality" class="tab-pane active">
       <div class="screen-header">
         <div>
-          <div class="screen-kicker">
-            <span>Theo dõi chất lượng phân tích</span>
-            <span>•</span>
-            <span>Màn hình hiệu quả</span>
-          </div>
-          <h1 class="screen-title">Hiệu quả gợi ý của AI so với Điều tra viên</h1>
-          <p class="screen-desc">
-            Theo dõi mức độ chấp thuận của Điều tra viên đối với kết quả do AI đề xuất theo thời gian và theo từng nhóm tai nạn để phát hiện sai lệch và cải tiến quy tắc.
-          </p>
+          <h1 class="screen-title" style="margin:0; font-size:20px; font-weight:700; color:#fff;">HIỆU QUẢ PHÂN TÍCH</h1>
         </div>
         <div style="display:flex; gap:10px; align-items:center;">
-          <select class="filter-select" id="quality-time-filter" onchange="updateQualityStats()">
-            <option value="w45">Tuần 45 (Hiện tại: 04/11 - 10/11/2026)</option>
-            <option value="w44">Tuần 44 (28/10 - 03/11/2026)</option>
-            <option value="w43">Tuần 43 (21/10 - 27/10/2026)</option>
-            <option value="w42">Tuần 42 (14/10 - 20/10/2026)</option>
-            <option value="month">30 ngày qua (Tổng hợp)</option>
-          </select>
-          <button class="btn btn-secondary btn-sm" onclick="showToast('Đã làm mới dữ liệu đối soát tuần 45', 'info')">
+          <div class="week-nav-widget" style="display:inline-flex; align-items:center; background:rgba(15,23,42,0.85); border:1px solid rgba(255,255,255,0.12); border-radius:8px; padding:2px; box-shadow:0 2px 6px rgba(0,0,0,0.3);">
+            <button type="button" class="btn-week-step" id="btn-prev-week" onclick="stepWeek(-1)" style="background:none; border:none; color:var(--text-muted); padding:6px 12px; border-radius:6px; cursor:pointer; font-size:16px; font-weight:bold; display:flex; align-items:center; justify-content:center; transition:all 0.15s ease;" title="Tuần trước">
+              ‹
+            </button>
+            <div id="week-range-display" style="padding:4px 14px; font-size:13px; font-weight:600; color:#f8fafc; text-align:center; min-width:160px; user-select:none;">
+              04/11 - 10/11 Tháng 11
+            </div>
+            <button type="button" class="btn-week-step" id="btn-next-week" onclick="stepWeek(1)" style="background:none; border:none; color:var(--text-muted); padding:6px 12px; border-radius:6px; cursor:pointer; font-size:16px; font-weight:bold; display:flex; align-items:center; justify-content:center; transition:all 0.15s ease;" title="Tuần sau">
+              ›
+            </button>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="showToast('Đã làm mới dữ liệu đối soát', 'info')">
             <span>⟳ Làm mới</span>
           </button>
         </div>
@@ -959,12 +955,6 @@
           <div class="panel-title">
             <span>📈 Xu hướng tỷ lệ Điều tra viên chấp thuận gợi ý AI theo tuần</span>
           </div>
-          <div style="font-size:12px; color:var(--text-muted);">
-            <span style="display:inline-flex; align-items:center; gap:6px;">
-              <span style="width:12px; height:12px; background:var(--emerald); border-radius:3px;"></span>
-              Tỷ lệ đồng thuận ngay lần đầu (Mục tiêu ≥80%)
-            </span>
-          </div>
         </div>
         <div class="panel-body">
           <div class="weekly-chart-wrap" style="grid-template-columns: repeat(4, 1fr); max-width:900px; margin:0 auto 16px;">
@@ -1004,10 +994,6 @@
               <div style="font-size:11px; color:var(--emerald); font-weight:600;">142 vụ việc</div>
             </div>
           </div>
-
-          <div style="font-size:12.5px; color:var(--text-muted); line-height:1.55; padding:12px 16px; background:rgba(0,0,0,0.25); border-radius:8px; border:1px solid rgba(255,255,255,0.06);">
-            💡 <strong>Nhận định chất lượng từ Reviewer:</strong> Sau khi bổ sung 3 quy tắc điều chỉnh lỗi chuyển làn ở Tuần 44, tỷ lệ Điều tra viên chấp thuận phán quyết của AI ngay lần đầu đã vượt mốc <strong>80%</strong> (đạt 81.2%). Hiện tại <strong>14 vụ việc có khác biệt</strong> tập trung chủ yếu ở ngã tư không đèn và vòng xuyến, cần rà soát để hoàn thiện thêm quy tắc.
-          </div>
         </div>
       </div>
 
@@ -1015,10 +1001,103 @@
       <div class="panel-box">
         <div class="panel-header">
           <div class="panel-title">
-            <span>📑 Phân bố độ khớp theo Loại tai nạn: AI đề xuất vs Điều tra viên (Tuần 45)</span>
+            <span>📑 Phân bố độ khớp theo Loại tai nạn: AI đề xuất vs Điều tra viên</span>
           </div>
-          <span style="font-size:12px; color:var(--text-muted);">Tổng cộng 142 vụ trên 5 nhóm va chạm chính</span>
         </div>
+
+        <!-- 2 Biểu đồ đặt cạnh nhau: Biểu đồ cột phân bố + Biểu đồ Donut cơ cấu -->
+        <div style="display:grid; grid-template-columns: 1.35fr 1fr; gap:16px; padding:16px; background:rgba(0,0,0,0.18); border-bottom:1px solid rgba(255,255,255,0.06);">
+          <!-- Biểu đồ cột bên trái: Tỷ lệ chấp thuận theo từng loại tai nạn -->
+          <div style="background:rgba(15,23,42,0.6); padding:14px 18px; border-radius:10px; border:1px solid rgba(255,255,255,0.07);">
+            <div style="font-size:12.5px; font-weight:700; color:#e2e8f0; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+              <span>📊 Tỷ lệ chấp thuận theo loại tai nạn</span>
+              <span style="font-size:11px; color:#10b981; font-weight:600;">Mục tiêu ≥80%</span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:9px;">
+              <div>
+                <div style="display:flex; justify-content:space-between; font-size:11.5px; margin-bottom:3px;">
+                  <span style="color:#cbd5e1;">Ngã tư không đèn</span>
+                  <span style="font-weight:700; color:#f87171;">73.9% (34/46)</span>
+                </div>
+                <div style="height:7px; background:rgba(255,255,255,0.08); border-radius:4px; overflow:hidden;">
+                  <div style="height:100%; width:73.9%; background:linear-gradient(90deg, #ef4444, #f87171); border-radius:4px;"></div>
+                </div>
+              </div>
+
+              <div>
+                <div style="display:flex; justify-content:space-between; font-size:11.5px; margin-bottom:3px;">
+                  <span style="color:#cbd5e1;">Chuyển làn cùng chiều</span>
+                  <span style="font-weight:700; color:#34d399;">86.8% (33/38)</span>
+                </div>
+                <div style="height:7px; background:rgba(255,255,255,0.08); border-radius:4px; overflow:hidden;">
+                  <div style="height:100%; width:86.8%; background:linear-gradient(90deg, #059669, #10b981); border-radius:4px;"></div>
+                </div>
+              </div>
+
+              <div>
+                <div style="display:flex; justify-content:space-between; font-size:11.5px; margin-bottom:3px;">
+                  <span style="color:#cbd5e1;">Đâm đuôi (Rear-end)</span>
+                  <span style="font-weight:700; color:#34d399;">92.9% (26/28)</span>
+                </div>
+                <div style="height:7px; background:rgba(255,255,255,0.08); border-radius:4px; overflow:hidden;">
+                  <div style="height:100%; width:92.9%; background:linear-gradient(90deg, #059669, #34d399); border-radius:4px;"></div>
+                </div>
+              </div>
+
+              <div>
+                <div style="display:flex; justify-content:space-between; font-size:11.5px; margin-bottom:3px;">
+                  <span style="color:#cbd5e1;">Vòng xuyến</span>
+                  <span style="font-weight:700; color:#fbbf24;">71.4% (10/14)</span>
+                </div>
+                <div style="height:7px; background:rgba(255,255,255,0.08); border-radius:4px; overflow:hidden;">
+                  <div style="height:100%; width:71.4%; background:linear-gradient(90deg, #d97706, #fbbf24); border-radius:4px;"></div>
+                </div>
+              </div>
+
+              <div>
+                <div style="display:flex; justify-content:space-between; font-size:11.5px; margin-bottom:3px;">
+                  <span style="color:#cbd5e1;">Người đi bộ / Xe đạp</span>
+                  <span style="font-weight:700; color:#34d399;">87.5% (14/16)</span>
+                </div>
+                <div style="height:7px; background:rgba(255,255,255,0.08); border-radius:4px; overflow:hidden;">
+                  <div style="height:100%; width:87.5%; background:linear-gradient(90deg, #059669, #10b981); border-radius:4px;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Biểu đồ tròn Donut bên cạnh: Cơ cấu kết quả đối soát -->
+          <div style="background:rgba(15,23,42,0.6); padding:14px 18px; border-radius:10px; border:1px solid rgba(255,255,255,0.07); display:flex; flex-direction:column; align-items:center; justify-content:center;">
+            <div style="font-size:12.5px; font-weight:700; color:#e2e8f0; margin-bottom:10px; width:100%; text-align:left;">
+              🍩 Cơ cấu kết quả đối soát
+            </div>
+            <div style="display:flex; align-items:center; gap:20px;">
+              <div style="position:relative; width:96px; height:96px;">
+                <svg viewBox="0 0 36 36" style="width:100%; height:100%; transform:rotate(-90deg);">
+                  <!-- Vòng nền: 18.8% khác biệt (Rose) -->
+                  <circle cx="18" cy="18" r="14" fill="none" stroke="#f43f5e" stroke-width="4.5" stroke-dasharray="100 100" />
+                  <!-- Vòng chính: 81.2% đồng thuận (Emerald) -->
+                  <circle cx="18" cy="18" r="14" fill="none" stroke="#10b981" stroke-width="4.5" stroke-dasharray="81.2 100" stroke-linecap="round" />
+                </svg>
+                <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                  <span style="font-size:15px; font-weight:800; color:#10b981;">81.2%</span>
+                  <span style="font-size:9.5px; color:#94a3b8;">142 vụ</span>
+                </div>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:8px; font-size:11.5px;">
+                <div style="display:flex; align-items:center; gap:7px;">
+                  <span style="width:10px; height:10px; border-radius:2px; background:#10b981;"></span>
+                  <span style="color:#cbd5e1;">Đồng thuận: <strong style="color:#10b981;">115 vụ</strong></span>
+                </div>
+                <div style="display:flex; align-items:center; gap:7px;">
+                  <span style="width:10px; height:10px; border-radius:2px; background:#f43f5e;"></span>
+                  <span style="color:#cbd5e1;">Khác biệt: <strong style="color:#f43f5e;">27 vụ</strong></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="table-responsive">
           <table class="data-table">
             <thead>
@@ -1028,7 +1107,6 @@
                 <th>Số vụ đồng thuận (AI = ĐTV)</th>
                 <th>Tỷ lệ chấp thuận</th>
                 <th>Số vụ lệch</th>
-                <th>Đánh giá</th>
                 <th>Hành động</th>
               </tr>
             </thead>
@@ -1039,7 +1117,6 @@
                 <td><b style="color:var(--emerald);">34 vụ</b></td>
                 <td><span class="badge badge-rose">73.9%</span></td>
                 <td><b style="color:var(--rose);">8 vụ lệch</b></td>
-                <td><span class="badge badge-amber">Cần tạo quy tắc</span></td>
                 <td><button class="btn btn-primary btn-sm" onclick="filterDiscrepancy('Ngã tư')">Xem 8 vụ lệch</button></td>
               </tr>
               <tr>
@@ -1048,7 +1125,6 @@
                 <td><b style="color:var(--emerald);">33 vụ</b></td>
                 <td><span class="badge badge-emerald">86.8%</span></td>
                 <td><b style="color:var(--text-muted);">3 vụ lệch</b></td>
-                <td><span class="badge badge-slate">Đạt chuẩn</span></td>
                 <td><button class="btn btn-secondary btn-sm" onclick="filterDiscrepancy('Chuyển làn')">Xem 3 vụ lệch</button></td>
               </tr>
               <tr>
@@ -1057,7 +1133,6 @@
                 <td><b style="color:var(--emerald);">26 vụ</b></td>
                 <td><span class="badge badge-emerald">92.9%</span></td>
                 <td><b style="color:var(--emerald);">1 vụ lệch</b></td>
-                <td><span class="badge badge-slate">Xuất sắc</span></td>
                 <td><button class="btn btn-secondary btn-sm" onclick="filterDiscrepancy('Đâm đuôi')">Xem 1 vụ lệch</button></td>
               </tr>
               <tr>
@@ -1066,7 +1141,6 @@
                 <td><b style="color:var(--emerald);">10 vụ</b></td>
                 <td><span class="badge badge-amber">71.4%</span></td>
                 <td><b style="color:var(--amber);">2 vụ lệch</b></td>
-                <td><span class="badge badge-amber">Cần tạo quy tắc</span></td>
                 <td><button class="btn btn-primary btn-sm" onclick="filterDiscrepancy('Vòng xuyến')">Xem 2 vụ lệch</button></td>
               </tr>
               <tr>
@@ -1075,7 +1149,6 @@
                 <td><b style="color:var(--emerald);">14 vụ</b></td>
                 <td><span class="badge badge-emerald">87.5%</span></td>
                 <td><b style="color:var(--text-muted);">0 vụ lệch</b></td>
-                <td><span class="badge badge-slate">Ổn định</span></td>
                 <td><button class="btn btn-secondary btn-sm" disabled style="opacity:0.4;">0 vụ lệch</button></td>
               </tr>
             </tbody>
@@ -1089,7 +1162,6 @@
           <div class="panel-title">
             <span>⚠️ Nhóm quy tắc thường tạo ra sai lệch nhiều nhất (Tuần 45)</span>
           </div>
-          <span style="font-size:12px; color:var(--text-muted);">Căn cứ để ưu tiên chuẩn hóa Knowledge Base</span>
         </div>
         <div class="table-responsive">
           <table class="data-table">
@@ -2351,16 +2423,41 @@
       openModal('modal-rule-detail');
     }
 
-    function updateQualityStats() {
-      const val = document.getElementById('quality-time-filter').value;
-      if (val === 'w44') {
-        document.getElementById('kpi-overall').textContent = '82.2%';
-        document.getElementById('kpi-routing-kb').textContent = '85.0%';
-      } else {
-        document.getElementById('kpi-overall').textContent = '84.6%';
-        document.getElementById('kpi-routing-kb').textContent = '88.5%';
-      }
-      showToast('Đã cập nhật số liệu theo khoảng thời gian chọn!', 'info');
+    const WEEKS_DATA = [
+      { label: '14/10 - 20/10 Tháng 10', match: '74.0%', diff: '26.0%', avg: '±9.8%', cases: '18 vụ', matchCount: '95/128 vụ', diffCount: '33/128 vụ' },
+      { label: '21/10 - 27/10 Tháng 10', match: '77.0%', diff: '23.0%', avg: '±9.2%', cases: '16 vụ', matchCount: '104/135 vụ', diffCount: '31/135 vụ' },
+      { label: '28/10 - 03/11 Tháng 11', match: '79.0%', diff: '21.0%', avg: '±8.9%', cases: '15 vụ', matchCount: '110/139 vụ', diffCount: '29/139 vụ' },
+      { label: '04/11 - 10/11 Tháng 11', match: '81.2%', diff: '18.8%', avg: '±8.5%', cases: '14 vụ', matchCount: '115/142 vụ', diffCount: '27/142 vụ' }
+    ];
+    let currentWeekIndex = 3;
+
+    function stepWeek(step) {
+      const nextIdx = currentWeekIndex + step;
+      if (nextIdx < 0 || nextIdx >= WEEKS_DATA.length) return;
+      currentWeekIndex = nextIdx;
+      updateWeekDisplay();
+    }
+
+    function updateWeekDisplay() {
+      const w = WEEKS_DATA[currentWeekIndex];
+      const disp = document.getElementById('week-range-display');
+      if (disp) disp.textContent = w.label;
+
+      const prevBtn = document.getElementById('btn-prev-week');
+      const nextBtn = document.getElementById('btn-next-week');
+      if (prevBtn) prevBtn.style.opacity = currentWeekIndex === 0 ? '0.35' : '1';
+      if (nextBtn) nextBtn.style.opacity = currentWeekIndex === WEEKS_DATA.length - 1 ? '0.35' : '1';
+
+      const kpiMatch = document.getElementById('kpi-match-rate');
+      const kpiDiff = document.getElementById('kpi-diff-rate');
+      const kpiAvg = document.getElementById('kpi-diff-avg');
+      const kpiCases = document.getElementById('kpi-diff-cases');
+      if (kpiMatch) kpiMatch.textContent = w.match;
+      if (kpiDiff) kpiDiff.textContent = w.diff;
+      if (kpiAvg) kpiAvg.textContent = w.avg;
+      if (kpiCases) kpiCases.textContent = w.cases;
+
+      showToast('Đã chuyển xem dữ liệu: ' + w.label, 'info');
     }
   </script>
 
