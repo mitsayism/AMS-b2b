@@ -2257,6 +2257,23 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+    max-height: 290px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  #design-comments .dc-list::-webkit-scrollbar {
+    width: 5px;
+  }
+  #design-comments .dc-list::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 4px;
+  }
+  #design-comments .dc-list::-webkit-scrollbar-thumb {
+    background: #1e3a5a;
+    border-radius: 4px;
+  }
+  #design-comments .dc-list::-webkit-scrollbar-thumb:hover {
+    background: #0284c7;
   }
   #design-comments .dc-item {
     background: #0f2034;
