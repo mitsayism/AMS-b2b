@@ -962,9 +962,9 @@
         <span>Tổng quan chất lượng</span>
         <span class="tab-count">Đối soát</span>
       </button>
-      <button class="nav-tab-btn" onclick="switchMainTab('tab-knia-rules')" id="btn-tab-knia-rules">
-        <span>Quy tắc &amp; Tiêu chí KNIA</span>
-        <span class="tab-count" id="badge-rules-count">32 chart · 48 tình tiết</span>
+      <button class="nav-tab-btn" onclick="switchMainTab('tab-rules')" id="btn-tab-rules">
+        <span>Danh sách quy tắc</span>
+        <span class="tab-count" id="badge-rules-count">48 quy tắc</span>
       </button>
       <button class="nav-tab-btn" onclick="switchMainTab('tab-discrepancy')" id="btn-tab-discrepancy">
         <span>Vụ lệch kết quả</span>
@@ -972,8 +972,8 @@
       </button>
     </nav>
     <div class="tab-bar-actions">
-      <button class="btn btn-primary btn-sm" onclick="openCreateModal()">
-        <span>＋ Thêm tình tiết / Bản nội bộ</span>
+      <button class="btn btn-primary btn-sm" onclick="openCreateRuleSimpleModal()">
+        <span>＋ Tạo quy tắc mới</span>
       </button>
     </div>
   </div>
@@ -1317,72 +1317,223 @@
       </div>
     </section>
 
-<!-- ================= TAB 2: QUY TẮC & TIÊU CHÍ KNIA (MASTER - DETAIL) ================= -->
-    <section id="tab-knia-rules" class="tab-pane">
+<!-- ================= TAB 2: DANH SÁCH QUY TẮC NGHIỆP VỤ ================= -->
+    <section id="tab-rules" class="tab-pane">
       <div class="screen-header">
         <div>
-          <h1 class="screen-title" style="margin:0; font-size:20px; font-weight:700; color:#fff;">QUY TẮC &amp; TIÊU CHÍ KNIA</h1>
+          <h1 class="screen-title" style="margin:0; font-size:20px; font-weight:700; color:#fff;">DANH SÁCH QUY TẮC</h1>
           <p class="screen-desc" style="margin-top:4px; font-size:13px; color:var(--text-muted);">
-            Quản lý biểu đồ KNIA gốc, các bản nội bộ kế thừa và danh mục quy tắc nhận diện tình tiết nguyên tử của AI.
+            Quản lý các quy tắc nghiệp vụ định lượng tỷ lệ lỗi và liên kết biểu đồ KNIA áp dụng trong phân tích bồi thường.
           </p>
         </div>
-        <div style="display:flex; gap:12px; align-items:center;">
-          <!-- Segmented View Switcher -->
-          <div class="segmented-control">
-            <button type="button" class="segmented-btn active" id="btn-view-charts" onclick="switchKniaViewMode('charts')">
-              <span>📊 Theo Biểu đồ KNIA</span>
-            </button>
-            <button type="button" class="segmented-btn" id="btn-view-rules" onclick="switchKniaViewMode('rules')">
-              <span>🧩 Theo Tình tiết AI</span>
-            </button>
-          </div>
-          <button type="button" class="btn btn-primary btn-sm" onclick="openCreateModal()">
-            <span>＋ Thêm mới</span>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <button type="button" class="btn btn-primary btn-sm" onclick="openCreateRuleSimpleModal()">
+            <span>＋ Tạo quy tắc mới</span>
           </button>
         </div>
       </div>
 
-      <!-- Master-Detail Split Layout -->
-      <div class="master-detail-layout">
-        <!-- Left: Master List -->
-        <div class="panel-box" style="margin-bottom:0; display:flex; flex-direction:column; height:calc(100vh - 210px); min-height:650px;">
-          <!-- Search & Filter Controls -->
-          <div style="padding:14px; border-bottom:1px solid var(--border); background:rgba(0,0,0,0.15); display:flex; flex-direction:column; gap:10px;">
-            <div class="search-input-wrap">
-              <input type="text" id="knia-search-input" placeholder="Tìm theo mã chart, tình tiết, từ khóa..." oninput="handleKniaMasterFilter()">
-            </div>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-              <select class="filter-select" id="knia-filter-category" onchange="handleKniaMasterFilter()" style="font-size:12px; padding:6px 8px;">
-                <option value="">Tất cả loại va chạm</option>
-                <option value="Ngã tư">Ngã tư không đèn</option>
-                <option value="Chuyển làn">Chuyển làn</option>
-                <option value="Đâm đuôi">Đâm đuôi</option>
-                <option value="Vòng xuyến">Vòng xuyến</option>
-                <option value="Người đi bộ">Người đi bộ</option>
-              </select>
-              <select class="filter-select" id="knia-filter-status" onchange="handleKniaMasterFilter()" style="font-size:12px; padding:6px 8px;">
-                <option value="">Tất cả trạng thái</option>
-                <option value="active">Đang dùng</option>
-                <option value="override">Bản kế thừa nội bộ</option>
-                <option value="paused">Tạm dừng</option>
-                <option value="draft">Nháp</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Scrollable Master Items List -->
-          <div id="knia-master-list" style="flex:1; overflow-y:auto; padding:12px; scrollbar-width:thin;">
-            <!-- Rendered dynamically via JavaScript -->
-          </div>
-          <div style="padding:10px 14px; border-top:1px solid var(--border); background:rgba(0,0,0,0.2); font-size:11.5px; color:var(--text-muted); display:flex; justify-content:space-between;">
-            <span id="knia-items-count">Đang hiển thị 4 mục</span>
-            <span style="color:var(--cyan); cursor:pointer;" onclick="showToast('Dữ liệu đã đồng bộ mới nhất', 'info')">⟳ Làm mới danh mục</span>
-          </div>
+      <!-- Rules Search & Filter Bar -->
+      <div class="filter-bar">
+        <div class="search-input-wrap">
+          <input type="text" id="search-rules-catalog" placeholder="Tìm theo tên quy tắc, tình huống áp dụng, từ khóa nhận diện, mã rule..." oninput="filterRulesCatalogTable()">
         </div>
+        <select class="filter-select" id="rule-cat-filter" onchange="filterRulesCatalogTable()">
+          <option value="">Tất cả loại tai nạn</option>
+          <option value="Ngã tư">Ngã tư không đèn / Có đèn</option>
+          <option value="Chuyển làn">Chuyển làn cùng chiều</option>
+          <option value="Đâm đuôi">Đâm đuôi (Rear-end)</option>
+          <option value="Vòng xuyến">Vòng xuyến</option>
+          <option value="Người đi bộ">Người đi bộ / Xe đạp</option>
+        </select>
+        <select class="filter-select" id="rule-status-filter-simple" onchange="filterRulesCatalogTable()">
+          <option value="">Tất cả trạng thái</option>
+          <option value="active">Đang áp dụng</option>
+          <option value="paused">Tạm dừng</option>
+          <option value="draft">Bản nháp</option>
+        </select>
+        <select class="filter-select" id="rule-chart-filter-simple" onchange="filterRulesCatalogTable()">
+          <option value="">Tất cả Chart KNIA</option>
+          <option value="112">Chart 112 (Ngã tư cùng độ rộng)</option>
+          <option value="114">Chart 114 (Ngã tư đường ưu tiên)</option>
+          <option value="252">Chart 252 (Chuyển làn tạt đầu)</option>
+          <option value="314">Chart 314 (Vòng xuyến)</option>
+          <option value="205">Chart 205 (Đâm đuôi phanh gấp)</option>
+        </select>
+      </div>
 
-        <!-- Right: Detail Panel -->
-        <div class="panel-box" id="knia-detail-container" style="margin-bottom:0; min-height:650px;">
-          <!-- Detail header & body rendered dynamically -->
+      <!-- Bảng Danh sách quy tắc chuẩn 6 cột nghiệp vụ -->
+      <div class="panel-box">
+        <div class="table-responsive">
+          <table class="data-table" id="rules-simple-table">
+            <thead>
+              <tr>
+                <th style="min-width:210px;">1. Tên quy tắc</th>
+                <th style="min-width:150px;">2. Nguồn KNIA / Tài liệu</th>
+                <th style="min-width:125px;">3. Chart liên quan</th>
+                <th style="min-width:280px;">4. Điều kiện áp dụng</th>
+                <th style="min-width:160px;">5. Tỷ lệ lỗi tham chiếu</th>
+                <th style="min-width:115px;">6. Trạng thái</th>
+                <th style="min-width:110px;">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Rule 1 -->
+              <tr data-cat="Chuyển làn" data-status="active" data-chart="252" data-rule-id="RULE-KNIA-252-01">
+                <td>
+                  <b style="color:var(--cyan); font-family:var(--font-mono);">RULE-KNIA-252-01</b>
+                  <div style="font-weight:600; color:#fff; margin-top:2px; font-size:13px;">Chuyển làn không bật xi-nhan trước 30m</div>
+                </td>
+                <td>
+                  <span class="badge badge-emerald">KNIA Sách 2024</span>
+                  <div style="font-size:11.5px; color:var(--text-muted); margin-top:3px;">Điều 31-3 (Án lệ 18/2023)</div>
+                </td>
+                <td>
+                  <span class="badge badge-primary">차252 (차31-3)</span>
+                  <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">Chuyển làn cùng chiều</div>
+                </td>
+                <td>
+                  <div style="font-size:12px; color:#cbd5e1; line-height:1.45;">
+                    Phương tiện chuyển làn đường nhưng camera ghi nhận không bật đèn tín hiệu báo rẽ trước thời điểm bắt đầu chuyển làn tối thiểu 30m hoặc 3 giây.
+                  </div>
+                </td>
+                <td>
+                  <b style="color:var(--rose);">+10% lỗi Xe chuyển làn</b>
+                  <div style="font-size:11.5px; color:var(--text-dim); margin-top:2px;">Cơ sở 80:20 ➔ 90:10</div>
+                </td>
+                <td>
+                  <span class="badge badge-emerald" id="status-badge-RULE-KNIA-252-01">Đang áp dụng</span>
+                </td>
+                <td>
+                  <button class="btn btn-secondary btn-sm" onclick="showRuleDetails('RULE-KNIA-252-01')">Xem chi tiết</button>
+                </td>
+              </tr>
+
+              <!-- Rule 2 -->
+              <tr data-cat="Ngã tư" data-status="active" data-chart="114" data-rule-id="RULE-KNIA-114-02">
+                <td>
+                  <b style="color:var(--cyan); font-family:var(--font-mono);">RULE-KNIA-114-02</b>
+                  <div style="font-weight:600; color:#fff; margin-top:2px; font-size:13px;">Ưu tiên đường lớn hơn tại ngã tư không đèn</div>
+                </td>
+                <td>
+                  <span class="badge badge-emerald">KNIA Sách 2024</span>
+                  <div style="font-size:11.5px; color:var(--text-muted); margin-top:3px;">Điều 114 // Luật GTĐB Đ.24</div>
+                </td>
+                <td>
+                  <span class="badge badge-primary">차114 (114-1)</span>
+                  <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">Đường ưu tiên</div>
+                </td>
+                <td>
+                  <div style="font-size:12px; color:#cbd5e1; line-height:1.45;">
+                    Xe đi từ đường nhánh vào ngã tư có bề rộng lòng đường xe kia lớn hơn từ 1.5 lần trở lên; không phân biệt rẽ phải hay đi thẳng.
+                  </div>
+                </td>
+                <td>
+                  <b style="color:var(--cyan);">60 : 40 (Xe nhánh 60%)</b>
+                  <div style="font-size:11.5px; color:var(--text-dim); margin-top:2px;">Cơ sở tiêu chuẩn</div>
+                </td>
+                <td>
+                  <span class="badge badge-emerald" id="status-badge-RULE-KNIA-114-02">Đang áp dụng</span>
+                </td>
+                <td>
+                  <button class="btn btn-secondary btn-sm" onclick="showRuleDetails('RULE-KNIA-114-02')">Xem chi tiết</button>
+                </td>
+              </tr>
+
+              <!-- Rule 3 -->
+              <tr data-cat="Ngã tư" data-status="active" data-chart="112" data-rule-id="RULE-KNIA-112-01">
+                <td>
+                  <b style="color:var(--cyan); font-family:var(--font-mono);">RULE-KNIA-112-01</b>
+                  <div style="font-weight:600; color:#fff; margin-top:2px; font-size:13px;">Xe B đã vào giao lộ trước tại ngã tư cùng độ rộng</div>
+                </td>
+                <td>
+                  <span class="badge badge-emerald">KNIA Sách 2024</span>
+                  <div style="font-size:11.5px; color:var(--text-muted); margin-top:3px;">Điều 112 // Án lệ Seoul 2021</div>
+                </td>
+                <td>
+                  <span class="badge badge-primary">차112 (112-1)</span>
+                  <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">Đường cùng bề rộng</div>
+                </td>
+                <td>
+                  <div style="font-size:12px; color:#cbd5e1; line-height:1.45;">
+                    Phương tiện bánh trước đã vượt qua vạch dừng hoặc tâm giao lộ trước phương tiện kia ít nhất 0.5 giây với tốc độ an toàn &lt;40km/h.
+                  </div>
+                </td>
+                <td>
+                  <b style="color:var(--emerald);">-15% lỗi cho xe vào trước</b>
+                  <div style="font-size:11.5px; color:var(--text-dim); margin-top:2px;">Cơ sở 60:40 ➔ 45:55</div>
+                </td>
+                <td>
+                  <span class="badge badge-emerald" id="status-badge-RULE-KNIA-112-01">Đang áp dụng</span>
+                </td>
+                <td>
+                  <button class="btn btn-secondary btn-sm" onclick="showRuleDetails('RULE-KNIA-112-01')">Xem chi tiết</button>
+                </td>
+              </tr>
+
+              <!-- Rule 4 -->
+              <tr data-cat="Vòng xuyến" data-status="active" data-chart="314" data-rule-id="RULE-KNIA-314-01">
+                <td>
+                  <b style="color:var(--cyan); font-family:var(--font-mono);">RULE-KNIA-314-01</b>
+                  <div style="font-weight:600; color:#fff; margin-top:2px; font-size:13px;">Quyền ưu tiên phương tiện đã vào sâu &gt;2/3 vòng xuyến</div>
+                </td>
+                <td>
+                  <span class="badge badge-emerald">KNIA Sách 2024</span>
+                  <div style="font-size:11.5px; color:var(--text-muted); margin-top:3px;">Điều 314 // Án lệ Seoul</div>
+                </td>
+                <td>
+                  <span class="badge badge-primary">차314</span>
+                  <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">Vòng xuyến</div>
+                </td>
+                <td>
+                  <div style="font-size:12px; color:#cbd5e1; line-height:1.45;">
+                    Phương tiện đã lưu thông hoàn thành &gt; 2/3 vòng xuyến có quyền ưu tiên đối với phương tiện đang từ các nhánh nhập vào đảo.
+                  </div>
+                </td>
+                <td>
+                  <b style="color:var(--amber);">20 : 80 (Xe nhập xuyến 80%)</b>
+                  <div style="font-size:11.5px; color:var(--text-dim); margin-top:2px;">Ưu tiên tuyệt đối</div>
+                </td>
+                <td>
+                  <span class="badge badge-emerald" id="status-badge-RULE-KNIA-314-01">Đang áp dụng</span>
+                </td>
+                <td>
+                  <button class="btn btn-secondary btn-sm" onclick="showRuleDetails('RULE-KNIA-314-01')">Xem chi tiết</button>
+                </td>
+              </tr>
+
+              <!-- Rule 5 -->
+              <tr data-cat="Đâm đuôi" data-status="paused" data-chart="205" data-rule-id="RULE-KNIA-205-01">
+                <td>
+                  <b style="color:var(--cyan); font-family:var(--font-mono);">RULE-KNIA-205-01</b>
+                  <div style="font-weight:600; color:#fff; margin-top:2px; font-size:13px;">Xe trước phanh gấp không lý do chính đáng</div>
+                </td>
+                <td>
+                  <span class="badge badge-slate">Biên bản Hòa giải</span>
+                  <div style="font-size:11.5px; color:var(--text-muted); margin-top:3px;">QĐ số 45/2025/HG</div>
+                </td>
+                <td>
+                  <span class="badge badge-primary">차205</span>
+                  <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">Đâm đuôi</div>
+                </td>
+                <td>
+                  <div style="font-size:12px; color:#cbd5e1; line-height:1.45;">
+                    Xe đi trước phanh đột ngột khi mặt đường phía trước hoàn toàn thông thoáng, không có chướng ngại vật hay tình huống khẩn cấp.
+                  </div>
+                </td>
+                <td>
+                  <b style="color:var(--rose);">-20% lỗi cho xe sau</b>
+                  <div style="font-size:11.5px; color:var(--text-dim); margin-top:2px;">Cơ sở 100:0 ➔ 80:20</div>
+                </td>
+                <td>
+                  <span class="badge badge-amber" id="status-badge-RULE-KNIA-205-01">Tạm dừng</span>
+                </td>
+                <td>
+                  <button class="btn btn-secondary btn-sm" onclick="showRuleDetails('RULE-KNIA-205-01')">Xem chi tiết</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </section>
@@ -1475,7 +1626,7 @@
                 <td>
                   <div style="display:flex; gap:6px;">
                     <button class="btn btn-primary btn-sm" onclick="inspectDiscrepancy('AMS-2026-8821')">Rà soát</button>
-                    <button class="btn btn-secondary btn-sm" onclick="jumpToRule('RULE-101')" title="Sửa quy tắc liên quan">Sửa rule</button>
+                    <button class="btn btn-secondary btn-sm" onclick="jumpToRuleFromDiscrepancy('RULE-KNIA-112-01')" title="Sửa quy tắc liên quan">Sửa rule</button>
                   </div>
                 </td>
               </tr>
@@ -1510,7 +1661,7 @@
                 <td>
                   <div style="display:flex; gap:6px;">
                     <button class="btn btn-primary btn-sm" onclick="inspectDiscrepancy('AMS-2026-8794')">Rà soát</button>
-                    <button class="btn btn-secondary btn-sm" onclick="jumpToRule('RULE-201')" title="Sửa quy tắc liên quan">Sửa rule</button>
+                    <button class="btn btn-secondary btn-sm" onclick="jumpToRuleFromDiscrepancy('RULE-KNIA-252-01')" title="Sửa quy tắc liên quan">Sửa rule</button>
                   </div>
                 </td>
               </tr>
@@ -1545,7 +1696,7 @@
                 <td>
                   <div style="display:flex; gap:6px;">
                     <button class="btn btn-primary btn-sm" onclick="inspectDiscrepancy('AMS-2026-8755')">Rà soát</button>
-                    <button class="btn btn-secondary btn-sm" onclick="jumpToRule('RULE-301')" title="Sửa quy tắc liên quan">Sửa rule</button>
+                    <button class="btn btn-secondary btn-sm" onclick="jumpToRuleFromDiscrepancy('RULE-KNIA-314-01')" title="Sửa quy tắc liên quan">Sửa rule</button>
                   </div>
                 </td>
               </tr>
@@ -1580,7 +1731,7 @@
                 <td>
                   <div style="display:flex; gap:6px;">
                     <button class="btn btn-primary btn-sm" onclick="inspectDiscrepancy('AMS-2026-8712')">Rà soát</button>
-                    <button class="btn btn-secondary btn-sm" onclick="jumpToRule('RULE-104')" title="Sửa quy tắc liên quan">Sửa rule</button>
+                    <button class="btn btn-secondary btn-sm" onclick="jumpToRuleFromDiscrepancy('RULE-KNIA-114-02')" title="Sửa quy tắc liên quan">Sửa rule</button>
                   </div>
                 </td>
               </tr>
@@ -2385,434 +2536,38 @@
     }
   ];
 
-  let kniaViewMode = 'charts'; // 'charts' | 'rules'
-  let selectedKniaItemId = 'chart-12';
+  // ================= QUY TẮC NGHIỆP VỤ TABLE FILTER =================
+  function filterRulesCatalogTable() {
+    const query = (document.getElementById('search-rules-catalog')?.value || '').toLowerCase().trim();
+    const cat = document.getElementById('rule-cat-filter')?.value || '';
+    const status = document.getElementById('rule-status-filter-simple')?.value || '';
+    const chart = document.getElementById('rule-chart-filter-simple')?.value || '';
 
-  function switchKniaViewMode(mode) {
-    kniaViewMode = mode;
-    document.getElementById('btn-view-charts').classList.toggle('active', mode === 'charts');
-    document.getElementById('btn-view-rules').classList.toggle('active', mode === 'rules');
+    const rows = document.querySelectorAll('#rules-simple-table tbody tr');
+    rows.forEach(row => {
+      const text = row.innerText.toLowerCase();
+      const rCat = row.getAttribute('data-cat') || '';
+      const rStatus = row.getAttribute('data-status') || '';
+      const rChart = row.getAttribute('data-chart') || '';
 
-    // Auto select first item in new mode
-    if (mode === 'charts') {
-      selectedKniaItemId = KNIA_CHARTS_DATA[0].id;
-    } else {
-      selectedKniaItemId = AI_ATOMIC_RULES_DATA[0].id;
-    }
-    renderKniaMasterList();
-    renderKniaDetail();
+      let match = true;
+      if (query && !text.includes(query)) match = false;
+      if (cat && !rCat.includes(cat)) match = false;
+      if (status && rStatus !== status) match = false;
+      if (chart && !rChart.includes(chart)) match = false;
+
+      row.style.display = match ? '' : 'none';
+    });
   }
 
-  function handleKniaMasterFilter() {
-    renderKniaMasterList();
+  function openCreateRuleSimpleModal() {
+    showToast('Mở form tạo quy tắc nghiệp vụ mới', 'info');
   }
 
-  function renderKniaMasterList() {
-    const listEl = document.getElementById('knia-master-list');
-    if (!listEl) return;
-
-    const query = (document.getElementById('knia-search-input')?.value || '').toLowerCase().trim();
-    const cat = document.getElementById('knia-filter-category')?.value || '';
-    const status = document.getElementById('knia-filter-status')?.value || '';
-
-    listEl.innerHTML = '';
-
-    if (kniaViewMode === 'charts') {
-      const items = KNIA_CHARTS_DATA.filter(item => {
-        let match = true;
-        if (query && !item.code.toLowerCase().includes(query) && !item.name.toLowerCase().includes(query)) match = false;
-        if (cat && !item.category.includes(cat)) match = false;
-        if (status === 'override' && !item.hasOverride) match = false;
-        else if (status && status !== 'override' && item.status !== status) match = false;
-        return match;
-      });
-
-      document.getElementById('knia-items-count').textContent = `Hiển thị ${items.length}/${KNIA_CHARTS_DATA.length} biểu đồ`;
-
-      items.forEach(item => {
-        const card = document.createElement('div');
-        card.className = `master-item-card ${selectedKniaItemId === item.id ? 'active' : ''}`;
-        card.onclick = () => {
-          selectedKniaItemId = item.id;
-          renderKniaMasterList();
-          renderKniaDetail();
-        };
-
-        card.innerHTML = `
-          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px;">
-            <b style="color:var(--cyan); font-family:var(--font-mono); font-size:13px;">${item.code}</b>
-            <div style="display:flex; gap:4px;">
-              ${item.hasOverride ? '<span class="badge badge-amber" style="font-size:10px; padding:1px 5px;">Bản nội bộ</span>' : ''}
-              <span class="badge badge-emerald" style="font-size:10px; padding:1px 5px;">${item.status === 'active' ? 'Đang dùng' : 'Tạm dừng'}</span>
-            </div>
-          </div>
-          <div style="font-weight:600; color:#fff; font-size:12.5px; line-height:1.4; margin-bottom:6px;">${item.name}</div>
-          <div style="display:flex; justify-content:space-between; font-size:11.5px; color:var(--text-muted);">
-            <span>Nhóm: <strong style="color:#cbd5e1;">${item.category}</strong></span>
-            <span>Cơ sở: <strong style="color:var(--cyan);">${item.baseRatio}</strong></span>
-          </div>
-          <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-dim); margin-top:5px; border-top:1px solid rgba(255,255,255,0.05); padding-top:4px;">
-            <span>${item.factorsCount} yếu tố tăng/giảm</span>
-            <span style="color:#38bdf8;">${item.linkedRules.length} quy tắc AI</span>
-          </div>
-        `;
-        listEl.appendChild(card);
-      });
-    } else {
-      // Rule mode
-      const items = AI_ATOMIC_RULES_DATA.filter(item => {
-        let match = true;
-        if (query && !item.name.toLowerCase().includes(query) && !item.id.toLowerCase().includes(query) && !item.keywords.some(k => k.includes(query))) match = false;
-        if (cat && !item.category.includes(cat)) match = false;
-        if (status && item.status !== status) match = false;
-        return match;
-      });
-
-      document.getElementById('knia-items-count').textContent = `Hiển thị ${items.length}/${AI_ATOMIC_RULES_DATA.length} tình tiết`;
-
-      items.forEach(item => {
-        const card = document.createElement('div');
-        card.className = `master-item-card ${selectedKniaItemId === item.id ? 'active' : ''}`;
-        card.onclick = () => {
-          selectedKniaItemId = item.id;
-          renderKniaMasterList();
-          renderKniaDetail();
-        };
-
-        card.innerHTML = `
-          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px;">
-            <b style="color:var(--cyan); font-family:var(--font-mono); font-size:13px;">${item.id}</b>
-            <span class="badge badge-emerald" style="font-size:10px; padding:1px 5px;">${item.status === 'active' ? 'Đang dùng' : 'Tạm dừng'}</span>
-          </div>
-          <div style="font-weight:600; color:#fff; font-size:12.5px; line-height:1.4; margin-bottom:6px;">${item.name}</div>
-          <div style="display:flex; justify-content:space-between; font-size:11.5px; color:var(--text-muted); margin-bottom:4px;">
-            <span>Nhóm: <strong style="color:#cbd5e1;">${item.category}</strong></span>
-            <span style="color:var(--amber); font-weight:600;">${item.priority}</span>
-          </div>
-          <div style="display:flex; gap:4px; flex-wrap:wrap; margin-top:5px; border-top:1px solid rgba(255,255,255,0.05); padding-top:4px;">
-            <span style="font-size:11px; color:var(--text-dim); margin-right:4px;">Chart:</span>
-            ${item.linkedCharts.map(c => `<span class="badge badge-primary" style="font-size:10px; padding:1px 5px;">${c.code}</span>`).join('')}
-          </div>
-        `;
-        listEl.appendChild(card);
-      });
-    }
-  }
-
-  function renderKniaDetail() {
-    const container = document.getElementById('knia-detail-container');
-    if (!container) return;
-
-    if (kniaViewMode === 'charts') {
-      const item = KNIA_CHARTS_DATA.find(c => c.id === selectedKniaItemId) || KNIA_CHARTS_DATA[0];
-      container.innerHTML = `
-        <div class="panel-header">
-          <div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <span class="badge badge-primary" style="font-size:13px; padding:3px 8px;">${item.code}</span>
-              ${item.hasOverride ? '<span class="badge badge-amber">Bản nội bộ kế thừa</span>' : '<span class="badge badge-slate">Bản gốc KNIA</span>'}
-              <span class="badge badge-emerald">${item.version}</span>
-            </div>
-            <h2 style="font-size:16.5px; font-weight:700; color:#fff; margin:8px 0 2px;">${item.name}</h2>
-            <div style="font-size:12px; color:var(--text-muted);">
-              Loại va chạm: <strong style="color:#cbd5e1;">${item.category}</strong> &nbsp;•&nbsp; Tỷ lệ lỗi cơ sở chuẩn: <strong style="color:var(--cyan);">${item.baseRatio}</strong>
-            </div>
-          </div>
-          <div style="display:flex; gap:8px;">
-            <button class="btn btn-secondary btn-sm" onclick="toggleItemStatus('${item.id}', 'chart')">
-              ${item.status === 'active' ? '⏸ Tạm dừng' : '▶ Kích hoạt'}
-            </button>
-            <button class="btn btn-primary btn-sm" onclick="openCreateOverrideModal('${item.id}')">
-              <span>✏️ Sửa bản nội bộ</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="panel-body" style="padding:18px 20px;">
-          <!-- Section 1: Tiêu chuẩn KNIA -->
-          <div class="detail-section-block">
-            <div class="detail-section-title">
-              <span>1. Tình huống đại diện &amp; Điều kiện áp dụng KNIA</span>
-              <span style="color:var(--text-dim); text-transform:none; font-weight:normal; font-size:11.5px;">Căn cứ luật</span>
-            </div>
-            <div style="font-size:13px; color:#f1f5f9; line-height:1.55; margin-bottom:12px;">
-              ${item.situation}
-            </div>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px;">
-              <div style="background:rgba(16,185,129,0.04); border:1px solid rgba(16,185,129,0.2); border-radius:8px; padding:10px 12px;">
-                <div style="font-size:11px; font-weight:700; color:#34d399; margin-bottom:4px;">✓ Điều kiện áp dụng:</div>
-                <div style="font-size:12px; color:#cbd5e1; line-height:1.5;">${item.conditionsApply}</div>
-              </div>
-              <div style="background:rgba(244,63,94,0.04); border:1px solid rgba(244,63,94,0.2); border-radius:8px; padding:10px 12px;">
-                <div style="font-size:11px; font-weight:700; color:#fb7185; margin-bottom:4px;">✕ Điều kiện loại trừ:</div>
-                <div style="font-size:12px; color:#cbd5e1; line-height:1.5;">${item.conditionsExclude}</div>
-              </div>
-            </div>
-            <div style="font-size:12px; color:var(--text-muted); line-height:1.5;">
-              ⚖️ <strong>Căn cứ pháp lý &amp; Án lệ:</strong> ${item.legalBasis}
-            </div>
-          </div>
-
-          <!-- Section 2: Bản kế thừa nội bộ -->
-          <div class="detail-section-block" style="${item.hasOverride ? 'border-color:rgba(245,158,11,0.3); background:rgba(245,158,11,0.03);' : ''}">
-            <div class="detail-section-title">
-              <span style="${item.hasOverride ? 'color:var(--amber);' : ''}">2. Bản nội bộ kế thừa KNIA</span>
-              <span class="badge ${item.hasOverride ? 'badge-amber' : 'badge-slate'}">${item.hasOverride ? 'Có tùy biến' : 'Chưa tùy biến (Nguyên bản)'}</span>
-            </div>
-            ${item.hasOverride ? `
-              <div class="override-grid">
-                <div class="override-box origin">
-                  <div style="font-size:11px; font-weight:600; color:var(--text-dim); margin-bottom:4px;">Giá trị gốc KNIA:</div>
-                  <div style="font-size:13px; font-weight:700; color:#fff;">${item.overrideDetails.originalBase}</div>
-                </div>
-                <div class="override-box internal">
-                  <div style="font-size:11px; font-weight:600; color:var(--amber); margin-bottom:4px;">Giá trị nội bộ áp dụng:</div>
-                  <div style="font-size:13px; font-weight:800; color:#fbbf24;">${item.overrideDetails.internalBase}</div>
-                </div>
-              </div>
-              <div style="background:rgba(0,0,0,0.25); border-radius:6px; padding:10px 12px; font-size:12px; color:var(--text-muted); line-height:1.5;">
-                <div><strong>Lý do sửa:</strong> ${item.overrideDetails.reason}</div>
-                <div style="margin-top:4px; font-size:11px; color:var(--text-dim);">
-                  Người sửa: <span style="color:#cbd5e1;">${item.overrideDetails.updatedBy}</span> • Thời gian: ${item.overrideDetails.updatedAt}
-                </div>
-              </div>
-            ` : `
-              <div style="font-size:12.5px; color:var(--text-muted); line-height:1.5;">
-                Biểu đồ này đang được áp dụng 100% theo quy chuẩn KNIA gốc. Reviewer có thể tạo bản kế thừa nội bộ nếu phát sinh án lệ riêng hoặc đặc thù lòng đường.
-              </div>
-            `}
-          </div>
-
-          <!-- Section 3: Quy tắc AI đang liên kết -->
-          <div class="detail-section-block">
-            <div class="detail-section-title">
-              <span>3. Các quy tắc AI đang gắn vào Chart này (N:N Mapping)</span>
-              <span style="color:#38bdf8; font-size:11.5px; text-transform:none;">${item.linkedRules.length} quy tắc</span>
-            </div>
-            <div style="display:flex; flex-direction:column; gap:8px;">
-              ${item.linkedRules.map(r => `
-                <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.2); padding:10px 12px; border-radius:6px; border:1px solid rgba(255,255,255,0.05);">
-                  <div>
-                    <b style="color:var(--cyan); font-family:var(--font-mono); font-size:12px;">${r.id}</b>
-                    <span style="color:#fff; font-weight:600; margin-left:8px; font-size:12.5px;">${r.name}</span>
-                    <div style="font-size:11.5px; color:var(--emerald); margin-top:2px;">Tác động lỗi: ${r.adjustment}</div>
-                  </div>
-                  <button class="btn btn-secondary btn-sm" onclick="jumpToRule('${r.id}')" style="font-size:11px; padding:4px 8px;">
-                    Xem quy tắc →
-                  </button>
-                </div>
-              `).join('')}
-            </div>
-          </div>
-        </div>
-      `;
-    } else {
-      // Rule Detail Mode
-      const item = AI_ATOMIC_RULES_DATA.find(r => r.id === selectedKniaItemId) || AI_ATOMIC_RULES_DATA[0];
-      container.innerHTML = `
-        <div class="panel-header">
-          <div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <span class="badge badge-primary" style="font-size:13px; padding:3px 8px;">${item.id}</span>
-              <span class="badge badge-emerald">${item.status === 'active' ? 'Đang áp dụng' : 'Tạm dừng'}</span>
-              <span class="badge badge-purple">${item.priority}</span>
-            </div>
-            <h2 style="font-size:17px; font-weight:700; color:#fff; margin:8px 0 2px;">${item.name}</h2>
-            <div style="font-size:12px; color:var(--text-muted);">
-              Tình tiết nguyên tử AI &nbsp;•&nbsp; Nhóm: <strong style="color:#cbd5e1;">${item.category}</strong>
-            </div>
-          </div>
-          <div style="display:flex; gap:8px;">
-            <button class="btn btn-secondary btn-sm" onclick="toggleItemStatus('${item.id}', 'rule')">
-              ${item.status === 'active' ? '⏸ Tạm dừng' : '▶ Kích hoạt'}
-            </button>
-            <button class="btn btn-primary btn-sm" onclick="openEditRuleModal('${item.id}')">
-              <span>✏️ Chỉnh sửa tình tiết</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="panel-body" style="padding:18px 20px;">
-          <!-- Section 1: Tình tiết & Diễn đạt tương đương -->
-          <div class="detail-section-block">
-            <div class="detail-section-title">
-              <span>1. Tình tiết chuẩn hóa &amp; Diễn đạt tương đương</span>
-              <span style="color:var(--text-dim); text-transform:none; font-size:11.5px;">NLP Pattern</span>
-            </div>
-            <div style="margin-bottom:10px;">
-              <div style="font-size:11px; color:var(--text-dim); margin-bottom:4px;">Các câu tương đương / lời khai nhận diện:</div>
-              <ul style="margin:0; padding-left:18px; font-size:12.5px; color:#cbd5e1; line-height:1.6;">
-                ${item.equivalents.map(eq => `<li>"${eq}"</li>`).join('')}
-              </ul>
-            </div>
-            <div>
-              <div style="font-size:11px; color:var(--text-dim); margin-bottom:5px;">Từ khóa / Thực thể trích xuất:</div>
-              <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                ${item.keywords.map(k => `<span class="badge badge-purple" style="font-size:11px;">#${k}</span>`).join('')}
-              </div>
-            </div>
-          </div>
-
-          <!-- Section 2: Điều kiện bắt buộc & Loại trừ -->
-          <div class="detail-section-block">
-            <div class="detail-section-title">
-              <span>2. Điều kiện bắt buộc &amp; Điều kiện loại trừ</span>
-            </div>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-              <div style="background:rgba(16,185,129,0.04); border:1px solid rgba(16,185,129,0.2); border-radius:8px; padding:10px 12px;">
-                <div style="font-size:11px; font-weight:700; color:#34d399; margin-bottom:4px;">✓ Điều kiện bắt buộc:</div>
-                <div style="font-size:12px; color:#cbd5e1; line-height:1.5;">${item.conditionsMust}</div>
-              </div>
-              <div style="background:rgba(244,63,94,0.04); border:1px solid rgba(244,63,94,0.2); border-radius:8px; padding:10px 12px;">
-                <div style="font-size:11px; font-weight:700; color:#fb7185; margin-bottom:4px;">✕ Điều kiện loại trừ:</div>
-                <div style="font-size:12px; color:#cbd5e1; line-height:1.5;">${item.conditionsExclude}</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section 3: Bảng Chart KNIA liên kết (Mapping N:N) -->
-          <div class="detail-section-block">
-            <div class="detail-section-title">
-              <span>3. Bảng Chart KNIA liên kết (Mapping N:N)</span>
-              <button class="btn btn-secondary btn-sm" onclick="showToast('Mở form gắn thêm chart KNIA', 'info')" style="font-size:11px; padding:3px 8px;">
-                ＋ Gắn thêm Chart
-              </button>
-            </div>
-            <div class="table-responsive">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Mã Chart</th>
-                    <th>Tác động / Yếu tố tăng giảm riêng theo Chart</th>
-                    <th>Thao tác</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${item.linkedCharts.map(c => `
-                    <tr>
-                      <td><b style="color:var(--cyan);">${c.code}</b></td>
-                      <td><span style="color:#6ee7b7; font-weight:600;">${c.effect}</span></td>
-                      <td>
-                        <button class="btn btn-secondary btn-sm" onclick="jumpToChart('${c.chartId}')" style="font-size:11px; padding:3px 8px;">
-                          Mở Chart →
-                        </button>
-                      </td>
-                    </tr>
-                  `).join('')}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- Section 4: Căn cứ & Lịch sử -->
-          <div style="font-size:12px; color:var(--text-muted); line-height:1.6; padding:0 4px;">
-            <div>⚖️ <strong>Căn cứ KNIA:</strong> ${item.kniaBasis}</div>
-            <div style="margin-top:2px;">🕒 <strong>Lịch sử cập nhật:</strong> ${item.history}</div>
-          </div>
-        </div>
-      `;
-    }
-  }
-
-  function jumpToRule(ruleId) {
-    switchMainTab('tab-knia-rules');
-    switchKniaViewMode('rules');
-    selectedKniaItemId = ruleId;
-    renderKniaMasterList();
-    renderKniaDetail();
-    showToast(`Đã chuyển đến quy tắc ${ruleId}`, 'info');
-  }
-
-  function jumpToChart(chartId) {
-    switchMainTab('tab-knia-rules');
-    switchKniaViewMode('charts');
-    selectedKniaItemId = chartId;
-    renderKniaMasterList();
-    renderKniaDetail();
-    showToast(`Đã chuyển đến biểu đồ ${chartId}`, 'info');
-  }
-
-  function toggleItemStatus(id, type) {
-    if (type === 'chart') {
-      const item = KNIA_CHARTS_DATA.find(c => c.id === id);
-      if (item) {
-        item.status = item.status === 'active' ? 'paused' : 'active';
-        showToast(`Đã đổi trạng thái biểu đồ ${item.code} thành: ${item.status === 'active' ? 'Đang dùng' : 'Tạm dừng'}`, 'success');
-      }
-    } else {
-      const item = AI_ATOMIC_RULES_DATA.find(r => r.id === id);
-      if (item) {
-        item.status = item.status === 'active' ? 'paused' : 'active';
-        showToast(`Đã đổi trạng thái quy tắc ${item.id} thành: ${item.status === 'active' ? 'Đang dùng' : 'Tạm dừng'}`, 'success');
-      }
-    }
-    renderKniaMasterList();
-    renderKniaDetail();
-  }
-
-  function openCreateModal() {
-    openModal('modal-quick-create');
-  }
-
-  function setCreateModalType(type) {
-    document.getElementById('btn-create-mode-rule').className = type === 'rule' ? 'btn btn-primary btn-sm' : 'btn btn-secondary btn-sm';
-    document.getElementById('btn-create-mode-chart').className = type === 'chart' ? 'btn btn-primary btn-sm' : 'btn btn-secondary btn-sm';
-    document.getElementById('mqc-rule-fields').style.display = type === 'rule' ? '' : 'none';
-    document.getElementById('mqc-chart-fields').style.display = type === 'chart' ? '' : 'none';
-  }
-
-  function handleQuickCreateSubmit(e) {
-    e.preventDefault();
-    const isRule = document.getElementById('mqc-rule-fields').style.display !== 'none';
-    if (isRule) {
-      const name = document.getElementById('mqc-rule-name').value;
-      const cat = document.getElementById('mqc-rule-cat').value;
-      const newId = `RULE-${Date.now().toString().slice(-3)}`;
-      AI_ATOMIC_RULES_DATA.unshift({
-        id: newId,
-        name: name,
-        category: cat,
-        priority: 'Cao (Priority 1)',
-        status: 'active',
-        equivalents: [name],
-        keywords: [name.toLowerCase().replace(/\\s+/g, '_')],
-        conditionsMust: 'Tự động kiểm tra qua lời khai và mô tả camera hành trình.',
-        conditionsExclude: 'Trường hợp có tín hiệu giao thông ưu tiên đặc biệt.',
-        linkedCharts: [{ chartId: 'chart-12', code: '차12', effect: 'Tỷ lệ theo quy chuẩn' }],
-        kniaBasis: 'Tài liệu hướng dẫn KNIA 2024',
-        history: `Tạo ngày ${new Date().toLocaleDateString('vi-VN')} bởi Reviewer`
-      });
-      showToast(`Đã thêm và kích hoạt quy tắc tình tiết "${name}"!`, 'success');
-      switchKniaViewMode('rules');
-      selectedKniaItemId = newId;
-    } else {
-      const code = document.getElementById('mqc-chart-code').value;
-      const base = document.getElementById('mqc-chart-internal-base').value;
-      const reason = document.getElementById('mqc-chart-reason').value;
-      showToast(`Đã tạo bản kế thừa nội bộ cho biểu đồ ${code} với tỷ lệ ${base}!`, 'success');
-    }
-    closeModal('modal-quick-create');
-    renderKniaMasterList();
-    renderKniaDetail();
-  }
-
-  function openCreateOverrideModal(chartId) {
-    openCreateModal();
-    setCreateModalType('chart');
-    const chart = KNIA_CHARTS_DATA.find(c => c.id === chartId);
-    if (chart) {
-      document.getElementById('mqc-chart-code').value = chart.code;
-    }
-  }
-
-  function openEditRuleModal(ruleId) {
-    openCreateModal();
-    setCreateModalType('rule');
-    const rule = AI_ATOMIC_RULES_DATA.find(r => r.id === ruleId);
-    if (rule) {
-      document.getElementById('mqc-rule-name').value = rule.name;
-      document.getElementById('mqc-rule-keywords').value = rule.keywords.join(', ');
-    }
+  // Jump from Discrepancy Tab 3 to Rules Tab 2
+  function jumpToRuleFromDiscrepancy(ruleId) {
+    switchMainTab('tab-rules');
+    showRuleDetails(ruleId);
   }
 
 </script>
