@@ -1897,45 +1897,137 @@
       <div class="rule-app">
         <!-- TOP CONTROLS -->
         <header class="top">
-          <h1>Quy tắc tỷ lệ lỗi</h1>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="font-size:18px;">⚖️</span>
+            <h1>Quy tắc tỷ lệ lỗi</h1>
+          </div>
           <div class="view" role="group" aria-label="Góc nhìn">
             <button class="on" id="btn-view-s" data-v="s" onclick="switchMockupView('s')">Theo tình huống</button>
             <button id="btn-view-r" data-v="r" onclick="switchMockupView('r')">Theo quy tắc</button>
           </div>
-          <input type="text" class="search-input" id="mock-search-input" placeholder="Tìm theo mã, mã cũ, tên tình huống, điều luật…" oninput="handleMockupSearch(this.value)" />
-          <span class="ver">Bản sửa đổi lần 10 · 6/2023</span>
+          <div style="position:relative; flex:1; max-width:380px;">
+            <input type="text" class="search-input" id="mock-search-input" placeholder="Tìm theo mã (차114, 252...), điều luật, loại tai nạn..." oninput="handleMockupSearch(this.value)" style="width:100%;" />
+            <span id="search-match-count" style="display:none; position:absolute; right:10px; top:50%; transform:translateY(-50%); font-size:11px; background:var(--acs); color:var(--ac); padding:2px 6px; border-radius:10px; font-weight:600;"></span>
+          </div>
+          <span class="ver">Bản sửa đổi lần 10 · KNIA 2024</span>
         </header>
 
         <!-- VIEW 1: THEO TÌNH HUỐNG -->
         <div class="ws on" id="vs">
           <!-- Col 1: Left Tree -->
           <nav class="col left" aria-label="Phân cấp tình huống">
-            <span class="lbl">Phân cấp</span>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <span class="lbl" style="margin:0;">Phân cấp tình huống</span>
+              <button type="button" onclick="expandAllTree(true)" style="background:none; border:0; color:var(--ac); font-size:11px; cursor:pointer;" title="Mở rộng tất cả">Mở rộng</button>
+            </div>
             <ul class="tree" id="mock-situation-tree">
-              <li onclick="showToast('Chương 1: Xe với người đi bộ (Đang mở rộng)', 'info')">Chương 1 · Xe với người đi bộ</li>
-              <li class="l1">▾ Chương 2 · Xe với xe</li>
-              <li class="l2">▾ Giao lộ (có ngã ba, ngã tư…)</li>
-              <li class="l3">▾ Hai bên có đèn tín hiệu</li>
-              <li class="l4" onclick="selectMockSituation(this, '차1')"><span class="code o">차1</span>Đi thẳng – đi thẳng</li>
-              <li class="l4 on" onclick="selectMockSituation(this, '차1-1')"><span class="code">차1-1</span>Xanh – đỏ</li>
-              <li class="l3" onclick="selectMockSituation(this, '차2')"><span class="code o">차2</span>Đi thẳng – rẽ trái</li>
-              <li class="l3" onclick="selectMockSituation(this, '차3')"><span class="code o">차3</span>Đi thẳng – rẽ trái (bên hông)</li>
-              <li class="l2" onclick="showToast('Đang cập nhật nhóm Xe đi ngược chiều', 'info')">▸ Xe đi ngược chiều</li>
-              <li class="l2" onclick="showToast('Đang cập nhật nhóm Xe cùng chiều', 'info')">▸ Xe cùng chiều</li>
-              <li onclick="showToast('Chương 3: Xe với xe đạp (Đang cập nhật)', 'info')">Chương 3 · Xe với xe đạp</li>
+              <!-- CHƯƠNG 1 -->
+              <li class="tree-header" onclick="toggleTreeBranch(this)">
+                <span class="tree-toggle-arrow">▾</span>
+                <span style="font-weight:700; color:var(--ink);">Chương 1 · Xe với người đi bộ</span>
+              </li>
+              <ul class="tree-sub" style="list-style:none; padding:0; margin:0;">
+                <li class="l2" onclick="selectMockSituation(this, '인1')">
+                  <span class="code o">인1</span> Trên vạch sang đường (đèn xanh)
+                </li>
+                <li class="l2" onclick="selectMockSituation(this, '인2')">
+                  <span class="code o">인2</span> Ngoài vạch / Ban đêm
+                </li>
+              </ul>
+
+              <!-- CHƯƠNG 2 -->
+              <li class="tree-header l1" onclick="toggleTreeBranch(this)">
+                <span class="tree-toggle-arrow">▾</span>
+                <span>Chương 2 · Xe với xe</span>
+              </li>
+              <ul class="tree-sub" style="list-style:none; padding:0; margin:0;">
+                <!-- Nhánh 1: Giao lộ có đèn -->
+                <li class="tree-header l2" onclick="toggleTreeBranch(this)">
+                  <span class="tree-toggle-arrow">▾</span>
+                  <span>Giao lộ có đèn tín hiệu</span>
+                </li>
+                <ul class="tree-sub" style="list-style:none; padding:0; margin:0;">
+                  <li class="l4" onclick="selectMockSituation(this, '차1')">
+                    <span class="code o">차1</span> Đi thẳng – đi thẳng (cùng hướng)
+                  </li>
+                  <li class="l4 on" onclick="selectMockSituation(this, '차1-1')">
+                    <span class="code">차1-1</span> Xanh – đỏ (vượt đèn)
+                  </li>
+                  <li class="l4" onclick="selectMockSituation(this, '차2')">
+                    <span class="code o">차2</span> Đi thẳng – rẽ trái (đối diện)
+                  </li>
+                  <li class="l4" onclick="selectMockSituation(this, '차3')">
+                    <span class="code o">차3</span> Đi thẳng – rẽ trái (bên hông)
+                  </li>
+                  <li class="l4" onclick="selectMockSituation(this, '차4')">
+                    <span class="code o">차4</span> Rẽ trái – rẽ phải
+                  </li>
+                </ul>
+
+                <!-- Nhánh 2: Giao lộ không đèn -->
+                <li class="tree-header l2" onclick="toggleTreeBranch(this)">
+                  <span class="tree-toggle-arrow">▾</span>
+                  <span>Giao lộ không có đèn tín hiệu</span>
+                </li>
+                <ul class="tree-sub" style="list-style:none; padding:0; margin:0;">
+                  <li class="l4" onclick="selectMockSituation(this, '차112')">
+                    <span class="code o">차112</span> Cùng độ rộng (nhường bên phải)
+                  </li>
+                  <li class="l4" onclick="selectMockSituation(this, '차114')">
+                    <span class="code o">차114</span> Đường nhánh / Biển STOP
+                  </li>
+                </ul>
+
+                <!-- Nhánh 3: Xe cùng chiều -->
+                <li class="tree-header l2" onclick="toggleTreeBranch(this)">
+                  <span class="tree-toggle-arrow">▾</span>
+                  <span>Xe cùng chiều</span>
+                </li>
+                <ul class="tree-sub" style="list-style:none; padding:0; margin:0;">
+                  <li class="l4" onclick="selectMockSituation(this, '차252')">
+                    <span class="code o">차252</span> Chuyển làn tạt đầu (xi-nhan <30m)
+                  </li>
+                  <li class="l4" onclick="selectMockSituation(this, '차205')">
+                    <span class="code o">차205</span> Đâm đuôi (phanh gấp bất ngờ)
+                  </li>
+                </ul>
+
+                <!-- Nhánh 4: Vòng xuyến -->
+                <li class="tree-header l2" onclick="toggleTreeBranch(this)">
+                  <span class="tree-toggle-arrow">▾</span>
+                  <span>Vòng xuyến (Roundabout)</span>
+                </li>
+                <ul class="tree-sub" style="list-style:none; padding:0; margin:0;">
+                  <li class="l4" onclick="selectMockSituation(this, '차314')">
+                    <span class="code o">차314</span> Xe vào va chạm xe trong xuyến
+                  </li>
+                </ul>
+              </ul>
+
+              <!-- CHƯƠNG 3 -->
+              <li class="tree-header" onclick="toggleTreeBranch(this)">
+                <span class="tree-toggle-arrow">▾</span>
+                <span style="font-weight:700; color:var(--ink);">Chương 3 · Xe với xe đạp</span>
+              </li>
+              <ul class="tree-sub" style="list-style:none; padding:0; margin:0;">
+                <li class="l2" onclick="selectMockSituation(this, '자1')">
+                  <span class="code o">자1</span> Ô tô rẽ phải va chạm xe đạp đi thẳng
+                </li>
+              </ul>
             </ul>
           </nav>
 
           <!-- Col 2: Mid Section -->
           <section class="col mid" id="mock-mid-col">
-            <!-- Edit Bar -->
+            <!-- Edit Bar Sticky -->
             <div class="bar" id="mock-bar" hidden>
-              <div style="display:flex;gap:8px;align-items:center">
+              <div style="display:flex; gap:8px; align-items:center;">
                 <b>Đang chỉnh sửa</b>
                 <span class="tag a" id="mock-cnt">0 thay đổi</span>
               </div>
-              <input id="mock-why" placeholder="Lý do thay đổi (bắt buộc khi gửi duyệt)" oninput="updateMockupDirty()">
+              <input id="mock-why" placeholder="Lý do thay đổi (bắt buộc khi gửi duyệt, ví dụ: Án lệ hòa giải mới...)" oninput="updateMockupDirty()">
               <div class="ba">
+                <button type="button" id="mock-revert-btn" onclick="revertMockSituationToKnia()" title="Khôi phục về giá trị KNIA gốc">Khôi phục gốc</button>
                 <button type="button" id="mock-cancel" onclick="exitMockupEdit(false)">Hủy</button>
                 <button type="button" id="mock-draft" onclick="saveMockupEdit(false)">Lưu nháp</button>
                 <button type="button" id="mock-sub" class="pri" disabled onclick="saveMockupEdit(true)">Gửi duyệt</button>
@@ -1948,6 +2040,7 @@
               <span class="code" id="mock-chart-badge">차1-1</span>
               <span class="tag" id="mock-chart-oldcode">Mã cũ: 201 · 301 · 302</span>
               <span class="tag a" id="mock-st">Đang áp dụng</span>
+              <span class="tag" id="mock-category-tag" style="color:var(--text-dim);">Giao lộ có đèn</span>
               <button class="edbtn" id="mock-edbtn" onclick="enterMockupEdit()">✎ Chỉnh sửa</button>
             </div>
             <h2 id="mock-chart-title">Xe xanh đi thẳng – xe đỏ đi thẳng</h2>
@@ -1955,20 +2048,17 @@
 
             <!-- Card 1: Vai trò và tỷ lệ cơ bản -->
             <div class="card">
-              <h3>Vai trò và tỷ lệ lỗi cơ bản</h3>
+              <h3>
+                <span>Vai trò và tỷ lệ lỗi cơ bản</span>
+                <span class="tag" id="mock-ratio-preview" style="font-family:ui-monospace, monospace; font-weight:700; color:var(--cyan);">0 : 100</span>
+              </h3>
               <div class="b top2">
-                <svg viewBox="0 0 200 150" width="100%" role="img" aria-label="Sơ đồ giao lộ: xe A đi thẳng đèn xanh, xe B đi thẳng đèn đỏ" style="border-radius:6px; background:var(--sf2); border:1px solid var(--line);">
-                  <rect x="80" y="0" width="40" height="150" fill="var(--sf2)" stroke="var(--line)"/>
-                  <rect x="0" y="55" width="200" height="40" fill="var(--sf2)" stroke="var(--line)"/>
-                  <rect x="81" y="56" width="38" height="38" fill="var(--sf)"/>
-                  <path d="M100 140V104" stroke="var(--ac)" stroke-width="4" marker-end="url(#mock-h)" fill="none"/>
-                  <path d="M10 75H70" stroke="var(--red)" stroke-width="4" marker-end="url(#mock-h)" fill="none" stroke-dasharray="6 4"/>
-                  <defs><marker id="mock-h" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto"><path d="M0 0L6 3L0 6z" fill="currentColor"/></marker></defs>
-                  <text x="108" y="130" font-size="12" font-weight="700" fill="var(--ac)">A</text>
-                  <text x="14" y="68" font-size="12" font-weight="700" fill="var(--red)">B</text>
-                </svg>
+                <!-- SVG Collision Diagram Container -->
+                <div id="mock-svg-container" style="width:100%; min-height:150px; display:flex; align-items:center; justify-content:center; background:var(--sf2); border:1px solid var(--line); border-radius:6px; overflow:hidden;">
+                  <!-- Dynamic SVG is rendered by JS -->
+                </div>
                 <div>
-                  <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+                  <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
                     <span id="label-role-a"><b>A</b> · xanh, đi thẳng</span>
                     <span id="label-role-b"><b>B</b> · đỏ, đi thẳng</span>
                   </div>
@@ -1988,95 +2078,72 @@
 
             <!-- Card 2: Ví dụ điều chỉnh tỷ lệ lỗi -->
             <div class="card">
-              <h3>Ví dụ điều chỉnh tỷ lệ lỗi <span class="tag" id="mock-factors-count">4 liên kết yếu tố</span></h3>
+              <h3>
+                <span>Ví dụ điều chỉnh tỷ lệ lỗi</span>
+                <span class="tag" id="mock-factors-count">4 liên kết yếu tố</span>
+              </h3>
               <table id="mock-factors-table">
                 <thead>
                   <tr>
-                    <th>Bên</th>
+                    <th style="width:55px;">Bên</th>
                     <th>Yếu tố</th>
-                    <th>Điều chỉnh</th>
-                    <th>Nguồn</th>
+                    <th style="width:110px;">Điều chỉnh</th>
+                    <th style="width:190px;">Nguồn</th>
                   </tr>
                 </thead>
                 <tbody id="mock-factors-tbody">
-                  <tr>
-                    <td><span class="code o">A</span></td>
-                    <td class="editable-col">Lỗi rõ rệt</td>
-                    <td class="val p editable-col">+10</td>
-                    <td><span class="tag a src" onclick="toggleFactorSource(this)">Bộ dùng chung · Ch.2</span></td>
-                  </tr>
-                  <tr>
-                    <td><span class="code o">A</span></td>
-                    <td class="editable-col">Lỗi nghiêm trọng</td>
-                    <td class="val p editable-col">+20</td>
-                    <td><span class="tag a src" onclick="toggleFactorSource(this)">Bộ dùng chung · Ch.2</span></td>
-                  </tr>
-                  <tr>
-                    <td><span class="code o">B</span></td>
-                    <td class="editable-col">Lỗi nghiêm trọng</td>
-                    <td class="val p editable-col">+20</td>
-                    <td><span class="tag a src" onclick="toggleFactorSource(this)">Bộ dùng chung · Ch.2</span></td>
-                  </tr>
-                  <tr>
-                    <td><span class="code o">B</span></td>
-                    <td class="editable-col">Lỗi rõ rệt</td>
-                    <td class="val n editable-col">Không áp dụng</td>
-                    <td><span class="tag w src" onclick="toggleFactorSource(this)">Ghi đè tại tình huống</span></td>
-                  </tr>
+                  <!-- Populated by JS -->
                 </tbody>
               </table>
-              <div id="mock-addrow-container" style="display:none; padding:10px 12px;">
-                <button type="button" class="mock-btn addrow" style="margin:0;" onclick="addMockFactorRow()">+ Thêm yếu tố điều chỉnh</button>
+              <div id="mock-addrow-container" style="display:none; padding:10px 12px; background:var(--sf2); border-top:1px solid var(--line);">
+                <button type="button" class="mock-btn addrow" style="margin:0;" onclick="addMockFactorRow()">+ Thêm yếu tố điều chỉnh mới</button>
               </div>
             </div>
 
             <!-- Card 3: Nội dung diễn giải -->
             <div class="card">
-              <h3>Nội dung diễn giải</h3>
+              <h3>Nội dung diễn giải và điều kiện áp dụng</h3>
               <div class="b txt" id="mock-narrative-box">
-                <h4>Tình huống</h4>
-                <p class="editable-col">Tại giao lộ có tín hiệu điều khiển, hai xe đi trên hai đường khác nhau. Xe A vào giao lộ khi đèn xanh và đi thẳng, xe B vào khi đèn đỏ và đi thẳng, hai xe va chạm.</p>
+                <h4>Tình huống áp dụng</h4>
+                <p class="editable-col" id="narrative-situation">Tại giao lộ có tín hiệu điều khiển, hai xe đi trên hai đường khác nhau. Xe A vào giao lộ khi đèn xanh và đi thẳng, xe B vào khi đèn đỏ và đi thẳng, hai xe va chạm.</p>
                 <h4>Giải thích tỷ lệ cơ bản</h4>
-                <p class="editable-col">Cả hai tài xế đều tin vào tín hiệu. Xe A không có lý do để lường trước xe B vượt đèn đỏ, nên lỗi quy cho xe B.</p>
+                <p class="editable-col" id="narrative-base">Cả hai tài xế đều tin vào tín hiệu. Xe A không có lý do để lường trước xe B vượt đèn đỏ, nên lỗi quy cho xe B.</p>
                 <h4>Giải thích yếu tố điều chỉnh</h4>
-                <p class="editable-col">Tham chiếu phần giải thích yếu tố điều chỉnh của Chương 2 (bộ dùng chung).</p>
-                <h4>Lưu ý khi áp dụng</h4>
-                <p class="editable-col">Không áp dụng khi va chạm với xe đang dừng tạm trong giao lộ. Đèn hỏng hoặc chỉ nhấp nháy được xem là giao lộ không có điều khiển. Tín hiệu được xác định tại thời điểm xe vào giao lộ (qua vạch dừng).</p>
+                <p class="editable-col" id="narrative-factor">Tham chiếu phần giải thích yếu tố điều chỉnh của Chương 2 (bộ dùng chung).</p>
+                <h4>Lưu ý khi áp dụng & Loại trừ</h4>
+                <p class="editable-col" id="narrative-notes">Không áp dụng khi va chạm với xe đang dừng tạm trong giao lộ. Đèn hỏng hoặc chỉ nhấp nháy được xem là giao lộ không có điều khiển. Tín hiệu được xác định tại thời điểm xe vào giao lộ (qua vạch dừng).</p>
               </div>
             </div>
           </section>
 
-          <!-- Col 3: Right Aside -->
+          <!-- Col 3: Right Aside (Linked Rules) -->
           <aside class="col right" aria-label="Quy tắc đã liên kết" id="mock-side-col">
-            <span class="lbl">Quy tắc đã liên kết · 4</span>
-            <button class="mock-btn" onclick="showToast('Thêm quy tắc mới từ thư viện KNIA', 'info')">+ Thêm quy tắc từ thư viện</button>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <span class="lbl" style="margin:0;" id="mock-linked-count-lbl">Quy tắc đã liên kết · 4</span>
+            </div>
+            <button type="button" class="mock-btn" onclick="openAddLinkedRuleModal()">+ Thêm quy tắc từ thư viện</button>
 
-            <span class="lbl">Điều luật</span>
-            <div class="lk">
-              <b>Luật Giao thông đường bộ, Điều 5</b>
-              <div class="row"><span class="tag a">Căn cứ</span><span class="tag">Dùng ở nhiều tình huống</span></div>
-            </div>
-            <div class="lk">
-              <b>Luật Giao thông đường bộ, Điều 25 (khoản 5)</b>
-              <div class="row"><span class="tag a">Căn cứ</span></div>
-            </div>
-            <div class="lk">
-              <b>Quy tắc thi hành, Phụ lục 2 · ý nghĩa tín hiệu</b>
-              <div class="row"><span class="tag">Tham chiếu</span><span class="tag">Dùng ở nhiều tình huống</span></div>
+            <!-- Laws Section -->
+            <span class="lbl">Điều luật & Quy định pháp lý</span>
+            <div id="mock-linked-laws-container">
+              <!-- Populated by JS -->
             </div>
 
-            <span class="lbl" style="margin-top:16px">Bộ yếu tố điều chỉnh</span>
-            <div class="lk sh">
-              <b>Bộ dùng chung · Chương 2</b>
-              <div class="row"><span class="tag a">Dùng chung</span><span class="tag w">Có 1 dòng bị ghi đè</span></div>
+            <!-- Factors Set Section -->
+            <span class="lbl" style="margin-top:16px;">Bộ yếu tố điều chỉnh</span>
+            <div id="mock-linked-factors-container">
+              <!-- Populated by JS -->
             </div>
 
-            <span class="lbl" style="margin-top:16px">Án lệ</span>
-            <div class="empty">Chưa gắn án lệ nào</div>
+            <!-- Case Law Section -->
+            <span class="lbl" style="margin-top:16px;">Án lệ & Tiền lệ xét xử</span>
+            <div id="mock-linked-cases-container">
+              <!-- Populated by JS -->
+            </div>
 
             <div class="warn">
               <b>Sửa quy tắc dùng chung?</b>
-              <span style="color:var(--mut)">Thay đổi sẽ ảnh hưởng mọi tình huống đang liên kết. Hệ thống sẽ liệt kê để rà soát trước khi lưu.</span>
+              <span style="color:var(--mut);">Thay đổi sẽ ảnh hưởng mọi tình huống đang liên kết. Hệ thống sẽ liệt kê để rà soát trước khi lưu.</span>
             </div>
           </aside>
         </div>
@@ -2086,17 +2153,13 @@
           <!-- Col 1: Left Library -->
           <nav class="col left" aria-label="Thư viện quy tắc">
             <span class="lbl">Thư viện quy tắc</span>
-            <div class="tabs" style="margin:0 0 8px">
-              <button class="on" id="mock-libtab-law" onclick="switchMockLibTab(this, 'law')">Điều luật</button>
+            <div class="tabs" style="margin:0 0 8px;">
+              <button class="on" id="mock-libtab-law" onclick="switchMockLibTab(this, 'laws')">Điều luật</button>
               <button id="mock-libtab-factors" onclick="switchMockLibTab(this, 'factors')">Bộ yếu tố</button>
               <button id="mock-libtab-cases" onclick="switchMockLibTab(this, 'cases')">Án lệ</button>
             </div>
             <ul class="rl" id="mock-rules-list">
-              <li class="on" onclick="selectMockRuleItem(this, 'law-5')"><b>Luật GTĐB, Điều 5</b><span>Nghĩa vụ tuân theo tín hiệu</span></li>
-              <li onclick="selectMockRuleItem(this, 'law-25')"><b>Luật GTĐB, Điều 25 (khoản 5)</b><span>Cách đi qua giao lộ</span></li>
-              <li onclick="selectMockRuleItem(this, 'annex-2')"><b>Quy tắc thi hành, Phụ lục 2</b><span>Ý nghĩa của tín hiệu</span></li>
-              <li onclick="selectMockRuleItem(this, 'law-27')"><b>Luật GTĐB, Điều 27</b><span>Bảo vệ người đi bộ</span></li>
-              <li onclick="selectMockRuleItem(this, 'law-48')"><b>Luật GTĐB, Điều 48</b><span>Nghĩa vụ lái xe an toàn</span></li>
+              <!-- Populated by JS -->
             </ul>
           </nav>
 
@@ -2105,53 +2168,37 @@
             <div class="head">
               <span class="tag" id="vr-badge-type">Điều luật</span>
               <span class="tag a" id="vr-badge-status">Đang hiệu lực</span>
+              <button class="edbtn" onclick="showToast('Chỉnh sửa văn bản pháp lý đang mở', 'info')">✎ Chỉnh sửa</button>
             </div>
             <h2 id="vr-title">Luật Giao thông đường bộ, Điều 5</h2>
             <p style="color:var(--mut)" id="vr-sub">Nghĩa vụ tuân theo tín hiệu hoặc chỉ dẫn</p>
 
             <div class="card">
-              <h3>Nội dung</h3>
+              <h3>Trích yếu nội dung văn bản</h3>
               <div class="b txt">
-                <p id="vr-content">Người đi bộ, người điều khiển phương tiện khi tham gia giao thông phải tuân theo tín hiệu hoặc chỉ dẫn của thiết bị an toàn giao thông và của người có thẩm quyền điều khiển giao thông.</p>
+                <p id="vr-content" style="font-size:13.5px; line-height:1.65; color:var(--ink);">
+                  Người đi bộ, người điều khiển phương tiện khi tham gia giao thông phải tuân theo tín hiệu hoặc chỉ dẫn của thiết bị an toàn giao thông và của người có thẩm quyền điều khiển giao thông.
+                </p>
               </div>
             </div>
 
             <div class="card">
-              <h3>Áp dụng ở các tình huống <span class="tag w">Dữ liệu minh họa</span></h3>
+              <h3>
+                <span>Áp dụng ở các tình huống thực tế</span>
+                <span class="tag w" id="vr-applied-count">4 tình huống</span>
+              </h3>
               <table>
                 <thead>
                   <tr>
-                    <th>Mã</th>
-                    <th>Tình huống</th>
-                    <th>Vai trò</th>
-                    <th>Điều chỉnh liên quan</th>
+                    <th style="width:75px;">Mã Chart</th>
+                    <th>Tình huống va chạm</th>
+                    <th style="width:110px;">Vai trò</th>
+                    <th style="width:180px;">Điều chỉnh liên quan</th>
+                    <th style="width:90px;">Thao tác</th>
                   </tr>
                 </thead>
                 <tbody id="vr-situations-tbody">
-                  <tr>
-                    <td><span class="code">차1-1</span></td>
-                    <td>Xanh – đỏ</td>
-                    <td><span class="tag a">Căn cứ</span></td>
-                    <td class="val p">A +10 / +20 · B +20</td>
-                  </tr>
-                  <tr>
-                    <td><span class="code">차2</span></td>
-                    <td>Đi thẳng – rẽ trái (đối diện)</td>
-                    <td><span class="tag a">Căn cứ</span></td>
-                    <td class="val n">Xem chi tiết</td>
-                  </tr>
-                  <tr>
-                    <td><span class="code">차3</span></td>
-                    <td>Đi thẳng – rẽ trái (bên hông)</td>
-                    <td><span class="tag">Tham chiếu</span></td>
-                    <td class="val n">Xem chi tiết</td>
-                  </tr>
-                  <tr>
-                    <td><span class="code">차4</span></td>
-                    <td>Rẽ trái – rẽ phải</td>
-                    <td><span class="tag">Tham chiếu</span></td>
-                    <td class="val n">Xem chi tiết</td>
-                  </tr>
+                  <!-- Populated by JS -->
                 </tbody>
               </table>
             </div>
@@ -2161,23 +2208,68 @@
           <aside class="col right" aria-label="Tác động">
             <span class="lbl">Tác động khi sửa</span>
             <div class="sq">
-              <div><b id="vr-stat-cases">4</b><span style="color:var(--mut)">tình huống liên kết</span></div>
-              <div><b id="vr-stat-chapters">2</b><span style="color:var(--mut)">chương bị ảnh hưởng</span></div>
+              <div><b id="vr-stat-cases">4</b><span style="color:var(--mut);">tình huống liên kết</span></div>
+              <div><b id="vr-stat-chapters">2</b><span style="color:var(--mut);">chương bị ảnh hưởng</span></div>
             </div>
-            <div class="warn" style="margin-top:14px">
+            <div class="warn" style="margin-top:14px;">
               <b>Cần rà soát sau khi sửa</b>
-              <span style="color:var(--mut)">Các tình huống liên kết sẽ chuyển sang trạng thái “Cần rà soát” cho tới khi được duyệt lại.</span>
+              <span style="color:var(--mut);">Các tình huống liên kết sẽ chuyển sang trạng thái “Cần rà soát” cho tới khi được duyệt lại.</span>
             </div>
-            <span class="lbl" style="margin-top:18px">Phát hiện bất thường</span>
-            <div class="lk">
+            <span class="lbl" style="margin-top:18px;">Phát hiện bất thường</span>
+            <div class="lk" id="vr-anomaly-box">
               <b>Có tình huống chưa gắn án lệ</b>
-              <span style="color:var(--mut)">Gợi ý bổ sung căn cứ.</span>
+              <span style="color:var(--mut);">Gợi ý bổ sung án lệ hòa giải đối với các vụ có tranh chấp tỷ lệ lỗi.</span>
             </div>
-            <p class="note">Số liệu ở góc nhìn này là minh họa. Chỉ tình huống 차1-1 dùng nội dung thật từ tài liệu.</p>
+            <p class="note">Thay đổi điều luật sẽ tự động đồng bộ sang luồng reasoning của AI khi thẩm định hồ sơ.</p>
           </aside>
         </div>
       </div>
     </section>
+
+    <!-- MODAL: THÊM QUY TẮC TỪ THƯ VIỆN VÀO TÌNH HUỐNG HIỆN TẠI -->
+    <div class="modal-backdrop" id="modal-add-linked-rule" onclick="if(event.target===this) closeModal('modal-add-linked-rule')">
+      <div class="modal-container" style="max-width:620px;">
+        <div class="modal-header">
+          <div>
+            <div class="modal-title">Thêm quy tắc / Căn cứ vào tình huống</div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">Tình huống đang chọn: <b id="malr-chart-target" style="color:var(--cyan);">차1-1</b></div>
+          </div>
+          <button class="modal-close" onclick="closeModal('modal-add-linked-rule')">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="tabs" style="margin-bottom:12px;">
+            <button class="on" id="malr-tab-laws" onclick="switchAddRuleModalTab('laws')">Điều luật</button>
+            <button id="malr-tab-factors" onclick="switchAddRuleModalTab('factors')">Bộ yếu tố</button>
+            <button id="malr-tab-cases" onclick="switchAddRuleModalTab('cases')">Án lệ</button>
+          </div>
+          <div style="margin-bottom:12px;">
+            <label class="form-label" style="font-size:12px; margin-bottom:4px; display:block;">Chọn mục cần liên kết:</label>
+            <select class="filter-select" id="malr-rule-select" style="width:100%; padding:9px 10px; background:var(--sf2); color:#fff; border:1px solid var(--line); border-radius:6px;">
+              <!-- Populated by JS -->
+            </select>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+            <div>
+              <label class="form-label" style="font-size:12px; margin-bottom:4px; display:block;">Vai trò liên kết:</label>
+              <select class="filter-select" id="malr-role-select" style="width:100%; padding:9px 10px; background:var(--sf2); color:#fff; border:1px solid var(--line); border-radius:6px;">
+                <option value="Căn cứ">Căn cứ (Bắt buộc áp dụng)</option>
+                <option value="Tham chiếu">Tham chiếu (Cân nhắc bổ sung)</option>
+                <option value="Dùng chung">Dùng chung (Áp dụng toàn chương)</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label" style="font-size:12px; margin-bottom:4px; display:block;">Ghi chú phạm vi:</label>
+              <input type="text" id="malr-note-input" value="Dùng ở nhiều tình huống" style="width:100%; padding:8px 10px; background:var(--sf2); color:#fff; border:1px solid var(--line); border-radius:6px; font-size:13px;" />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modal-add-linked-rule')">Hủy</button>
+          <button type="button" class="btn btn-primary" onclick="confirmAddLinkedRule()">+ Thêm vào tình huống</button>
+        </div>
+      </div>
+    </div>
+
 
 <!-- ================= TAB 3: VỤ LỆCH KẾT QUẢ ================= -->
     <section id="tab-discrepancy" class="tab-pane">
@@ -3207,9 +3299,1131 @@
 
   // Jump from Discrepancy Tab 3 to Rules Tab 2
   function jumpToRuleFromDiscrepancy(ruleId) {
-    switchMainTab('tab-rules');
-    showRuleDetails(ruleId);
+    let code = '차1-1';
+    if (ruleId.includes('252')) code = '차252';
+    else if (ruleId.includes('114')) code = '차114';
+    else if (ruleId.includes('112')) code = '차112';
+    else if (ruleId.includes('314')) code = '차314';
+    else if (ruleId.includes('205')) code = '차205';
+    jumpToSituationFromDiscrepancy(code);
   }
+
+
+
+  // ==========================================================================
+  // TAB 2: QUẢN LÝ QUY TẮC TỶ LỆ LỖI (COMPLETE INTERACTION ENGINE)
+  // ==========================================================================
+
+  // 1. DATA REPOSITORY: SITUATIONS & COLLISION CHARTS
+  const KNIA_ORIGINALS = {
+    '차1-1': {
+      code: '차1-1', oldCode: 'Mã cũ: 201 · 301 · 302', category: 'Giao lộ có đèn',
+      title: 'Xe xanh đi thẳng – xe đỏ đi thẳng',
+      sub: 'Giao lộ hai bên có đèn tín hiệu · xe kia vào từ bên hông vượt đèn',
+      status: 'Đang áp dụng', ratioA: 0, ratioB: 100,
+      roleA: 'A · xanh, đi thẳng', roleB: 'B · đỏ, vượt đèn',
+      svgType: 'intersection_light_cross',
+      factors: [
+        { side: 'A', factor: 'Lỗi chú ý quan sát cơ bản', val: '+10', p: true, src: 'Bộ dùng chung · Ch.2', isShared: true },
+        { side: 'A', factor: 'Chạy quá tốc độ quy định', val: '+20', p: true, src: 'Bộ dùng chung · Ch.2', isShared: true },
+        { side: 'B', factor: 'Cố ý vượt khi đèn đã đỏ rõ rệt', val: '+20', p: true, src: 'Bộ dùng chung · Ch.2', isShared: true },
+        { side: 'B', factor: 'Lỗi nhẹ do khuất tầm nhìn', val: 'Không áp dụng', p: false, src: 'Ghi đè tại tình huống', isShared: false }
+      ],
+      narrative: {
+        situation: 'Tại giao lộ có tín hiệu điều khiển, hai xe lưu thông trên hai hướng giao cắt. Xe A vào giao lộ khi đèn xanh và đi thẳng, xe B vào khi đèn đỏ và đi thẳng, hai xe xảy ra va chạm tại điểm giao cắt.',
+        baseReason: 'Người điều khiển xe A chấp hành đúng tín hiệu đèn xanh. Xe A không có nghĩa vụ phải dự liệu trước việc xe B sẽ cố tình vượt đèn đỏ, do đó toàn bộ lỗi cơ sở thuộc về xe B.',
+        factorReason: 'Áp dụng các yếu tố tăng giảm lỗi chung của Chương 2: nếu xe A vi phạm tốc độ hoặc thiếu quan sát có thể cộng thêm 10-20% lỗi.',
+        notes: 'Không áp dụng khi va chạm với xe đang dừng chờ rẽ trong giao lộ. Tín hiệu được xác định căn cứ tại thời điểm đầu xe vượt qua vạch dừng giao lộ.'
+      },
+      linkedLaws: [
+        { title: 'Luật GTĐB - Điều 5 (Chấp hành báo hiệu đường bộ)', role: 'Căn cứ', note: 'Dùng ở nhiều tình huống' },
+        { title: 'Luật GTĐB - Điều 25(5) (Quy tắc đi qua nơi giao nhau)', role: 'Căn cứ', note: '' },
+        { title: 'Quy chuẩn QCVN 41:2019 - Ý nghĩa tín hiệu đèn', role: 'Tham chiếu', note: 'Dùng ở nhiều tình huống' }
+      ],
+      linkedFactors: [
+        { title: 'Bộ yếu tố dùng chung · Chương 2 (Xe - Xe)', role: 'Dùng chung', note: 'Có 1 dòng ghi đè' }
+      ],
+      linkedCases: [
+        { title: 'Án lệ hòa giải Sonbo 2024 (Xác định thời điểm vào vạch dừng)', role: 'Tham chiếu', note: 'Án lệ bổ sung' }
+      ]
+    },
+    '차1': {
+      code: '차1', oldCode: 'Mã cũ: 200 · 300', category: 'Giao lộ có đèn',
+      title: 'Xe đi thẳng – Xe đi thẳng cùng hướng',
+      sub: 'Giao lộ có tín hiệu điều khiển · cả hai xe đi thẳng cùng lúc va chạm hông',
+      status: 'Đang áp dụng', ratioA: 50, ratioB: 50,
+      roleA: 'A · xe đi thẳng làn trái', roleB: 'B · xe đi thẳng làn phải',
+      svgType: 'intersection_straight',
+      factors: [
+        { side: 'A', factor: 'Lấn sang làn bên cạnh khi đi thẳng', val: '+20', p: true, src: 'Bộ dùng chung · Ch.2', isShared: true },
+        { side: 'B', factor: 'Chạy quá tốc độ trong nút giao', val: '+10', p: true, src: 'Bộ dùng chung · Ch.2', isShared: true }
+      ],
+      narrative: {
+        situation: 'Hai phương tiện cùng đi thẳng qua nút giao theo tín hiệu xanh nhưng không giữ khoảng cách bên sườn và xảy ra va chạm ép hông.',
+        baseReason: 'Cả hai xe đều có quyền ưu tiên đi thẳng ngang nhau theo đèn xanh. Tỷ lệ lỗi cơ sở chia đều 50:50.',
+        factorReason: 'Xe nào lấn làn hoặc chuyển hướng đột ngột trong nút giao sẽ chịu tăng thêm lỗi.',
+        notes: 'Chỉ áp dụng khi lòng đường hai bên có độ rộng tương đương và cùng tín hiệu đèn xanh.'
+      },
+      linkedLaws: [
+        { title: 'Luật GTĐB - Điều 5 (Quy tắc tín hiệu)', role: 'Căn cứ', note: '' },
+        { title: 'Luật GTĐB - Điều 12 (Khoảng cách an toàn)', role: 'Tham chiếu', note: '' }
+      ],
+      linkedFactors: [{ title: 'Bộ yếu tố dùng chung · Chương 2', role: 'Dùng chung', note: '' }],
+      linkedCases: []
+    },
+    '차2': {
+      code: '차2', oldCode: 'Mã cũ: 203 · 305', category: 'Giao lộ có đèn',
+      title: 'Xe đi thẳng – Xe rẽ trái đối diện',
+      sub: 'Giao lộ có đèn tín hiệu xanh chung · xe rẽ trái phải nhường đường xe đi thẳng',
+      status: 'Đang áp dụng', ratioA: 20, ratioB: 80,
+      roleA: 'A · đi thẳng (được ưu tiên)', roleB: 'B · rẽ trái (phải nhường)',
+      svgType: 'intersection_turn_left',
+      factors: [
+        { side: 'A', factor: 'Đi tốc độ cao khi qua giao lộ', val: '+10', p: true, src: 'Bộ dùng chung · Ch.2', isShared: true },
+        { side: 'B', factor: 'Rẽ trái thiếu chú ý quan sát xe ngược chiều', val: '+10', p: true, src: 'Bộ dùng chung · Ch.2', isShared: true },
+        { side: 'B', factor: 'Bắt đầu rẽ khi khoảng cách quá gần', val: '+10', p: true, src: 'Ghi đè tại tình huống', isShared: false }
+      ],
+      narrative: {
+        situation: 'Hai xe đi đối diện nhau tại giao lộ có đèn xanh. Xe A đi thẳng, xe B rẽ trái qua đầu xe A dẫn đến va chạm.',
+        baseReason: 'Theo quy tắc nhường đường, xe rẽ phải nhường đường cho xe đi thẳng cùng được bật đèn xanh. Tỷ lệ cơ bản A 20 : B 80.',
+        factorReason: 'Gia giảm lỗi tùy thuộc vào thời điểm bật xi nhan và tốc độ của xe đi thẳng.',
+        notes: 'Không áp dụng khi ngã tư có đèn mũi tên rẽ trái riêng biệt.'
+      },
+      linkedLaws: [
+        { title: 'Luật GTĐB - Điều 15 (Chuyển hướng xe)', role: 'Căn cứ', note: 'Bắt buộc nhường đường' },
+        { title: 'Luật GTĐB - Điều 24 (Quy tắc nhường đường)', role: 'Căn cứ', note: '' }
+      ],
+      linkedFactors: [{ title: 'Bộ yếu tố dùng chung · Chương 2', role: 'Dùng chung', note: '' }],
+      linkedCases: [{ title: 'Án lệ TAND Tối cao về lỗi chuyển hướng', role: 'Căn cứ', note: '' }]
+    },
+    '차3': {
+      code: '차3', oldCode: 'Mã cũ: 204 · 306', category: 'Giao lộ có đèn',
+      title: 'Xe đi thẳng – Xe rẽ trái từ đường nhánh',
+      sub: 'Giao lộ có tín hiệu điều khiển · xe rẽ trái từ đường nhánh bên hông',
+      status: 'Đang áp dụng', ratioA: 30, ratioB: 70,
+      roleA: 'A · đi thẳng', roleB: 'B · rẽ trái từ nhánh',
+      svgType: 'intersection_turn_left',
+      factors: [
+        { side: 'A', factor: 'Không giảm tốc độ khi vào ngã tư', val: '+10', p: true, src: 'Bộ dùng chung · Ch.2', isShared: true },
+        { side: 'B', factor: 'Cắt ngang làn xe đi thẳng đột ngột', val: '+15', p: true, src: 'Ghi đè tại tình huống', isShared: false }
+      ],
+      narrative: {
+        situation: 'Xe A đi thẳng, xe B rẽ trái từ đường giao cắt bên cạnh vào giao lộ.',
+        baseReason: 'Xe đi thẳng trên trục đường chính được ưu tiên hơn so với xe rẽ trái nhập làn. Tỷ lệ cơ bản 30:70.',
+        factorReason: 'Cộng trừ tùy theo góc quan sát và việc bật đèn báo rẽ sớm hay muộn.',
+        notes: 'Cần xác định thời điểm xe B bắt đầu chuyển hướng.'
+      },
+      linkedLaws: [{ title: 'Luật GTĐB - Điều 15 (Chuyển hướng)', role: 'Căn cứ', note: '' }],
+      linkedFactors: [{ title: 'Bộ yếu tố dùng chung · Chương 2', role: 'Dùng chung', note: '' }],
+      linkedCases: []
+    },
+    '차4': {
+      code: '차4', oldCode: 'Mã cũ: 207 · 309', category: 'Giao lộ có đèn',
+      title: 'Xe rẽ trái – Xe rẽ phải cùng nhập làn',
+      sub: 'Hai xe từ hai hướng đối diện rẽ vào cùng một làn đường',
+      status: 'Đang áp dụng', ratioA: 60, ratioB: 40,
+      roleA: 'A · xe rẽ trái', roleB: 'B · xe rẽ phải (ưu tiên hơn)',
+      svgType: 'intersection_turn_left',
+      factors: [
+        { side: 'A', factor: 'Rẽ góc rộng lấn làn xe rẽ phải', val: '+15', p: true, src: 'Bộ dùng chung · Ch.2', isShared: true },
+        { side: 'B', factor: 'Rẽ phải nhưng không đi sát mép đường bên phải', val: '+10', p: true, src: 'Ghi đè tại tình huống', isShared: false }
+      ],
+      narrative: {
+        situation: 'Hai phương tiện từ hai hướng đối diện cùng rẽ vào một nhánh đường chung.',
+        baseReason: 'Xe rẽ phải có bán kính vòng cua nhỏ hơn và được ưu tiên hơn xe rẽ trái. Tỷ lệ cơ bản A 60 : B 40.',
+        factorReason: 'Điều chỉnh nếu một trong hai xe rẽ quá nhanh hoặc không bật xi-nhan.',
+        notes: 'Áp dụng cho ngã ba hoặc ngã tư có đèn xanh đồng thời.'
+      },
+      linkedLaws: [{ title: 'Luật GTĐB - Điều 15 (Chuyển hướng)', role: 'Căn cứ', note: '' }],
+      linkedFactors: [{ title: 'Bộ yếu tố dùng chung · Chương 2', role: 'Dùng chung', note: '' }],
+      linkedCases: []
+    },
+    '차112': {
+      code: '차112', oldCode: 'Mã cũ: 112-1', category: 'Giao lộ không đèn',
+      title: 'Ngã tư cùng độ rộng – Quy tắc nhường bên phải',
+      sub: 'Giao lộ không có đèn tín hiệu · lòng đường tương đương · xe đến từ bên phải được ưu tiên',
+      status: 'Đang áp dụng', ratioA: 60, ratioB: 40,
+      roleA: 'A · xe đi từ bên trái', roleB: 'B · xe đi từ bên phải (ưu tiên)',
+      svgType: 'intersection_straight',
+      factors: [
+        { side: 'A', factor: 'Không giảm tốc độ khi đến nơi giao nhau', val: '+10', p: true, src: 'Bộ dùng chung · Ch.2', isShared: true },
+        { side: 'B', factor: 'Lái xe tốc độ cao qua ngã tư', val: '+10', p: true, src: 'Bộ dùng chung · Ch.2', isShared: true }
+      ],
+      narrative: {
+        situation: 'Giao lộ đồng cấp, không có biển báo ưu tiên và không có đèn điều khiển.',
+        baseReason: 'Tại nơi giao nhau không có báo hiệu đi theo vòng xuyến, phải nhường đường cho xe đến từ bên phải. Tỷ lệ cơ bản A 60 : B 40.',
+        factorReason: 'Điều chỉnh nếu xe nào đã vào nút giao trước một cách rõ ràng.',
+        notes: 'Chỉ áp dụng khi bề rộng lòng đường hai bên xấp xỉ nhau (chênh lệch dưới 1.5 lần).'
+      },
+      linkedLaws: [
+        { title: 'Luật GTĐB - Điều 24 (Nhường đường bên phải tại giao lộ đồng cấp)', role: 'Căn cứ', note: 'Nguyên tắc vàng' }
+      ],
+      linkedFactors: [{ title: 'Bộ yếu tố dùng chung · Chương 2', role: 'Dùng chung', note: '' }],
+      linkedCases: [{ title: 'Án lệ hòa giải tai nạn giao lộ đồng cấp 2023', role: 'Tham chiếu', note: '' }]
+    },
+    '차114': {
+      code: '차114', oldCode: 'Mã cũ: 114-1', category: 'Giao lộ không đèn',
+      title: 'Đường nhánh giao nhau đường ưu tiên / Biển STOP',
+      sub: 'Xe từ đường nhánh phụ có biển dừng lại nhường đường cho trục chính',
+      status: 'Đang áp dụng', ratioA: 80, ratioB: 20,
+      roleA: 'A · xe đường nhánh (phải dừng nhường)', roleB: 'B · xe đường ưu tiên',
+      svgType: 'intersection_straight',
+      factors: [
+        { side: 'A', factor: 'Không dừng lại tại vạch dừng biển STOP', val: '+10', p: true, src: 'Ghi đè tại tình huống', isShared: false },
+        { side: 'B', factor: 'Chạy quá tốc độ trên đường chính', val: '+10', p: true, src: 'Bộ dùng chung · Ch.2', isShared: true }
+      ],
+      narrative: {
+        situation: 'Xe A từ đường nhánh phụ hoặc ngõ hẻm đi ra đường chính có biển báo ưu tiên hoặc biển STOP.',
+        baseReason: 'Xe trên đường phụ bắt buộc phải nhường đường cho xe trên đường chính từ bất kỳ hướng nào tới. Tỷ lệ cơ bản A 80 : B 20.',
+        factorReason: 'Nếu xe A không dừng lại trước vạch mà lao thẳng ra thì chịu thêm 10% lỗi (90:10).',
+        notes: 'Được áp dụng cả khi bề rộng đường chính lớn hơn đường nhánh từ 1.5 lần trở lên.'
+      },
+      linkedLaws: [
+        { title: 'Luật GTĐB - Điều 24 (Quy tắc đường ưu tiên)', role: 'Căn cứ', note: 'Bắt buộc' },
+        { title: 'Quy chuẩn QCVN 41:2019 - Biển báo P.122 (Dừng lại)', role: 'Căn cứ', note: '' }
+      ],
+      linkedFactors: [{ title: 'Bộ yếu tố dùng chung · Chương 2', role: 'Dùng chung', note: '' }],
+      linkedCases: [{ title: 'Án lệ 04/2022/AL - Quyền ưu tiên xe trục chính', role: 'Căn cứ', note: '' }]
+    },
+    '차252': {
+      code: '차252', oldCode: 'Mã cũ: 31-3', category: 'Xe cùng chiều',
+      title: 'Chuyển làn tạt đầu – Thiếu khoảng cách an toàn',
+      sub: 'Xe chuyển làn đường cắt ngang dòng xe đi thẳng cùng chiều thiếu khoảng cách hoặc xi-nhan muộn',
+      status: 'Đang áp dụng', ratioA: 80, ratioB: 20,
+      roleA: 'A · xe chuyển làn (tạt đầu)', roleB: 'B · xe đi thẳng đúng làn',
+      svgType: 'lane_change',
+      factors: [
+        { side: 'A', factor: 'Không bật xi-nhan trước 30m hoặc 3 giây', val: '+10', p: true, src: 'Bộ yếu tố chuyển làn', isShared: true },
+        { side: 'A', factor: 'Chuyển nhiều làn cùng một lúc liên tục', val: '+10', p: true, src: 'Ghi đè tại tình huống', isShared: false },
+        { side: 'B', factor: 'Tăng tốc cố tình cản trở xe chuyển làn', val: '+10', p: true, src: 'Bộ dùng chung · Ch.2', isShared: true }
+      ],
+      narrative: {
+        situation: 'Xe A đang lưu thông cùng chiều bất ngờ chuyển làn sang làn xe B đang đi thẳng mà không đảm bảo khoảng cách an toàn.',
+        baseReason: 'Người điều khiển phương tiện chuyển làn chỉ được chuyển hướng khi đảm bảo an toàn cho các xe phía sau. Tỷ lệ cơ sở A 80 : B 20.',
+        factorReason: 'Nếu camera ghi nhận xe A bật xi-nhan muộn dưới 3 giây hoặc chuyển làn gấp thì tăng lên 90:10.',
+        notes: 'Không áp dụng tại nơi có vạch kẻ liền cấm chuyển làn (nếu vạch liền thì xe A chịu 100% lỗi).'
+      },
+      linkedLaws: [
+        { title: 'Luật GTĐB - Điều 13 (Sử dụng làn đường)', role: 'Căn cứ', note: '' },
+        { title: 'Luật GTĐB - Điều 15 (Bật tín hiệu báo hướng rẽ)', role: 'Căn cứ', note: 'Tối thiểu 30m' }
+      ],
+      linkedFactors: [
+        { title: 'Bộ yếu tố dùng chung chuyển làn đường', role: 'Dùng chung', note: 'Áp dụng cho mọi xe chuyển làn' }
+      ],
+      linkedCases: [
+        { title: 'Án lệ 18/2023/AL - Trách nhiệm phương tiện chuyển hướng', role: 'Căn cứ', note: 'Án lệ cốt lõi' }
+      ]
+    },
+    '차205': {
+      code: '차205', oldCode: 'Mã cũ: 205-1', category: 'Xe cùng chiều',
+      title: 'Đâm đuôi khi xe trước phanh gấp bất ngờ',
+      sub: 'Xe phía trước phanh dừng khẩn cấp không vì lý do an toàn chính đáng',
+      status: 'Đang áp dụng', ratioA: 30, ratioB: 70,
+      roleA: 'A · xe trước (phanh gấp vô cớ)', roleB: 'B · xe sau (không giữ khoảng cách)',
+      svgType: 'rear_end',
+      factors: [
+        { side: 'A', factor: 'Đèn phanh sau bị hỏng hoặc không sáng', val: '+20', p: true, src: 'Bộ dùng chung · Ch.2', isShared: true },
+        { side: 'B', factor: 'Bám quá sát khoảng cách tối thiểu', val: '+10', p: true, src: 'Bộ dùng chung · Ch.2', isShared: true }
+      ],
+      narrative: {
+        situation: 'Xe A và B đi cùng làn. Xe A đạp phanh gấp đột ngột không vì chướng ngại vật hay lý do an toàn, xe B đâm vào đuôi xe A.',
+        baseReason: 'Xe sau có nghĩa vụ giữ khoảng cách an toàn nhưng xe trước không được phanh đột ngột vô cớ. Tỷ lệ cơ bản A 30 : B 70.',
+        factorReason: 'Nếu xe trước phanh do tránh chướng ngại vật thật thì lỗi thuộc về xe sau 100%.',
+        notes: 'Yêu cầu trích xuất dữ liệu camera hành trình xác minh nguyên nhân xe trước đạp phanh.'
+      },
+      linkedLaws: [
+        { title: 'Luật GTĐB - Điều 12 (Khoảng cách an toàn giữa hai xe)', role: 'Căn cứ', note: 'Thông tư 31/2019' }
+      ],
+      linkedFactors: [{ title: 'Bộ yếu tố dùng chung · Chương 2', role: 'Dùng chung', note: '' }],
+      linkedCases: [{ title: 'Tiền lệ giải quyết tranh chấp phanh gấp Sonbo 2023', role: 'Tham chiếu', note: '' }]
+    },
+    '차314': {
+      code: '차314', oldCode: 'Mã cũ: 314-1', category: 'Vòng xuyến',
+      title: 'Va chạm tại nơi giao nhau có vòng xuyến',
+      sub: 'Xe từ đường dẫn chuẩn bị vào vòng xuyến va chạm với xe đang lưu thông bên trong',
+      status: 'Đang áp dụng', ratioA: 70, ratioB: 30,
+      roleA: 'A · xe từ ngoài vào vòng xuyến', roleB: 'B · xe đang trong vòng xuyến',
+      svgType: 'roundabout',
+      factors: [
+        { side: 'A', factor: 'Không nhường đường bên trái khi vào xuyến', val: '+10', p: true, src: 'Bộ dùng chung · Ch.2', isShared: true },
+        { side: 'B', factor: 'Chuyển làn đột ngột từ tâm xuyến ra ngoài', val: '+10', p: true, src: 'Ghi đè tại tình huống', isShared: false }
+      ],
+      narrative: {
+        situation: 'Xe A từ đường nhánh nhập vào đảo xuyến giao thông, xe B đang di chuyển trên luồng xoay tròn trong xuyến.',
+        baseReason: 'Tại nơi có báo hiệu đi theo vòng xuyến, phải nhường đường cho xe đi bên trong từ bên trái tới. Tỷ lệ cơ bản A 70 : B 30.',
+        factorReason: 'Điều chỉnh nếu xe trong xuyến đi quá nhanh hoặc tạt gấp ra lối thoát.',
+        notes: 'Phải có biển báo giao nhau theo vòng xuyến R.303.'
+      },
+      linkedLaws: [
+        { title: 'Luật GTĐB - Điều 24 (Quy tắc đi theo vòng xuyến)', role: 'Căn cứ', note: 'Nhường bên trái' }
+      ],
+      linkedFactors: [{ title: 'Bộ yếu tố dùng chung · Chương 2', role: 'Dùng chung', note: '' }],
+      linkedCases: []
+    },
+    '인1': {
+      code: '인1', oldCode: 'Mã cũ: 101-1', category: 'Xe - Người đi bộ',
+      title: 'Người đi bộ qua đường trên vạch sơn đèn xanh',
+      sub: 'Người đi bộ chấp hành đúng vạch sang đường và đèn tín hiệu',
+      status: 'Đang áp dụng', ratioA: 100, ratioB: 0,
+      roleA: 'A · xe cơ giới (lỗi toàn bộ)', roleB: 'B · người đi bộ đúng luật',
+      svgType: 'pedestrian',
+      factors: [
+        { side: 'B', factor: 'Bất ngờ dừng lại hoặc chạy lùi đột ngột', val: '+10', p: true, src: 'Ghi đè tại tình huống', isShared: false }
+      ],
+      narrative: {
+        situation: 'Người đi bộ băng qua đường trên vạch kẻ đường dành cho người đi bộ khi tín hiệu đèn cho phép. Xe cơ giới va chạm với người đi bộ.',
+        baseReason: 'Người đi bộ được bảo vệ ưu tiên cao nhất khi đi đúng luật. Toàn bộ lỗi thuộc về người điều khiển xe (A 100 : B 0).',
+        factorReason: 'Chỉ giảm lỗi nếu người đi bộ có hành vi nguy hiểm bất thường không thể lường trước.',
+        notes: 'Áp dụng trên toàn bộ phần đường có vạch sơn cho người đi bộ.'
+      },
+      linkedLaws: [
+        { title: 'Luật GTĐB - Điều 27 (Bảo vệ người đi bộ qua đường)', role: 'Căn cứ', note: 'Ưu tiên tuyệt đối' }
+      ],
+      linkedFactors: [{ title: 'Bộ yếu tố dùng chung · Chương 1', role: 'Dùng chung', note: '' }],
+      linkedCases: []
+    },
+    '인2': {
+      code: '인2', oldCode: 'Mã cũ: 102-1', category: 'Xe - Người đi bộ',
+      title: 'Người đi bộ qua đường ban đêm ngoài vạch sang đường',
+      sub: 'Khu vực không có vạch kẻ đường hoặc cách vạch kẻ đường trên 50m',
+      status: 'Đang áp dụng', ratioA: 70, ratioB: 30,
+      roleA: 'A · xe cơ giới thiếu quan sát', roleB: 'B · người đi bộ qua đường thiếu an toàn',
+      svgType: 'pedestrian',
+      factors: [
+        { side: 'B', factor: 'Mặc áo tối màu, qua đường nơi có dải phân cách cứng', val: '+10', p: true, src: 'Ghi đè tại tình huống', isShared: false },
+        { side: 'A', factor: 'Xe không bật đèn chiếu sáng ban đêm', val: '+15', p: true, src: 'Bộ dùng chung · Ch.1', isShared: true }
+      ],
+      narrative: {
+        situation: 'Người đi bộ băng qua đường ban đêm tại nơi không có vạch kẻ đường dành riêng, xe cơ giới va chạm với người đi bộ.',
+        baseReason: 'Người đi bộ phải quan sát kỹ khi qua đường không có vạch, người lái xe phải làm chủ tốc độ. Tỷ lệ cơ sở A 70 : B 30.',
+        factorReason: 'Tăng lỗi người đi bộ nếu trèo qua dải phân cách hoặc không chú ý quan sát.',
+        notes: 'Cần xác định điều kiện ánh sáng đèn đường và tốc độ xe.'
+      },
+      linkedLaws: [
+        { title: 'Luật GTĐB - Điều 27 (Trách nhiệm người đi bộ)', role: 'Căn cứ', note: '' }
+      ],
+      linkedFactors: [{ title: 'Bộ yếu tố dùng chung · Chương 1', role: 'Dùng chung', note: '' }],
+      linkedCases: []
+    },
+    '자1': {
+      code: '자1', oldCode: 'Mã cũ: 401-1', category: 'Xe - Xe đạp',
+      title: 'Ô tô rẽ phải va chạm xe đạp đi thẳng cùng chiều',
+      sub: 'Xe đạp đi sát mép đường bên phải, ô tô vượt lên trước rồi rẽ phải tạt ngang',
+      status: 'Đang áp dụng', ratioA: 80, ratioB: 20,
+      roleA: 'A · ô tô rẽ phải (tạt đầu xe đạp)', roleB: 'B · xe đạp đi thẳng đúng làn',
+      svgType: 'lane_change',
+      factors: [
+        { side: 'A', factor: 'Rẽ phải nhưng không đi sát lề phải trước khi rẽ', val: '+10', p: true, src: 'Bộ dùng chung · Ch.3', isShared: true },
+        { side: 'B', factor: 'Xe đạp không có đèn hoặc phản quang ban đêm', val: '+10', p: true, src: 'Ghi đè tại tình huống', isShared: false }
+      ],
+      narrative: {
+        situation: 'Ô tô và xe đạp đi cùng chiều trên đường. Ô tô vượt lên và rẽ phải vào ngõ hoặc cây xăng, cắt ngang đường đi của xe đạp.',
+        baseReason: 'Phương tiện chuyển hướng phải nhường đường cho xe thô sơ đang đi thẳng cùng chiều. Tỷ lệ cơ bản Ô tô 80 : Xe đạp 20.',
+        factorReason: 'Gia giảm lỗi tùy thuộc vào tốc độ rẽ của ô tô và vị trí va chạm.',
+        notes: 'Áp dụng cho mọi xe thô sơ đi sát mép đường bên phải.'
+      },
+      linkedLaws: [
+        { title: 'Luật GTĐB - Điều 15 (Chuyển hướng phải nhường xe thô sơ)', role: 'Căn cứ', note: '' }
+      ],
+      linkedFactors: [{ title: 'Bộ yếu tố dùng chung · Chương 3', role: 'Dùng chung', note: '' }],
+      linkedCases: []
+    }
+  };
+
+  // Clone active copy from KNIA originals
+  let SITUATIONS_DB = JSON.parse(JSON.stringify(KNIA_ORIGINALS));
+  let currentSituationCode = '차1-1';
+
+  // 2. RULES & LAWS LIBRARY (VIEW 2)
+  const RULES_LIBRARY = {
+    laws: [
+      {
+        id: 'law-5', type: 'Điều luật', title: 'Luật Giao thông đường bộ - Điều 5',
+        sub: 'Nghĩa vụ chấp hành báo hiệu đường bộ và hiệu lệnh',
+        content: 'Người tham gia giao thông phải nghiêm chỉnh chấp hành hiệu lệnh và chỉ dẫn của hệ thống báo hiệu đường bộ (đèn tín hiệu, biển báo hiệu, vạch kẻ đường, cọc tiêu, rào chắn) và hiệu lệnh của người điều khiển giao thông.',
+        appliedSituations: [
+          { code: '차1-1', name: 'Xanh – đỏ (vượt đèn)', role: 'Căn cứ cốt lõi', diff: 'B lỗi 100%' },
+          { code: '차1', name: 'Đi thẳng – đi thẳng cùng hướng', role: 'Căn cứ', diff: 'Đồng tốc 50:50' },
+          { code: '차2', name: 'Đi thẳng – rẽ trái đối diện', role: 'Căn cứ', diff: 'Rẽ trái lỗi 80%' },
+          { code: '인1', name: 'Người đi bộ qua đường đèn xanh', role: 'Căn cứ', diff: 'Xe lỗi 100%' }
+        ],
+        casesCount: 4, chaptersCount: 2, hasPrecedent: true
+      },
+      {
+        id: 'law-12', type: 'Điều luật', title: 'Luật Giao thông đường bộ - Điều 12',
+        sub: 'Tốc độ và khoảng cách an toàn giữa các phương tiện',
+        content: 'Người lái xe phải tuân thủ quy định về tốc độ tối đa cho phép và giữ khoảng cách an toàn đối với xe chạy liền trước. Khi trời mưa, có sương mù, mặt đường trơn trượt hoặc vào nút giao, phải chủ động giảm tốc độ.',
+        appliedSituations: [
+          { code: '차205', name: 'Đâm đuôi khi xe trước phanh gấp', role: 'Căn cứ chính', diff: 'Xe sau lỗi 70%' },
+          { code: '차252', name: 'Chuyển làn tạt đầu', role: 'Tham chiếu', diff: 'Khoảng cách an toàn' },
+          { code: '차112', name: 'Ngã tư cùng độ rộng', role: 'Tham chiếu', diff: 'Giảm tốc độ giao lộ' }
+        ],
+        casesCount: 3, chaptersCount: 1, hasPrecedent: true
+      },
+      {
+        id: 'law-15', type: 'Điều luật', title: 'Luật Giao thông đường bộ - Điều 15',
+        sub: 'Chuyển hướng xe, bật tín hiệu và nhường đường',
+        content: 'Khi muốn chuyển hướng, người điều khiển phương tiện phải giảm tốc độ và có tín hiệu báo hướng rẽ (bật đèn xi-nhan) trước một khoảng cách an toàn tối thiểu; phải nhường đường cho người đi bộ, xe thô sơ và xe đi ngược chiều.',
+        appliedSituations: [
+          { code: '차252', name: 'Chuyển làn tạt đầu', role: 'Căn cứ', diff: 'Xi-nhan trước 30m (+10%)' },
+          { code: '차2', name: 'Đi thẳng – rẽ trái đối diện', role: 'Căn cứ', diff: 'Nhường xe đi thẳng' },
+          { code: '차4', name: 'Rẽ trái – rẽ phải', role: 'Căn cứ', diff: 'Bán kính quay xe' },
+          { code: '자1', name: 'Ô tô rẽ phải va chạm xe đạp', role: 'Căn cứ', diff: 'Nhường xe đạp đi thẳng' }
+        ],
+        casesCount: 4, chaptersCount: 2, hasPrecedent: true
+      },
+      {
+        id: 'law-24', type: 'Điều luật', title: 'Luật Giao thông đường bộ - Điều 24',
+        sub: 'Quy tắc nhường đường tại nơi đường giao nhau',
+        content: 'Khi đến gần đường giao nhau, người điều khiển phương tiện phải giảm tốc độ. Tại nơi không có báo hiệu đi theo vòng xuyến, phải nhường đường cho xe đến từ bên phải; tại nơi có biển báo đường ưu tiên, xe từ đường nhánh phải nhường đường.',
+        appliedSituations: [
+          { code: '차112', name: 'Ngã tư cùng độ rộng', role: 'Căn cứ', diff: 'Nhường bên phải (60:40)' },
+          { code: '차114', name: 'Đường nhánh / Biển STOP', role: 'Căn cứ cốt lõi', diff: 'Đường nhánh chịu 80%' },
+          { code: '차314', name: 'Vòng xuyến (Roundabout)', role: 'Căn cứ', diff: 'Nhường xe bên trái trong xuyến' }
+        ],
+        casesCount: 3, chaptersCount: 1, hasPrecedent: true
+      },
+      {
+        id: 'law-27', type: 'Điều luật', title: 'Luật Giao thông đường bộ - Điều 27',
+        sub: 'Trách nhiệm bảo vệ người đi bộ qua đường',
+        content: 'Tại nơi có vạch kẻ đường dành cho người đi bộ, người lái xe phải quan sát, giảm tốc độ và nhường đường cho người đi bộ đang qua đường. Nơi không có vạch, người lái xe vẫn phải chú ý bảo đảm an toàn cho người đi bộ.',
+        appliedSituations: [
+          { code: '인1', name: 'Trên vạch sang đường có đèn', role: 'Căn cứ', diff: 'Xe chịu lỗi 100%' },
+          { code: '인2', name: 'Ngoài vạch / Ban đêm', role: 'Căn cứ', diff: 'Xe chịu 70%' }
+        ],
+        casesCount: 2, chaptersCount: 1, hasPrecedent: false
+      }
+    ],
+    factors: [
+      {
+        id: 'factor-ch2', type: 'Bộ yếu tố', title: 'Bộ yếu tố dùng chung · Chương 2 (Xe - Xe)',
+        sub: 'Quy chuẩn gia giảm lỗi áp dụng cho mọi va chạm giữa xe cơ giới',
+        content: 'Bao gồm các yếu tố khách quan và chủ quan: Lỗi rõ rệt (chạy quá tốc độ 10-20km/h, không chú ý quan sát: +10%), Lỗi nghiêm trọng (uống rượu bia, chạy quá tốc độ trên 20km/h, sử dụng điện thoại: +20%), thời tiết mưa gió tầm nhìn hạn chế (±5-10%).',
+        appliedSituations: [
+          { code: '차1-1', name: 'Xanh – đỏ', role: 'Dùng chung', diff: 'Quá tốc độ +20%' },
+          { code: '차1', name: 'Đi thẳng – đi thẳng', role: 'Dùng chung', diff: 'Lấn làn +20%' },
+          { code: '차2', name: 'Đi thẳng – rẽ trái', role: 'Dùng chung', diff: 'Thiếu quan sát +10%' },
+          { code: '차112', name: 'Ngã tư cùng độ rộng', role: 'Dùng chung', diff: 'Không giảm tốc +10%' },
+          { code: '차252', name: 'Chuyển làn tạt đầu', role: 'Dùng chung', diff: 'Cố tình cản trở +10%' }
+        ],
+        casesCount: 5, chaptersCount: 1, hasPrecedent: true
+      },
+      {
+        id: 'factor-lane', type: 'Bộ yếu tố', title: 'Bộ yếu tố chuyển làn đường chuyên biệt',
+        sub: 'Quy tắc định lượng sai phạm xi-nhan và góc tạt đầu',
+        content: 'Quy định chi tiết: Bật xi-nhan dưới 3 giây hoặc dưới 30m trước khi chớm bánh vào vạch: +10% lỗi. Chuyển liên tiếp từ 2 làn trở lên mà không ổn định xe: +10% lỗi. Chuyển làn đè vạch nét liền: lỗi chuyển làn chịu 100%.',
+        appliedSituations: [
+          { code: '차252', name: 'Chuyển làn tạt đầu', role: 'Căn cứ cốt lõi', diff: 'Xi-nhan muộn +10%' },
+          { code: '차205', name: 'Đâm đuôi phanh gấp', role: 'Tham chiếu', diff: 'Chuyển làn rồi phanh' }
+        ],
+        casesCount: 2, chaptersCount: 1, hasPrecedent: true
+      }
+    ],
+    cases: [
+      {
+        id: 'case-18-2023', type: 'Án lệ', title: 'Án lệ 18/2023/AL - Trách nhiệm phương tiện chuyển hướng',
+        sub: 'Hội đồng Thẩm phán TAND Tối cao ban hành ngày 18/08/2023',
+        content: 'Án lệ xác lập: Xe chuyển hướng hoặc chuyển làn dù đã có tín hiệu đèn báo rẽ nhưng nếu khoảng cách và tốc độ của xe đi thẳng phía sau không đủ để dừng xe an toàn trong điều kiện bình thường, thì xe chuyển hướng vẫn phải chịu trách nhiệm chính về vụ tai nạn.',
+        appliedSituations: [
+          { code: '차252', name: 'Chuyển làn tạt đầu', role: 'Án lệ bắt buộc', diff: 'Cố định tỷ lệ lỗi ≥80%' },
+          { code: '차2', name: 'Đi thẳng – rẽ trái', role: 'Án lệ tham khảo', diff: 'Nhường xe thẳng' }
+        ],
+        casesCount: 2, chaptersCount: 1, hasPrecedent: true
+      },
+      {
+        id: 'case-04-2022', type: 'Án lệ', title: 'Án lệ 04/2022/AL - Quyền ưu tiên xe trên trục đường chính',
+        sub: 'Án lệ về giải quyết tranh chấp bồi thường giao lộ',
+        content: 'Xe lưu thông trên đường ưu tiên không bị xem là có lỗi hỗn hợp nếu xe từ đường phụ đi ra với tốc độ nhanh bất ngờ, không chấp hành vạch dừng của biển báo STOP, khiến xe trục chính dù đi đúng tốc độ vẫn không thể tránh khỏi va chạm.',
+        appliedSituations: [
+          { code: '차114', name: 'Đường nhánh / Biển STOP', role: 'Án lệ cốt lõi', diff: 'Bác bỏ lỗi xe trục chính' }
+        ],
+        casesCount: 1, chaptersCount: 1, hasPrecedent: true
+      }
+    ]
+  };
+
+  let currentLibTab = 'laws';
+  let currentLibRuleId = 'law-5';
+
+  // 3. SVG DIAGRAM GENERATOR
+  function renderCollisionSVG(type, code) {
+    if (type === 'lane_change') {
+      return `
+        <svg viewBox="0 0 200 150" width="100%" height="150" role="img" aria-label="Sơ đồ chuyển làn tạt đầu">
+          <!-- 2 Lanes -->
+          <rect x="20" y="0" width="160" height="150" fill="var(--sf2)" stroke="var(--line)"/>
+          <line x1="100" y1="0" x2="100" y2="150" stroke="var(--line)" stroke-width="2" stroke-dasharray="8 6"/>
+          <!-- Car B straight in right lane -->
+          <path d="M140 140V70" stroke="var(--ac)" stroke-width="4" marker-end="url(#mock-h)" fill="none"/>
+          <text x="148" y="110" font-size="12" font-weight="700" fill="var(--ac)">B</text>
+          <!-- Car A cutting from left lane to right lane -->
+          <path d="M60 140Q65 95 130 75" stroke="var(--red)" stroke-width="4" marker-end="url(#mock-h)" fill="none" stroke-dasharray="6 4"/>
+          <text x="50" y="115" font-size="12" font-weight="700" fill="var(--red)">A</text>
+          <!-- Crash star -->
+          <circle cx="132" cy="74" r="7" fill="var(--amb)" opacity="0.8"/>
+          <defs><marker id="mock-h" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto"><path d="M0 0L6 3L0 6z" fill="currentColor"/></marker></defs>
+        </svg>
+      `;
+    } else if (type === 'rear_end') {
+      return `
+        <svg viewBox="0 0 200 150" width="100%" height="150" role="img" aria-label="Sơ đồ đâm đuôi phanh gấp">
+          <rect x="60" y="0" width="80" height="150" fill="var(--sf2)" stroke="var(--line)"/>
+          <!-- Car A (front) -->
+          <rect x="85" y="30" width="30" height="42" rx="4" fill="var(--red)" opacity="0.9"/>
+          <text x="96" y="55" font-size="12" font-weight="700" fill="#fff">A</text>
+          <!-- Brake signal -->
+          <line x1="80" y1="30" x2="120" y2="30" stroke="var(--red)" stroke-width="3"/>
+          <!-- Car B (behind) crashing -->
+          <path d="M100 140V76" stroke="var(--ac)" stroke-width="4" marker-end="url(#mock-h)" fill="none"/>
+          <text x="110" y="120" font-size="12" font-weight="700" fill="var(--ac)">B</text>
+          <circle cx="100" cy="74" r="6" fill="var(--amb)" opacity="0.9"/>
+          <defs><marker id="mock-h" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto"><path d="M0 0L6 3L0 6z" fill="currentColor"/></marker></defs>
+        </svg>
+      `;
+    } else if (type === 'roundabout') {
+      return `
+        <svg viewBox="0 0 200 150" width="100%" height="150" role="img" aria-label="Sơ đồ vòng xuyến">
+          <circle cx="100" cy="75" r="55" fill="none" stroke="var(--line)" stroke-width="28"/>
+          <circle cx="100" cy="75" r="28" fill="var(--sf2)" stroke="var(--line)"/>
+          <!-- Feeder road -->
+          <rect x="88" y="120" width="24" height="30" fill="var(--sf2)"/>
+          <!-- Car B inside circle -->
+          <path d="M142 75A42 42 0 0 1 100 117" stroke="var(--ac)" stroke-width="4" marker-end="url(#mock-h)" fill="none"/>
+          <text x="145" y="65" font-size="12" font-weight="700" fill="var(--ac)">B</text>
+          <!-- Car A entering -->
+          <path d="M100 145V115" stroke="var(--red)" stroke-width="4" marker-end="url(#mock-h)" fill="none" stroke-dasharray="5 3"/>
+          <text x="86" y="138" font-size="12" font-weight="700" fill="var(--red)">A</text>
+          <circle cx="100" cy="116" r="6" fill="var(--amb)"/>
+          <defs><marker id="mock-h" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto"><path d="M0 0L6 3L0 6z" fill="currentColor"/></marker></defs>
+        </svg>
+      `;
+    } else if (type === 'pedestrian') {
+      return `
+        <svg viewBox="0 0 200 150" width="100%" height="150" role="img" aria-label="Sơ đồ người đi bộ">
+          <rect x="20" y="0" width="160" height="150" fill="var(--sf2)" stroke="var(--line)"/>
+          <!-- Zebra stripes -->
+          <line x1="20" y1="65" x2="180" y2="65" stroke="#fff" stroke-width="6" stroke-dasharray="10 8"/>
+          <line x1="20" y1="85" x2="180" y2="85" stroke="#fff" stroke-width="6" stroke-dasharray="10 8"/>
+          <!-- Car A approaching -->
+          <path d="M100 145V95" stroke="var(--red)" stroke-width="4" marker-end="url(#mock-h)" fill="none"/>
+          <text x="110" y="125" font-size="12" font-weight="700" fill="var(--red)">A</text>
+          <!-- Pedestrian B walking across -->
+          <path d="M30 75H92" stroke="var(--ac)" stroke-width="3" marker-end="url(#mock-h)" fill="none" stroke-dasharray="4 3"/>
+          <circle cx="95" cy="75" r="5" fill="var(--ac)"/>
+          <text x="40" y="65" font-size="12" font-weight="700" fill="var(--ac)">B (Người)</text>
+          <defs><marker id="mock-h" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto"><path d="M0 0L6 3L0 6z" fill="currentColor"/></marker></defs>
+        </svg>
+      `;
+    } else {
+      // Standard 4-way Intersection
+      return `
+        <svg viewBox="0 0 200 150" width="100%" height="150" role="img" aria-label="Sơ đồ giao lộ ngã tư">
+          <rect x="80" y="0" width="40" height="150" fill="var(--sf2)" stroke="var(--line)"/>
+          <rect x="0" y="55" width="200" height="40" fill="var(--sf2)" stroke="var(--line)"/>
+          <rect x="81" y="56" width="38" height="38" fill="var(--sf)"/>
+          <path d="M100 140V104" stroke="var(--ac)" stroke-width="4" marker-end="url(#mock-h)" fill="none"/>
+          <path d="M10 75H70" stroke="var(--red)" stroke-width="4" marker-end="url(#mock-h)" fill="none" stroke-dasharray="6 4"/>
+          <defs><marker id="mock-h" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto"><path d="M0 0L6 3L0 6z" fill="currentColor"/></marker></defs>
+          <text x="108" y="130" font-size="12" font-weight="700" fill="var(--ac)">A</text>
+          <text x="14" y="68" font-size="12" font-weight="700" fill="var(--red)">B</text>
+          <circle cx="76" cy="75" r="5" fill="var(--amb)" opacity="0.9"/>
+        </svg>
+      `;
+    }
+  }
+
+  // 4. RENDER CURRENT SITUATION (VIEW 1)
+  function renderMockSituation(code) {
+    const data = SITUATIONS_DB[code];
+    if (!data) return;
+    currentSituationCode = code;
+
+    // Header tags & title
+    const badge = document.getElementById('mock-chart-badge');
+    const oldCode = document.getElementById('mock-chart-oldcode');
+    const stBadge = document.getElementById('mock-st');
+    const catTag = document.getElementById('mock-category-tag');
+    const title = document.getElementById('mock-chart-title');
+    const sub = document.getElementById('mock-chart-sub');
+
+    if (badge) badge.textContent = data.code;
+    if (oldCode) oldCode.textContent = data.oldCode;
+    if (stBadge) {
+      stBadge.textContent = data.status;
+      stBadge.className = 'tag ' + (data.status === 'Đang áp dụng' ? 'a' : 'w');
+    }
+    if (catTag) catTag.textContent = data.category;
+    if (title) title.textContent = data.title;
+    if (sub) sub.textContent = data.sub;
+
+    // SVG
+    const svgBox = document.getElementById('mock-svg-container');
+    if (svgBox) {
+      svgBox.innerHTML = renderCollisionSVG(data.svgType, data.code);
+    }
+
+    // Role labels
+    const roleA = document.getElementById('label-role-a');
+    const roleB = document.getElementById('label-role-b');
+    if (roleA) roleA.innerHTML = `<b>${data.roleA.split('·')[0].trim()}</b> · ${data.roleA.split('·')[1]?.trim() || ''}`;
+    if (roleB) roleB.innerHTML = `<b>${data.roleB.split('·')[0].trim()}</b> · ${data.roleB.split('·')[1]?.trim() || ''}`;
+
+    // Ratio Bar
+    const ra = data.ratioA;
+    const rb = data.ratioB;
+    const elRatioA = document.getElementById('mock-ratio-a');
+    const elRatioB = document.getElementById('mock-ratio-b');
+    const inputRa = document.getElementById('mock-ra');
+    const spanRb = document.getElementById('mock-rb');
+    const preview = document.getElementById('mock-ratio-preview');
+    const note = document.getElementById('mock-ratio-note');
+
+    if (elRatioA && elRatioB) {
+      elRatioA.style.width = ra + '%';
+      elRatioA.textContent = ra;
+      elRatioB.textContent = rb;
+      if (inputRa) inputRa.value = ra;
+      if (spanRb) spanRb.textContent = rb;
+      if (preview) preview.textContent = `${ra} : ${rb}`;
+      if (note) note.textContent = `Tỷ lệ lỗi cơ bản A ${ra} : B ${rb}. Có thể cộng trừ theo quan hệ nhân quả với tai nạn và mức thiệt hại.`;
+    }
+
+    // Factors table
+    const fTbody = document.getElementById('mock-factors-tbody');
+    const fCount = document.getElementById('mock-factors-count');
+    if (fTbody) {
+      fTbody.innerHTML = '';
+      (data.factors || []).forEach(f => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><span class="code o">${f.side}</span></td>
+          <td class="editable-col">${f.factor}</td>
+          <td class="val ${f.p ? 'p' : 'n'} editable-col">${f.val}</td>
+          <td><span class="tag ${f.isShared ? 'a' : 'w'} src" onclick="toggleFactorSource(this)">${f.src}</span></td>
+        `;
+        fTbody.appendChild(tr);
+      });
+      if (fCount) fCount.textContent = `${data.factors.length} liên kết yếu tố`;
+    }
+
+    // Narrative Box
+    const nSit = document.getElementById('narrative-situation');
+    const nBase = document.getElementById('narrative-base');
+    const nFact = document.getElementById('narrative-factor');
+    const nNote = document.getElementById('narrative-notes');
+    if (nSit) nSit.textContent = data.narrative.situation;
+    if (nBase) nBase.textContent = data.narrative.baseReason;
+    if (nFact) nFact.textContent = data.narrative.factorReason;
+    if (nNote) nNote.textContent = data.narrative.notes;
+
+    // Linked Rules in Right Column
+    renderLinkedRulesCol(data);
+  }
+
+  function renderLinkedRulesCol(data) {
+    const lawsBox = document.getElementById('mock-linked-laws-container');
+    const factBox = document.getElementById('mock-linked-factors-container');
+    const caseBox = document.getElementById('mock-linked-cases-container');
+    const countLbl = document.getElementById('mock-linked-count-lbl');
+
+    const totalCount = (data.linkedLaws?.length || 0) + (data.linkedFactors?.length || 0) + (data.linkedCases?.length || 0);
+    if (countLbl) countLbl.textContent = `Quy tắc đã liên kết · ${totalCount}`;
+
+    if (lawsBox) {
+      lawsBox.innerHTML = '';
+      (data.linkedLaws || []).forEach(l => {
+        lawsBox.innerHTML += `
+          <div class="lk">
+            <b>${l.title}</b>
+            <div class="row">
+              <span class="tag a">${l.role}</span>
+              ${l.note ? `<span class="tag">${l.note}</span>` : ''}
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    if (factBox) {
+      factBox.innerHTML = '';
+      (data.linkedFactors || []).forEach(f => {
+        factBox.innerHTML += `
+          <div class="lk sh">
+            <b>${f.title}</b>
+            <div class="row">
+              <span class="tag a">${f.role}</span>
+              ${f.note ? `<span class="tag w">${f.note}</span>` : ''}
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    if (caseBox) {
+      caseBox.innerHTML = '';
+      if (!data.linkedCases || data.linkedCases.length === 0) {
+        caseBox.innerHTML = '<div class="empty">Chưa gắn án lệ nào</div>';
+      } else {
+        data.linkedCases.forEach(c => {
+          caseBox.innerHTML += `
+            <div class="lk">
+              <b>${c.title}</b>
+              <div class="row">
+                <span class="tag a">${c.role}</span>
+                ${c.note ? `<span class="tag">${c.note}</span>` : ''}
+              </div>
+            </div>
+          `;
+        });
+      }
+    }
+  }
+
+  // 5. TREE INTERACTIONS
+  function selectMockSituation(el, code) {
+    document.querySelectorAll('#mock-situation-tree li').forEach(li => li.classList.remove('on'));
+    if (el) el.classList.add('on');
+    renderMockSituation(code);
+  }
+
+  function toggleTreeBranch(headerLi) {
+    const nextSub = headerLi.nextElementSibling;
+    const arrow = headerLi.querySelector('.tree-toggle-arrow');
+    if (!nextSub || !nextSub.classList.contains('tree-sub')) return;
+    const isHidden = nextSub.style.display === 'none';
+    nextSub.style.display = isHidden ? 'block' : 'none';
+    if (arrow) arrow.textContent = isHidden ? '▾' : '▸';
+  }
+
+  function expandAllTree(expand) {
+    document.querySelectorAll('#mock-situation-tree .tree-sub').forEach(sub => {
+      sub.style.display = expand ? 'block' : 'none';
+    });
+    document.querySelectorAll('#mock-situation-tree .tree-toggle-arrow').forEach(a => {
+      a.textContent = expand ? '▾' : '▸';
+    });
+  }
+
+  // 6. REAL-TIME SEARCH
+  function handleMockupSearch(query) {
+    query = (query || '').toLowerCase().trim();
+    const countBadge = document.getElementById('search-match-count');
+    let matchCount = 0;
+
+    const situationItems = document.querySelectorAll('#mock-situation-tree li.l2, #mock-situation-tree li.l4');
+    situationItems.forEach(li => {
+      const text = li.textContent.toLowerCase();
+      const codeMatch = Object.keys(SITUATIONS_DB).some(k => {
+        if (li.textContent.includes(k)) {
+          const s = SITUATIONS_DB[k];
+          return s.title.toLowerCase().includes(query) || s.category.toLowerCase().includes(query) || s.oldCode.toLowerCase().includes(query);
+        }
+        return false;
+      });
+
+      if (!query || text.includes(query) || codeMatch) {
+        li.style.display = '';
+        matchCount++;
+      } else {
+        li.style.display = 'none';
+      }
+    });
+
+    if (query) {
+      expandAllTree(true);
+      if (countBadge) {
+        countBadge.style.display = 'inline-block';
+        countBadge.textContent = `${matchCount} khớp`;
+      }
+    } else {
+      if (countBadge) countBadge.style.display = 'none';
+    }
+  }
+
+  // 7. VIEW SWITCHER
+  function switchMockupView(view) {
+    const btnS = document.getElementById('btn-view-s');
+    const btnR = document.getElementById('btn-view-r');
+    const wsS = document.getElementById('vs');
+    const wsR = document.getElementById('vr');
+
+    if (view === 's') {
+      btnS?.classList.add('on');
+      btnR?.classList.remove('on');
+      wsS?.classList.add('on');
+      wsR?.classList.remove('on');
+    } else {
+      btnR?.classList.add('on');
+      btnS?.classList.remove('on');
+      wsR?.classList.add('on');
+      wsS?.classList.remove('on');
+      renderView2Library();
+    }
+  }
+
+  // 8. VIEW 2: THEO QUY TẮC ENGINE
+  function switchMockLibTab(btn, tab) {
+    document.querySelectorAll('#vr .tabs button').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    currentLibTab = tab;
+    renderView2Library();
+  }
+
+  function renderView2Library() {
+    const listEl = document.getElementById('mock-rules-list');
+    if (!listEl) return;
+    listEl.innerHTML = '';
+
+    const items = RULES_LIBRARY[currentLibTab] || [];
+    if (items.length > 0 && !items.some(it => it.id === currentLibRuleId)) {
+      currentLibRuleId = items[0].id;
+    }
+
+    items.forEach(it => {
+      const li = document.createElement('li');
+      li.className = it.id === currentLibRuleId ? 'on' : '';
+      li.onclick = () => selectMockRuleItem(it.id);
+      li.innerHTML = `<b>${it.title}</b><span>${it.sub}</span>`;
+      listEl.appendChild(li);
+    });
+
+    renderView2Details(currentLibRuleId);
+  }
+
+  function selectMockRuleItem(ruleId) {
+    currentLibRuleId = ruleId;
+    document.querySelectorAll('#mock-rules-list li').forEach((li, idx) => {
+      const items = RULES_LIBRARY[currentLibTab] || [];
+      if (items[idx]?.id === ruleId) li.classList.add('on');
+      else li.classList.remove('on');
+    });
+    renderView2Details(ruleId);
+  }
+
+  function renderView2Details(ruleId) {
+    let target = null;
+    for (const key of ['laws', 'factors', 'cases']) {
+      const found = RULES_LIBRARY[key].find(item => item.id === ruleId);
+      if (found) { target = found; break; }
+    }
+    if (!target) return;
+
+    const bType = document.getElementById('vr-badge-type');
+    const title = document.getElementById('vr-title');
+    const sub = document.getElementById('vr-sub');
+    const content = document.getElementById('vr-content');
+    const countBadge = document.getElementById('vr-applied-count');
+    const statCases = document.getElementById('vr-stat-cases');
+    const statChapters = document.getElementById('vr-stat-chapters');
+    const tbody = document.getElementById('vr-situations-tbody');
+
+    if (bType) bType.textContent = target.type;
+    if (title) title.textContent = target.title;
+    if (sub) sub.textContent = target.sub;
+    if (content) content.textContent = target.content;
+    if (countBadge) countBadge.textContent = `${target.appliedSituations.length} tình huống`;
+    if (statCases) statCases.textContent = target.casesCount;
+    if (statChapters) statChapters.textContent = target.chaptersCount;
+
+    if (tbody) {
+      tbody.innerHTML = '';
+      target.appliedSituations.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><span class="code" style="cursor:pointer;" onclick="jumpToSituationFromView2('${row.code}')">${row.code}</span></td>
+          <td><b>${row.name}</b></td>
+          <td><span class="tag a">${row.role}</span></td>
+          <td class="val p">${row.diff}</td>
+          <td>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="jumpToSituationFromView2('${row.code}')">Xem</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+  }
+
+  function jumpToSituationFromView2(code) {
+    switchMockupView('s');
+    const treeLi = Array.from(document.querySelectorAll('#mock-situation-tree li')).find(li => li.textContent.includes(code));
+    selectMockSituation(treeLi, code);
+    showToast(`Đã chuyển tới biểu đồ ${code}`, 'info');
+  }
+
+  // 9. MODAL: ADD LINKED RULE
+  function openAddLinkedRuleModal() {
+    const targetLbl = document.getElementById('malr-chart-target');
+    if (targetLbl) targetLbl.textContent = currentSituationCode;
+    switchAddRuleModalTab('laws');
+    openModal('modal-add-linked-rule');
+  }
+
+  function switchAddRuleModalTab(tabKey) {
+    ['laws', 'factors', 'cases'].forEach(k => {
+      const b = document.getElementById(`malr-tab-${k}`);
+      if (b) b.classList.toggle('on', k === tabKey);
+    });
+    const select = document.getElementById('malr-rule-select');
+    if (!select) return;
+    select.innerHTML = '';
+    const items = RULES_LIBRARY[tabKey] || [];
+    items.forEach(it => {
+      const opt = document.createElement('option');
+      opt.value = it.title;
+      opt.textContent = `${it.title} - ${it.sub}`;
+      select.appendChild(opt);
+    });
+  }
+
+  function confirmAddLinkedRule() {
+    const ruleTitle = document.getElementById('malr-rule-select')?.value;
+    const role = document.getElementById('malr-role-select')?.value || 'Căn cứ';
+    const note = document.getElementById('malr-note-input')?.value || '';
+
+    if (!ruleTitle) return;
+    const sit = SITUATIONS_DB[currentSituationCode];
+    if (!sit) return;
+
+    if (ruleTitle.includes('Luật') || ruleTitle.includes('Nghị định') || ruleTitle.includes('Quy chuẩn')) {
+      sit.linkedLaws.push({ title: ruleTitle, role, note });
+    } else if (ruleTitle.includes('Bộ yếu tố')) {
+      sit.linkedFactors.push({ title: ruleTitle, role, note });
+    } else {
+      sit.linkedCases.push({ title: ruleTitle, role, note });
+    }
+
+    renderLinkedRulesCol(sit);
+    closeModal('modal-add-linked-rule');
+    showToast(`Đã thêm căn cứ vào tình huống ${currentSituationCode}`, 'success');
+  }
+
+  // 10. EDITING MODE & DIRTY STATE
+  let mockDirtyCount = new Set();
+  let mockMidSnapshot = '';
+  let mockSideSnapshot = '';
+
+  function enterMockupEdit() {
+    const mid = document.getElementById('mock-mid-col');
+    const side = document.getElementById('mock-side-col');
+    const bar = document.getElementById('mock-bar');
+    const edbtn = document.getElementById('mock-edbtn');
+    const addrowBox = document.getElementById('mock-addrow-container');
+
+    if (!mid) return;
+    mockMidSnapshot = mid.innerHTML;
+    mockSideSnapshot = side ? side.innerHTML : '';
+    mockDirtyCount.clear();
+
+    mid.classList.add('edit');
+    if (bar) bar.hidden = false;
+    if (edbtn) edbtn.hidden = true;
+    if (addrowBox) addrowBox.style.display = 'block';
+
+    mid.querySelectorAll('.editable-col').forEach(el => {
+      el.contentEditable = 'true';
+      el.addEventListener('input', () => {
+        mockDirtyCount.add(el);
+        updateMockupDirty();
+      });
+    });
+
+    const thead = mid.querySelector('#mock-factors-table thead tr');
+    if (thead && !thead.querySelector('.xd-head')) {
+      thead.insertAdjacentHTML('beforeend', '<th class="xd-head" style="width:36px;"></th>');
+    }
+    mid.querySelectorAll('#mock-factors-tbody tr').forEach(r => {
+      if (!r.querySelector('.xd-cell')) {
+        r.insertAdjacentHTML('beforeend', '<td class="xd-cell"><button type="button" class="rm-row-btn" onclick="removeMockFactorRow(this)" title="Xóa dòng" style="color:var(--red);border:0;background:none;cursor:pointer;font-weight:700;">✕</button></td>');
+      }
+    });
+
+    if (side) {
+      side.querySelectorAll('.lk').forEach(l => {
+        if (!l.querySelector('.rm-lk-btn')) {
+          l.insertAdjacentHTML('beforeend', '<button type="button" class="rm-lk-btn rm" onclick="toggleMockUnlink(this)" style="margin-top:6px;font-size:11.5px;color:var(--red);background:none;border:0;cursor:pointer;">Gỡ liên kết</button>');
+        }
+      });
+    }
+
+    updateMockupDirty();
+  }
+
+  function changeMockRatio(val) {
+    val = Math.max(0, Math.min(100, parseInt(val, 10) || 0));
+    const sit = SITUATIONS_DB[currentSituationCode];
+    if (sit) {
+      sit.ratioA = val;
+      sit.ratioB = 100 - val;
+    }
+    const ratioA = document.getElementById('mock-ratio-a');
+    const ratioB = document.getElementById('mock-ratio-b');
+    const rb = document.getElementById('mock-rb');
+    const preview = document.getElementById('mock-ratio-preview');
+    const note = document.getElementById('mock-ratio-note');
+
+    if (ratioA && ratioB) {
+      ratioA.style.width = val + '%';
+      ratioA.textContent = val;
+      ratioB.textContent = 100 - val;
+      if (rb) rb.textContent = 100 - val;
+      if (preview) preview.textContent = `${val} : ${100 - val}`;
+      if (note) note.textContent = `Tỷ lệ lỗi cơ bản A ${val} : B ${100 - val}. Có thể cộng trừ theo quan hệ nhân quả với tai nạn và mức thiệt hại.`;
+    }
+    mockDirtyCount.add('ratio');
+    updateMockupDirty();
+  }
+
+  function updateMockupDirty() {
+    const cnt = document.getElementById('mock-cnt');
+    const sub = document.getElementById('mock-sub');
+    const why = document.getElementById('mock-why');
+    if (cnt) cnt.textContent = `${mockDirtyCount.size} thay đổi`;
+    if (sub && why) {
+      sub.disabled = !(mockDirtyCount.size > 0 && why.value.trim().length > 0);
+    }
+  }
+
+  function toggleFactorSource(el) {
+    const mid = document.getElementById('mock-mid-col');
+    if (!mid || !mid.classList.contains('edit')) return;
+    const isShared = el.textContent.includes('Bộ dùng chung');
+    el.textContent = isShared ? 'Ghi đè tại tình huống' : 'Bộ dùng chung · Ch.2';
+    el.className = 'tag src ' + (isShared ? 'w' : 'a');
+    mockDirtyCount.add(el);
+    updateMockupDirty();
+  }
+
+  function toggleMockUnlink(btn) {
+    const lk = btn.closest('.lk');
+    if (!lk) return;
+    lk.classList.toggle('gone');
+    btn.textContent = lk.classList.contains('gone') ? 'Hoàn tác' : 'Gỡ liên kết';
+    if (lk.classList.contains('gone')) {
+      mockDirtyCount.add(lk);
+    } else {
+      mockDirtyCount.delete(lk);
+    }
+    updateMockupDirty();
+  }
+
+  function addMockFactorRow() {
+    const tbody = document.getElementById('mock-factors-tbody');
+    if (!tbody) return;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span class="code o" contenteditable="true">A</span></td>
+      <td class="editable-col" contenteditable="true">Yếu tố điều chỉnh mới</td>
+      <td class="val p editable-col" contenteditable="true">+10</td>
+      <td><span class="tag w src" onclick="toggleFactorSource(this)">Ghi đè tại tình huống</span></td>
+      <td class="xd-cell"><button type="button" class="rm-row-btn" onclick="removeMockFactorRow(this)" title="Xóa dòng" style="color:var(--red);border:0;background:none;cursor:pointer;font-weight:700;">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+    mockDirtyCount.add('add-' + Date.now());
+    updateMockupDirty();
+  }
+
+  function removeMockFactorRow(btn) {
+    const tr = btn.closest('tr');
+    if (tr) {
+      tr.remove();
+      mockDirtyCount.add('del-' + Date.now());
+      updateMockupDirty();
+    }
+  }
+
+  function exitMockupEdit(save) {
+    const mid = document.getElementById('mock-mid-col');
+    const side = document.getElementById('mock-side-col');
+    const bar = document.getElementById('mock-bar');
+    const edbtn = document.getElementById('mock-edbtn');
+    const addrowBox = document.getElementById('mock-addrow-container');
+
+    if (!mid) return;
+    if (!save && mockMidSnapshot) {
+      mid.innerHTML = mockMidSnapshot;
+      if (side && mockSideSnapshot) side.innerHTML = mockSideSnapshot;
+    }
+
+    mid.classList.remove('edit');
+    if (bar) bar.hidden = true;
+    if (edbtn) edbtn.hidden = false;
+    if (addrowBox) addrowBox.style.display = 'none';
+
+    mid.querySelectorAll('.editable-col').forEach(el => el.removeAttribute('contenteditable'));
+    mid.querySelectorAll('.xd-head, .xd-cell').forEach(el => el.remove());
+    if (side) side.querySelectorAll('.rm-lk-btn').forEach(el => el.remove());
+
+    mockDirtyCount.clear();
+  }
+
+  function saveMockupEdit(submitApproval) {
+    const sit = SITUATIONS_DB[currentSituationCode];
+    if (sit) {
+      sit.status = submitApproval ? 'Chờ duyệt' : 'Bản nháp';
+      // Persist edited narrative
+      const nSit = document.getElementById('narrative-situation');
+      const nBase = document.getElementById('narrative-base');
+      const nFact = document.getElementById('narrative-factor');
+      const nNote = document.getElementById('narrative-notes');
+      if (nSit) sit.narrative.situation = nSit.textContent;
+      if (nBase) sit.narrative.baseReason = nBase.textContent;
+      if (nFact) sit.narrative.factorReason = nFact.textContent;
+      if (nNote) sit.narrative.notes = nNote.textContent;
+    }
+
+    exitMockupEdit(true);
+    renderMockSituation(currentSituationCode);
+
+    // Update tree item indicator
+    const activeLi = document.querySelector('#mock-situation-tree li.on');
+    if (activeLi) {
+      let badge = activeLi.querySelector('.tree-status-indicator');
+      if (!badge) {
+        badge = document.createElement('span');
+        badge.className = 'tree-status-indicator badge badge-amber';
+        badge.style.fontSize = '9.5px';
+        badge.style.padding = '1px 4px';
+        badge.style.marginLeft = 'auto';
+        activeLi.appendChild(badge);
+      }
+      badge.textContent = submitApproval ? 'Chờ duyệt' : 'Nháp';
+    }
+
+    showToast(
+      submitApproval
+        ? `Đã gửi duyệt thay đổi cho biểu đồ ${currentSituationCode}. Phiên bản mới sẽ có hiệu lực sau khi cấp thẩm quyền phê duyệt.`
+        : `Đã lưu bản nháp quy tắc ${currentSituationCode}. Bạn có thể tiếp tục chỉnh sửa bất kỳ lúc nào.`,
+      submitApproval ? 'success' : 'info'
+    );
+  }
+
+  function revertMockSituationToKnia() {
+    if (confirm(`Bạn có chắc muốn khôi phục tình huống ${currentSituationCode} về giá trị nguyên bản của KNIA 2024? Mọi sửa đổi chưa lưu sẽ bị hủy.`)) {
+      SITUATIONS_DB[currentSituationCode] = JSON.parse(JSON.stringify(KNIA_ORIGINALS[currentSituationCode]));
+      exitMockupEdit(false);
+      renderMockSituation(currentSituationCode);
+      const activeLi = document.querySelector('#mock-situation-tree li.on');
+      const badge = activeLi?.querySelector('.tree-status-indicator');
+      if (badge) badge.remove();
+      showToast(`Đã khôi phục ${currentSituationCode} về nguyên bản KNIA 2024`, 'success');
+    }
+  }
+
+  // 11. TAB 3 DISCREPANCY QUICK JUMP INTEGRATION
+  function jumpToSituationFromDiscrepancy(code) {
+    switchMainTab('tab-rules');
+    switchMockupView('s');
+    expandAllTree(true);
+    const treeLi = Array.from(document.querySelectorAll('#mock-situation-tree li')).find(li => li.textContent.includes(code));
+    selectMockSituation(treeLi, code);
+    showToast(`Đã rà soát và chuyển tới quy tắc ${code}`, 'info');
+  }
+
+  // INITIALIZE TAB 2 ON LOAD
+  window.addEventListener('DOMContentLoaded', () => {
+    renderMockSituation('차1-1');
+  });
+
 
 </script>
 
@@ -4370,272 +5584,6 @@
   }, 15000);
 })();
 
-
-  // ==========================================================================
-  // TAB 2: QUẢN LÝ QUY TẮC TỶ LỆ LỖI (MOCKUP INTERACTION ENGINE)
-  // ==========================================================================
-  let mockDirtyCount = new Set();
-  let mockMidSnapshot = '';
-  let mockSideSnapshot = '';
-
-  function switchMockupView(view) {
-    const btnS = document.getElementById('btn-view-s');
-    const btnR = document.getElementById('btn-view-r');
-    const wsS = document.getElementById('vs');
-    const wsR = document.getElementById('vr');
-
-    if (view === 's') {
-      btnS?.classList.add('on');
-      btnR?.classList.remove('on');
-      wsS?.classList.add('on');
-      wsR?.classList.remove('on');
-    } else {
-      btnR?.classList.add('on');
-      btnS?.classList.remove('on');
-      wsR?.classList.add('on');
-      wsS?.classList.remove('on');
-    }
-  }
-
-  function changeMockRatio(val) {
-    val = Math.max(0, Math.min(100, parseInt(val, 10) || 0));
-    const ratioA = document.getElementById('mock-ratio-a');
-    const ratioB = document.getElementById('mock-ratio-b');
-    const rb = document.getElementById('mock-rb');
-    const note = document.getElementById('mock-ratio-note');
-
-    if (ratioA && ratioB) {
-      ratioA.style.width = val + '%';
-      ratioA.textContent = val;
-      ratioB.textContent = 100 - val;
-      if (rb) rb.textContent = 100 - val;
-      if (note) note.textContent = `Tỷ lệ lỗi cơ bản A ${val} : B ${100 - val}. Có thể cộng trừ theo quan hệ nhân quả với tai nạn và mức thiệt hại.`;
-    }
-    mockDirtyCount.add('ratio');
-    updateMockupDirty();
-  }
-
-  function enterMockupEdit() {
-    const mid = document.getElementById('mock-mid-col');
-    const side = document.getElementById('mock-side-col');
-    const bar = document.getElementById('mock-bar');
-    const edbtn = document.getElementById('mock-edbtn');
-    const addrowBox = document.getElementById('mock-addrow-container');
-
-    if (!mid) return;
-    mockMidSnapshot = mid.innerHTML;
-    mockSideSnapshot = side ? side.innerHTML : '';
-    mockDirtyCount.clear();
-
-    mid.classList.add('edit');
-    if (bar) bar.hidden = false;
-    if (edbtn) edbtn.hidden = true;
-    if (addrowBox) addrowBox.style.display = 'block';
-
-    // Make editable fields
-    mid.querySelectorAll('.editable-col').forEach(el => {
-      el.contentEditable = 'true';
-      el.addEventListener('input', () => {
-        mockDirtyCount.add(el);
-        updateMockupDirty();
-      });
-    });
-
-    // Add delete buttons to factor table rows
-    const thead = mid.querySelector('#mock-factors-table thead tr');
-    if (thead && !thead.querySelector('.xd-head')) {
-      thead.insertAdjacentHTML('beforeend', '<th class="xd-head" style="width:36px;"></th>');
-    }
-    mid.querySelectorAll('#mock-factors-tbody tr').forEach(r => {
-      if (!r.querySelector('.xd-cell')) {
-        r.insertAdjacentHTML('beforeend', '<td class="xd-cell"><button type="button" class="rm-row-btn" onclick="removeMockFactorRow(this)" title="Xóa dòng" style="color:var(--red);border:0;background:none;cursor:pointer;font-weight:700;">✕</button></td>');
-      }
-    });
-
-    // Add unlink buttons to side links
-    if (side) {
-      side.querySelectorAll('.lk').forEach(l => {
-        if (!l.querySelector('.rm-lk-btn')) {
-          l.insertAdjacentHTML('beforeend', '<button type="button" class="rm-lk-btn rm" onclick="toggleMockUnlink(this)" style="margin-top:6px;font-size:11.5px;color:var(--red);background:none;border:0;cursor:pointer;">Gỡ liên kết</button>');
-        }
-      });
-    }
-
-    updateMockupDirty();
-  }
-
-  function updateMockupDirty() {
-    const cnt = document.getElementById('mock-cnt');
-    const sub = document.getElementById('mock-sub');
-    const why = document.getElementById('mock-why');
-
-    if (cnt) cnt.textContent = `${mockDirtyCount.size} thay đổi`;
-    if (sub && why) {
-      sub.disabled = !(mockDirtyCount.size > 0 && why.value.trim().length > 0);
-    }
-  }
-
-  function toggleFactorSource(el) {
-    const mid = document.getElementById('mock-mid-col');
-    if (!mid || !mid.classList.contains('edit')) return;
-    const isShared = el.textContent.includes('Bộ dùng chung');
-    el.textContent = isShared ? 'Ghi đè tại tình huống' : 'Bộ dùng chung · Ch.2';
-    el.className = 'tag src ' + (isShared ? 'w' : 'a');
-    mockDirtyCount.add(el);
-    updateMockupDirty();
-  }
-
-  function toggleMockUnlink(btn) {
-    const lk = btn.closest('.lk');
-    if (!lk) return;
-    lk.classList.toggle('gone');
-    btn.textContent = lk.classList.contains('gone') ? 'Hoàn tác' : 'Gỡ liên kết';
-    if (lk.classList.contains('gone')) {
-      mockDirtyCount.add(lk);
-    } else {
-      mockDirtyCount.delete(lk);
-    }
-    updateMockupDirty();
-  }
-
-  function addMockFactorRow() {
-    const tbody = document.getElementById('mock-factors-tbody');
-    if (!tbody) return;
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td><span class="code o" contenteditable="true">A</span></td>
-      <td class="editable-col" contenteditable="true">Yếu tố mới</td>
-      <td class="val p editable-col" contenteditable="true">+0</td>
-      <td><span class="tag w src" onclick="toggleFactorSource(this)">Ghi đè tại tình huống</span></td>
-      <td class="xd-cell"><button type="button" class="rm-row-btn" onclick="removeMockFactorRow(this)" title="Xóa dòng" style="color:var(--red);border:0;background:none;cursor:pointer;font-weight:700;">✕</button></td>
-    `;
-    tbody.appendChild(tr);
-    mockDirtyCount.add('add-' + Date.now());
-    updateMockupDirty();
-  }
-
-  function removeMockFactorRow(btn) {
-    const tr = btn.closest('tr');
-    if (tr) {
-      tr.remove();
-      mockDirtyCount.add('del-' + Date.now());
-      updateMockupDirty();
-    }
-  }
-
-  function exitMockupEdit(save) {
-    const mid = document.getElementById('mock-mid-col');
-    const side = document.getElementById('mock-side-col');
-    const bar = document.getElementById('mock-bar');
-    const edbtn = document.getElementById('mock-edbtn');
-    const addrowBox = document.getElementById('mock-addrow-container');
-
-    if (!mid) return;
-    if (!save && mockMidSnapshot) {
-      mid.innerHTML = mockMidSnapshot;
-      if (side && mockSideSnapshot) side.innerHTML = mockSideSnapshot;
-    }
-
-    mid.classList.remove('edit');
-    if (bar) bar.hidden = true;
-    if (edbtn) edbtn.hidden = false;
-    if (addrowBox) addrowBox.style.display = 'none';
-
-    mid.querySelectorAll('.editable-col').forEach(el => el.removeAttribute('contenteditable'));
-    mid.querySelectorAll('.xd-head, .xd-cell').forEach(el => el.remove());
-    if (side) side.querySelectorAll('.rm-lk-btn').forEach(el => el.remove());
-
-    mockDirtyCount.clear();
-  }
-
-  function saveMockupEdit(submitApproval) {
-    const stBadge = document.getElementById('mock-st');
-    exitMockupEdit(true);
-
-    if (stBadge) {
-      stBadge.className = 'tag w';
-      stBadge.textContent = submitApproval ? 'Chờ duyệt' : 'Bản nháp';
-    }
-
-    showToast(
-      submitApproval
-        ? 'Đã gửi duyệt thay đổi quy tắc. Phiên bản mới sẽ có hiệu lực sau khi được cấp quản lý phê chuẩn.'
-        : 'Đã lưu bản nháp quy tắc tỷ lệ lỗi. Chưa áp dụng vào luồng tính toán.',
-      submitApproval ? 'success' : 'info'
-    );
-  }
-
-  function selectMockSituation(el, code) {
-    document.querySelectorAll('#mock-situation-tree li').forEach(li => li.classList.remove('on'));
-    el.classList.add('on');
-
-    const badge = document.getElementById('mock-chart-badge');
-    const title = document.getElementById('mock-chart-title');
-    const sub = document.getElementById('mock-chart-sub');
-    const oldCode = document.getElementById('mock-chart-oldcode');
-
-    if (code === '차1-1') {
-      if (badge) badge.textContent = '차1-1';
-      if (oldCode) oldCode.textContent = 'Mã cũ: 201 · 301 · 302';
-      if (title) title.textContent = 'Xe xanh đi thẳng – xe đỏ đi thẳng';
-      if (sub) sub.textContent = 'Giao lộ hai bên có đèn tín hiệu · xe kia vào từ bên hông';
-      changeMockRatio(0);
-    } else if (code === '차1') {
-      if (badge) badge.textContent = '차1';
-      if (oldCode) oldCode.textContent = 'Mã cũ: 200 · 300';
-      if (title) title.textContent = 'Xe đi thẳng – Xe đi thẳng cùng hướng';
-      if (sub) sub.textContent = 'Giao lộ có tín hiệu điều khiển · cả hai xe đi thẳng';
-      changeMockRatio(50);
-    } else if (code === '차2') {
-      if (badge) badge.textContent = '차2';
-      if (oldCode) oldCode.textContent = 'Mã cũ: 203 · 305';
-      if (title) title.textContent = 'Xe đi thẳng – Xe rẽ trái (đối diện)';
-      if (sub) sub.textContent = 'Giao lộ có đèn tín hiệu xanh chung · xe rẽ trái phải nhường xe đi thẳng';
-      changeMockRatio(80);
-    } else if (code === '차3') {
-      if (badge) badge.textContent = '차3';
-      if (oldCode) oldCode.textContent = 'Mã cũ: 204 · 306';
-      if (title) title.textContent = 'Xe đi thẳng – Xe rẽ trái (bên hông)';
-      if (sub) sub.textContent = 'Giao lộ hai bên có đèn tín hiệu · xe rẽ trái vào từ đường giao nhau';
-      changeMockRatio(70);
-    }
-  }
-
-  function switchMockLibTab(btn, tab) {
-    document.querySelectorAll('#vr .tabs button').forEach(b => b.classList.remove('on'));
-    btn.classList.add('on');
-    showToast(`Đã chuyển sang thư mục: ${btn.textContent}`, 'info');
-  }
-
-  function selectMockRuleItem(el, id) {
-    document.querySelectorAll('#mock-rules-list li').forEach(li => li.classList.remove('on'));
-    el.classList.add('on');
-
-    const title = document.getElementById('vr-title');
-    const sub = document.getElementById('vr-sub');
-    const content = document.getElementById('vr-content');
-
-    const titleText = el.querySelector('b')?.textContent || '';
-    const subText = el.querySelector('span')?.textContent || '';
-    if (title) title.textContent = titleText;
-    if (sub) sub.textContent = subText;
-    if (content) {
-      content.textContent = `Quy định tại ${titleText}: Người tham gia giao thông có trách nhiệm chấp hành nghiêm túc quy định và hướng dẫn của cơ quan thẩm quyền và hệ thống báo hiệu đường bộ.`;
-    }
-  }
-
-  function handleMockupSearch(query) {
-    query = (query || '').toLowerCase().trim();
-    const treeItems = document.querySelectorAll('#mock-situation-tree li');
-    treeItems.forEach(li => {
-      const text = li.textContent.toLowerCase();
-      if (!query || text.includes(query)) {
-        li.style.display = '';
-      } else if (!li.classList.contains('l1') && !li.classList.contains('l2') && !li.classList.contains('l3')) {
-        li.style.display = 'none';
-      }
-    });
-  }
 
 </script>
 
