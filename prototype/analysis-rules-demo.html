@@ -2249,6 +2249,1061 @@
       showToast('Đã cập nhật số liệu theo khoảng thời gian chọn!', 'info');
     }
   </script>
+
+<!-- ================= DESIGN COMMENTS SYSTEM ================= -->
+<style>
+  #design-comments-toggle {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 99990;
+    border: 0;
+    border-radius: 28px;
+    padding: 11px 18px;
+    background: linear-gradient(135deg, #06b6d4, #0284c7);
+    color: #04121e;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(6, 182, 212, 0.4), 0 2px 6px rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  #design-comments-toggle:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(6, 182, 212, 0.5);
+  }
+  #design-comments-toggle .dc-badge {
+    background: #04121e;
+    color: #38bdf8;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 10px;
+  }
+  #design-comments {
+    position: fixed;
+    right: 24px;
+    bottom: 80px;
+    width: min(390px, calc(100vw - 32px));
+    max-height: 75vh;
+    overflow-y: auto;
+    z-index: 99991;
+    padding: 16px;
+    border: 1px solid #1e3a5a;
+    border-radius: 14px;
+    background: #091524;
+    color: #e2e8f0;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.65), 0 0 0 1px rgba(6,182,212,0.2);
+    font: 13.5px/1.45 'Inter', system-ui, sans-serif;
+  }
+  #design-comments[hidden] { display: none; }
+  #design-comments h2 {
+    margin: 0 0 6px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  #design-comments .dc-intro {
+    margin: 4px 0 10px;
+    color: #94a3b8;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+  #design-comments p { margin: 6px 0; }
+  #design-comments button {
+    cursor: pointer;
+    padding: 6px 11px;
+    border: 1px solid #1e3a5a;
+    border-radius: 7px;
+    background: #112236;
+    color: #e0f2fe;
+    font-size: 12px;
+    font-weight: 600;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  #design-comments button:hover {
+    background: #19334f;
+    border-color: #0284c7;
+  }
+  #design-comments .dc-btn-primary {
+    background: #0284c7;
+    border-color: #38bdf8;
+    color: #fff;
+  }
+  #design-comments .dc-btn-primary:hover {
+    background: #0369a1;
+  }
+  #design-comments .dc-btn-danger {
+    color: #f87171;
+    border-color: rgba(248, 113, 113, 0.35);
+  }
+  #design-comments .dc-btn-danger:hover {
+    background: rgba(239, 68, 68, 0.15);
+  }
+  #design-comments textarea, #design-comments input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 10px;
+    margin: 6px 0;
+    border: 1px solid #1e3a5a;
+    border-radius: 7px;
+    background: #060e18;
+    color: #fff;
+    font: inherit;
+    font-size: 12.5px;
+  }
+  #design-comments textarea:focus, #design-comments input:focus {
+    outline: none;
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+  }
+  #design-comments textarea {
+    min-height: 75px;
+    resize: vertical;
+  }
+  #design-comments .dc-actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  #design-comments .dc-list {
+    margin-top: 14px;
+    border-top: 1px solid #162c45;
+    padding-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  #design-comments .dc-item {
+    background: #0f2034;
+    border: 1px solid #1a3754;
+    border-radius: 9px;
+    padding: 9px 11px;
+    position: relative;
+    transition: border-color 0.15s;
+  }
+  #design-comments .dc-item:hover {
+    border-color: #0284c7;
+  }
+  #design-comments .dc-item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  #design-comments .dc-item-title {
+    font-weight: 700;
+    color: #38bdf8;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    word-break: break-word;
+  }
+  #design-comments .dc-item-num {
+    background: #0284c7;
+    color: #fff;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10.5px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  #design-comments .dc-item-text {
+    font-size: 12px;
+    color: #cbd5e1;
+    white-space: pre-wrap;
+    margin: 4px 0 6px;
+    line-height: 1.4;
+    word-break: break-word;
+  }
+  #design-comments .dc-item-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: #64748b;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding-top: 5px;
+    margin-top: 4px;
+  }
+  #design-comments .dc-item-btns {
+    display: flex;
+    gap: 4px;
+  }
+  #design-comments .dc-item-btns button {
+    padding: 3px 6px;
+    font-size: 11px;
+  }
+  .dc-note {
+    position: absolute;
+    z-index: 99989;
+    font: 13px/1.4 'Inter', system-ui, sans-serif;
+  }
+  .dc-marker {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    font-size: 11.5px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    background: #0284c7;
+    color: #fff;
+    font-weight: 800;
+    cursor: grab;
+    touch-action: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s, background 0.15s;
+  }
+  .dc-marker:hover {
+    transform: scale(1.15);
+    background: #0ea5e9;
+  }
+  .dc-detail {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 100%;
+    margin-top: 6px;
+    width: 270px;
+    max-width: calc(100vw - 44px);
+    max-height: 50vh;
+    overflow: auto;
+    padding: 12px 14px;
+    border: 1px solid #0284c7;
+    border-radius: 10px;
+    background: #091524;
+    color: #e2e8f0;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+    overflow-wrap: anywhere;
+  }
+  .dc-note:not(.dc-closed):hover .dc-detail,
+  .dc-note:not(.dc-closed):focus-within .dc-detail,
+  .dc-note.dc-open .dc-detail {
+    display: block;
+  }
+  .dc-detail strong {
+    display: block;
+    color: #38bdf8;
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+  .dc-detail p {
+    white-space: pre-wrap;
+    margin: 6px 0 10px;
+    font-size: 12px;
+    color: #cbd5e1;
+    line-height: 1.45;
+  }
+  .dc-detail .dc-actions button {
+    background: none;
+    border: 0;
+    color: #38bdf8;
+    cursor: pointer;
+    padding: 2px 10px 2px 0;
+    font-size: 11.5px;
+    font-weight: 600;
+  }
+  .dc-detail .dc-actions button:hover {
+    text-decoration: underline;
+  }
+  .dc-detail .dc-actions button.dc-btn-delete {
+    color: #f87171;
+  }
+  .dc-region {
+    display: none;
+    position: absolute;
+    box-sizing: border-box;
+    border: 2px dashed #38bdf8;
+    border-radius: 6px;
+    background: rgba(56, 189, 248, 0.12);
+    pointer-events: none;
+  }
+  .dc-note:hover .dc-region,
+  .dc-note.dc-open .dc-region {
+    display: block;
+  }
+  .dc-selection {
+    position: fixed;
+    z-index: 99999;
+    border: 2px dashed #38bdf8;
+    border-radius: 6px;
+    background: rgba(56, 189, 248, 0.2);
+    pointer-events: none;
+  }
+  .dc-highlight-target {
+    outline: 3px solid #38bdf8 !important;
+    outline-offset: 2px !important;
+    animation: dcPulse 1.5s infinite;
+  }
+  @keyframes dcPulse {
+    0%, 100% { outline-color: #38bdf8; }
+    50% { outline-color: #f59e0b; }
+  }
+  body.dc-picking, body.dc-picking * {
+    cursor: crosshair !important;
+  }
+</style>
+
+<button id="design-comments-toggle" type="button" aria-expanded="false">
+  <span>💬 Ghi chú thiết kế</span>
+  <span class="dc-badge" id="dc-count-badge">0</span>
+</button>
+
+<aside id="design-comments" hidden aria-label="Ghi chú thiết kế">
+  <h2>
+    <span>Ghi chú thiết kế UI/UX</span>
+    <button type="button" id="dc-close-panel" style="padding:2px 8px; font-size:14px; background:none; border:none; color:#94a3b8;">✕</button>
+  </h2>
+  <p class="dc-intro">Bấm "＋ Thêm ghi chú" rồi nhấp hoặc kéo khoanh vùng bất kỳ component nào để để lại yêu cầu sửa/xóa design.</p>
+  <p id="dc-sync-status" style="font-size:11px; color:#38bdf8; margin:4px 0 8px;">Đang kết nối ghi chú chung…</p>
+  
+  <div class="dc-actions dc-toolbar" id="dc-main-toolbar">
+    <button id="dc-pick" class="dc-btn-primary" type="button">＋ Thêm ghi chú</button>
+    <button id="dc-export-md" type="button" title="Tải file Markdown chứa toàn bộ ghi chú">Xuất Markdown</button>
+    <button id="dc-export-json" type="button" title="Tải JSON để gửi AI sửa">Tải JSON</button>
+    <button id="dc-clear-all" class="dc-btn-danger" type="button" title="Xóa toàn bộ ghi chú đã sửa">Xóa tất cả</button>
+  </div>
+
+  <!-- Form nhập comment -->
+  <div id="dc-form" hidden style="margin-top:10px; background:#0f2034; padding:12px; border-radius:8px; border:1px solid #1e3a5a;">
+    <div style="font-size:11px; color:#94a3b8; margin-bottom:4px;" id="dc-location-label">Component được chọn:</div>
+    <input id="dc-title" aria-label="Tên component" placeholder="Tên component / vị trí..." style="font-weight:600; color:#38bdf8;">
+    <textarea id="dc-text" aria-label="Góp ý thiết kế" placeholder="Mô tả chi tiết sửa, xóa hoặc đổi giao diện component này..."></textarea>
+    <div class="dc-actions" style="margin-top:6px;">
+      <button id="dc-save" class="dc-btn-primary" type="button">Lưu ghi chú</button>
+      <button id="dc-redraw" type="button" hidden>Chọn lại vị trí</button>
+      <button id="dc-cancel" type="button">Hủy</button>
+    </div>
+  </div>
+
+  <!-- Danh sách comment -->
+  <div class="dc-list" id="dc-notes-list">
+    <!-- Render dynamically -->
+  </div>
+</aside>
+
+<script>
+(() => {
+  const key = 'ams-b2b-analysis-rules-comments-v1';
+  const panel = document.getElementById('design-comments');
+  const toggle = document.getElementById('design-comments-toggle');
+  const countBadge = document.getElementById('dc-count-badge');
+  const form = document.getElementById('dc-form');
+  const input = document.getElementById('dc-text');
+  const titleInput = document.getElementById('dc-title');
+  const listContainer = document.getElementById('dc-notes-list');
+  const statusEl = document.getElementById('dc-sync-status');
+
+  let notes = [];
+  try {
+    notes = JSON.parse(localStorage.getItem(key) || '[]');
+    if (!Array.isArray(notes)) notes = [];
+  } catch (_) {}
+
+  let picking = false, target = null, editing = null, openNoteId = null, redrawing = false;
+  const endpoint = 'https://ktiuyqtvspdreyupxuve.supabase.co/rest/v1/prototype_comments';
+  const apiKey = 'sb_publishable_GPRgAzD7HnW6t_meh9QfXA_rQMN12MD';
+  const queueKey = `${key}-pending`;
+  let pending = [];
+  try {
+    pending = JSON.parse(localStorage.getItem(queueKey) || '[]');
+    if (!Array.isArray(pending)) pending = [];
+  } catch (_) {}
+
+  let previous = new Map(notes.map(n => [String(n.id), JSON.stringify(n)]));
+  let syncing = false;
+
+  const setStatus = msg => { if (statusEl) statusEl.textContent = msg; };
+
+  const request = async (url, options = {}) => {
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        apikey: apiKey,
+        'Content-Type': 'application/json',
+        ...(options.headers || {})
+      }
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response;
+  };
+
+  const sync = async () => {
+    if (syncing) return;
+    syncing = true;
+    try {
+      while (pending.length) {
+        const op = pending[0];
+        if (op.data) {
+          await request(`${endpoint}?on_conflict=id`, {
+            method: 'POST',
+            headers: { Prefer: 'resolution=merge-duplicates' },
+            body: JSON.stringify({ id: String(op.id), data: op.data })
+          });
+        } else {
+          await request(`${endpoint}?id=eq.${encodeURIComponent(op.id)}`, { method: 'DELETE' });
+        }
+        pending.shift();
+        localStorage.setItem(queueKey, JSON.stringify(pending));
+      }
+
+      // Fetch only rules comments
+      const rows = await (await request(`${endpoint}?id=like.rules_*&select=id,data&order=id.asc`)).json();
+      if (!pending.length && !picking && form.hidden) {
+        notes = rows.map(r => r.data).filter(n => n && n.id != null);
+        previous = new Map(notes.map(n => [String(n.id), JSON.stringify(n)]));
+        localStorage.setItem(key, JSON.stringify(notes));
+        renderList();
+        draw();
+      }
+      setStatus('Đã đồng bộ ghi chú chung.');
+    } catch (_) {
+      setStatus('Lưu trên trình duyệt (offline).');
+    } finally {
+      syncing = false;
+    }
+  };
+
+  const save = () => {
+    try {
+      const current = new Map(notes.map(n => [String(n.id), JSON.stringify(n)]));
+      for (const [id, data] of current) {
+        if (previous.get(id) !== data) pending.push({ id, data: JSON.parse(data) });
+      }
+      for (const id of previous.keys()) {
+        if (!current.has(id)) pending.push({ id, data: null });
+      }
+      localStorage.setItem(queueKey, JSON.stringify(pending));
+      localStorage.setItem(key, JSON.stringify(notes));
+      previous = current;
+      setStatus('Đang đồng bộ ghi chú…');
+      renderList();
+      void sync();
+      return true;
+    } catch (_) {
+      alert('Không thể lưu ghi chú trên trình duyệt.');
+      return false;
+    }
+  };
+
+  // Active view helpers
+  const currentTab = () => document.querySelector('.tab-pane.active')?.id || 'tab-quality';
+  const activeModal = () => document.querySelector('.modal-backdrop.active');
+  const activeRoot = () => activeModal() || document.querySelector('.tab-pane.active') || document.body;
+
+  // Smart Component Title Resolver
+  const resolveComponentTitle = el => {
+    if (!el || el === document.body) return 'Toàn màn hình Quản lý quy tắc';
+
+    // 1. Modal context
+    const modal = el.closest('.modal-backdrop');
+    const modalPrefix = modal ? (modal.querySelector('.modal-header h3, .modal-title')?.textContent.trim() || 'Modal chi tiết') + ' > ' : '';
+
+    // 2. Tab context
+    const tabPane = el.closest('.tab-pane');
+    let tabPrefix = '';
+    if (tabPane) {
+      const tabBtn = document.querySelector(`.nav-tab-btn[onclick*="${tabPane.id}"]`) || document.getElementById('btn-' + tabPane.id);
+      const tabName = tabBtn?.querySelector('span')?.textContent.trim() || tabPane.id;
+      tabPrefix = `[${tabName}] `;
+    }
+
+    // 3. Closest functional container
+    let comp = '';
+    if (el.closest('.app-header')) {
+      comp = 'Header thanh điều hướng';
+    } else if (el.closest('.tab-bar-container')) {
+      const btn = el.closest('.nav-tab-btn, button');
+      comp = btn ? `Tab: ${btn.textContent.trim().replace(/\s+/g, ' ')}` : 'Thanh chuyển tab chính';
+    } else if (el.closest('.kpi-card')) {
+      const kpi = el.closest('.kpi-card');
+      const label = kpi.querySelector('.kpi-label')?.textContent.trim() || kpi.querySelector('div')?.textContent.trim();
+      comp = label ? `KPI: ${label}` : 'Thẻ KPI';
+    } else if (el.closest('.filter-bar')) {
+      comp = 'Thanh tìm kiếm & Bộ lọc';
+    } else if (el.closest('.table-card, table')) {
+      const wrap = el.closest('.table-card') || el.closest('table').parentElement;
+      const title = wrap.querySelector('h3, .card-title, .screen-title')?.textContent.trim();
+      const th = el.closest('th');
+      const tr = el.closest('tr');
+      if (th) {
+        comp = `Bảng - Cột "${th.textContent.trim()}"`;
+      } else if (tr && tr.dataset?.ruleId) {
+        comp = `Hàng quy tắc ${tr.dataset.ruleId}`;
+      } else {
+        comp = title ? `Bảng: ${title}` : 'Bảng dữ liệu';
+      }
+    } else if (el.closest('.form-group, .form-row')) {
+      const grp = el.closest('.form-group, .form-row');
+      const label = grp.querySelector('label, .form-label')?.textContent.trim();
+      comp = label ? `Trường nhập "${label}"` : 'Biểu mẫu';
+    } else if (el.closest('.modal-header')) {
+      comp = 'Tiêu đề Modal';
+    } else if (el.closest('.modal-footer')) {
+      comp = 'Thanh nút bấm Modal';
+    }
+
+    // 4. Element specific
+    let elem = '';
+    if (el.tagName === 'BUTTON') {
+      elem = `Nút "${el.textContent.trim().replace(/\s+/g, ' ').slice(0, 30)}"`;
+    } else if (el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'TEXTAREA') {
+      const placeholder = el.placeholder || el.name || el.id;
+      elem = placeholder ? `Ô nhập "${placeholder.slice(0, 25)}"` : `Ô nhập ${el.tagName.toLowerCase()}`;
+    } else if (/^H[1-6]$/.test(el.tagName)) {
+      elem = `Tiêu đề "${el.textContent.trim().replace(/\s+/g, ' ').slice(0, 30)}"`;
+    } else if (el.classList.contains('badge')) {
+      elem = `Badge "${el.textContent.trim()}"`;
+    }
+
+    let full = '';
+    if (modalPrefix) {
+      full = modalPrefix + (comp || elem || 'Vị trí trong modal');
+    } else if (tabPrefix) {
+      if (comp && elem && !comp.includes(elem)) {
+        full = `${tabPrefix}${comp} - ${elem}`;
+      } else {
+        full = `${tabPrefix}${comp || elem || 'Khu vực nội dung'}`;
+      }
+    } else {
+      full = comp ? `${comp}${elem ? ' - ' + elem : ''}` : (elem || el.id || 'Thành phần UI');
+    }
+
+    return full.replace(/\s+/g, ' ').trim();
+  };
+
+  const pathFor = (el, root) => {
+    const path = [];
+    while (el && el !== root) {
+      const parent = el.parentElement;
+      if (!parent) return '';
+      path.unshift([...parent.children].indexOf(el));
+      el = parent;
+    }
+    return el === root ? path.join('.') : '';
+  };
+
+  const resolve = note => {
+    let el = document.getElementById(note.rootId || note.tab);
+    if (!el) el = document.body;
+    if (!note.path) return el;
+    for (const idx of note.path.split('.').filter(Boolean)) {
+      el = el.children[Number(idx)];
+      if (!el) return null;
+    }
+    return el;
+  };
+
+  // Draw markers & regions
+  const draw = () => {
+    document.querySelectorAll('.dc-note').forEach(el => el.remove());
+    countBadge.textContent = notes.length;
+
+    const curTab = currentTab();
+    const curModal = activeModal();
+
+    notes.forEach((note, index) => {
+      // Filter by active view
+      if (curModal) {
+        if (note.modalId !== curModal.id) return;
+      } else {
+        if (note.modalId) return; // Note belongs to modal but modal is closed
+        if (note.tab && note.tab !== 'global' && note.tab !== curTab) return;
+      }
+
+      const el = resolve(note);
+      if (!el || !el.getClientRects().length || getComputedStyle(el).visibility === 'hidden') return;
+
+      const rect = el.getBoundingClientRect();
+      const pageX = window.scrollX || window.pageXOffset;
+      const pageY = window.scrollY || window.pageYOffset;
+
+      const item = document.createElement('div');
+      item.className = 'dc-note';
+      item.classList.toggle('dc-open', openNoteId === note.id);
+
+      const x = Math.max(0, rect.left + pageX + rect.width * (note.x ?? 0.5) - 12);
+      const y = Math.max(0, rect.top + pageY + rect.height * (note.y ?? 0.5) - 12);
+
+      item.style.left = `${x}px`;
+      item.style.top = `${y}px`;
+
+      // Region outline
+      const region = document.createElement('div');
+      region.className = 'dc-region';
+      const selReg = note.region;
+      if (selReg) {
+        const rootEl = document.getElementById(selReg.rootId) || document.body;
+        const b = rootEl.getBoundingClientRect();
+        const rw = selReg.width * (selReg.relative ? b.width : 1);
+        const rh = selReg.height * (selReg.relative ? b.height : 1);
+        const rx = b.left + pageX + selReg.left * (selReg.relative ? b.width : 1);
+        const ry = b.top + pageY + selReg.top * (selReg.relative ? b.height : 1);
+        Object.assign(region.style, {
+          left: `${rx - x}px`,
+          top: `${ry - y}px`,
+          width: `${rw}px`,
+          height: `${rh}px`
+        });
+      } else {
+        Object.assign(region.style, {
+          left: `${rect.left + pageX - x}px`,
+          top: `${rect.top + pageY - y}px`,
+          width: `${rect.width}px`,
+          height: `${rect.height}px`
+        });
+      }
+
+      // Marker button
+      const marker = document.createElement('button');
+      marker.type = 'button';
+      marker.className = 'dc-marker';
+      marker.textContent = index + 1;
+      marker.title = `${note.title}: ${note.text}`;
+      marker.onclick = e => {
+        e.stopPropagation();
+        const wasOpen = openNoteId === note.id;
+        document.querySelectorAll('.dc-note.dc-open').forEach(n => n.classList.remove('dc-open'));
+        openNoteId = wasOpen ? null : note.id;
+        item.classList.toggle('dc-open', !wasOpen);
+      };
+
+      // Detail popover
+      const detail = document.createElement('div');
+      detail.className = 'dc-detail';
+
+      const dTitle = document.createElement('strong');
+      dTitle.textContent = `#${index + 1}. ${note.title || 'Component'}`;
+
+      const dText = document.createElement('p');
+      dText.textContent = note.text;
+
+      const dActions = document.createElement('div');
+      dActions.className = 'dc-actions';
+
+      const btnEdit = document.createElement('button');
+      btnEdit.textContent = '✏️ Sửa';
+      btnEdit.onclick = () => editNote(note);
+
+      const btnDel = document.createElement('button');
+      btnDel.className = 'dc-btn-delete';
+      btnDel.textContent = '🗑️ Xóa';
+      btnDel.onclick = () => deleteNote(note.id);
+
+      dActions.append(btnEdit, btnDel);
+      detail.append(dTitle, dText, dActions);
+
+      item.append(region, marker, detail);
+      document.body.append(item);
+    });
+  };
+
+  // Render list inside panel
+  const renderList = () => {
+    countBadge.textContent = notes.length;
+    listContainer.innerHTML = '';
+
+    if (!notes.length) {
+      listContainer.innerHTML = '<div style="color:#64748b; font-size:12px; text-align:center; padding:16px 0;">Chưa có ghi chú nào. Bấm "＋ Thêm ghi chú" để bắt đầu!</div>';
+      return;
+    }
+
+    notes.forEach((note, index) => {
+      const item = document.createElement('div');
+      item.className = 'dc-item';
+
+      const header = document.createElement('div');
+      header.className = 'dc-item-header';
+
+      const titleWrap = document.createElement('div');
+      titleWrap.className = 'dc-item-title';
+
+      const num = document.createElement('span');
+      num.className = 'dc-item-num';
+      num.textContent = index + 1;
+
+      const title = document.createElement('span');
+      title.textContent = note.title || 'Component';
+
+      titleWrap.append(num, title);
+
+      const btns = document.createElement('div');
+      btns.className = 'dc-item-btns';
+
+      const btnFocus = document.createElement('button');
+      btnFocus.textContent = '👁️ Xem';
+      btnFocus.title = 'Cuộn đến vị trí này trên màn hình';
+      btnFocus.onclick = () => focusNote(note);
+
+      const btnEdit = document.createElement('button');
+      btnEdit.textContent = 'Sửa';
+      btnEdit.onclick = () => editNote(note);
+
+      const btnDel = document.createElement('button');
+      btnDel.className = 'dc-btn-danger';
+      btnDel.textContent = 'Xóa';
+      btnDel.onclick = () => deleteNote(note.id);
+
+      btns.append(btnFocus, btnEdit, btnDel);
+      header.append(titleWrap, btns);
+
+      const text = document.createElement('div');
+      text.className = 'dc-item-text';
+      text.textContent = note.text;
+
+      const footer = document.createElement('div');
+      footer.className = 'dc-item-footer';
+      footer.textContent = note.tab ? `Tab: ${note.tab}` : 'Toàn trang';
+
+      item.append(header, text, footer);
+      listContainer.append(item);
+    });
+  };
+
+  const focusNote = note => {
+    // Switch tab if needed
+    if (note.tab && note.tab !== 'global' && note.tab !== currentTab()) {
+      if (typeof window.switchMainTab === 'function') {
+        window.switchMainTab(note.tab);
+      }
+    }
+    // Open modal if needed
+    if (note.modalId) {
+      if (typeof window.openModal === 'function') {
+        window.openModal(note.modalId);
+      }
+    }
+
+    setTimeout(() => {
+      draw();
+      const el = resolve(note);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.classList.add('dc-highlight-target');
+        setTimeout(() => el.classList.remove('dc-highlight-target'), 2500);
+      }
+      openNoteId = note.id;
+      draw();
+    }, 150);
+  };
+
+  const editNote = note => {
+    editing = note.id;
+    target = { ...note };
+    titleInput.value = note.title || '';
+    input.value = note.text || '';
+    document.getElementById('dc-location-label').textContent = 'Sửa ghi chú component:';
+    document.getElementById('dc-redraw').hidden = false;
+    form.hidden = false;
+    panel.hidden = false;
+    toggle.setAttribute('aria-expanded', 'true');
+    input.focus();
+  };
+
+  const deleteNote = id => {
+    if (confirm('Bạn có chắc chắn muốn xóa ghi chú này?')) {
+      notes = notes.filter(n => n.id !== id);
+      save();
+      draw();
+    }
+  };
+
+  // Toggle Panel
+  toggle.onclick = () => {
+    panel.hidden = !panel.hidden;
+    toggle.setAttribute('aria-expanded', String(!panel.hidden));
+    draw();
+  };
+  document.getElementById('dc-close-panel').onclick = () => {
+    panel.hidden = true;
+    toggle.setAttribute('aria-expanded', 'false');
+  };
+
+  // Pick target or drag area
+  const startPicking = () => {
+    picking = true;
+    document.body.classList.add('dc-picking');
+    panel.hidden = true;
+    toggle.setAttribute('aria-expanded', 'false');
+  };
+
+  document.getElementById('dc-pick').onclick = () => {
+    redrawing = false;
+    startPicking();
+  };
+  document.getElementById('dc-redraw').onclick = () => {
+    redrawing = true;
+    startPicking();
+  };
+
+  // Pointer drag selection
+  document.addEventListener('pointerdown', event => {
+    if (!picking || event.button !== 0 || event.target.closest('#design-comments, #design-comments-toggle, .dc-note')) return;
+
+    const startX = event.clientX, startY = event.clientY;
+    const scope = event.target;
+    let selection = null;
+
+    const move = e => {
+      if (!selection && Math.hypot(e.clientX - startX, e.clientY - startY) < 5) return;
+      if (!selection) {
+        selection = document.createElement('div');
+        selection.className = 'dc-selection';
+        document.body.append(selection);
+      }
+      Object.assign(selection.style, {
+        left: `${Math.min(startX, e.clientX)}px`,
+        top: `${Math.min(startY, e.clientY)}px`,
+        width: `${Math.abs(e.clientX - startX)}px`,
+        height: `${Math.abs(e.clientY - startY)}px`
+      });
+    };
+
+    const finish = e => {
+      window.removeEventListener('pointermove', move, true);
+      window.removeEventListener('pointerup', finish, true);
+      window.removeEventListener('pointercancel', finish, true);
+
+      if (!selection) return;
+      selection.remove();
+      if (e.type === 'pointercancel') return;
+
+      const root = activeRoot();
+      const bounds = root.getBoundingClientRect();
+      const left = Math.min(startX, e.clientX), top = Math.min(startY, e.clientY);
+      const w = Math.abs(e.clientX - startX), h = Math.abs(e.clientY - startY);
+
+      const region = {
+        rootId: root.id || 'body',
+        relative: true,
+        left: (left - bounds.left) / (bounds.width || 1),
+        top: (top - bounds.top) / (bounds.height || 1),
+        width: w / (bounds.width || 1),
+        height: h / (bounds.height || 1)
+      };
+
+      const title = resolveComponentTitle(scope) + ' (Vùng chọn)';
+      const curModal = activeModal();
+
+      if (redrawing) {
+        target.region = region;
+        target.title = title;
+        titleInput.value = title;
+        redrawing = false;
+      } else {
+        target = {
+          id: 'rules_' + Date.now() + Math.random().toString(36).slice(2, 6),
+          page: 'analysis-rules',
+          tab: currentTab(),
+          modalId: curModal ? curModal.id : null,
+          rootId: root.id || 'body',
+          path: pathFor(scope, root),
+          title: title,
+          x: (left - bounds.left + w / 2) / (bounds.width || 1),
+          y: (top - bounds.top + h / 2) / (bounds.height || 1),
+          region: region,
+          createdAt: new Date().toISOString()
+        };
+        editing = null;
+        titleInput.value = title;
+        input.value = '';
+      }
+
+      picking = false;
+      document.body.classList.remove('dc-picking');
+      document.getElementById('dc-location-label').textContent = 'Vùng component được chọn:';
+      form.hidden = false;
+      panel.hidden = false;
+      toggle.setAttribute('aria-expanded', 'true');
+      input.focus();
+      draw();
+    };
+
+    window.addEventListener('pointermove', move, true);
+    window.addEventListener('pointerup', finish, true);
+    window.addEventListener('pointercancel', finish, true);
+  }, true);
+
+  // Click single element
+  document.addEventListener('click', event => {
+    if (!picking || event.target.closest('#design-comments, #design-comments-toggle, .dc-note')) return;
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    picking = false;
+    document.body.classList.remove('dc-picking');
+
+    const el = event.target;
+    const root = activeRoot();
+    const bounds = el.getBoundingClientRect();
+    const title = resolveComponentTitle(el);
+    const curModal = activeModal();
+
+    if (redrawing) {
+      target.title = title;
+      target.path = pathFor(el, root);
+      target.region = null;
+      titleInput.value = title;
+      redrawing = false;
+    } else {
+      target = {
+        id: 'rules_' + Date.now() + Math.random().toString(36).slice(2, 6),
+        page: 'analysis-rules',
+        tab: currentTab(),
+        modalId: curModal ? curModal.id : null,
+        rootId: root.id || 'body',
+        path: pathFor(el, root),
+        title: title,
+        x: bounds.width ? 0.5 : 0,
+        y: bounds.height ? 0.5 : 0,
+        createdAt: new Date().toISOString()
+      };
+      editing = null;
+      titleInput.value = title;
+      input.value = '';
+    }
+
+    document.getElementById('dc-location-label').textContent = 'Component được chọn:';
+    document.getElementById('dc-redraw').hidden = true;
+    form.hidden = false;
+    panel.hidden = false;
+    toggle.setAttribute('aria-expanded', 'true');
+    input.focus();
+    draw();
+  }, true);
+
+  // Form actions
+  document.getElementById('dc-cancel').onclick = () => {
+    form.hidden = true;
+    target = null;
+    editing = null;
+    draw();
+  };
+
+  document.getElementById('dc-save').onclick = () => {
+    const text = input.value.trim();
+    const title = titleInput.value.trim();
+    if (!title || !text) {
+      alert('Vui lòng nhập tên component và nội dung ghi chú.');
+      (title ? input : titleInput).focus();
+      return;
+    }
+
+    if (editing) {
+      const note = notes.find(n => n.id === editing);
+      if (note) {
+        Object.assign(note, { title, text, region: target?.region, tab: target?.tab });
+      }
+    } else {
+      notes.push({
+        ...target,
+        title,
+        text
+      });
+    }
+
+    if (save()) {
+      form.hidden = true;
+      target = null;
+      editing = null;
+      draw();
+    }
+  };
+
+  // Export Markdown
+  document.getElementById('dc-export-md').onclick = () => {
+    if (!notes.length) {
+      alert('Chưa có ghi chú nào để xuất.');
+      return;
+    }
+    const md = '# Danh sách ghi chú thiết kế (Quản lý quy tắc phân tích)\n\n' +
+      notes.map((n, i) => `### ${i + 1}. ${n.title}\n- **Vị trí/Tab:** ${n.tab || 'Toàn trang'}\n- **Mã ghi chú:** \`${n.id}\`\n- **Thời gian:** ${n.createdAt || ''}\n- **Nội dung yêu cầu:**\n${n.text}\n`).join('\n---\n\n');
+
+    const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'ghi-chu-thiet-ke-quy-tac.md';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+
+  // Export JSON for AI
+  document.getElementById('dc-export-json').onclick = () => {
+    if (!notes.length) {
+      alert('Chưa có ghi chú nào.');
+      return;
+    }
+    const jsonStr = JSON.stringify(notes, null, 2);
+    const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'analysis-rules-comments.json';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+
+  // Clear all comments
+  document.getElementById('dc-clear-all').onclick = () => {
+    if (!notes.length) return;
+    if (confirm('Bạn có chắc muốn xóa TẤT CẢ ghi chú? Thao tác này thường thực hiện sau khi đã hoàn thành sửa chữa.')) {
+      notes = [];
+      save();
+      draw();
+    }
+  };
+
+  // Redraw listeners
+  window.addEventListener('resize', draw);
+  window.addEventListener('scroll', () => requestAnimationFrame(draw), true);
+
+  // Tab switch hook
+  const origSwitch = window.switchMainTab;
+  if (typeof origSwitch === 'function') {
+    window.switchMainTab = function(tabId) {
+      origSwitch.apply(this, arguments);
+      setTimeout(draw, 100);
+    };
+  }
+
+  // Escape key cancels picking
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && picking) {
+      picking = false;
+      redrawing = false;
+      document.body.classList.remove('dc-picking');
+      panel.hidden = false;
+      toggle.setAttribute('aria-expanded', 'true');
+    }
+  });
+
+  // Initial draw and sync
+  renderList();
+  draw();
+  void sync();
+  setInterval(() => {
+    if (!picking && form.hidden) void sync();
+  }, 15000);
+})();
+</script>
+
 </body>
 </html>
 
