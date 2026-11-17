@@ -910,44 +910,44 @@
         </div>
       </div>
 
-      <!-- KPI Summary Cards: Clean and Focused -->
+            <!-- KPI Summary Cards: Thống kê sai lệch 4 chỉ số chuẩn -->
       <div class="kpi-grid">
         <div class="kpi-card">
           <div class="kpi-label">
-            <span>TỶ LỆ CHẤP THUẬN NGAY LẦN ĐẦU</span>
+            <span>TỶ LỆ GIỐNG NHAU (AI = ĐIỀU TRA VIÊN)</span>
           </div>
           <div class="kpi-value-row">
-            <span class="kpi-value" id="kpi-ai-investigator">81.2%</span>
-            <span class="kpi-sub up">▲ +3.1% vs tuần trước</span>
+            <span class="kpi-value" id="kpi-match-rate" style="color:var(--emerald);">81.2%</span>
+            <span class="kpi-sub up">▲ 115/142 vụ</span>
           </div>
         </div>
 
         <div class="kpi-card">
           <div class="kpi-label">
-            <span>TỔNG SỐ VỤ ĐÃ THẨM ĐỊNH</span>
+            <span>TỶ LỆ KHÁC NHAU</span>
           </div>
           <div class="kpi-value-row">
-            <span class="kpi-value" id="kpi-total-cases">142 vụ</span>
-            <span class="kpi-sub up">▲ +3 vụ vs tuần trước</span>
+            <span class="kpi-value" id="kpi-diff-rate" style="color:var(--rose);">18.8%</span>
+            <span class="kpi-sub down">▼ 27/142 vụ</span>
           </div>
         </div>
 
         <div class="kpi-card">
           <div class="kpi-label">
-            <span>SỐ VỤ ĐỒNG THUẬN HOÀN TOÀN</span>
+            <span>CHÊNH LỆCH TỶ LỆ LỖI TRUNG BÌNH</span>
           </div>
           <div class="kpi-value-row">
-            <span class="kpi-value" id="kpi-match-cases" style="color:var(--emerald);">115 vụ</span>
-            <span class="kpi-sub up">▲ 81.2%</span>
+            <span class="kpi-value" id="kpi-diff-avg" style="color:var(--cyan);">±8.5%</span>
+            <span class="kpi-sub up">▼ -1.2% vs tuần trước</span>
           </div>
         </div>
 
         <div class="kpi-card">
           <div class="kpi-label">
-            <span>SỐ VỤ KHÁC BIỆT CẦN RÀ SOÁT</span>
+            <span>CÁC VỤ VIỆC CẦN XEM LẠI</span>
           </div>
           <div class="kpi-value-row">
-            <span class="kpi-value" id="kpi-diff-cases" style="color:var(--rose);">14 vụ</span>
+            <span class="kpi-value" id="kpi-diff-cases" style="color:var(--amber);">14 vụ</span>
             <span class="kpi-sub down">▼ -3 vụ vs tuần trước</span>
           </div>
         </div>
@@ -1082,9 +1082,72 @@
           </table>
         </div>
       </div>
+    
+      <!-- Nhóm quy tắc thường tạo ra sai lệch -->
+      <div class="panel-box" style="margin-top:20px;">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>⚠️ Nhóm quy tắc thường tạo ra sai lệch nhiều nhất (Tuần 45)</span>
+          </div>
+          <span style="font-size:12px; color:var(--text-muted);">Căn cứ để ưu tiên chuẩn hóa Knowledge Base</span>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Nhóm quy tắc</th>
+                <th>Số vụ lệch</th>
+                <th>Chênh lệch TB</th>
+                <th>Căn cứ KNIA liên quan</th>
+                <th>Mẫu Chart thường lệch</th>
+                <th>Đánh giá nguyên nhân</th>
+                <th>Hành động</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><b>Nhường đường ngã tư &amp; Đường ưu tiên</b></td>
+                <td><b style="color:var(--rose);">8 vụ</b></td>
+                <td><span class="badge badge-rose">±15.0% lỗi</span></td>
+                <td>KNIA Điều 112 / 114</td>
+                <td>Chart 112 ➔ Chart 114</td>
+                <td style="font-size:12px; color:var(--text-muted);">Camera góc hẹp không thấy độ rộng lòng đường, bỏ sót lời khai đường nhánh</td>
+                <td><button class="btn btn-primary btn-sm" onclick="filterDiscrepancy('Ngã tư')">Rà soát 8 vụ</button></td>
+              </tr>
+              <tr>
+                <td><b>Xi-nhan &amp; Khoảng cách chuyển làn</b></td>
+                <td><b style="color:var(--amber);">3 vụ</b></td>
+                <td><span class="badge badge-amber">±10.0% lỗi</span></td>
+                <td>KNIA Điều 252 (차31-3)</td>
+                <td>Chart 252 (tăng lỗi tạt đầu)</td>
+                <td style="font-size:12px; color:var(--text-muted);">AI chưa đo được khoảng cách bật đèn tín hiệu &lt;30m trước khi chuyển làn</td>
+                <td><button class="btn btn-secondary btn-sm" onclick="filterDiscrepancy('Chuyển làn')">Rà soát 3 vụ</button></td>
+              </tr>
+              <tr>
+                <td><b>Quyền ưu tiên trong Vòng xuyến</b></td>
+                <td><b style="color:var(--amber);">2 vụ</b></td>
+                <td><span class="badge badge-rose">±20.0% lỗi</span></td>
+                <td>KNIA Điều 311 / 314</td>
+                <td>Chart 311 ➔ Chart 314</td>
+                <td style="font-size:12px; color:var(--text-muted);">Xe đã vào sâu hơn 2/3 vòng xuyến nhưng AI vẫn tính ngã rẽ thông thường</td>
+                <td><button class="btn btn-primary btn-sm" onclick="filterDiscrepancy('Vòng xuyến')">Rà soát 2 vụ</button></td>
+              </tr>
+              <tr>
+                <td><b>Đèn tín hiệu khi rẽ phải</b></td>
+                <td><b style="color:var(--text-muted);">1 vụ</b></td>
+                <td><span class="badge badge-rose">±20.0% lỗi</span></td>
+                <td>KNIA Điều 103 / 105</td>
+                <td>Chart 103 ➔ Chart 105</td>
+                <td style="font-size:12px; color:var(--text-muted);">Giao lộ có biển cấm rẽ phải khi đèn đỏ nhưng AI không quét được biển phụ</td>
+                <td><button class="btn btn-secondary btn-sm" onclick="filterDiscrepancy('Ngã tư')">Rà soát 1 vụ</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </section>
 
-    <!-- ================= TAB 2: KIỂM TRA KẾT QUẢ KHÁC NHAU (RÀ SOÁT KHÁC BIỆT) ================= -->
+<!-- ================= TAB 2: KIỂM TRA KẾT QUẢ KHÁC NHAU (RÀ SOÁT KHÁC BIỆT) ================= -->
         <section id="tab-discrepancy" class="tab-pane">
       <div class="screen-header">
         <div>
@@ -1120,20 +1183,21 @@
         </select>
       </div>
 
-      <!-- Discrepancy Table: Clean 2-Way Comparison (AI vs Investigator) -->
+            <!-- Discrepancy Table: 4. Chi tiết sai lệch chuẩn -->
       <div class="panel-box">
         <div class="table-responsive">
           <table class="data-table" id="discrepancy-table">
             <thead>
               <tr>
-                <th style="min-width:125px;">Mã vụ việc</th>
-                <th style="min-width:120px;">Thời gian</th>
-                <th style="min-width:170px;">Loại tình huống</th>
-                <th style="min-width:120px;">AI Đề xuất</th>
-                <th style="min-width:130px;">Điều tra viên chốt</th>
-                <th>Chênh lệch &amp; Lý do con người sửa</th>
-                <th style="min-width:110px;">Trạng thái</th>
-                <th style="min-width:130px;">Thao tác</th>
+                <th style="min-width:120px;">Mã vụ việc</th>
+                <th style="min-width:115px;">Thời gian</th>
+                <th style="min-width:160px;">Loại tình huống</th>
+                <th style="min-width:125px;">Kết quả AI</th>
+                <th style="min-width:130px;">Kết quả ĐTV</th>
+                <th style="min-width:135px;">Tỷ lệ chênh lệch</th>
+                <th style="min-width:150px;">Quy tắc/KNIA áp dụng</th>
+                <th style="min-width:110px;">Vụ việc</th>
+                <th style="min-width:120px;">Thao tác</th>
               </tr>
             </thead>
             <tbody>
@@ -1158,16 +1222,20 @@
                   <div style="font-size:12px; font-weight:800; color:var(--amber); margin-top:3px;">55 : 45</div>
                 </td>
                 <td>
-                  <span class="badge badge-rose">Đổi mẫu (112 ➔ 114)</span>
-                  <div style="font-size:11.5px; color:var(--text-muted); margin-top:3px;">
-                    Điều tra viên đổi sang Chart 114 do lời khai xe B đã vào giao lộ trước, lòng đường lớn hơn 1.5 lần.
-                  </div>
+                  <span class="badge badge-rose">Khác mẫu (112 vs 114)</span>
+                  <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Lệch 15% tỷ lệ</div>
                 </td>
                 <td>
-                  <span class="badge badge-rose">Chưa rà soát</span>
+                  <code style="font-size:11px; color:#38bdf8;">RULE-KNIA-112-01</code>
+                  <div style="font-size:11px; color:var(--text-dim);">KNIA Điều 112</div>
                 </td>
                 <td>
-                  <button class="btn btn-cyan btn-sm" onclick="inspectDiscrepancy('AMS-2026-8821')">Chi tiết &amp; Tạo quy tắc</button>
+                  <a href="./index.html?caseId=AMS-2026-8821" target="_blank" class="btn btn-secondary btn-sm" title="Mở lại vụ việc trên Workbench">
+                    <span>🔗 Mở</span>
+                  </a>
+                </td>
+                <td>
+                  <button class="btn btn-cyan btn-sm" onclick="inspectDiscrepancy('AMS-2026-8821')">Chi tiết sai lệch</button>
                 </td>
               </tr>
 
@@ -1193,15 +1261,19 @@
                 </td>
                 <td>
                   <span class="badge badge-amber">Lệch +15% lỗi</span>
-                  <div style="font-size:11.5px; color:var(--text-muted); margin-top:3px;">
-                    Cùng Chart 252 nhưng điều tra viên tăng 15% lỗi xe A do bật xi nhan muộn &lt;30m trước khi tạt đầu.
-                  </div>
+                  <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Tăng lỗi do tạt đầu</div>
                 </td>
                 <td>
-                  <span class="badge badge-amber">Đang xem xét</span>
+                  <code style="font-size:11px; color:#38bdf8;">RULE-KNIA-252-01</code>
+                  <div style="font-size:11px; color:var(--text-dim);">KNIA Điều 252</div>
                 </td>
                 <td>
-                  <button class="btn btn-cyan btn-sm" onclick="inspectDiscrepancy('AMS-2026-8794')">Chi tiết &amp; Tạo quy tắc</button>
+                  <a href="./index.html?caseId=AMS-2026-8794" target="_blank" class="btn btn-secondary btn-sm" title="Mở lại vụ việc trên Workbench">
+                    <span>🔗 Mở</span>
+                  </a>
+                </td>
+                <td>
+                  <button class="btn btn-cyan btn-sm" onclick="inspectDiscrepancy('AMS-2026-8794')">Chi tiết sai lệch</button>
                 </td>
               </tr>
 
@@ -1226,16 +1298,20 @@
                   <div style="font-size:12px; font-weight:800; color:var(--amber); margin-top:3px;">20 : 80</div>
                 </td>
                 <td>
-                  <span class="badge badge-rose">Đổi mẫu (311 ➔ 314)</span>
-                  <div style="font-size:11.5px; color:var(--text-muted); margin-top:3px;">
-                    Xe A đã hoàn thành 2/3 vòng xuyến, điều tra viên xác định được ưu tiên tuyệt đối.
-                  </div>
+                  <span class="badge badge-rose">Khác mẫu (311 vs 314)</span>
+                  <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Lệch 20% tỷ lệ</div>
                 </td>
                 <td>
-                  <span class="badge badge-emerald">Đã có quy tắc #R-041</span>
+                  <code style="font-size:11px; color:#38bdf8;">RULE-KNIA-311-01</code>
+                  <div style="font-size:11px; color:var(--text-dim);">KNIA Điều 311</div>
                 </td>
                 <td>
-                  <button class="btn btn-secondary btn-sm" onclick="inspectDiscrepancy('AMS-2026-8650')">Xem chi tiết</button>
+                  <a href="./index.html?caseId=AMS-2026-8650" target="_blank" class="btn btn-secondary btn-sm" title="Mở lại vụ việc trên Workbench">
+                    <span>🔗 Mở</span>
+                  </a>
+                </td>
+                <td>
+                  <button class="btn btn-cyan btn-sm" onclick="inspectDiscrepancy('AMS-2026-8650')">Chi tiết sai lệch</button>
                 </td>
               </tr>
 
@@ -1260,16 +1336,20 @@
                   <div style="font-size:12px; font-weight:800; color:var(--amber); margin-top:3px;">100 : 0</div>
                 </td>
                 <td>
-                  <span class="badge badge-rose">Đổi mẫu (103 ➔ 105)</span>
-                  <div style="font-size:11.5px; color:var(--text-muted); margin-top:3px;">
-                    Điều tra viên xác định giao lộ cấm rẽ phải khi đèn đỏ, xe A chịu 100% lỗi thay vì 80%.
-                  </div>
+                  <span class="badge badge-rose">Khác mẫu (103 vs 105)</span>
+                  <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Lệch 20% tỷ lệ</div>
                 </td>
                 <td>
-                  <span class="badge badge-rose">Chưa rà soát</span>
+                  <code style="font-size:11px; color:#38bdf8;">RULE-KNIA-103-01</code>
+                  <div style="font-size:11px; color:var(--text-dim);">KNIA Điều 103</div>
                 </td>
                 <td>
-                  <button class="btn btn-cyan btn-sm" onclick="inspectDiscrepancy('AMS-2026-8512')">Chi tiết &amp; Tạo quy tắc</button>
+                  <a href="./index.html?caseId=AMS-2026-8512" target="_blank" class="btn btn-secondary btn-sm" title="Mở lại vụ việc trên Workbench">
+                    <span>🔗 Mở</span>
+                  </a>
+                </td>
+                <td>
+                  <button class="btn btn-cyan btn-sm" onclick="inspectDiscrepancy('AMS-2026-8512')">Chi tiết sai lệch</button>
                 </td>
               </tr>
             </tbody>
@@ -1332,122 +1412,143 @@
       </div>
 
       <!-- Rules Table -->
-      <div class="panel-box">
+            <div class="panel-box">
         <div class="table-responsive">
           <table class="data-table" id="rules-catalog-table">
             <thead>
               <tr>
-                <th>Mã quy tắc</th>
-                <th>Tên quy tắc &amp; Câu mô tả ngữ cảnh</th>
-                <th>Phân loại</th>
-                <th>Mẫu KNIA liên kết</th>
-                <th>Từ khóa / Lời khai nhận diện</th>
-                <th>Số lần áp dụng</th>
-                <th>Độ khớp</th>
-                <th>Hiển thị</th>
-                <th>Trạng thái</th>
-                <th>Thao tác</th>
+                <th style="min-width:180px;">Tên quy tắc</th>
+                <th style="min-width:160px;">Nguồn KNIA / Tài liệu</th>
+                <th style="min-width:110px;">Chart liên quan</th>
+                <th>Điều kiện áp dụng</th>
+                <th style="min-width:150px;">Tỷ lệ lỗi tham chiếu</th>
+                <th style="min-width:110px;">Trạng thái</th>
+                <th style="min-width:100px;">Thao tác</th>
               </tr>
             </thead>
             <tbody>
               <!-- Rule 1 -->
-              <tr data-status="active" data-type="lane-change" data-visibility="public" data-chart="chart-200">
+              <tr data-status="active" data-chart="chart-244" data-rule-id="RULE-KNIA-244-01">
                 <td>
-                  <b style="color:var(--cyan); font-family:var(--font-mono);">RULE-KNIA-252-01</b>
-                  <div style="font-size:11px; color:var(--text-dim);">Cập nhật: 01/11/2026</div>
+                  <b style="color:var(--cyan); font-family:var(--font-mono);">RULE-KNIA-244-01</b>
+                  <div style="font-weight:600; color:#fff; margin-top:2px;">Chuyển làn không bật xi-nhan trước 30m</div>
                 </td>
                 <td>
-                  <b>Chuyển làn không báo hiệu hoặc xi nhan muộn</b>
-                  <div style="font-size:11.5px; color:var(--text-muted);">Tăng nặng +10% lỗi cho phương tiện chuyển làn nếu bật đèn dưới 30m trước vạch.</div>
-                </td>
-                <td><span class="badge badge-primary">Chuyển làn</span></td>
-                <td>
-                  <span class="badge badge-cyan">Chart 252</span>
-                  <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">Tỷ lệ: 80 : 20</div>
+                  <span class="badge badge-emerald">KNIA Sách 2024</span>
+                  <div style="font-size:11.5px; color:var(--text-muted); margin-top:3px;">Điều 31-3 (Án lệ 18/2023)</div>
                 </td>
                 <td>
-                  <code style="font-size:11px; color:#fbcfe8;">xi_nhan_muon</code>, <code style="font-size:11px; color:#fbcfe8;">tat_dau</code>
+                  <span class="badge badge-primary">Chart 244</span>
+                  <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">차31-3</div>
                 </td>
-                <td><b>142 lần</b></td>
-                <td><span class="badge badge-emerald">94.8%</span></td>
-                <td><span class="badge badge-slate">Điều tra viên</span></td>
-                <td><span class="badge badge-emerald">Đang áp dụng</span></td>
-                <td><button class="btn btn-secondary btn-sm" onclick="showRuleDetails('RULE-KNIA-252-01')">Xem chi tiết</button></td>
+                <td>
+                  <div style="font-size:12px; color:#cbd5e1; line-height:1.45;">
+                    Phương tiện chuyển làn đường nhưng camera ghi nhận không bật đèn tín hiệu báo rẽ trước thời điểm bắt đầu chuyển làn tối thiểu 30m hoặc 3 giây.
+                  </div>
+                </td>
+                <td>
+                  <b style="color:var(--rose);">+10% lỗi Xe chuyển làn</b>
+                  <div style="font-size:11px; color:var(--text-dim);">Cơ sở 70:30 ➔ 80:20</div>
+                </td>
+                <td>
+                  <span class="badge badge-emerald">Đang áp dụng</span>
+                </td>
+                <td>
+                  <button class="btn btn-secondary btn-sm" onclick="showRuleDetails('RULE-KNIA-244-01')">Xem chi tiết</button>
+                </td>
               </tr>
 
               <!-- Rule 2 -->
-              <tr data-status="active" data-type="intersection" data-visibility="public" data-chart="chart-100">
+              <tr data-status="active" data-chart="chart-114" data-rule-id="RULE-KNIA-114-02">
                 <td>
                   <b style="color:var(--cyan); font-family:var(--font-mono);">RULE-KNIA-114-02</b>
-                  <div style="font-size:11px; color:var(--text-dim);">Cập nhật: 25/10/2026</div>
+                  <div style="font-weight:600; color:#fff; margin-top:2px;">Ưu tiên đường lớn hơn tại ngã tư không đèn</div>
                 </td>
                 <td>
-                  <b>Ngã tư không đèn: Ưu tiên đường lớn hơn rõ rệt</b>
-                  <div style="font-size:11.5px; color:var(--text-muted);">Xác định đường có lòng đường rộng hơn từ 1.5 lần trở lên được hưởng quyền ưu tiên.</div>
-                </td>
-                <td><span class="badge badge-primary">Ngã tư</span></td>
-                <td>
-                  <span class="badge badge-cyan">Chart 114</span>
-                  <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">Tỷ lệ: 60 : 40</div>
+                  <span class="badge badge-emerald">KNIA Sách 2024</span>
+                  <div style="font-size:11.5px; color:var(--text-muted); margin-top:3px;">Điều 14 // Luật GTĐB Đ.24</div>
                 </td>
                 <td>
-                  <code style="font-size:11px; color:#fbcfe8;">duong_chinh</code>, <code style="font-size:11px; color:#fbcfe8;">duong_nhanh</code>
+                  <span class="badge badge-primary">Chart 114</span>
+                  <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">Đường ưu tiên</div>
                 </td>
-                <td><b>210 lần</b></td>
-                <td><span class="badge badge-emerald">91.2%</span></td>
-                <td><span class="badge badge-slate">Điều tra viên</span></td>
-                <td><span class="badge badge-emerald">Đang áp dụng</span></td>
-                <td><button class="btn btn-secondary btn-sm" onclick="showRuleDetails('RULE-KNIA-114-02')">Xem chi tiết</button></td>
+                <td>
+                  <div style="font-size:12px; color:#cbd5e1; line-height:1.45;">
+                    Xe đi từ đường nhánh vào ngã tư có bề rộng lòng đường xe kia lớn hơn từ 1.5 lần trở lên; không phân biệt rẽ phải hay đi thẳng.
+                  </div>
+                </td>
+                <td>
+                  <b style="color:var(--cyan);">60 : 40 (Xe nhánh 60%)</b>
+                  <div style="font-size:11px; color:var(--text-dim);">Cơ sở tiêu chuẩn</div>
+                </td>
+                <td>
+                  <span class="badge badge-emerald">Đang áp dụng</span>
+                </td>
+                <td>
+                  <button class="btn btn-secondary btn-sm" onclick="showRuleDetails('RULE-KNIA-114-02')">Xem chi tiết</button>
+                </td>
               </tr>
 
               <!-- Rule 3 -->
-              <tr data-status="active" data-type="roundabout" data-visibility="internal" data-chart="chart-300">
+              <tr data-status="active" data-chart="chart-314" data-rule-id="RULE-KNIA-314-01">
                 <td>
                   <b style="color:var(--cyan); font-family:var(--font-mono);">RULE-KNIA-314-01</b>
-                  <div style="font-size:11px; color:var(--text-dim);">Cập nhật: 15/10/2026</div>
+                  <div style="font-weight:600; color:#fff; margin-top:2px;">Quyền ưu tiên phương tiện đã vào vòng xuyến trước</div>
                 </td>
                 <td>
-                  <b>Quyền ưu tiên phương tiện đã vào vòng xuyến trước</b>
-                  <div style="font-size:11.5px; color:var(--text-muted);">Phương tiện đang lưu thông trong đảo giao thông được quyền ưu tiên đối với xe đang nhập làn.</div>
-                </td>
-                <td><span class="badge badge-primary">Vòng xuyến</span></td>
-                <td>
-                  <span class="badge badge-cyan">Chart 314</span>
-                  <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">Tỷ lệ: 20 : 80</div>
+                  <span class="badge badge-emerald">KNIA Sách 2024</span>
+                  <div style="font-size:11.5px; color:var(--text-muted); margin-top:3px;">Điều 314 (Án lệ Tòa Seoul)</div>
                 </td>
                 <td>
-                  <code style="font-size:11px; color:#fbcfe8;">trong_vong_xuyen</code>, <code style="font-size:11px; color:#fbcfe8;">nhap_lan</code>
+                  <span class="badge badge-primary">Chart 314</span>
+                  <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">Vòng xuyến</div>
                 </td>
-                <td><b>64 lần</b></td>
-                <td><span class="badge badge-emerald">88.6%</span></td>
-                <td><span class="badge badge-amber">Nội bộ KB</span></td>
-                <td><span class="badge badge-emerald">Đang áp dụng</span></td>
-                <td><button class="btn btn-secondary btn-sm" onclick="showRuleDetails('RULE-KNIA-314-01')">Xem chi tiết</button></td>
+                <td>
+                  <div style="font-size:12px; color:#cbd5e1; line-height:1.45;">
+                    Phương tiện đã lưu thông hoàn thành &gt; 2/3 vòng xuyến có quyền ưu tiên đối với phương tiện đang từ các nhánh nhập vào đảo.
+                  </div>
+                </td>
+                <td>
+                  <b style="color:var(--amber);">20 : 80 (Xe nhập làn 80%)</b>
+                  <div style="font-size:11px; color:var(--text-dim);">Ưu tiên tuyệt đối</div>
+                </td>
+                <td>
+                  <span class="badge badge-emerald">Đang áp dụng</span>
+                </td>
+                <td>
+                  <button class="btn btn-secondary btn-sm" onclick="showRuleDetails('RULE-KNIA-314-01')">Xem chi tiết</button>
+                </td>
               </tr>
 
               <!-- Rule 4 -->
-              <tr data-status="paused" data-type="rear-end" data-visibility="internal" data-chart="chart-200">
+              <tr data-status="paused" data-chart="chart-205" data-rule-id="RULE-KNIA-205-PAUSE">
                 <td>
                   <b style="color:var(--cyan); font-family:var(--font-mono);">RULE-KNIA-205-PAUSE</b>
-                  <div style="font-size:11px; color:var(--text-dim);">Cập nhật: 05/10/2026</div>
+                  <div style="font-weight:600; color:#fff; margin-top:2px;">Xe trước phanh gấp không lý do chính đáng</div>
                 </td>
                 <td>
-                  <b>Xe trước phanh gấp không lý do chính đáng</b>
-                  <div style="font-size:11.5px; color:var(--text-muted);">Điều chỉnh giảm -20% lỗi cho xe sau nếu xe trước phanh đột ngột khi đường thông thoáng.</div>
-                </td>
-                <td><span class="badge badge-primary">Đâm đuôi</span></td>
-                <td>
-                  <span class="badge badge-cyan">Chart 205</span>
-                  <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">Tỷ lệ: 70 : 30</div>
+                  <span class="badge badge-slate">Biên bản Hòa giải</span>
+                  <div style="font-size:11.5px; color:var(--text-muted); margin-top:3px;">QĐ số 45/2025/HG</div>
                 </td>
                 <td>
-                  <code style="font-size:11px; color:#fbcfe8;">phanh_gap_vo_co</code>, <code style="font-size:11px; color:#fbcfe8;">dung_xe_dot_ngot</code>
+                  <span class="badge badge-primary">Chart 205</span>
+                  <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">Đâm đuôi</div>
                 </td>
-                <td><b>18 lần</b></td>
-                <td><span class="badge badge-rose">68.2%</span></td>
-                <td><span class="badge badge-amber">Nội bộ KB</span></td>
-                <td><span class="badge badge-amber">Tạm dừng</span></td>
-                <td><button class="btn btn-secondary btn-sm" onclick="showRuleDetails('RULE-KNIA-205-PAUSE')">Xem chi tiết</button></td>
+                <td>
+                  <div style="font-size:12px; color:#cbd5e1; line-height:1.45;">
+                    Xe đi trước phanh đột ngột khi mặt đường phía trước hoàn toàn thông thoáng, không có chướng ngại vật hay tình huống khẩn cấp.
+                  </div>
+                </td>
+                <td>
+                  <b style="color:var(--rose);">-20% lỗi cho xe sau</b>
+                  <div style="font-size:11px; color:var(--text-dim);">Cơ sở 100:0 ➔ 80:20</div>
+                </td>
+                <td>
+                  <span class="badge badge-amber">Thử nghiệm</span>
+                </td>
+                <td>
+                  <button class="btn btn-secondary btn-sm" onclick="showRuleDetails('RULE-KNIA-205-PAUSE')">Xem chi tiết</button>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -1849,6 +1950,96 @@
     </div>
   </div>
 
+  
+  <!-- ================= MODAL: 2. CHI TIẾT QUY TẮC ================= -->
+  <div class="modal-backdrop" id="modal-rule-detail" onclick="if(event.target===this) closeModal('modal-rule-detail')">
+    <div class="modal-container" style="max-width:780px;">
+      <div class="modal-header">
+        <div>
+          <span class="badge badge-cyan" id="mrd-status-badge">Đang áp dụng</span>
+          <div class="modal-title" id="mrd-rule-id" style="margin-top:4px;">RULE-KNIA-244-01</div>
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-rule-detail')">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- 1. Nội dung quy tắc -->
+        <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:10px; padding:14px; margin-bottom:14px;">
+          <div style="font-size:11px; font-weight:700; color:var(--cyan); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">1. Nội dung quy tắc</div>
+          <div id="mrd-content" style="font-size:14px; font-weight:600; color:#fff; line-height:1.5;">
+            Phương tiện chuyển làn đường nhưng camera ghi nhận không bật đèn tín hiệu báo rẽ trước thời điểm bắt đầu chuyển hướng tối thiểu 30m hoặc 3 giây.
+          </div>
+        </div>
+
+        <!-- 2. Tình huống áp dụng & 3. Căn cứ KNIA -->
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:14px;">
+          <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:10px; padding:14px;">
+            <div style="font-size:11px; font-weight:700; color:var(--cyan); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">2. Tình huống áp dụng</div>
+            <div id="mrd-situation" style="font-size:12.5px; color:#cbd5e1; line-height:1.5;">
+              Va chạm cùng chiều giữa 2 xe ô tô hoặc giữa ô tô và xe máy trên đoạn đường thẳng có từ 2 làn xe cùng chiều trở lên.
+            </div>
+          </div>
+
+          <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:10px; padding:14px;">
+            <div style="font-size:11px; font-weight:700; color:var(--cyan); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">3. Căn cứ KNIA &amp; Tài liệu</div>
+            <div id="mrd-basis" style="font-size:12.5px; color:#cbd5e1; line-height:1.5;">
+              • KNIA Sách hướng dẫn bồi thường 2024 Điều 31-3.<br>
+              • Luật Giao thông đường bộ Điều 15.<br>
+              • Án lệ Tòa án số 18/2023/DS-ST về lỗi tạt đầu xe.
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Chart và Tỷ lệ tham chiếu -->
+        <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:10px; padding:14px; margin-bottom:14px; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="font-size:11px; font-weight:700; color:var(--cyan); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">4. Chart &amp; Tỷ lệ tham chiếu</div>
+            <div id="mrd-chart" style="font-size:15px; font-weight:700; color:#fff;">Chart KNIA 244 (차31-3)</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:11px; color:var(--text-muted); margin-bottom:2px;">Tỷ lệ lỗi điều chỉnh</div>
+            <div id="mrd-fault" style="font-size:16px; font-weight:800; color:var(--rose);">+10% lỗi Xe chuyển làn (Cơ sở 70:30 ➔ 80:20)</div>
+          </div>
+        </div>
+
+        <!-- 5. Lịch sử chỉnh sửa -->
+        <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:10px; padding:14px;">
+          <div style="font-size:11px; font-weight:700; color:var(--cyan); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">5. Lịch sử chỉnh sửa</div>
+          <div style="display:flex; flex-direction:column; gap:8px;" id="mrd-history">
+            <div style="display:flex; justify-content:space-between; font-size:12px; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:6px;">
+              <div>
+                <b style="color:#fff;">Phiên bản v1.2</b>
+                <span style="color:var(--text-muted); margin-left:6px;">Bổ sung điều kiện đo khoảng cách xi-nhan 30m qua camera</span>
+              </div>
+              <div style="color:var(--text-dim);">10/11/2026 • Nguyễn Văn A</div>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:12px; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:6px;">
+              <div>
+                <b style="color:#fff;">Phiên bản v1.1</b>
+                <span style="color:var(--text-muted); margin-left:6px;">Điều chỉnh mức tăng lỗi từ +5% thành +10% theo Án lệ 18</span>
+              </div>
+              <div style="color:var(--text-dim);">02/11/2026 • Trần Thị B</div>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:12px;">
+              <div>
+                <b style="color:#fff;">Phiên bản v1.0</b>
+                <span style="color:var(--text-muted); margin-left:6px;">Khởi tạo quy tắc ban đầu từ KNIA 2024</span>
+              </div>
+              <div style="color:var(--text-dim);">15/10/2026 • Hệ thống</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('modal-rule-detail')">Đóng</button>
+        <button class="btn btn-primary" onclick="showToast('Chức năng chỉnh sửa quy tắc đang mở', 'info')">
+          <span>✏️ Chỉnh sửa quy tắc</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Notification Container -->
   <div class="toast-container" id="toast-container"></div>
 
@@ -2098,8 +2289,66 @@
       }, 1500);
     }
 
+            // Show Rule Details Modal
+    const RULE_DATA = {
+      'RULE-KNIA-244-01': {
+        title: 'Chuyển làn không bật xi-nhan trước 30m',
+        content: 'Phương tiện chuyển làn đường nhưng camera ghi nhận không bật đèn tín hiệu báo rẽ trước thời điểm bắt đầu chuyển hướng tối thiểu 30m hoặc 3 giây.',
+        situation: 'Va chạm cùng chiều giữa 2 xe ô tô hoặc giữa ô tô và xe máy trên đoạn đường thẳng có từ 2 làn xe cùng chiều trở lên.',
+        basis: '• KNIA Sách hướng dẫn bồi thường 2024 Điều 31-3.<br>• Luật Giao thông đường bộ Điều 15.<br>• Án lệ Tòa án số 18/2023/DS-ST về lỗi tạt đầu xe.',
+        chart: 'Chart KNIA 244 (차31-3)',
+        fault: '+10% lỗi Xe chuyển làn (Cơ sở 70:30 ➔ 80:20)',
+        status: 'Đang áp dụng'
+      },
+      'RULE-KNIA-114-02': {
+        title: 'Ưu tiên đường lớn hơn tại ngã tư không đèn',
+        content: 'Xe đi từ đường nhánh vào ngã tư có bề rộng lòng đường xe kia lớn hơn từ 1.5 lần trở lên; không phân biệt rẽ phải hay đi thẳng.',
+        situation: 'Giao lộ ngã tư không có đèn tín hiệu điều khiển giao thông; hai xe đi vuông góc nhau từ hai hướng đường có cấp bậc khác nhau.',
+        basis: '• KNIA 2024 Điều 14 (Giao lộ không tín hiệu).<br>• Luật GTĐB Điều 24 (Quy tắc nhường đường tại nơi đường giao nhau).',
+        chart: 'Chart KNIA 114 (Đường ưu tiên)',
+        fault: 'Cơ sở: 60 : 40 (Xe từ đường nhánh 60%)',
+        status: 'Đang áp dụng'
+      },
+      'RULE-KNIA-314-01': {
+        title: 'Quyền ưu tiên phương tiện đã vào vòng xuyến trước',
+        content: 'Phương tiện đã lưu thông hoàn thành > 2/3 vòng xuyến có quyền ưu tiên đối với phương tiện đang từ các nhánh nhập vào đảo.',
+        situation: 'Va chạm tại vòng xuyến trung tâm hoặc đảo giao thông có bán kính > 15m.',
+        basis: '• KNIA 2024 Điều 314.<br>• Án lệ Tòa phúc thẩm Seoul 2022 về giải quyết xung đột điểm mù vòng xuyến.',
+        chart: 'Chart KNIA 314 (Vòng xuyến)',
+        fault: 'Cơ sở: 20 : 80 (Xe nhập làn chịu 80%)',
+        status: 'Đang áp dụng'
+      },
+      'RULE-KNIA-205-PAUSE': {
+        title: 'Xe trước phanh gấp không lý do chính đáng',
+        content: 'Xe đi trước phanh đột ngột khi mặt đường phía trước hoàn toàn thông thoáng, không có chướng ngại vật hay tình huống khẩn cấp.',
+        situation: 'Hai phương tiện cùng chiều trên một làn xe, xe trước dừng xe hoặc phanh gấp đột ngột khiến xe sau đâm đuôi.',
+        basis: '• KNIA 2024 Điều 205 (Va chạm đâm đuôi).<br>• Quyết định Hòa giải Bảo hiểm số 45/2025/HG.',
+        chart: 'Chart KNIA 205 (Đâm đuôi)',
+        fault: '-20% lỗi cho xe sau (Cơ sở: 100:0 ➔ 80:20)',
+        status: 'Thử nghiệm'
+      }
+    };
+
     function showRuleDetails(ruleId) {
-      showToast(`Mở chi tiết quy tắc ${ruleId}`, 'info');
+      const data = RULE_DATA[ruleId] || {
+        title: ruleId,
+        content: 'Nội dung chi tiết quy tắc ' + ruleId,
+        situation: 'Tình huống va chạm được áp dụng.',
+        basis: 'Căn cứ KNIA 2024.',
+        chart: 'Chart KNIA',
+        fault: 'Tỷ lệ theo quy chuẩn',
+        status: 'Đang áp dụng'
+      };
+
+      document.getElementById('mrd-rule-id').textContent = ruleId + ': ' + data.title;
+      document.getElementById('mrd-content').textContent = data.content;
+      document.getElementById('mrd-situation').textContent = data.situation;
+      document.getElementById('mrd-basis').innerHTML = data.basis;
+      document.getElementById('mrd-chart').textContent = data.chart;
+      document.getElementById('mrd-fault').textContent = data.fault;
+      document.getElementById('mrd-status-badge').textContent = data.status;
+
+      openModal('modal-rule-detail');
     }
 
     function updateQualityStats() {
