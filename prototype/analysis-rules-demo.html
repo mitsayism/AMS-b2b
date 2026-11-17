@@ -2748,6 +2748,11 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
           <option value="AI chọn đúng nhưng áp sai yếu tố điều chỉnh">AI chọn đúng nhưng áp sai yếu tố điều chỉnh</option>
           <option value="Diễn giải khác về cùng bằng chứng">Diễn giải khác về cùng bằng chứng</option>
           <option value="Thương lượng giữa hai bên">Thương lượng giữa hai bên</option>
+          <option value="Chất lượng dữ liệu đầu vào hạn chế (video mờ / góc khuất)">Chất lượng dữ liệu đầu vào hạn chế</option>
+          <option value="Kết luận chính thức của CSGT / Biên bản điều tra">Kết luận chính thức của CSGT</option>
+          <option value="Áp dụng án lệ / Tập quán hòa giải địa phương">Áp dụng án lệ / Hòa giải địa phương</option>
+          <option value="Yếu tố đặc thù ngoài bộ quy tắc chuẩn">Yếu tố đặc thù ngoài quy tắc chuẩn</option>
+          <option value="Lý do khác (ghi rõ ở phần ghi chú)">Lý do khác (ghi chú riêng)</option>
         </select>
       </div>
 
@@ -6308,7 +6313,12 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
       'AI nhận diện sai tình huống',
       'AI chọn đúng nhưng áp sai yếu tố điều chỉnh',
       'Diễn giải khác về cùng bằng chứng',
-      'Thương lượng giữa hai bên'
+      'Thương lượng giữa hai bên',
+      'Chất lượng dữ liệu đầu vào hạn chế (video mờ / góc khuất)',
+      'Kết luận chính thức của CSGT / Biên bản điều tra',
+      'Áp dụng án lệ / Tập quán hòa giải địa phương',
+      'Yếu tố đặc thù ngoài bộ quy tắc chuẩn',
+      'Lý do khác (ghi rõ ở phần ghi chú)'
     ],
     labels: {
       matchSame: 'Giống',
@@ -6536,8 +6546,8 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
         factors: [{ name: 'Chuyển 2 làn liên tiếp', side: 'A', val: '+5%' }],
         finalA: 85, finalB: 15
       },
-      reason: 'AI chọn đúng nhưng áp sai yếu tố điều chỉnh',
-      notes: 'Xe A chuyển từ làn 3 sang làn 1 không dừng nhịp, cộng 5% lỗi',
+      reason: 'Chất lượng dữ liệu đầu vào hạn chế (video mờ / góc khuất)',
+      notes: 'Camera hành trình bị lóa đèn pha ban đêm và mưa to, AI không quét được vạch kẻ đường mờ',
       _meta: { modelVersion: 'visus-knia-v2.4.1', rulesSnapshot: { chart: '차252', ver: '2024-v10' }, finalizerUser: 'smtadmin', finalizedAt: '2026-10-25 17:30' }
     },
     {
@@ -6644,8 +6654,8 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
         factors: [{ name: 'Xe ngoài vào không quan sát', side: 'A', val: '+5%' }],
         finalA: 75, finalB: 25
       },
-      reason: 'Có bằng chứng bổ sung sau khi AI chạy',
-      notes: 'Camera bên đường bổ sung góc nhìn xe ngoài lao vào nhanh',
+      reason: 'Kết luận chính thức của CSGT / Biên bản điều tra',
+      notes: 'Căn cứ biên bản khám nghiệm hiện trường của CSGT xác định xe ngoài vào vòng xuyến vi phạm quyền ưu tiên',
       _meta: { modelVersion: 'visus-knia-v2.4.1', rulesSnapshot: { chart: '차314', ver: '2024-v10' }, finalizerUser: 'smtadmin', finalizedAt: '2026-10-14 16:45' }
     },
     {
@@ -6680,8 +6690,8 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
         factors: [{ name: 'Chuyển làn đè vạch nét liền', side: 'A', val: '+20%' }],
         finalA: 100, finalB: 0
       },
-      reason: 'Có bằng chứng bổ sung sau khi AI chạy',
-      notes: 'Cảnh sát giao thông cung cấp biên bản xác định vạch liền cấm chuyển làn',
+      reason: 'Áp dụng án lệ / Tập quán hòa giải địa phương',
+      notes: 'Theo bản án lệ hòa giải số 18/2025 về hành vi tạt đầu qua làn khẩn cấp trên cao tốc',
       _meta: { modelVersion: 'visus-knia-v2.4.1', rulesSnapshot: { chart: '차252', ver: '2024-v10' }, finalizerUser: 'smtadmin', finalizedAt: '2026-10-10 18:30' }
     }
   ];
