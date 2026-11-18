@@ -8243,6 +8243,7 @@
       if (screenId === 'SCR-ACTIVITY-LOG') filterLogs('ALL');
       renderDocumentMenu();
       renderHeaderContext();
+      window.dispatchEvent(new CustomEvent('ams-screen-change', { detail: { screenId } }));
     }
 
     function openHeaderHistory() {
@@ -13916,10 +13917,24 @@ function renderInternalReportTab(c) {
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
+    cursor: grab;
     box-shadow: 0 4px 12px rgba(0,0,0,0.5), 0 0 0 2px #fff;
-    transition: transform 0.15s;
+    transition: transform 0.15s, box-shadow 0.15s;
     user-select: none;
+    touch-action: none;
+  }
+  .dc-pin:active, .dc-note.dc-dragging .dc-pin {
+    cursor: grabbing !important;
+    transform: scale(1.24);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.7), 0 0 0 3px #38bdf8;
+  }
+  .dc-note.dc-dragging {
+    z-index: 999999 !important;
+    transition: none !important;
+  }
+  body.dc-pin-dragging, body.dc-pin-dragging * {
+    user-select: none !important;
+    cursor: grabbing !important;
   }
   .dc-pin.business {
     background: linear-gradient(135deg, #0284c7, #0369a1);
@@ -13970,7 +13985,11 @@ function renderInternalReportTab(c) {
     border-radius: 6px;
     pointer-events: none;
     z-index: 99988;
-    transition: all 0.08s ease-out;
+    transition: opacity 0.12s ease-out, box-shadow 0.12s ease-out;
+    display: none; /* Mặc định ẩn, chỉ hiện khi hover hoặc click mở note */
+  }
+  .dc-region.dc-visible {
+    display: block;
   }
   #dc-drag-box {
     position: fixed;
@@ -14246,9 +14265,37 @@ function renderInternalReportTab(c) {
     return el === root ? path.join('.') : '';
   };
 
-    const resolveTarget = (note) => {
+  const getSelectorFor = (el, root) => {
+    if (!el || el === root) return '';
+    if (el.id) return '#' + CSS.escape(el.id);
+    const parts = [];
+    let cur = el;
+    while (cur && cur !== root && cur !== document.body) {
+      let tag = cur.tagName.toLowerCase();
+      if (cur.id) {
+        parts.unshift('#' + CSS.escape(cur.id));
+        break;
+      }
+      if (cur.className && typeof cur.className === 'string') {
+        const cls = cur.className.trim().split(/\s+/).filter(c => !c.startsWith('dc-') && !c.startsWith('wb-'));
+        if (cls.length) tag += '.' + cls.slice(0, 2).map(c => CSS.escape(c)).join('.');
+      }
+      parts.unshift(tag);
+      cur = cur.parentElement;
+    }
+    return parts.join(' > ');
+  };
+
+  const resolveTarget = (note) => {
     const root = document.getElementById(note.rootId || note.screen) || currentScreenEl();
     if (!root) return null;
+
+    if (note.targetSelector) {
+      try {
+        const el = root.querySelector(note.targetSelector);
+        if (el && el.getClientRects().length) return el;
+      } catch (_) {}
+    }
 
     const title = (note.title || '').toLowerCase();
     const text = (note.text || '').toLowerCase();
@@ -14392,6 +14439,28 @@ function renderInternalReportTab(c) {
     scheduleUpdate();
   };
 
+    // Hover & Drag State for Pins and Target Highlights
+  let hoveredNoteId = null;
+  let draggingNoteId = null;
+
+  const updateRegionVisibility = () => {
+    const allNotes = [...(showBusinessPins ? businessNotes : []), ...designNotes];
+    allNotes.forEach(n => {
+      const regEl = document.getElementById('dc-reg-' + n.id);
+      if (!regEl) return;
+      const isVisible = (hoveredNoteId === n.id || openNoteId === n.id || draggingNoteId === n.id);
+      regEl.style.display = isVisible ? 'block' : 'none';
+      if (isVisible) {
+        regEl.classList.add('dc-visible');
+        regEl.style.boxShadow = (openNoteId === n.id || draggingNoteId === n.id)
+          ? '0 0 16px rgba(6, 182, 212, 0.65)'
+          : '0 0 10px rgba(6, 182, 212, 0.4)';
+      } else {
+        regEl.classList.remove('dc-visible');
+      }
+    });
+  };
+
   // Render Business List
   const renderBusinessList = () => {
     if (bcCountBadge) bcCountBadge.textContent = businessNotes.length;
@@ -14416,6 +14485,16 @@ function renderInternalReportTab(c) {
         <div class="dc-item-text">${n.text}</div>
       `;
       item.onclick = () => highlightPin(n.id);
+      item.addEventListener('mouseenter', () => {
+        hoveredNoteId = n.id;
+        updateRegionVisibility();
+      });
+      item.addEventListener('mouseleave', () => {
+        if (hoveredNoteId === n.id) {
+          hoveredNoteId = null;
+          updateRegionVisibility();
+        }
+      });
       bcList.appendChild(item);
     });
   };
@@ -14453,6 +14532,16 @@ function renderInternalReportTab(c) {
         if (e.target.tagName === 'BUTTON') return;
         highlightPin(n.id);
       };
+      item.addEventListener('mouseenter', () => {
+        hoveredNoteId = n.id;
+        updateRegionVisibility();
+      });
+      item.addEventListener('mouseleave', () => {
+        if (hoveredNoteId === n.id) {
+          hoveredNoteId = null;
+          updateRegionVisibility();
+        }
+      });
       dcList.appendChild(item);
     });
   };
@@ -14504,16 +14593,17 @@ function renderInternalReportTab(c) {
   };
 
   const createPinElement = (n, num, kind, currentRoot) => {
-    // Region element
+    // Region element (mặc định ẩn hoàn toàn, chỉ hiện khi hover hoặc click mở note)
     if (n.region) {
       const reg = document.createElement('div');
       reg.className = 'dc-region';
       reg.id = 'dc-reg-' + n.id;
       if (kind === 'business') reg.style.borderColor = '#0284c7';
+      reg.style.display = 'none';
       document.body.appendChild(reg);
     }
 
-    // Pin element
+    // Pin container
     const pinContainer = document.createElement('div');
     pinContainer.className = 'dc-note' + (openNoteId === n.id ? ' dc-open' : '');
     pinContainer.id = 'dc-pin-' + n.id;
@@ -14521,7 +14611,7 @@ function renderInternalReportTab(c) {
 
     const iconPrefix = kind === 'business' ? '📋' : '🎨';
     pinContainer.innerHTML = `
-      <div class="dc-pin ${kind}" title="${iconPrefix} ${n.title}: ${n.text}">${num}</div>
+      <div class="dc-pin ${kind}" title="${iconPrefix} #${num}. ${n.title}: ${n.text} (Kéo để di chuyển vị trí)">${num}</div>
       <div class="dc-note-body">
         <h4>${iconPrefix} ${n.title || (kind === 'business' ? 'Nghiệp vụ' : 'Thiết kế')}</h4>
         <p>${n.text}</p>
@@ -14532,16 +14622,164 @@ function renderInternalReportTab(c) {
       </div>
     `;
 
-    pinContainer.querySelector('.dc-pin').onclick = (e) => {
+    // Hover on pin lights up its target region box
+    pinContainer.addEventListener('mouseenter', () => {
+      hoveredNoteId = n.id;
+      updateRegionVisibility();
+    });
+    pinContainer.addEventListener('mouseleave', () => {
+      if (hoveredNoteId === n.id) {
+        hoveredNoteId = null;
+        updateRegionVisibility();
+      }
+    });
+
+    // DRAG AND DROP PIN LOGIC
+    const pinEl = pinContainer.querySelector('.dc-pin');
+    let isDraggingPin = false;
+    let pinStartX = 0, pinStartY = 0;
+    let startMouseX = 0, startMouseY = 0;
+    let hasMoved = false;
+    const DRAG_THRESHOLD = 5;
+
+    pinEl.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0) return; // Left mouse click only
       e.stopPropagation();
-      openNoteId = openNoteId === n.id ? null : n.id;
-      updatePinPositions();
-    };
+
+      startMouseX = e.clientX;
+      startMouseY = e.clientY;
+      const rect = pinContainer.getBoundingClientRect();
+      pinStartX = rect.left;
+      pinStartY = rect.top;
+      hasMoved = false;
+      isDraggingPin = false;
+
+      const onPointerMove = (moveEv) => {
+        const dx = moveEv.clientX - startMouseX;
+        const dy = moveEv.clientY - startMouseY;
+
+        if (!hasMoved && Math.hypot(dx, dy) >= DRAG_THRESHOLD) {
+          hasMoved = true;
+          isDraggingPin = true;
+          draggingNoteId = n.id;
+          pinContainer.classList.add('dc-dragging');
+          document.body.classList.add('dc-pin-dragging');
+          updateRegionVisibility();
+        }
+
+        if (isDraggingPin) {
+          moveEv.preventDefault();
+          const curX = Math.max(6, Math.min(window.innerWidth - 32, pinStartX + dx));
+          const curY = Math.max(6, Math.min(window.innerHeight - 32, pinStartY + dy));
+          pinContainer.style.left = `${curX}px`;
+          pinContainer.style.top = `${curY}px`;
+
+          // Candidate hover inspector
+          pinContainer.style.pointerEvents = 'none';
+          const elUnder = document.elementFromPoint(moveEv.clientX, moveEv.clientY);
+          pinContainer.style.pointerEvents = 'auto';
+
+          if (elUnder && !elUnder.closest('#wb-notes-bar, .wb-panel, .dc-note, .dc-region')) {
+            const candidate = elUnder.closest('button, select, input, textarea, .card, .panel, table, tr, td, th, [id], .badge, .tag, h1, h2, h3, h4, h5, .step-item, .video-container, .fact-thumb-item') || elUnder;
+            const sc = currentScreenEl();
+            if (candidate && candidate !== document.body && candidate !== sc) {
+              const cRect = candidate.getBoundingClientRect();
+              hoverInspector.style.display = 'block';
+              hoverInspector.style.left = `${cRect.left}px`;
+              hoverInspector.style.top = `${cRect.top}px`;
+              hoverInspector.style.width = `${cRect.width}px`;
+              hoverInspector.style.height = `${cRect.height}px`;
+              const info = getSpecificTextTarget(candidate);
+              hoverLabel.textContent = `Thả vào: ${info ? info.title : candidate.tagName.toLowerCase()}`;
+            } else {
+              hoverInspector.style.display = 'none';
+            }
+          } else {
+            hoverInspector.style.display = 'none';
+          }
+        }
+      };
+
+      const onPointerUp = (upEv) => {
+        window.removeEventListener('pointermove', onPointerMove, true);
+        window.removeEventListener('pointerup', onPointerUp, true);
+        window.removeEventListener('pointercancel', onPointerUp, true);
+
+        hoverInspector.style.display = 'none';
+        pinContainer.classList.remove('dc-dragging');
+        document.body.classList.remove('dc-pin-dragging');
+        draggingNoteId = null;
+
+        if (hasMoved && isDraggingPin) {
+          const dropX = upEv.clientX;
+          const dropY = upEv.clientY;
+
+          pinContainer.style.pointerEvents = 'none';
+          const dropEl = document.elementFromPoint(dropX, dropY);
+          pinContainer.style.pointerEvents = 'auto';
+
+          const candidate = (dropEl && !dropEl.closest('#wb-notes-bar, .wb-panel, .dc-note, .dc-region'))
+            ? (dropEl.closest('button, select, input, textarea, .card, .panel, table, tr, td, th, [id], .badge, .tag, h1, h2, h3, h4, h5, .step-item, .video-container, .fact-thumb-item') || dropEl)
+            : null;
+
+          const sc = currentScreenEl();
+          const modal = activeModalEl();
+          const root = modal || sc;
+
+          if (candidate && candidate !== document.body && candidate !== sc && root) {
+            const tRect = candidate.getBoundingClientRect();
+            n.x = Math.max(0.05, Math.min(0.95, (dropX - tRect.left) / tRect.width));
+            n.y = Math.max(0.05, Math.min(0.95, (dropY - tRect.top) / tRect.height));
+            n.path = pathFor(candidate, root);
+            n.targetSelector = getSelectorFor(candidate, root);
+            n.rootId = root.id;
+            n.screen = sc.id;
+            n.customPinPos = null;
+
+            if (n.region) {
+              n.region.rootId = root.id;
+              n.region.scopePath = n.path;
+              n.region.targetSelector = n.targetSelector;
+            }
+          } else if (root) {
+            const rRect = root.getBoundingClientRect();
+            n.customPinPos = {
+              relX: Math.max(0.02, Math.min(0.98, (dropX - rRect.left) / rRect.width)),
+              relY: Math.max(0.02, Math.min(0.98, (dropY - rRect.top) / rRect.height)),
+              absX: dropX,
+              absY: dropY
+            };
+          }
+
+          if (kind === 'business') {
+            localStorage.setItem(BUSINESS_KEY, JSON.stringify(businessNotes));
+          } else {
+            localStorage.setItem(DESIGN_KEY, JSON.stringify(designNotes));
+          }
+
+          if (typeof showToast === 'function') {
+            showToast(`✓ Đã di chuyển điểm ghim #${num} sang vị trí mới`);
+          }
+
+          updatePinPositions();
+          updateRegionVisibility();
+        } else {
+          // Click: toggle open/close
+          openNoteId = openNoteId === n.id ? null : n.id;
+          updatePinPositions();
+          updateRegionVisibility();
+        }
+      };
+
+      window.addEventListener('pointermove', onPointerMove, true);
+      window.addEventListener('pointerup', onPointerUp, true);
+      window.addEventListener('pointercancel', onPointerUp, true);
+    });
 
     document.body.appendChild(pinContainer);
   };
 
-    // UPDATE POSITIONS DYNAMICALLY WITH EXACT PROPORTIONAL SCALING
+  // UPDATE POSITIONS DYNAMICALLY WITH EXACT PROPORTIONAL SCALING
   const updatePinPositions = () => {
     const sc = currentScreenEl();
     const modal = activeModalEl();
@@ -14585,7 +14823,6 @@ function renderInternalReportTab(c) {
             width: tRect.width + 8,
             height: tRect.height + 8
           };
-          regEl.style.display = 'block';
           regEl.style.left = `${rBox.left}px`;
           regEl.style.top = `${rBox.top}px`;
           regEl.style.width = `${rBox.width}px`;
@@ -14613,20 +14850,12 @@ function renderInternalReportTab(c) {
               height: reg.height * hMultiplier
             };
 
-            regEl.style.display = 'block';
             regEl.style.left = `${rBox.left}px`;
             regEl.style.top = `${rBox.top}px`;
             regEl.style.width = `${rBox.width}px`;
             regEl.style.height = `${rBox.height}px`;
             hasValidRegion = true;
-          } else {
-            regEl.style.display = 'none';
           }
-        }
-
-        // Highlight box when active
-        if (hasValidRegion && regEl) {
-          regEl.style.boxShadow = openNoteId === n.id ? '0 0 12px rgba(6, 182, 212, 0.5)' : 'none';
         }
       }
 
@@ -14637,7 +14866,17 @@ function renderInternalReportTab(c) {
 
         let px, py;
 
-        if (hasValidRegion && rBox) {
+        if (n.customPinPos) {
+          const rootEl = document.getElementById(n.rootId || n.screen) || sc;
+          if (rootEl && rootEl.getClientRects().length && n.customPinPos.relX != null) {
+            const rootRect = rootEl.getBoundingClientRect();
+            px = rootRect.left + rootRect.width * n.customPinPos.relX;
+            py = rootRect.top + rootRect.height * n.customPinPos.relY;
+          } else if (n.customPinPos.absX != null) {
+            px = n.customPinPos.absX;
+            py = n.customPinPos.absY;
+          }
+        } else if (hasValidRegion && rBox) {
           // Place pin neatly at top-left corner of the region box
           px = rBox.left - 13;
           py = rBox.top - 13;
@@ -14655,23 +14894,25 @@ function renderInternalReportTab(c) {
         pinContainer.style.top = `${py}px`;
       }
     });
+
+    updateRegionVisibility();
   };
 
-  let rafScheduled = false;
+  let updateRafId = null;
   const scheduleUpdate = () => {
-    if (rafScheduled) return;
-    rafScheduled = true;
-    requestAnimationFrame(() => {
-      rafScheduled = false;
+    if (updateRafId) cancelAnimationFrame(updateRafId);
+    updateRafId = requestAnimationFrame(() => {
+      updateRafId = null;
       drawPins();
     });
   };
 
+  let reposRafId = null;
   const scheduleRepositionOnly = () => {
-    if (rafScheduled) return;
-    rafScheduled = true;
-    requestAnimationFrame(() => {
-      rafScheduled = false;
+    if (updateRafId) return; // Full drawPins is already scheduled
+    if (reposRafId) cancelAnimationFrame(reposRafId);
+    reposRafId = requestAnimationFrame(() => {
+      reposRafId = null;
       updatePinPositions();
     });
   };
@@ -14986,6 +15227,11 @@ function renderInternalReportTab(c) {
       scheduleRepositionOnly();
     }
   };
+
+  window.addEventListener('ams-screen-change', () => {
+    lastActiveScreenId = '';
+    drawPins();
+  });
 
   const observer = new MutationObserver(() => {
     if (!picking) checkScreenChange();
