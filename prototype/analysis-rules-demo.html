@@ -1028,6 +1028,18 @@
 #tab-rules .ws.on {
   display: grid;
 }
+#tab-rules #vr.on { grid-template-columns: 260px minmax(0,1fr); }
+#mock-side-col .linked-row { padding:5px 0; border:0; background:none; margin:0; }
+#mock-side-col .linked-line { display:flex; align-items:center; gap:5px; }
+#mock-side-col .linked-name { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; background:none; border:0; color:var(--ink); text-align:left; cursor:pointer; }
+#mock-side-col .linked-action { background:none; border:0; color:var(--cyan); cursor:pointer; }
+#mock-side-col.edit > div:first-child .mock-btn { background:var(--cyan); color:#07111f; font-weight:700; }
+#mock-side-col .rm-lk-btn { visibility:hidden; color:var(--red); border:0; background:none; cursor:pointer; }
+#mock-side-col .linked-row:hover .rm-lk-btn, #mock-side-col .linked-row:focus-within .rm-lk-btn, #mock-side-col.edit .rm-lk-btn, #mock-side-col .gone .rm-lk-btn { visibility:visible; }
+#mock-side-col details > summary { cursor:pointer; color:var(--mut); padding:8px 0 3px; font-weight:600; }
+#mock-side-col .linked-detail { font-size:11px; color:var(--mut); padding:5px 10px; }
+#mock-side-col .linked-legend { position:sticky; bottom:0; background:var(--sf); padding:8px 0; }
+@media(max-width:800px) { #tab-rules #vr.on { display:block; } }
 #tab-rules .col {
   overflow: auto;
   min-width: 0;
@@ -2600,7 +2612,6 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
             <input type="text" class="search-input" id="mock-search-input" placeholder="Tìm theo mã (차114, 252...), điều luật, loại tai nạn..." oninput="handleMockupSearch(this.value)" style="width:100%;" />
             <span id="search-match-count" style="display:none; position:absolute; right:10px; top:50%; transform:translateY(-50%); font-size:11px; background:var(--acs); color:var(--ac); padding:2px 6px; border-radius:10px; font-weight:600;"></span>
           </div>
-          <span class="ver">Bản sửa đổi lần 10 · KNIA 2024</span>
         </header>
 
         <!-- VIEW 1: THEO TÌNH HUỐNG -->
@@ -2818,30 +2829,14 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
 
           <!-- Col 3: Right Aside (Linked Rules) -->
           <aside class="col right" aria-label="Quy tắc đã liên kết" id="mock-side-col">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:8px;">
               <span class="lbl" style="margin:0;" id="mock-linked-count-lbl">Quy tắc đã liên kết · 4</span>
+              <button type="button" class="mock-btn" onclick="openAddLinkedRuleModal()">+ Thêm</button>
             </div>
-            <button type="button" class="mock-btn" onclick="openAddLinkedRuleModal()">+ Thêm quy tắc từ thư viện</button>
-
-            <!-- Laws Section -->
-            <span class="lbl">Điều luật & Quy định pháp lý</span>
-            <div id="mock-linked-laws-container">
-              <!-- Populated by JS -->
-            </div>
-
-            <!-- Factors Set Section -->
-            <span class="lbl" style="margin-top:16px;">Bộ yếu tố điều chỉnh</span>
-            <div id="mock-linked-factors-container">
-              <!-- Populated by JS -->
-            </div>
-
-            <!-- Case Law Section -->
-            <span class="lbl" style="margin-top:16px;">Án lệ & Tiền lệ xét xử</span>
-            <div id="mock-linked-cases-container">
-              <!-- Populated by JS -->
-            </div>
-
-
+            <details open><summary id="mock-laws-summary">Điều luật & quy định</summary><div id="mock-linked-laws-container"></div></details>
+            <details open><summary id="mock-factors-summary">Bộ yếu tố điều chỉnh</summary><div id="mock-linked-factors-container"></div></details>
+            <details open><summary id="mock-cases-summary">Án lệ</summary><div id="mock-linked-cases-container"></div></details>
+            <p class="linked-legend" style="font-size:11px;color:var(--mut);margin-top:14px;">● Căn cứ · ○ Tham chiếu · ◆ Dùng chung<br>↗ Số tình huống · ⚠ Số dòng ghi đè</p>
           </aside>
         </div>
 
@@ -2889,7 +2884,6 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
                   <tr>
                     <th style="width:75px;">Mã Chart</th>
                     <th>Tình huống va chạm</th>
-                    <th style="width:110px;">Vai trò</th>
                     <th style="width:180px;">Điều chỉnh liên quan</th>
                     <th style="width:90px;">Thao tác</th>
                   </tr>
@@ -2901,24 +2895,6 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
             </div>
           </section>
 
-          <!-- Col 3: Right Aside -->
-          <aside class="col right" aria-label="Tác động">
-            <span class="lbl">Tác động khi sửa</span>
-            <div class="sq">
-              <div><b id="vr-stat-cases">4</b><span style="color:var(--mut);">tình huống liên kết</span></div>
-              <div><b id="vr-stat-chapters">2</b><span style="color:var(--mut);">chương bị ảnh hưởng</span></div>
-            </div>
-            <div class="warn" style="margin-top:14px;">
-              <b>Cần rà soát sau khi sửa</b>
-              <span style="color:var(--mut);">Các tình huống liên kết sẽ chuyển sang trạng thái “Cần rà soát” cho tới khi được duyệt lại.</span>
-            </div>
-            <span class="lbl" style="margin-top:18px;">Phát hiện bất thường</span>
-            <div class="lk" id="vr-anomaly-box">
-              <b>Có tình huống chưa gắn án lệ</b>
-              <span style="color:var(--mut);">Gợi ý bổ sung án lệ hòa giải đối với các vụ có tranh chấp tỷ lệ lỗi.</span>
-            </div>
-            <p class="note">Thay đổi điều luật sẽ tự động đồng bộ sang luồng reasoning của AI khi thẩm định hồ sơ.</p>
-          </aside>
         </div>
       </div>
     </section>
@@ -4591,62 +4567,35 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
   }
 
   function renderLinkedRulesCol(data) {
-    const lawsBox = document.getElementById('mock-linked-laws-container');
-    const factBox = document.getElementById('mock-linked-factors-container');
-    const caseBox = document.getElementById('mock-linked-cases-container');
     const countLbl = document.getElementById('mock-linked-count-lbl');
-
     const totalCount = (data.linkedLaws?.length || 0) + (data.linkedFactors?.length || 0) + (data.linkedCases?.length || 0);
     if (countLbl) countLbl.textContent = `Quy tắc đã liên kết · ${totalCount}`;
-
-    if (lawsBox) {
-      lawsBox.innerHTML = '';
-      (data.linkedLaws || []).forEach(l => {
-        lawsBox.innerHTML += `
-          <div class="lk">
-            <b>${l.title}</b>
-            <div class="row">
-              <span class="tag a">${l.role}</span>
-              ${l.note ? `<span class="tag">${l.note}</span>` : ''}
-            </div>
-          </div>
-        `;
+    [['linkedLaws','mock-linked-laws-container','mock-laws-summary','Điều luật & quy định'], ['linkedFactors','mock-linked-factors-container','mock-factors-summary','Bộ yếu tố điều chỉnh'], ['linkedCases','mock-linked-cases-container','mock-cases-summary','Án lệ']].forEach(([key, boxId, summaryId, label]) => {
+      const box = document.getElementById(boxId), items = data[key] || [];
+      document.getElementById(summaryId).textContent = `${label} (${items.length})`;
+      box.replaceChildren();
+      items.forEach((item, index) => {
+        const row = document.createElement('div'); row.className = 'lk linked-row'; row.dataset.key = key; row.dataset.index = index;
+        const line = document.createElement('div'); line.className = 'linked-line';
+        const symbol = document.createElement('span'); symbol.textContent = item.role === 'Dùng chung' ? '◆' : item.role === 'Căn cứ' ? '●' : '○'; symbol.setAttribute('aria-label', item.role);
+        const name = document.createElement('button'); name.type = 'button'; name.className = 'linked-name'; name.textContent = item.title.replace(/\s*\([^)]*\)\s*$/, ''); name.title = item.title;
+        const detail = document.createElement('div'); detail.className = 'linked-detail'; detail.hidden = true;
+        const full = document.createElement('div'); full.textContent = item.title; detail.appendChild(full);
+        const role = document.createElement('select'); role.setAttribute('aria-label', 'Vai trò');
+        [...new Set([item.role, 'Căn cứ', 'Tham chiếu', 'Dùng chung'])].forEach(value => { const opt = document.createElement('option'); opt.value = value; opt.textContent = value; role.appendChild(opt); });
+        role.value = item.role; role.onchange = () => { if (!document.getElementById('mock-mid-col').classList.contains('edit')) enterMockupEdit(); mockDirtyCount.add(row); updateMockupDirty(); };
+        detail.append('Vai trò: ', role); if (item.note) { const note = document.createElement('div'); note.textContent = item.note; detail.appendChild(note); }
+        name.onclick = () => { detail.hidden = !detail.hidden; };
+        const related = Object.values(SITUATIONS_DB).filter(s => (s[key] || []).some(link => link.title === item.title));
+        const count = document.createElement('button'); count.type = 'button'; count.className = 'linked-action'; count.textContent = `↗${related.length}`; count.title = `Dùng ở ${related.length} tình huống`;
+        count.onclick = () => { switchMockupView('r'); renderView2Details(null, { type: label, title: item.title, sub: item.note || '', content: item.title, appliedSituations: related.map(s => ({ code: s.code, name: s.title, diff: '—' })) }); };
+        const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'rm-lk-btn'; remove.textContent = '✕'; remove.title = 'Gỡ liên kết'; remove.setAttribute('aria-label', 'Gỡ liên kết'); remove.onclick = () => { if (!document.getElementById('mock-mid-col').classList.contains('edit')) enterMockupEdit(); toggleMockUnlink(remove); };
+        line.append(symbol, name);
+        if (key === 'linkedFactors') { const overrides = (data.factors || []).filter(f => !f.isShared).length; if (overrides) { const warning = document.createElement('span'); warning.textContent = `⚠${overrides}`; warning.title = `${overrides} dòng ghi đè`; line.appendChild(warning); } }
+        line.append(count, remove); row.append(line, detail); box.appendChild(row);
       });
-    }
-
-    if (factBox) {
-      factBox.innerHTML = '';
-      (data.linkedFactors || []).forEach(f => {
-        factBox.innerHTML += `
-          <div class="lk sh">
-            <b>${f.title}</b>
-            <div class="row">
-              <span class="tag a">${f.role}</span>
-              ${f.note ? `<span class="tag w">${f.note}</span>` : ''}
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    if (caseBox) {
-      caseBox.innerHTML = '';
-      if (!data.linkedCases || data.linkedCases.length === 0) {
-        caseBox.innerHTML = '<div class="empty">Chưa gắn án lệ nào</div>';
-      } else {
-        data.linkedCases.forEach(c => {
-          caseBox.innerHTML += `
-            <div class="lk">
-              <b>${c.title}</b>
-              <div class="row">
-                <span class="tag a">${c.role}</span>
-                ${c.note ? `<span class="tag">${c.note}</span>` : ''}
-              </div>
-            </div>
-          `;
-        });
-      }
-    }
+      if (!items.length) box.textContent = 'Chưa có liên kết';
+    });
   }
 
   // 5. TREE INTERACTIONS
@@ -4770,9 +4719,10 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
     renderView2Details(ruleId);
   }
 
-  function renderView2Details(ruleId) {
-    let target = null;
+  function renderView2Details(ruleId, selectedRule = null) {
+    let target = selectedRule;
     for (const key of ['laws', 'factors', 'cases']) {
+      if (target) break;
       const found = RULES_LIBRARY[key].find(item => item.id === ruleId);
       if (found) { target = found; break; }
     }
@@ -4802,7 +4752,6 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
         tr.innerHTML = `
           <td><span class="code" style="cursor:pointer;" onclick="jumpToSituationFromView2('${row.code}')">${row.code}</span></td>
           <td><b>${row.name}</b></td>
-          <td><span class="tag a">${row.role}</span></td>
           <td class="val p">${row.diff}</td>
           <td>
             <button type="button" class="btn btn-secondary btn-sm" onclick="jumpToSituationFromView2('${row.code}')">Xem</button>
@@ -4885,6 +4834,7 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
     mockDirtyCount.clear();
 
     mid.classList.add('edit');
+    side?.classList.add('edit');
     if (bar) bar.hidden = false;
     if (edbtn) edbtn.hidden = true;
     if (addrowBox) addrowBox.style.display = 'block';
@@ -4967,7 +4917,8 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
     const lk = btn.closest('.lk');
     if (!lk) return;
     lk.classList.toggle('gone');
-    btn.textContent = lk.classList.contains('gone') ? 'Hoàn tác' : 'Gỡ liên kết';
+    btn.textContent = lk.classList.contains('gone') ? 'Hoàn tác' : '✕';
+    btn.setAttribute('aria-label', lk.classList.contains('gone') ? 'Hoàn tác gỡ liên kết' : 'Gỡ liên kết');
     if (lk.classList.contains('gone')) {
       mockDirtyCount.add(lk);
     } else {
@@ -5010,7 +4961,6 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
     if (!mid) return;
     if (!save && mockMidSnapshot) {
       mid.innerHTML = mockMidSnapshot;
-      if (side && mockSideSnapshot) side.innerHTML = mockSideSnapshot;
     }
 
     mid.classList.remove('edit');
@@ -5020,7 +4970,8 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
 
     mid.querySelectorAll('.editable-col').forEach(el => el.removeAttribute('contenteditable'));
     mid.querySelectorAll('.xd-head, .xd-cell').forEach(el => el.remove());
-    if (side) side.querySelectorAll('.rm-lk-btn').forEach(el => el.remove());
+    side?.classList.remove('edit');
+    if (!save) renderLinkedRulesCol(SITUATIONS_DB[currentSituationCode]);
 
     mockDirtyCount.clear();
   }
@@ -5028,6 +4979,11 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
   function saveMockupEdit(submitApproval) {
     const sit = SITUATIONS_DB[currentSituationCode];
     if (sit) {
+      for (const key of ['linkedLaws', 'linkedFactors', 'linkedCases']) {
+        const rows = [...document.querySelectorAll(`#mock-side-col .linked-row[data-key="${key}"]`)];
+        rows.forEach(row => { const item = sit[key]?.[Number(row.dataset.index)]; if (item && !row.classList.contains('gone')) item.role = row.querySelector('select').value; });
+        sit[key] = (sit[key] || []).filter((_, index) => !rows.some(row => Number(row.dataset.index) === index && row.classList.contains('gone')));
+      }
       sit.status = submitApproval ? 'Chờ duyệt' : 'Bản nháp';
       // Persist edited narrative
       const nSit = document.getElementById('narrative-situation');
