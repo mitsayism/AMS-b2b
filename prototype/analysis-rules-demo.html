@@ -1686,8 +1686,22 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
   padding: 10px 12px;
   white-space: nowrap;
   position: sticky;
-  top: 31px;
+  top: 0;
   z-index: 4;
+}
+.cmp-table thead tr.col-row th.sticky-c1 {
+  position: sticky;
+  left: 0;
+  top: 0;
+  z-index: 6;
+  background: #0f1c2d;
+}
+.cmp-table thead tr.col-row th.sticky-c2 {
+  position: sticky;
+  left: 130px;
+  top: 0;
+  z-index: 6;
+  background: #0f1c2d;
 }
 .cmp-table thead tr.col-row th.sortable {
   cursor: pointer;
@@ -2026,6 +2040,162 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
 .narrative-textarea:focus {
   outline: none;
   box-shadow: 0 0 0 2px rgba(6,182,212,0.25);
+}
+
+
+/* ==========================================================================
+   COMPACT COMPARISON SPEC (6 COLUMNS, JOURNEY ROW, 3 KPIS & DEEP ANALYSIS)
+   ========================================================================== */
+.deep-analysis-drawer {
+  background: #09131f;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin-bottom: 14px;
+}
+.deep-analysis-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+@media (max-width: 1000px) {
+  .deep-analysis-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Journey row */
+.expand-journey-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 9px 14px;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+.journey-node {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+}
+.journey-node small {
+  font-size: 9.5px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 700;
+}
+.journey-node.ai {
+  background: rgba(6, 182, 212, 0.12);
+  color: var(--cyan);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+}
+.journey-node.concluded {
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--emerald);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+.journey-node.step {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.journey-node.match {
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--emerald);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+.journey-arrow {
+  color: var(--text-dim);
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.journey-tag {
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+.journey-tag.chart {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--amber);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+.journey-tag.factor {
+  background: rgba(56, 189, 248, 0.12);
+  color: var(--cyan);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+}
+.journey-tag.match {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--emerald);
+}
+
+/* Clean diff list */
+.diff-clean-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+.diff-clean-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* Expand input row */
+.expand-input-row {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+}
+@media (max-width: 800px) {
+  .expand-input-row { grid-template-columns: 1fr; }
+}
+.expand-input-label {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 5px;
+}
+.btn-toggle-full-blocks {
+  background: none;
+  border: none;
+  color: var(--cyan);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: opacity 0.15s ease;
+}
+.btn-toggle-full-blocks:hover {
+  text-decoration: underline;
+  opacity: 0.85;
 }
 
 </style>
@@ -2941,31 +3111,26 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
         </div>
       </div>
 
-      <!-- Phần số tổng hợp phía trên bảng (4 KPI Cards) -->
-      <div class="compare-kpi-grid">
+                        <!-- Phần số tổng hợp phía trên bảng (Chỉ hiển thị 3 số chuẩn theo yêu cầu) -->
+      <div class="compare-kpi-grid" style="grid-template-columns: repeat(3, 1fr);">
         <div class="compare-kpi-card">
           <span class="compare-kpi-label">Tỷ lệ Chart giống nhau</span>
           <strong class="compare-kpi-val" id="kpi-chart-match-rate">85.0%</strong>
           <span class="compare-kpi-sub" id="kpi-chart-match-sub">17 / 20 vụ trùng khớp</span>
         </div>
         <div class="compare-kpi-card">
-          <span class="compare-kpi-label">Lệch trong ngưỡng xanh (≤5pp)</span>
-          <strong class="compare-kpi-val" id="kpi-green-ratio" style="color:var(--emerald);">70.0%</strong>
-          <span class="compare-kpi-sub" id="kpi-green-sub">14 vụ lệch nhẹ hoặc bằng nhau</span>
-        </div>
-        <div class="compare-kpi-card">
-          <span class="compare-kpi-label">Chênh lệch tuyệt đối TB</span>
+          <span class="compare-kpi-label">Chênh lệch trung bình (pp)</span>
           <strong class="compare-kpi-val" id="kpi-avg-diff">5.5 pp</strong>
-          <span class="compare-kpi-sub" id="kpi-avg-diff-sub">Trung bình độ lệch bên A</span>
+          <span class="compare-kpi-sub" id="kpi-avg-diff-sub">Độ lệch trung bình bên A</span>
         </div>
         <div class="compare-kpi-card">
-          <span class="compare-kpi-label">Nguyên nhân lệch nhiều nhất</span>
-          <strong class="compare-kpi-val" id="kpi-top-reason" style="font-size:14px; line-height:1.4; color:var(--amber);">Bằng chứng bổ sung</strong>
-          <span class="compare-kpi-sub" id="kpi-top-reason-sub">3 vụ việc ghi nhận</span>
+          <span class="compare-kpi-label">Số vụ việc (Cỡ mẫu)</span>
+          <strong class="compare-kpi-val" id="kpi-sample-size" style="color:var(--cyan);">20 vụ</strong>
+          <span class="compare-kpi-sub" id="kpi-sample-sub">17 vụ tính KPI sau khi loại thương lượng</span>
         </div>
       </div>
 
-      <!-- Công tắc: Loại trừ các vụ lệch do thương lượng -->
+      <!-- Công tắc: Loại trừ thương lượng & Nút mở ngăn Phân tích chuyên sâu -->
       <div class="compare-toggle-bar">
         <div class="compare-toggle-left">
           <label class="compare-switch">
@@ -2979,7 +3144,58 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
             </span>
           </div>
         </div>
-        <span class="tag" id="negotiation-filter-status" style="font-size:11px;">Đang bật: Đã loại 3 vụ</span>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span class="tag" id="negotiation-filter-status" style="font-size:11px;">Đang bật: Đã loại 3 vụ</span>
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-deep-analysis" onclick="toggleDeepAnalysisDrawer()" style="font-size:11.5px; padding:3px 9px;" title="Mở ngăn phân tích sâu về biểu đồ lệch, yếu tố và xu hướng">
+            <span id="deep-analysis-btn-text">📊 Phân tích chuyên sâu ⌄</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Ngăn Phân tích chuyên sâu (Mặc định đóng) -->
+      <div id="deep-analysis-drawer" class="deep-analysis-drawer" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.06);">
+          <span style="font-size:12px; font-weight:700; color:var(--cyan); text-transform:uppercase; letter-spacing:0.05em;">📊 Phân Tích Chuyên Sâu Về Sai Lệch &amp; Xu Hướng</span>
+          <button type="button" onclick="toggleDeepAnalysisDrawer()" style="background:none; border:none; color:var(--text-dim); cursor:pointer; font-size:13px;">✕ Đóng</button>
+        </div>
+        <div class="deep-analysis-grid">
+          <!-- Khối 1: Chart bị lệch nhiều nhất -->
+          <div class="expand-block">
+            <div class="expand-block-header">
+              <span style="color:var(--amber);">Chart bị lệch nhiều nhất</span>
+            </div>
+            <div id="deep-top-charts" style="font-size:12px; color:var(--text-main); display:flex; flex-direction:column; gap:4px;">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <!-- Khối 2: Yếu tố bị thêm/bỏ nhiều nhất -->
+          <div class="expand-block">
+            <div class="expand-block-header">
+              <span style="color:var(--rose);">Yếu tố bị thêm / bỏ nhiều nhất</span>
+            </div>
+            <div id="deep-top-factors" style="font-size:12px; color:var(--text-main); display:flex; flex-direction:column; gap:4px;">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <!-- Khối 3: Phân bố nguyên nhân lệch -->
+          <div class="expand-block">
+            <div class="expand-block-header">
+              <span style="color:var(--cyan);">Phân bố nguyên nhân lệch</span>
+            </div>
+            <div id="deep-reason-dist" style="font-size:11.5px; color:var(--text-main); display:flex; flex-direction:column; gap:4px;">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <!-- Khối 4: Xu hướng theo tháng -->
+          <div class="expand-block">
+            <div class="expand-block-header">
+              <span style="color:var(--emerald);">Xu hướng chênh lệch</span>
+            </div>
+            <div id="deep-monthly-trend" style="font-size:12px; color:var(--text-main); display:flex; flex-direction:column; gap:4px;">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Bộ lọc và tìm kiếm -->
@@ -3018,34 +3234,22 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
         </select>
       </div>
 
-      <!-- BẢNG SO SÁNH (5 NHÓM CỘT, STICKY LEFT, EXPANDABLE) -->
+      <!-- BẢNG SO SÁNH (6 CỘT CHẾ ĐỘ GỌN, STICKY LEFT, EXPANDABLE) -->
       <div class="compare-table-container">
         <table class="cmp-table" id="comparison-main-table">
           <thead>
-            <!-- HÀNG TIÊU ĐỀ NHÓM -->
-            <tr class="group-row">
-              <th colspan="2" class="sticky-group">1. VỤ VIỆC</th>
-              <th colspan="2">2. KẾT QUẢ AI ĐƯA RA</th>
-              <th colspan="2">3. KẾT QUẢ CHỐT</th>
-              <th colspan="2">4. SO SÁNH</th>
-              <th colspan="2">5. LÝ DO &amp; GHI CHÚ</th>
-            </tr>
-            <!-- HÀNG TIÊU ĐỀ CỘT -->
             <tr class="col-row">
               <th class="sticky-c1" style="min-width:130px;">Mã vụ việc</th>
-              <th class="sticky-c2" style="min-width:115px;">Thời gian</th>
-              <th style="min-width:200px;">Chart AI chọn</th>
-              <th style="min-width:90px; text-align:center;">Tỷ lệ AI</th>
-              <th style="min-width:190px;">Chart chốt</th>
-              <th style="min-width:90px; text-align:center;">Tỷ lệ chốt</th>
-              <th style="min-width:95px; text-align:center;">Khớp Chart</th>
-              <th class="sortable" onclick="toggleSortDiff()" style="min-width:135px; text-align:center;" title="Bấm để sắp xếp theo giá trị tuyệt đối chênh lệch" id="th-sort-diff">
-                Chênh lệch tỷ lệ <span id="sort-diff-icon">⇅</span>
+              <th class="sticky-c2" style="min-width:110px;">Thời gian</th>
+              <th style="min-width:240px;">Chart (AI → Chốt)</th>
+              <th style="min-width:125px; text-align:center;">Tỷ lệ (AI → Chốt)</th>
+              <th class="sortable" onclick="toggleSortDiff()" style="min-width:130px; text-align:center;" title="Bấm để sắp xếp theo giá trị tuyệt đối chênh lệch" id="th-sort-diff">
+                Chênh lệch <span id="sort-diff-icon">⇅</span>
               </th>
-              <th style="min-width:220px;">Nguyên nhân lệch</th>
-              <th style="min-width:200px;">Ghi chú</th>
+              <th style="min-width:240px;">Nguyên nhân lệch</th>
             </tr>
           </thead>
+
           <tbody id="comparison-table-tbody">
             <!-- Rendered by JS -->
           </tbody>
@@ -5553,8 +5757,22 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
   padding: 10px 12px;
   white-space: nowrap;
   position: sticky;
-  top: 31px;
+  top: 0;
   z-index: 4;
+}
+.cmp-table thead tr.col-row th.sticky-c1 {
+  position: sticky;
+  left: 0;
+  top: 0;
+  z-index: 6;
+  background: #0f1c2d;
+}
+.cmp-table thead tr.col-row th.sticky-c2 {
+  position: sticky;
+  left: 130px;
+  top: 0;
+  z-index: 6;
+  background: #0f1c2d;
 }
 .cmp-table thead tr.col-row th.sortable {
   cursor: pointer;
@@ -6972,7 +7190,7 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
     }
   ];
 
-  // Helper: compute diff metrics for a case
+    // Helper: compute diff metrics for a case
   function getCaseDiffMetrics(c) {
     const diff = c.concluded.finalA - c.ai.finalA; // điểm % lệch của bên A
     const absDiff = Math.abs(diff);
@@ -6982,10 +7200,10 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
     let text = '= 0';
     if (diff > 0) {
       sign = '▲';
-      text = `▲ +${diff}pp`;
+      text = `▲ A +${diff}pp`;
     } else if (diff < 0) {
       sign = '▼';
-      text = `▼ ${diff}pp`;
+      text = `▼ A ${diff}pp`;
     }
 
     let level = 'green';
@@ -7004,8 +7222,24 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
 
   // State Management
   let cmpExpandedSet = new Set();
+  let cmpFullDetailSet = new Set();
   let cmpSortDiffMode = 'none'; // 'none' | 'desc' | 'asc'
   let cmpActiveQuickFilter = 'all'; // 'all' | 'diff' | 'chart_diff'
+  let cmpDeepAnalysisOpen = false;
+
+  function toggleDeepAnalysisDrawer() {
+    cmpDeepAnalysisOpen = !cmpDeepAnalysisOpen;
+    const drawer = document.getElementById('deep-analysis-drawer');
+    const btnText = document.getElementById('deep-analysis-btn-text');
+    if (drawer) drawer.style.display = cmpDeepAnalysisOpen ? 'block' : 'none';
+    if (btnText) btnText.textContent = cmpDeepAnalysisOpen ? '📊 Phân tích chuyên sâu ⌃' : '📊 Phân tích chuyên sâu ⌄';
+  }
+
+  function toggleCaseFullDetail(caseId) {
+    if (cmpFullDetailSet.has(caseId)) cmpFullDetailSet.delete(caseId);
+    else cmpFullDetailSet.add(caseId);
+    renderComparisonTable();
+  }
 
   // Render & Calculate Engine
   function renderComparisonTable() {
@@ -7055,17 +7289,17 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
       filtered.sort((a, b) => getCaseDiffMetrics(a).absDiff - getCaseDiffMetrics(b).absDiff);
     }
 
-    // Update KPI Summary Cards
+    // Update KPI Summary Cards (3 cards) & Deep Analysis Drawer
     calculateComparisonKPIs(filtered, excludeNegotiated);
 
     // Update Total Badge
     const badgeTotal = document.getElementById('cmp-total-badge');
     if (badgeTotal) badgeTotal.textContent = `${filtered.length} / ${COMPARISON_CASES.length} vụ hiển thị`;
 
-    // Render Table Rows
+    // Render 6-Column Compact Table Rows
     tbody.innerHTML = '';
     if (filtered.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:32px; color:var(--text-muted);">Không tìm thấy vụ việc nào phù hợp với điều kiện lọc.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:32px; color:var(--text-muted);">Không tìm thấy vụ việc nào phù hợp với điều kiện lọc.</td></tr>`;
       return;
     }
 
@@ -7076,7 +7310,7 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
       const isDimmed = (excludeNegotiated && isNegotiated);
       const isFullyMatched = (m.chartMatch && m.diff === 0);
 
-      // Main Row
+      // Main Compact Row (6 Columns)
       const tr = document.createElement('tr');
       tr.className = `case-row ${isExpanded ? 'expanded' : ''} ${isDimmed ? 'dimmed-negotiation' : ''}`;
       tr.id = `row-${c.id.replace('#', '')}`;
@@ -7084,7 +7318,6 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
       tr.setAttribute('role', 'button');
       tr.setAttribute('aria-expanded', String(isExpanded));
       tr.onclick = (e) => {
-        // Prevent toggle if clicking input/select directly
         if (['SELECT', 'INPUT', 'BUTTON', 'A'].includes(e.target.tagName)) return;
         toggleExpandRow(c.id);
       };
@@ -7096,75 +7329,82 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
         }
       };
 
+      // 1. Chart column compact
+      let chartColHtml = '';
+      if (m.chartMatch) {
+        chartColHtml = `
+          <div style="font-weight:600; color:#fff; font-size:12px; display:flex; align-items:center; gap:6px;" title="AI đề xuất với độ tin cậy: ${c.ai.confidence}%">
+            <span class="code" style="padding:2px 5px; font-size:11px;">${c.ai.chartCode}</span>
+            <span>${c.ai.chartName}</span>
+          </div>
+        `;
+      } else {
+        chartColHtml = `
+          <div style="display:flex; align-items:center; gap:6px;" title="AI: ${c.ai.chartCode} (độ tin cậy ${c.ai.confidence}%) → Chốt: ${c.concluded.chartCode}">
+            <span style="width:7px; height:7px; border-radius:50%; background:var(--amber); display:inline-block; flex-shrink:0;" title="Biểu đồ khác nhau"></span>
+            <span class="code" style="padding:2px 5px; font-size:11px; color:#cbd5e1;">${c.ai.chartCode}</span>
+            <span style="color:var(--text-dim); font-size:11px;">→</span>
+            <span class="code o" style="padding:2px 5px; font-size:11px; font-weight:700;">${c.concluded.chartCode}</span>
+            <span style="color:var(--text-muted); font-size:11.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:130px;">${c.concluded.chartName}</span>
+          </div>
+        `;
+      }
+
+      // 2. Fault ratio compact (AI -> Concluded)
+      let ratioColHtml = '';
+      if (c.ai.finalA === c.concluded.finalA && c.ai.finalB === c.concluded.finalB) {
+        ratioColHtml = `<span style="font-family:var(--font-mono); font-weight:700; color:#fff; font-size:12.5px;">${c.ai.finalA}:${c.ai.finalB}</span>`;
+      } else {
+        ratioColHtml = `
+          <span style="font-family:var(--font-mono); font-size:11.5px; color:var(--text-dim);">${c.ai.finalA}:${c.ai.finalB}</span>
+          <span style="color:var(--text-dim); font-size:10px; margin:0 3px;">→</span>
+          <span style="font-family:var(--font-mono); font-weight:700; color:#fff; font-size:12.5px;">${c.concluded.finalA}:${c.concluded.finalB}</span>
+        `;
+      }
+
       tr.innerHTML = `
-        <!-- 1. VỤ VIỆC (CỐ ĐỊNH TRÁI) -->
+        <!-- 1. Mã vụ việc (Cố định trái) -->
         <td class="sticky-c1">
           <div style="display:flex; align-items:center; gap:6px;">
             <span style="font-size:11px; color:var(--cyan); transition:transform 0.15s ease; display:inline-block; transform:${isExpanded ? 'rotate(90deg)' : 'none'};">▶</span>
             <b style="color:var(--cyan); font-family:var(--font-mono); font-size:12.5px;">${c.id}</b>
           </div>
-          ${isNegotiated && excludeNegotiated ? `<div style="font-size:9.5px; color:var(--amber); margin-top:2px;">${COMPARISON_CONFIG.labels.negotiatedBadge}</div>` : ''}
         </td>
+
+        <!-- 2. Thời gian (Cố định trái) -->
         <td class="sticky-c2">
           <span style="font-size:11.5px; color:var(--text-muted); font-family:var(--font-mono);">${c.date}</span>
         </td>
 
-        <!-- 2. KẾT QUẢ AI -->
+        <!-- 3. Chart: 1 ô (Giống hiện 1 lần, khác hiện AI → Chốt kèm chấm cảnh báo) -->
         <td>
-          <div style="font-weight:600; color:#fff; font-size:12.5px;">
-            <span class="code" style="padding:2px 5px; font-size:11px; margin-right:4px;">${c.ai.chartCode}</span>
-            ${c.ai.chartName}
-          </div>
-          <div style="font-size:11px; color:var(--text-dim); margin-top:2px;">
-            Độ tin cậy: <b style="color:var(--cyan);">${c.ai.confidence}%</b>
-          </div>
-        </td>
-        <td style="text-align:center;">
-          <span style="font-family:var(--font-mono); font-weight:700; color:#fff; font-size:13px;">${c.ai.finalA} : ${c.ai.finalB}</span>
+          ${chartColHtml}
         </td>
 
-        <!-- 3. KẾT QUẢ CHỐT -->
-        <td>
-          <div style="font-weight:600; color:#fff; font-size:12.5px;">
-            <span class="code ${m.chartMatch ? 'o' : ''}" style="padding:2px 5px; font-size:11px; margin-right:4px; ${!m.chartMatch ? 'background:var(--amber); color:#000;' : ''}">${c.concluded.chartCode}</span>
-            ${c.concluded.chartName}
-          </div>
-        </td>
+        <!-- 4. Tỷ lệ: 1 ô A:B (AI) → A:B (Chốt) -->
         <td style="text-align:center;">
-          <span style="font-family:var(--font-mono); font-weight:700; color:#fff; font-size:13px;">${c.concluded.finalA} : ${c.concluded.finalB}</span>
+          ${ratioColHtml}
         </td>
 
-        <!-- 4. SO SÁNH -->
-        <td style="text-align:center;">
-          <span class="tag ${m.chartMatch ? '' : 'w'}" style="font-size:11px; padding:2px 7px;">
-            ${m.chartMatch ? COMPARISON_CONFIG.labels.matchSame : COMPARISON_CONFIG.labels.matchDiff}
-          </span>
-        </td>
+        <!-- 5. Chênh lệch: ▲ A +Xpp / ▼ A -Ypp -->
         <td style="text-align:center;">
           <span class="diff-pill ${m.level}" title="Điểm % lệch bên A: ${m.diff}pp">
             ${m.text}
           </span>
         </td>
 
-        <!-- 5. LÝ DO & GHI CHÚ -->
-        <td onclick="event.stopPropagation()">
-          ${isFullyMatched ? `<span style="color:var(--text-dim); font-size:13px;">${COMPARISON_CONFIG.labels.empty}</span>` : `
-            <select class="table-inline-select" onchange="handleCaseReasonChange('${c.id}', this.value)" title="Chọn nguyên nhân sai lệch">
-              <option value="">-- Chưa chọn --</option>
-              ${COMPARISON_CONFIG.reasons.map(r => `<option value="${r}" ${c.reason === r ? 'selected' : ''}>${r}</option>`).join('')}
-            </select>
+        <!-- 6. Nguyên nhân lệch: Chỉ hiển thị, không sửa trên dòng bảng -->
+        <td>
+          ${isFullyMatched ? `<span style="color:var(--text-dim); font-size:12px;">—</span>` : `
+            <span style="font-size:12px; color:${c.reason ? 'var(--text-main)' : 'var(--text-dim)'}; ${c.reason ? 'font-weight:500;' : 'font-style:italic;'}">
+              ${c.reason || 'Chưa chọn'}
+            </span>
           `}
-        </td>
-        <td onclick="event.stopPropagation()">
-          <div style="display:flex; align-items:center; gap:4px;">
-            <input type="text" class="table-inline-input" value="${c.notes || ''}" placeholder="Nhập ghi chú..." onblur="handleCaseNotesBlur('${c.id}', this.value, this)" onkeydown="if(event.key==='Enter') this.blur()" />
-            <span class="autosave-tag" id="save-tag-${c.id.replace('#', '')}">${COMPARISON_CONFIG.labels.autoSaved}</span>
-          </div>
         </td>
       `;
       tbody.appendChild(tr);
 
-      // Expandable Row
+      // Expandable Row: 1 Khối duy nhất gồm đúng 4 phần (Đường đi, Khác biệt, Nhập Nguyên nhân/Ghi chú, Link xem chi tiết)
       if (isExpanded) {
         const expandTr = document.createElement('tr');
         expandTr.className = 'expand-row';
@@ -7184,102 +7424,192 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
           }
         });
 
+        // 1. DÒNG ĐƯỜNG ĐI (Step-by-step Journey)
+        const chartChanged = (c.ai.chartCode !== c.concluded.chartCode);
+        const diffChartA = c.concluded.baseA - c.ai.baseA; // Lệch do đổi chart
+        const diffFactorA = (c.concluded.finalA - c.concluded.baseA) - (c.ai.finalA - c.ai.baseA); // Lệch do yếu tố
+
+        let journeyHtml = '';
+        if (chartChanged) {
+          const signChart = diffChartA >= 0 ? `+${diffChartA}` : `${diffChartA}`;
+          const signFactor = diffFactorA >= 0 ? `+${diffFactorA}` : `${diffFactorA}`;
+          journeyHtml = `
+            <div class="expand-journey-row">
+              <span class="journey-node ai">
+                <small>AI</small> <b>${c.ai.finalA}:${c.ai.finalB}</b>
+              </span>
+              <span class="journey-arrow">
+                → <span class="journey-tag chart">đổi chart (${c.ai.chartCode} → ${c.concluded.chartCode}: ${signChart}pp)</span> →
+              </span>
+              <span class="journey-node step">
+                <small>Cơ bản</small> <b>${c.concluded.baseA}:${c.concluded.baseB}</b>
+              </span>
+              <span class="journey-arrow">
+                → <span class="journey-tag factor">yếu tố (${signFactor}pp)</span> →
+              </span>
+              <span class="journey-node concluded">
+                <small>Chốt</small> <b>${c.concluded.finalA}:${c.concluded.finalB}</b>
+              </span>
+            </div>
+          `;
+        } else if (m.diff !== 0) {
+          const signDiff = m.diff >= 0 ? `+${m.diff}` : `${m.diff}`;
+          journeyHtml = `
+            <div class="expand-journey-row">
+              <span class="journey-node ai">
+                <small>AI</small> <b>${c.ai.finalA}:${c.ai.finalB}</b>
+              </span>
+              <span class="journey-arrow">
+                → <span class="journey-tag factor">điều chỉnh yếu tố (${signDiff}pp)</span> →
+              </span>
+              <span class="journey-node concluded">
+                <small>Chốt</small> <b>${c.concluded.finalA}:${c.concluded.finalB}</b>
+              </span>
+            </div>
+          `;
+        } else {
+          journeyHtml = `
+            <div class="expand-journey-row">
+              <span class="journey-node ai">
+                <small>AI</small> <b>${c.ai.finalA}:${c.ai.finalB}</b>
+              </span>
+              <span class="journey-arrow">
+                → <span class="journey-tag match">khớp hoàn toàn (= 0)</span> →
+              </span>
+              <span class="journey-node match">
+                <small>Chốt</small> <b>${c.concluded.finalA}:${c.concluded.finalB}</b>
+              </span>
+            </div>
+          `;
+        }
+
+        // 2. DANH SÁCH KHÁC BIỆT GỌN (Mỗi dòng 1 yếu tố, không viết câu giải thích)
+        const diffItems = [];
+        if (chartChanged) {
+          diffItems.push(`
+            <div class="diff-clean-item">
+              <span class="tag w" style="font-size:10px;">Đổi chart</span>
+              <span style="color:#cbd5e1;">${c.ai.chartCode} → <b style="color:var(--cyan);">${c.concluded.chartCode}</b></span>
+              <span style="color:var(--text-muted); font-size:11.5px;">(${c.concluded.chartName})</span>
+            </div>
+          `);
+        }
+        aiOnly.forEach(f => {
+          diffItems.push(`
+            <div class="diff-clean-item">
+              <span class="tag" style="font-size:10px; color:var(--rose); border-color:var(--rose);">AI thêm</span>
+              <span style="color:#cbd5e1;">${f.name}</span>
+              <span class="code" style="padding:1px 5px; font-size:10.5px;">Bên ${f.side}</span>
+              <b style="color:var(--rose);">${f.val}</b>
+            </div>
+          `);
+        });
+        conOnly.forEach(f => {
+          diffItems.push(`
+            <div class="diff-clean-item">
+              <span class="tag a" style="font-size:10px;">Bổ sung</span>
+              <span style="color:#cbd5e1;">${f.name}</span>
+              <span class="code" style="padding:1px 5px; font-size:10.5px;">Bên ${f.side}</span>
+              <b style="color:var(--emerald);">${f.val}</b>
+            </div>
+          `);
+        });
+        changed.forEach(f => {
+          diffItems.push(`
+            <div class="diff-clean-item">
+              <span class="tag w" style="font-size:10px;">Đổi giá trị</span>
+              <span style="color:#cbd5e1;">${f.name}</span>
+              <span class="code" style="padding:1px 5px; font-size:10.5px;">Bên ${f.side}</span>
+              <span style="color:var(--text-muted); text-decoration:line-through;">${f.from}</span>
+              <span style="color:var(--text-dim); font-size:11px;">→</span>
+              <b style="color:var(--cyan);">${f.to}</b>
+            </div>
+          `);
+        });
+
+        let diffSectionHtml = '';
+        if (diffItems.length === 0) {
+          diffSectionHtml = `<div style="font-size:12px; color:var(--text-dim); font-style:italic; margin-bottom:12px;">Không có khác biệt về biểu đồ và yếu tố điều chỉnh.</div>`;
+        } else {
+          diffSectionHtml = `<div class="diff-clean-list">${diffItems.join('')}</div>`;
+        }
+
+        // 4. KIỂM TRA TRẠNG THÁI KHỐI ĐẦY ĐỦ
+        const isFullDetailOpen = cmpFullDetailSet.has(c.id);
+
         expandTr.innerHTML = `
-          <td colspan="10" style="padding:0; border-bottom:2px solid var(--border);">
+          <td colspan="6" style="padding:0; border-bottom:2px solid var(--border);">
             <div class="expand-cell-wrap">
-              <!-- Grid 2 khối cạnh nhau: AI vs Chốt -->
-              <div class="expand-blocks-grid">
-                <!-- Khối AI -->
-                <div class="expand-block">
-                  <div class="expand-block-header">
-                    <span style="color:var(--cyan);">KẾT QUẢ AI ĐỀ XUẤT</span>
-                    <span class="tag a" style="font-size:10px;">Độ tin cậy: ${c.ai.confidence}%</span>
-                  </div>
-                  <div style="font-size:13px; font-weight:600; color:#fff; margin-bottom:4px;">
-                    ${c.ai.chartCode} · ${c.ai.chartName}
-                  </div>
-                  <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">
-                    Tỷ lệ cơ bản: <b style="color:var(--text-main); font-family:var(--font-mono);">${c.ai.baseA} : ${c.ai.baseB}</b>
-                  </div>
-                  <div style="font-size:11px; font-weight:700; color:var(--text-dim); text-transform:uppercase; margin-bottom:4px;">Yếu tố điều chỉnh AI:</div>
-                  ${aiFactors.length === 0 ? '<div style="font-size:12px; color:var(--text-dim); font-style:italic;">Không áp dụng yếu tố gia giảm</div>' : `
-                    <ul style="margin:0; padding-left:18px; font-size:12px; color:var(--text-main);">
-                      ${aiFactors.map(f => `<li><b>Bên ${f.side}:</b> ${f.name} (<span style="color:var(--amber); font-weight:700;">${f.val}</span>)</li>`).join('')}
-                    </ul>
-                  `}
-                </div>
+              <!-- Phần 1: Dòng đường đi -->
+              ${journeyHtml}
 
-                <!-- Khối Chốt -->
-                <div class="expand-block">
-                  <div class="expand-block-header">
-                    <span style="color:var(--emerald);">KẾT QUẢ CHUYÊN VIÊN CHỐT</span>
-                    <span class="tag" style="font-size:10px;">Chốt sau thương lượng</span>
-                  </div>
-                  <div style="font-size:13px; font-weight:600; color:#fff; margin-bottom:4px;">
-                    ${c.concluded.chartCode} · ${c.concluded.chartName}
-                  </div>
-                  <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">
-                    Tỷ lệ cơ bản: <b style="color:var(--text-main); font-family:var(--font-mono);">${c.concluded.baseA} : ${c.concluded.baseB}</b>
-                  </div>
-                  <div style="font-size:11px; font-weight:700; color:var(--text-dim); text-transform:uppercase; margin-bottom:4px;">Yếu tố điều chỉnh chốt:</div>
-                  ${conFactors.length === 0 ? '<div style="font-size:12px; color:var(--text-dim); font-style:italic;">Không áp dụng yếu tố gia giảm</div>' : `
-                    <ul style="margin:0; padding-left:18px; font-size:12px; color:var(--text-main);">
-                      ${conFactors.map(f => `<li><b>Bên ${f.side}:</b> ${f.name} (<span style="color:var(--emerald); font-weight:700;">${f.val}</span>)</li>`).join('')}
-                    </ul>
-                  `}
-                </div>
-              </div>
+              <!-- Phần 2: Danh sách khác biệt gọn -->
+              ${diffSectionHtml}
 
-              <!-- Khối Khác biệt tô nổi -->
-              <div class="expand-diff-box">
-                <div class="expand-diff-header">
-                  <span>⚡ KHÁC BIỆT GIỮA AI VÀ KẾT QUẢ CHỐT</span>
-                </div>
-                <div class="expand-diff-list">
-                  ${!m.chartMatch ? `
-                    <div class="expand-diff-item">
-                      <span class="tag w" style="font-size:10.5px;">Khác Chart</span>
-                      <span>AI chọn <b>${c.ai.chartCode}</b>, chuyên viên chốt chọn <b>${c.concluded.chartCode}</b> (Chênh lệch tình huống nhận định).</span>
-                    </div>
-                  ` : ''}
-                  ${aiOnly.map(f => `
-                    <div class="expand-diff-item">
-                      <span class="tag" style="font-size:10.5px; color:var(--rose); border-color:var(--rose);">AI thêm · Chuyên viên bỏ</span>
-                      <span>Yếu tố: <b>${f.name}</b> (${f.val}) cho bên ${f.side}.</span>
-                    </div>
-                  `).join('')}
-                  ${conOnly.map(f => `
-                    <div class="expand-diff-item">
-                      <span class="tag a" style="font-size:10.5px;">Chuyên viên bổ sung</span>
-                      <span>Yếu tố: <b>${f.name}</b> (${f.val}) cho bên ${f.side}.</span>
-                    </div>
-                  `).join('')}
-                  ${changed.map(f => `
-                    <div class="expand-diff-item">
-                      <span class="tag w" style="font-size:10.5px;">Thay đổi giá trị</span>
-                      <span>Yếu tố: <b>${f.name}</b> (Bên ${f.side}): Giá trị AI đề xuất <span style="text-decoration:line-through; color:var(--text-muted);">${f.from}</span> ➔ Chốt: <b style="color:var(--cyan);">${f.to}</b>.</span>
-                    </div>
-                  `).join('')}
-                  ${m.chartMatch && aiOnly.length === 0 && conOnly.length === 0 && changed.length === 0 ? `
-                    <div style="font-size:12px; color:var(--text-muted); font-style:italic;">Không có khác biệt về yếu tố điều chỉnh hay biểu đồ va chạm.</div>
-                  ` : ''}
-                </div>
-              </div>
-
-              <!-- Chỉnh sửa nguyên nhân & ghi chú trong dòng mở rộng -->
-              <div style="display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap; background:rgba(255,255,255,0.02); padding:10px 14px; border-radius:6px; border:1px solid rgba(255,255,255,0.05);">
-                <div style="flex:1; min-width:240px;">
-                  <label style="display:block; font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px;">Nguyên nhân lệch:</label>
-                  <select class="table-inline-select" style="max-width:100%;" onchange="handleCaseReasonChange('${c.id}', this.value)">
-                    <option value="">-- Chưa chọn nguyên nhân --</option>
-                    ${COMPARISON_CONFIG.reasons.map(r => `<option value="${r}" ${c.reason === r ? 'selected' : ''}>${r}</option>`).join('')}
-                  </select>
-                </div>
-                <div style="flex:2; min-width:280px;">
-                  <label style="display:block; font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px;">Ghi chú chi tiết vụ việc:</label>
+              <!-- Phần 3: Nguyên nhân lệch & Ghi chú (NƠI NHẬP DUY NHẤT) -->
+              <div class="expand-input-row">
+                <div>
+                  <label class="expand-input-label">NGUYÊN NHÂN LỆCH</label>
                   <div style="display:flex; align-items:center; gap:6px;">
-                    <input type="text" class="table-inline-input" style="width:100%;" value="${c.notes || ''}" placeholder="Nhập ghi chú giải thích căn cứ chốt..." onblur="handleCaseNotesBlur('${c.id}', this.value, this)" onkeydown="if(event.key==='Enter') this.blur()" />
-                    <span class="autosave-tag" id="save-tag-exp-${c.id.replace('#', '')}">${COMPARISON_CONFIG.labels.autoSaved}</span>
+                    <select class="table-inline-select" style="max-width:100%;" onchange="handleCaseReasonChange('${c.id}', this.value)">
+                      <option value="">-- Chọn nguyên nhân lệch --</option>
+                      ${COMPARISON_CONFIG.reasons.map(r => `<option value="${r}" ${c.reason === r ? 'selected' : ''}>${r}</option>`).join('')}
+                    </select>
+                    <span class="autosave-tag" id="save-tag-reason-${c.id.replace('#', '')}">${COMPARISON_CONFIG.labels.autoSaved}</span>
+                  </div>
+                </div>
+                <div>
+                  <label class="expand-input-label">GHI CHÚ VỤ VIỆC</label>
+                  <div style="display:flex; align-items:center; gap:6px;">
+                    <input type="text" class="table-inline-input" style="width:100%;" value="${c.notes || ''}" placeholder="Nhập ghi chú chi tiết..." onblur="handleCaseNotesBlur('${c.id}', this.value, this)" onkeydown="if(event.key==='Enter') this.blur()" />
+                    <span class="autosave-tag" id="save-tag-notes-${c.id.replace('#', '')}">${COMPARISON_CONFIG.labels.autoSaved}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Phần 4: Link Xem chi tiết AI và chốt (Mặc định đóng) -->
+              <div style="margin-top:8px;">
+                <button type="button" class="btn-toggle-full-blocks" onclick="toggleCaseFullDetail('${c.id}')" id="btn-toggle-detail-${c.id.replace('#', '')}">
+                  <span>${isFullDetailOpen ? '⌃ Thu gọn chi tiết AI và chốt' : '🔍 Xem chi tiết AI và chốt ⌄'}</span>
+                </button>
+                <div id="full-blocks-${c.id.replace('#', '')}" class="expand-blocks-grid" style="margin-top:10px; display:${isFullDetailOpen ? 'grid' : 'none'};">
+                  <!-- Khối AI đầy đủ -->
+                  <div class="expand-block">
+                    <div class="expand-block-header">
+                      <span style="color:var(--cyan);">KẾT QUẢ AI ĐỀ XUẤT</span>
+                      <span class="tag a" style="font-size:10px;">Độ tin cậy: ${c.ai.confidence}%</span>
+                    </div>
+                    <div style="font-size:12.5px; font-weight:600; color:#fff; margin-bottom:4px;">
+                      ${c.ai.chartCode} · ${c.ai.chartName}
+                    </div>
+                    <div style="font-size:11.5px; color:var(--text-muted); margin-bottom:8px;">
+                      Tỷ lệ cơ bản: <b style="color:var(--text-main); font-family:var(--font-mono);">${c.ai.baseA} : ${c.ai.baseB}</b>
+                    </div>
+                    <div style="font-size:11px; font-weight:700; color:var(--text-dim); text-transform:uppercase; margin-bottom:4px;">Yếu tố điều chỉnh AI:</div>
+                    ${aiFactors.length === 0 ? '<div style="font-size:11.5px; color:var(--text-dim); font-style:italic;">Không áp dụng yếu tố gia giảm</div>' : `
+                      <ul style="margin:0; padding-left:16px; font-size:11.5px; color:var(--text-main);">
+                        ${aiFactors.map(f => `<li><b>Bên ${f.side}:</b> ${f.name} (<span style="color:var(--amber); font-weight:700;">${f.val}</span>)</li>`).join('')}
+                      </ul>
+                    `}
+                  </div>
+
+                  <!-- Khối Chốt đầy đủ -->
+                  <div class="expand-block">
+                    <div class="expand-block-header">
+                      <span style="color:var(--emerald);">KẾT QUẢ CHUYÊN VIÊN CHỐT</span>
+                    </div>
+                    <div style="font-size:12.5px; font-weight:600; color:#fff; margin-bottom:4px;">
+                      ${c.concluded.chartCode} · ${c.concluded.chartName}
+                    </div>
+                    <div style="font-size:11.5px; color:var(--text-muted); margin-bottom:8px;">
+                      Tỷ lệ cơ bản: <b style="color:var(--text-main); font-family:var(--font-mono);">${c.concluded.baseA} : ${c.concluded.baseB}</b>
+                    </div>
+                    <div style="font-size:11px; font-weight:700; color:var(--text-dim); text-transform:uppercase; margin-bottom:4px;">Yếu tố điều chỉnh chốt:</div>
+                    ${conFactors.length === 0 ? '<div style="font-size:11.5px; color:var(--text-dim); font-style:italic;">Không áp dụng yếu tố gia giảm</div>' : `
+                      <ul style="margin:0; padding-left:16px; font-size:11.5px; color:var(--text-main);">
+                        ${conFactors.map(f => `<li><b>Bên ${f.side}:</b> ${f.name} (<span style="color:var(--emerald); font-weight:700;">${f.val}</span>)</li>`).join('')}
+                      </ul>
+                    `}
                   </div>
                 </div>
               </div>
@@ -7307,8 +7637,7 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
     if (!target) return;
     target.reason = value;
 
-    // Show toast & autosave
-    triggerAutosaveBadge(caseId);
+    triggerAutosaveBadge(caseId, 'reason');
     renderComparisonTable();
     showToast(`Đã lưu nguyên nhân cho vụ ${caseId}`, 'success');
   }
@@ -7319,41 +7648,33 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
     if (target.notes === value) return; // No change
     target.notes = value;
 
-    // Trigger save indicator
-    triggerAutosaveBadge(caseId);
+    triggerAutosaveBadge(caseId, 'notes');
+    renderComparisonTable();
     showToast(`Đã lưu ghi chú cho vụ ${caseId}`, 'success');
   }
 
-  function triggerAutosaveBadge(caseId) {
-    const cleanId = caseId.replace('#', '');
-    const tags = [
-      document.getElementById(`save-tag-${cleanId}`),
-      document.getElementById(`save-tag-exp-${cleanId}`)
-    ];
-    tags.forEach(t => {
-      if (t) {
-        t.classList.add('visible');
-        setTimeout(() => t.classList.remove('visible'), 2000);
-      }
-    });
+  function triggerAutosaveBadge(caseId, type) {
+    const tag = document.getElementById(`save-tag-${type || 'notes'}-${caseId.replace('#', '')}`);
+    if (tag) {
+      tag.classList.add('visible');
+      setTimeout(() => tag.classList.remove('visible'), 2000);
+    }
   }
 
-  // Toggle Negotiation Exclusion
   function handleNegotiationToggle() {
-    const isExcluded = document.getElementById('toggle-exclude-negotiation')?.checked ?? true;
-    const statusLabel = document.getElementById('negotiation-filter-status');
-    const negCount = COMPARISON_CASES.filter(c => c.reason === 'Thương lượng giữa hai bên').length;
+    const checkbox = document.getElementById('toggle-exclude-negotiation');
+    const status = document.getElementById('negotiation-filter-status');
+    const isExcluded = checkbox?.checked ?? true;
 
-    if (statusLabel) {
-      statusLabel.textContent = isExcluded ? `Đang bật: Đã loại ${negCount} vụ` : 'Đang tắt: Tính toàn bộ';
-      statusLabel.className = isExcluded ? 'tag' : 'tag w';
+    const negotiatedCount = COMPARISON_CASES.filter(c => c.reason === 'Thương lượng giữa hai bên').length;
+    if (status) {
+      status.textContent = isExcluded ? `Đang bật: Đã loại ${negotiatedCount} vụ` : `Đang tắt: Tính cả vụ thương lượng`;
+      status.className = isExcluded ? 'tag' : 'tag w';
     }
 
     renderComparisonTable();
-    showToast(isExcluded ? 'Đã loại trừ các vụ thương lượng khỏi 4 chỉ số KPI' : 'Đang tính toán toàn bộ các vụ vào KPI', 'info');
   }
 
-  // Sort by Absolute Diff
   function toggleSortDiff() {
     const icon = document.getElementById('sort-diff-icon');
     if (cmpSortDiffMode === 'none') {
@@ -7369,7 +7690,6 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
     renderComparisonTable();
   }
 
-  // Filter Change
   function handleComparisonFilterChange() {
     renderComparisonTable();
   }
@@ -7382,9 +7702,8 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
     renderComparisonTable();
   }
 
-  // KPI Calculator Engine
+  // KPI Calculator Engine: 3 Số Chuẩn & Dữ Liệu Ngăn Phân Tích Chuyên Sâu
   function calculateComparisonKPIs(cases, excludeNegotiated) {
-    // Determine cohort for KPI calculations
     let kpiCases = cases;
     if (excludeNegotiated) {
       kpiCases = cases.filter(c => c.reason !== 'Thương lượng giữa hai bên');
@@ -7393,18 +7712,15 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
     const total = kpiCases.length;
     const matchEl = document.getElementById('kpi-chart-match-rate');
     const matchSub = document.getElementById('kpi-chart-match-sub');
-    const greenEl = document.getElementById('kpi-green-ratio');
-    const greenSub = document.getElementById('kpi-green-sub');
     const avgEl = document.getElementById('kpi-avg-diff');
     const avgSub = document.getElementById('kpi-avg-diff-sub');
-    const topEl = document.getElementById('kpi-top-reason');
-    const topSub = document.getElementById('kpi-top-reason-sub');
+    const sampleEl = document.getElementById('kpi-sample-size');
+    const sampleSub = document.getElementById('kpi-sample-sub');
 
     if (total === 0) {
       if (matchEl) matchEl.textContent = '—';
-      if (greenEl) greenEl.textContent = '—';
       if (avgEl) avgEl.textContent = '—';
-      if (topEl) topEl.textContent = '—';
+      if (sampleEl) sampleEl.textContent = '0 vụ';
       return;
     }
 
@@ -7414,53 +7730,100 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
     if (matchEl) matchEl.textContent = `${sameRate}%`;
     if (matchSub) matchSub.textContent = `${sameChartCount} / ${total} vụ trùng khớp`;
 
-    // 2. Green Ratio (<= 5pp)
-    const greenCount = kpiCases.filter(c => Math.abs(c.concluded.finalA - c.ai.finalA) <= COMPARISON_CONFIG.thresholds.greenMax).length;
-    const greenRate = ((greenCount / total) * 100).toFixed(1);
-    if (greenEl) greenEl.textContent = `${greenRate}%`;
-    if (greenSub) greenSub.textContent = `${greenCount} / ${total} vụ lệch nhẹ hoặc bằng`;
-
-    // 3. Average Absolute Difference (pp)
+    // 2. Average Absolute Difference (pp)
     const sumAbsDiff = kpiCases.reduce((acc, c) => acc + Math.abs(c.concluded.finalA - c.ai.finalA), 0);
     const avgDiff = (sumAbsDiff / total).toFixed(1);
-    if (avgEl) avgEl.textContent = `${avgDiff} pp`;
+    if (avgEl) avgEl.textContent = `±${avgDiff} pp`;
     if (avgSub) avgSub.textContent = `Độ lệch trung bình bên A`;
 
-    // 4. Most Frequent Reason
+    // 3. Sample Size (Cỡ mẫu)
+    if (sampleEl) sampleEl.textContent = `${cases.length} vụ`;
+    if (sampleSub) {
+      sampleSub.textContent = excludeNegotiated ? `${total} vụ tính KPI khi loại thương lượng` : `Tính toàn bộ ${cases.length} vụ`;
+    }
+
+    // POPULATE DEEP ANALYSIS DRAWER
+    // Khối 1: Chart bị lệch nhiều nhất
+    const chartDiffCounts = {};
+    cases.forEach(c => {
+      if (c.ai.chartCode !== c.concluded.chartCode || c.ai.finalA !== c.concluded.finalA) {
+        chartDiffCounts[c.concluded.chartCode] = (chartDiffCounts[c.concluded.chartCode] || 0) + 1;
+      }
+    });
+    const topChartsEl = document.getElementById('deep-top-charts');
+    if (topChartsEl) {
+      const topList = Object.entries(chartDiffCounts).sort((a,b) => b[1] - a[1]).slice(0, 3);
+      topChartsEl.innerHTML = topList.length ? topList.map(([code, count]) => `
+        <div style="display:flex; justify-content:space-between; padding:3px 0; border-bottom:1px dashed rgba(255,255,255,0.05);">
+          <span>Chart <b>${code}</b></span>
+          <b style="color:var(--amber);">${count} vụ lệch</b>
+        </div>
+      `).join('') : '<span style="color:var(--text-dim); font-style:italic;">Không có chart lệch</span>';
+    }
+
+    // Khối 2: Yếu tố bị thêm / bỏ nhiều nhất
+    const factorDiffCounts = {};
+    cases.forEach(c => {
+      (c.concluded.factors || []).forEach(f => {
+        if (!(c.ai.factors || []).some(af => af.name === f.name)) {
+          factorDiffCounts[f.name] = (factorDiffCounts[f.name] || 0) + 1;
+        }
+      });
+      (c.ai.factors || []).forEach(f => {
+        if (!(c.concluded.factors || []).some(cf => cf.name === f.name)) {
+          factorDiffCounts[f.name] = (factorDiffCounts[f.name] || 0) + 1;
+        }
+      });
+    });
+    const topFactorsEl = document.getElementById('deep-top-factors');
+    if (topFactorsEl) {
+      const topFacList = Object.entries(factorDiffCounts).sort((a,b) => b[1] - a[1]).slice(0, 3);
+      topFactorsEl.innerHTML = topFacList.length ? topFacList.map(([name, count]) => `
+        <div style="display:flex; justify-content:space-between; padding:3px 0; border-bottom:1px dashed rgba(255,255,255,0.05);">
+          <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:140px;" title="${name}">${name}</span>
+          <b style="color:var(--rose);">${count} lần</b>
+        </div>
+      `).join('') : '<span style="color:var(--text-dim); font-style:italic;">Không có yếu tố thay đổi</span>';
+    }
+
+    // Khối 3: Phân bố nguyên nhân lệch
     const reasonCounts = {};
-    kpiCases.forEach(c => {
-      if (c.reason && c.reason.trim() && c.reason !== 'Thương lượng giữa hai bên') {
+    cases.forEach(c => {
+      if (c.reason && c.reason.trim()) {
         reasonCounts[c.reason] = (reasonCounts[c.reason] || 0) + 1;
       }
     });
-
-    let topReason = 'Không có sai lệch';
-    let maxCount = 0;
-    for (const [r, count] of Object.entries(reasonCounts)) {
-      if (count > maxCount) {
-        maxCount = count;
-        topReason = r;
-      }
+    const reasonDistEl = document.getElementById('deep-reason-dist');
+    if (reasonDistEl) {
+      const topReasons = Object.entries(reasonCounts).sort((a,b) => b[1] - a[1]).slice(0, 4);
+      reasonDistEl.innerHTML = topReasons.length ? topReasons.map(([reason, count]) => `
+        <div style="display:flex; justify-content:space-between; padding:3px 0; border-bottom:1px dashed rgba(255,255,255,0.05);">
+          <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:140px;" title="${reason}">${reason}</span>
+          <b style="color:var(--cyan);">${count} vụ</b>
+        </div>
+      `).join('') : '<span style="color:var(--text-dim); font-style:italic;">Chưa có phân loại</span>';
     }
 
-    if (topEl) {
-      topEl.textContent = maxCount > 0 ? topReason.split(' ')[0] + ' ' + (topReason.split(' ')[1] || '') : '—';
-      topEl.title = topReason;
-    }
-    if (topSub) {
-      topSub.textContent = maxCount > 0 ? `${maxCount} vụ ghi nhận (${topReason})` : 'Tất cả vụ trùng khớp';
+    // Khối 4: Xu hướng theo tháng
+    const monthlyTrendEl = document.getElementById('deep-monthly-trend');
+    if (monthlyTrendEl) {
+      monthlyTrendEl.innerHTML = `
+        <div style="display:flex; justify-content:space-between; padding:3px 0; border-bottom:1px dashed rgba(255,255,255,0.05);">
+          <span>Tháng 11/2026</span>
+          <b style="color:var(--emerald);">±5.2 pp (Đang giảm)</b>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:3px 0; border-bottom:1px dashed rgba(255,255,255,0.05);">
+          <span>Tháng 10/2026</span>
+          <b style="color:var(--amber);">±6.8 pp</b>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:3px 0;">
+          <span>Tháng 09/2026</span>
+          <b style="color:var(--text-muted);">±7.5 pp</b>
+        </div>
+      `;
     }
   }
 
-  // Initialize Tab 3 on tab switch or DOM load
-  window.addEventListener('DOMContentLoaded', () => {
-    renderComparisonTable();
-  });
-
-
-
-  // ==========================================================================
-  // FEEDBACK IMPLEMENTATIONS: CALENDAR POPOVER, ACCIDENT VIEWS, NARRATIVE EDIT
   // ==========================================================================
 
   // 1. CALENDAR POPOVER LOGIC
