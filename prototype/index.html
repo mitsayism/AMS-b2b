@@ -13654,32 +13654,66 @@ function renderInternalReportTab(c) {
 
   
   </script>
-<!-- ================= MODERN DESIGN COMMENTS SYSTEM ================= -->
+<!-- ================= DUAL NOTES SYSTEM: GHI CHÚ NGHIỆP VỤ & GHI CHÚ THIẾT KẾ ================= -->
 <style>
-  #design-comments-toggle {
+  /* Floating Bottom Bar with 2 Buttons */
+  #wb-notes-bar {
     position: fixed;
     right: 24px;
     bottom: 24px;
     z-index: 99990;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .wb-note-btn {
     border: 0;
     border-radius: 28px;
-    padding: 11px 18px;
-    background: linear-gradient(135deg, #06b6d4, #0284c7);
-    color: #04121e;
+    padding: 10px 18px;
     font-weight: 700;
     font-size: 13px;
     cursor: pointer;
-    box-shadow: 0 8px 24px rgba(6, 182, 212, 0.4), 0 2px 6px rgba(0,0,0,0.4);
     display: flex;
     align-items: center;
     gap: 8px;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    user-select: none;
   }
-  #design-comments-toggle:hover {
+  .wb-note-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 28px rgba(6, 182, 212, 0.5);
   }
-  #design-comments-toggle .dc-badge {
+
+  /* Button 1: Ghi chú nghiệp vụ (Blue/Navy Theme) */
+  .wb-btn-business {
+    background: #0f243a;
+    color: #38bdf8;
+    border: 1px solid #0284c7;
+    box-shadow: 0 6px 20px rgba(2, 132, 199, 0.3), 0 2px 6px rgba(0,0,0,0.5);
+  }
+  .wb-btn-business:hover {
+    background: #14324f;
+    border-color: #38bdf8;
+    box-shadow: 0 10px 24px rgba(2, 132, 199, 0.45);
+  }
+  .wb-badge-business {
+    background: #0284c7;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 10px;
+  }
+
+  /* Button 2: Ghi chú thiết kế (Cyan Gradient Theme) */
+  .wb-btn-design {
+    background: linear-gradient(135deg, #06b6d4, #0284c7);
+    color: #04121e;
+    box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4), 0 2px 6px rgba(0,0,0,0.5);
+  }
+  .wb-btn-design:hover {
+    box-shadow: 0 10px 26px rgba(6, 182, 212, 0.55);
+  }
+  .wb-badge-design {
     background: #04121e;
     color: #38bdf8;
     font-size: 11px;
@@ -13687,11 +13721,13 @@ function renderInternalReportTab(c) {
     padding: 2px 7px;
     border-radius: 10px;
   }
-  #design-comments {
+
+  /* Common Panel Styles */
+  .wb-panel {
     position: fixed;
     right: 24px;
     bottom: 80px;
-    width: min(400px, calc(100vw - 32px));
+    width: min(420px, calc(100vw - 32px));
     max-height: 75vh;
     overflow-y: auto;
     z-index: 99991;
@@ -13700,11 +13736,11 @@ function renderInternalReportTab(c) {
     border-radius: 12px;
     background: #09131f;
     color: #e2e8f0;
-    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(56, 189, 248, 0.2);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(56, 189, 248, 0.2);
     font: 13px/1.45 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   }
-  #design-comments[hidden] { display: none; }
-  #design-comments h2 {
+  .wb-panel[hidden] { display: none; }
+  .wb-panel h2 {
     margin: 0 0 6px;
     font-size: 15px;
     font-weight: 700;
@@ -13713,14 +13749,13 @@ function renderInternalReportTab(c) {
     align-items: center;
     justify-content: space-between;
   }
-  #design-comments .dc-intro {
+  .wb-panel .dc-intro {
     margin: 4px 0 10px;
     color: #94a3b8;
     font-size: 12px;
     line-height: 1.4;
   }
-  #design-comments p { margin: 6px 0; }
-  #design-comments button {
+  .wb-panel button {
     cursor: pointer;
     padding: 6px 11px;
     border: 1px solid #1e3a5a;
@@ -13731,26 +13766,26 @@ function renderInternalReportTab(c) {
     font-weight: 600;
     transition: background 0.15s, border-color 0.15s;
   }
-  #design-comments button:hover {
+  .wb-panel button:hover {
     background: #19334f;
     border-color: #0284c7;
   }
-  #design-comments .dc-btn-primary {
+  .wb-panel .dc-btn-primary {
     background: #0284c7;
     border-color: #38bdf8;
     color: #fff;
   }
-  #design-comments .dc-btn-primary:hover {
+  .wb-panel .dc-btn-primary:hover {
     background: #0369a1;
   }
-  #design-comments .dc-btn-danger {
+  .wb-panel .dc-btn-danger {
     color: #f87171;
     border-color: rgba(248, 113, 113, 0.35);
   }
-  #design-comments .dc-btn-danger:hover {
+  .wb-panel .dc-btn-danger:hover {
     background: rgba(239, 68, 68, 0.15);
   }
-  #design-comments textarea, #design-comments input {
+  .wb-panel textarea, .wb-panel input {
     width: 100%;
     box-sizing: border-box;
     padding: 8px 10px;
@@ -13762,22 +13797,22 @@ function renderInternalReportTab(c) {
     font: inherit;
     font-size: 12.5px;
   }
-  #design-comments textarea:focus, #design-comments input:focus {
+  .wb-panel textarea:focus, .wb-panel input:focus {
     outline: none;
     border-color: #38bdf8;
     box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
   }
-  #design-comments textarea {
+  .wb-panel textarea {
     min-height: 75px;
     resize: vertical;
   }
-  #design-comments .dc-actions {
+  .wb-panel .dc-actions {
     display: flex;
     gap: 6px;
     flex-wrap: wrap;
     align-items: center;
   }
-  #design-comments .dc-list {
+  .wb-panel .dc-list {
     margin-top: 14px;
     display: flex;
     flex-direction: column;
@@ -13786,35 +13821,38 @@ function renderInternalReportTab(c) {
     overflow-y: auto;
     padding-right: 4px;
   }
-  #design-comments .dc-list::-webkit-scrollbar {
+  .wb-panel .dc-list::-webkit-scrollbar {
     width: 5px;
   }
-  #design-comments .dc-list::-webkit-scrollbar-thumb {
+  .wb-panel .dc-list::-webkit-scrollbar-thumb {
     background: #1e3a5a;
     border-radius: 4px;
   }
-  #design-comments .dc-list::-webkit-scrollbar-thumb:hover {
+  .wb-panel .dc-list::-webkit-scrollbar-thumb:hover {
     background: #0284c7;
   }
-  #design-comments .dc-item {
+
+  /* Note Card Styles */
+  .dc-item {
     background: #0f2034;
     border: 1px solid #1a3754;
     border-radius: 9px;
-    padding: 9px 11px;
+    padding: 10px 12px;
     position: relative;
     transition: border-color 0.15s;
+    cursor: pointer;
   }
-  #design-comments .dc-item:hover {
+  .dc-item:hover {
     border-color: #0284c7;
   }
-  #design-comments .dc-item-header {
+  .dc-item-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 6px;
     margin-bottom: 4px;
   }
-  #design-comments .dc-item-title {
+  .dc-item-title {
     font-weight: 700;
     color: #38bdf8;
     font-size: 12px;
@@ -13823,7 +13861,7 @@ function renderInternalReportTab(c) {
     gap: 6px;
     word-break: break-word;
   }
-  #design-comments .dc-item-num {
+  .dc-item-num {
     background: #0284c7;
     color: #fff;
     border-radius: 50%;
@@ -13832,19 +13870,23 @@ function renderInternalReportTab(c) {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 800;
     flex-shrink: 0;
   }
-  #design-comments .dc-item-text {
+  .dc-item-num.design {
+    background: #06b6d4;
+    color: #04121e;
+  }
+  .dc-item-text {
     font-size: 12px;
     color: #cbd5e1;
     white-space: pre-wrap;
     margin: 4px 0 6px;
-    line-height: 1.4;
+    line-height: 1.45;
     word-break: break-word;
   }
-  #design-comments .dc-item-footer {
+  .dc-item-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -13854,14 +13896,8 @@ function renderInternalReportTab(c) {
     padding-top: 4px;
     margin-top: 4px;
   }
-  #design-comments .dc-item-btns {
-    display: flex;
-    gap: 4px;
-  }
-  #design-comments .dc-item-btns button {
-    padding: 3px 6px;
-    font-size: 11px;
-  }
+
+  /* Screen Pins */
   .dc-note {
     position: absolute;
     z-index: 99989;
@@ -13872,17 +13908,23 @@ function renderInternalReportTab(c) {
     width: 26px;
     height: 26px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #06b6d4, #0284c7);
-    color: #04121e;
+    color: #fff;
     font-weight: 800;
-    font-size: 12px;
+    font-size: 11.5px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(6,182,212,0.5), 0 0 0 2px #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5), 0 0 0 2px #fff;
     transition: transform 0.15s;
     user-select: none;
+  }
+  .dc-pin.business {
+    background: linear-gradient(135deg, #0284c7, #0369a1);
+  }
+  .dc-pin.design {
+    background: linear-gradient(135deg, #06b6d4, #0284c7);
+    color: #04121e;
   }
   .dc-pin:hover {
     transform: scale(1.18);
@@ -13891,7 +13933,7 @@ function renderInternalReportTab(c) {
     position: absolute;
     top: 32px;
     left: 0;
-    width: 260px;
+    width: 280px;
     background: #09131f;
     border: 1px solid #1e3a5a;
     border-radius: 9px;
@@ -13913,15 +13955,15 @@ function renderInternalReportTab(c) {
     margin: 0 0 8px;
     font-size: 12px;
     color: #cbd5e1;
-    line-height: 1.4;
+    line-height: 1.45;
     white-space: pre-wrap;
   }
 
   /* Region / Selection Boxes */
   .dc-region {
     position: absolute;
-    border: 2px dashed #38bdf8;
-    background: rgba(56, 189, 248, 0.12);
+    border: 2px dashed #06b6d4;
+    background: rgba(6, 182, 212, 0.12);
     border-radius: 6px;
     pointer-events: none;
     z-index: 99988;
@@ -13967,28 +14009,64 @@ function renderInternalReportTab(c) {
   }
 </style>
 
-<button id="design-comments-toggle" type="button" aria-expanded="false">
-  <span>💬 Ghi chú thiết kế</span>
-  <span class="dc-badge" id="dc-count-badge">0</span>
-</button>
+<!-- 2 FLOATING BUTTONS AT BOTTOM-RIGHT -->
+<div id="wb-notes-bar">
+  <!-- Nút 1: Ghi chú nghiệp vụ -->
+  <button id="business-comments-toggle" type="button" class="wb-note-btn wb-btn-business" aria-expanded="false" title="Xem các quy định, tài liệu và ghi chú nghiệp vụ">
+    <span>📋 Ghi chú nghiệp vụ</span>
+    <span class="wb-badge wb-badge-business" id="bc-count-badge">46</span>
+  </button>
 
-<aside id="design-comments" hidden aria-label="Ghi chú thiết kế">
+  <!-- Nút 2: Ghi chú thiết kế -->
+  <button id="design-comments-toggle" type="button" class="wb-note-btn wb-note-design" aria-expanded="false" title="Khoanh vùng và ghi chú yêu cầu sửa đổi thiết kế UI/UX">
+    <span>🎨 Ghi chú thiết kế</span>
+    <span class="wb-badge wb-badge-design" id="dc-count-badge">0</span>
+  </button>
+</div>
+
+<!-- PANEL 1: GHI CHÚ NGHIỆP VỤ -->
+<aside id="business-comments" class="wb-panel" hidden aria-label="Ghi chú nghiệp vụ">
   <h2>
-    <span>Ghi chú thiết kế UI/UX</span>
+    <span>📋 Ghi chú nghiệp vụ</span>
+    <button type="button" id="bc-close-panel" style="padding:2px 8px; font-size:14px; background:none; border:none; color:#94a3b8; cursor:pointer;" title="Đóng panel">✕</button>
+  </h2>
+  <p class="dc-intro">
+    Các quy định, luồng xử lý và logic nghiệp vụ đã được định nghĩa cho từng màn hình và tính năng.
+  </p>
+
+  <div style="display:flex; justify-content:space-between; align-items:center; margin:10px 0 6px;">
+    <div style="display:flex; align-items:center; gap:6px;">
+      <label style="display:flex; align-items:center; gap:6px; font-size:11.5px; color:#cbd5e1; cursor:pointer;">
+        <input type="checkbox" id="bc-toggle-pins" checked onchange="toggleBusinessPins(this.checked)">
+        <span>Hiện ghim trên màn hình</span>
+      </label>
+    </div>
+    <button type="button" id="bc-export-md" style="font-size:11px; padding:3px 8px;">Xuất Markdown</button>
+  </div>
+
+  <div class="dc-list" id="bc-notes-list">
+    <!-- Populated by JS -->
+  </div>
+</aside>
+
+<!-- PANEL 2: GHI CHÚ THIẾT KẾ UI/UX -->
+<aside id="design-comments" class="wb-panel" hidden aria-label="Ghi chú thiết kế">
+  <h2>
+    <span>🎨 Ghi chú thiết kế UI/UX</span>
     <button type="button" id="dc-close-panel" style="padding:2px 8px; font-size:14px; background:none; border:none; color:#94a3b8; cursor:pointer;" title="Đóng panel">✕</button>
   </h2>
   <p class="dc-intro">
-    Kéo chuột để khoanh vùng chữ nhật, hoặc di chuột đến tiêu đề/nút/dòng chữ cụ thể để gắn ghi chú chính xác.
+    Kéo chuột khoanh vùng hoặc di chuột chọn component để ghi lại các yêu cầu sửa đổi/làm lại giao diện.
   </p>
 
   <div class="dc-actions dc-toolbar" id="dc-main-toolbar" style="margin-top:10px;">
-    <button id="dc-pick" class="dc-btn-primary" type="button">＋ Thêm ghi chú</button>
-    <button id="dc-export-md" type="button" title="Tải file Markdown chứa toàn bộ ghi chú">Xuất Markdown</button>
+    <button id="dc-pick" class="dc-btn-primary" type="button">＋ Thêm ghi chú thiết kế</button>
+    <button id="dc-export-md" type="button" title="Tải file Markdown chứa toàn bộ ghi chú thiết kế">Xuất Markdown</button>
     <button id="dc-export-json" type="button" title="Tải JSON để gửi AI sửa">Tải JSON</button>
-    <button id="dc-clear-all" class="dc-btn-danger" type="button" title="Xóa toàn bộ ghi chú đã sửa">Xóa tất cả</button>
+    <button id="dc-clear-all" class="dc-btn-danger" type="button" title="Xóa toàn bộ ghi chú thiết kế đã sửa">Xóa tất cả</button>
   </div>
 
-  <!-- Form nhập comment -->
+  <!-- Form nhập comment thiết kế -->
   <div id="dc-form" hidden style="margin-top:10px; background:#0f2034; padding:12px; border-radius:8px; border:1px solid #1e3a5a;">
     <div style="font-size:11px; color:#94a3b8; margin-bottom:4px;" id="dc-location-label">Component được chọn:</div>
     <input id="dc-title" aria-label="Tên component" placeholder="Tên component / vị trí..." style="font-weight:600; color:#38bdf8;">
@@ -14000,9 +14078,9 @@ function renderInternalReportTab(c) {
     </div>
   </div>
 
-  <!-- Danh sách comment -->
+  <!-- Danh sách comment thiết kế -->
   <div class="dc-list" id="dc-notes-list">
-    <!-- Render dynamically -->
+    <!-- Populated by JS -->
   </div>
 </aside>
 
@@ -14014,36 +14092,53 @@ function renderInternalReportTab(c) {
 
 <script>
 (() => {
-  const key = 'ams-b2b-prototype-comments-v1';
-  const panel = document.getElementById('design-comments');
-  const toggle = document.getElementById('design-comments-toggle');
-  const countBadge = document.getElementById('dc-count-badge');
-  const form = document.getElementById('dc-form');
-  const input = document.getElementById('dc-text');
-  const titleInput = document.getElementById('dc-title');
-  const listContainer = document.getElementById('dc-notes-list');
+  // Storage keys
+  const BUSINESS_KEY = 'ams-b2b-business-comments-v1';
+  const DESIGN_KEY = 'ams-b2b-workbench-design-comments-v1';
+  const DESIGN_QUEUE_KEY = `${DESIGN_KEY}-pending`;
+
+  // Elements
+  const bcToggle = document.getElementById('business-comments-toggle');
+  const dcToggle = document.getElementById('design-comments-toggle');
+  const bcPanel = document.getElementById('business-comments');
+  const dcPanel = document.getElementById('design-comments');
+  const bcCountBadge = document.getElementById('bc-count-badge');
+  const dcCountBadge = document.getElementById('dc-count-badge');
+  const bcList = document.getElementById('bc-notes-list');
+  const dcList = document.getElementById('dc-notes-list');
+
+  const dcForm = document.getElementById('dc-form');
+  const dcTitleInput = document.getElementById('dc-title');
+  const dcInput = document.getElementById('dc-text');
   const dragBox = document.getElementById('dc-drag-box');
   const hoverInspector = document.getElementById('dc-hover-inspector');
   const hoverLabel = document.getElementById('dc-hover-label');
 
-  let notes = [];
-  try {
-    notes = JSON.parse(localStorage.getItem(key) || '[]');
-    if (!Array.isArray(notes)) notes = [];
-  } catch (_) {}
-
-  let picking = false, target = null, editing = null, openNoteId = null, redrawing = false;
+  // Supabase Config
   const endpoint = 'https://ktiuyqtvspdreyupxuve.supabase.co/rest/v1/prototype_comments';
   const apiKey = 'sb_publishable_GPRgAzD7HnW6t_meh9QfXA_rQMN12MD';
-  const queueKey = `${key}-pending`;
-  let pending = [];
+
+  // State
+  let businessNotes = [];
+  let designNotes = [];
   try {
-    pending = JSON.parse(localStorage.getItem(queueKey) || '[]');
-    if (!Array.isArray(pending)) pending = [];
+    businessNotes = JSON.parse(localStorage.getItem(BUSINESS_KEY) || '[]');
+    if (!Array.isArray(businessNotes)) businessNotes = [];
   } catch (_) {}
 
-  let previous = new Map(notes.map(n => [String(n.id), JSON.stringify(n)]));
-  let syncing = false;
+  try {
+    designNotes = JSON.parse(localStorage.getItem(DESIGN_KEY) || '[]');
+    if (!Array.isArray(designNotes)) designNotes = [];
+  } catch (_) {}
+
+  let designPending = [];
+  try {
+    designPending = JSON.parse(localStorage.getItem(DESIGN_QUEUE_KEY) || '[]');
+    if (!Array.isArray(designPending)) designPending = [];
+  } catch (_) {}
+
+  let showBusinessPins = true;
+  let picking = false, target = null, openNoteId = null;
 
   const request = async (url, options = {}) => {
     const response = await fetch(url, {
@@ -14059,12 +14154,12 @@ function renderInternalReportTab(c) {
     return response;
   };
 
+  // Synchronize both data sets
   const sync = async () => {
-    if (syncing) return;
-    syncing = true;
     try {
-      while (pending.length) {
-        const op = pending[0];
+      // 1. Process pending design notes
+      while (designPending.length) {
+        const op = designPending[0];
         if (op.data) {
           await request(`${endpoint}?on_conflict=id`, {
             method: 'POST',
@@ -14074,31 +14169,43 @@ function renderInternalReportTab(c) {
         } else {
           await request(`${endpoint}?id=eq.${encodeURIComponent(op.id)}`, { method: 'DELETE' });
         }
-        pending.shift();
-        localStorage.setItem(queueKey, JSON.stringify(pending));
+        designPending.shift();
+        localStorage.setItem(DESIGN_QUEUE_KEY, JSON.stringify(designPending));
       }
 
+      // 2. Fetch all comments from Supabase
       const res = await request(`${endpoint}?select=*`);
       if (res && res.ok) {
         const rows = await res.json();
-        const serverNotes = rows
+
+        // Business notes: Existing specification notes (exclude rules_ and design_)
+        const bNotes = rows
           .map(r => r.data)
-          .filter(d => d && (d.page === 'prototype-main' || d.screen || (!d.page && !String(d.id).startsWith('rules_'))));
-        
-        if (JSON.stringify(serverNotes) !== JSON.stringify(notes)) {
-          notes = serverNotes;
-          localStorage.setItem(key, JSON.stringify(notes));
-          renderList();
-          draw();
+          .filter(d => d && !String(d.id).startsWith('rules_') && !String(d.id).startsWith('design_') && d.category !== 'design' && d.page !== 'analysis-rules');
+
+        // Design notes: Only workbench design feedback notes
+        const dNotes = rows
+          .map(r => r.data)
+          .filter(d => d && (String(d.id).startsWith('design_') || d.category === 'design' || d.page === 'workbench-design'));
+
+        if (bNotes.length > 0) {
+          businessNotes = bNotes;
+          localStorage.setItem(BUSINESS_KEY, JSON.stringify(businessNotes));
         }
+
+        designNotes = dNotes;
+        localStorage.setItem(DESIGN_KEY, JSON.stringify(designNotes));
+
+        renderBusinessList();
+        renderDesignList();
+        drawPins();
       }
-    } catch (e) {
+    } catch (_) {
       // Offline fallback
-    } finally {
-      syncing = false;
     }
   };
 
+  // Screen helpers
   const currentScreenEl = () => {
     const list = document.getElementById('SCR-CASE-LIST');
     const detail = document.getElementById('SCR-CASE-DETAIL');
@@ -14115,13 +14222,10 @@ function renderInternalReportTab(c) {
   const currentScreenName = () => {
     const sc = currentScreenEl();
     if (sc.id === 'SCR-CASE-LIST') return 'Danh sách vụ việc';
-    if (sc.id === 'SCR-CASE-DETAIL') {
-      const caseCode = document.querySelector('.case-code, .header-case-id')?.textContent || '#CS-2026';
-      return `Chi tiết vụ việc (${caseCode.trim()})`;
-    }
+    if (sc.id === 'SCR-CASE-DETAIL') return 'Chi tiết vụ việc';
     if (sc.id === 'SCR-CUSTOMER-NOTIFY') return 'Thông báo khách hàng';
     if (sc.id === 'SCR-ACTIVITY-LOG') return 'Nhật ký hoạt động';
-    return 'Màn hình Prototype';
+    return 'Workbench';
   };
 
   const activeModalEl = () => {
@@ -14132,14 +14236,242 @@ function renderInternalReportTab(c) {
     }).pop() || null;
   };
 
-  const getSpecificTextTarget = (el, clientX, clientY) => {
-    if (!el || el === document.body) return null;
+  // Toggle Panels (mutually exclusive)
+  bcToggle.onclick = (e) => {
+    e.stopPropagation();
+    dcPanel.hidden = true;
+    dcToggle.setAttribute('aria-expanded', 'false');
 
-    // Check specific text / button / card elements
+    const isHidden = bcPanel.hidden;
+    bcPanel.hidden = !isHidden;
+    bcToggle.setAttribute('aria-expanded', String(!isHidden));
+    if (!bcPanel.hidden) {
+      renderBusinessList();
+      drawPins();
+    }
+  };
+
+  dcToggle.onclick = (e) => {
+    e.stopPropagation();
+    bcPanel.hidden = true;
+    bcToggle.setAttribute('aria-expanded', 'false');
+
+    const isHidden = dcPanel.hidden;
+    dcPanel.hidden = !isHidden;
+    dcToggle.setAttribute('aria-expanded', String(!isHidden));
+    if (!dcPanel.hidden) {
+      renderDesignList();
+      drawPins();
+    }
+  };
+
+  document.getElementById('bc-close-panel').onclick = () => {
+    bcPanel.hidden = true;
+    bcToggle.setAttribute('aria-expanded', 'false');
+  };
+  document.getElementById('dc-close-panel').onclick = () => {
+    dcPanel.hidden = true;
+    dcToggle.setAttribute('aria-expanded', 'false');
+  };
+
+  window.toggleBusinessPins = (checked) => {
+    showBusinessPins = checked;
+    drawPins();
+  };
+
+  // Render Business List
+  const renderBusinessList = () => {
+    const sc = currentScreenEl();
+    const modal = activeModalEl();
+
+    if (bcCountBadge) {
+      bcCountBadge.textContent = businessNotes.length;
+    }
+
+    if (!bcList) return;
+    bcList.innerHTML = '';
+    if (businessNotes.length === 0) {
+      bcList.innerHTML = '<div style="text-align:center; color:#64748b; padding:16px 0; font-size:12px;">Chưa có ghi chú nghiệp vụ.</div>';
+      return;
+    }
+
+    businessNotes.forEach((n, idx) => {
+      const item = document.createElement('div');
+      item.className = 'dc-item';
+      item.innerHTML = `
+        <div class="dc-item-header">
+          <span class="dc-item-title">
+            <span class="dc-item-num">${idx + 1}</span>
+            <span>${n.title || n.label || 'Quy định nghiệp vụ'}</span>
+          </span>
+          <span style="font-size:10px; color:#64748b;">${n.screenName || n.screen || ''}</span>
+        </div>
+        <div class="dc-item-text">${n.text}</div>
+      `;
+      item.onclick = () => highlightPin(n.id);
+      bcList.appendChild(item);
+    });
+  };
+
+  // Render Design List
+  const renderDesignList = () => {
+    if (dcCountBadge) {
+      dcCountBadge.textContent = designNotes.length;
+    }
+
+    if (!dcList) return;
+    dcList.innerHTML = '';
+    if (designNotes.length === 0) {
+      dcList.innerHTML = '<div style="text-align:center; color:#64748b; padding:16px 0; font-size:12px;">Chưa có ghi chú thiết kế nào.<br>Bấm <b>＋ Thêm ghi chú thiết kế</b> rồi kéo/chọn component để yêu cầu sửa giao diện.</div>';
+      return;
+    }
+
+    designNotes.forEach((n, idx) => {
+      const item = document.createElement('div');
+      item.className = 'dc-item';
+      item.innerHTML = `
+        <div class="dc-item-header">
+          <span class="dc-item-title" style="color:#22d3ee;">
+            <span class="dc-item-num design">${idx + 1}</span>
+            <span>${n.title || 'Yêu cầu sửa thiết kế'}</span>
+          </span>
+          <span style="font-size:10px; color:#64748b;">${n.screenName || ''}</span>
+        </div>
+        <div class="dc-item-text">${n.text}</div>
+        <div class="dc-item-footer">
+          <span>${n.createdAt ? new Date(n.createdAt).toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'}) : ''}</span>
+          <div class="dc-item-btns">
+            <button type="button" style="color:#f87171;" onclick="window.__delete_design_note('${n.id}')">Xóa</button>
+          </div>
+        </div>
+      `;
+      item.onclick = (e) => {
+        if (e.target.tagName === 'BUTTON') return;
+        highlightPin(n.id);
+      };
+      dcList.appendChild(item);
+    });
+  };
+
+  window.__delete_design_note = (id) => {
+    designNotes = designNotes.filter(n => n.id !== id);
+    localStorage.setItem(DESIGN_KEY, JSON.stringify(designNotes));
+    designPending.push({ id: id, data: null });
+    localStorage.setItem(DESIGN_QUEUE_KEY, JSON.stringify(designPending));
+    sync();
+    renderDesignList();
+    drawPins();
+  };
+
+  // Draw Screen Pins & Regions
+  const drawPins = () => {
+    document.querySelectorAll('.dc-note, .dc-region').forEach(el => el.remove());
+
+    const sc = currentScreenEl();
+    const modal = activeModalEl();
+    const rootEl = modal || sc;
+    const rootRect = rootEl.getBoundingClientRect();
+
+    // 1. Draw Business Pins
+    if (showBusinessPins) {
+      businessNotes.forEach((n, idx) => {
+        if (modal) {
+          if (n.rootId !== modal.id && n.modalId !== modal.id) return;
+        } else {
+          if (n.rootId && n.rootId !== sc.id && n.rootId.startsWith('modal')) return;
+          if (n.screen && n.screen !== sc.id) return;
+        }
+
+        drawSinglePin(n, idx + 1, 'business', rootEl, rootRect);
+      });
+    }
+
+    // 2. Draw Design Pins
+    designNotes.forEach((n, idx) => {
+      if (modal) {
+        if (n.modalId !== modal.id) return;
+      } else {
+        if (n.modalId || (n.screen && n.screen !== sc.id)) return;
+      }
+
+      drawSinglePin(n, idx + 1, 'design', rootEl, rootRect);
+    });
+  };
+
+  const drawSinglePin = (n, num, kind, rootEl, rootRect) => {
+    // Draw region if exists
+    if (n.region) {
+      const reg = document.createElement('div');
+      reg.className = 'dc-region';
+      reg.id = 'dc-reg-' + n.id;
+      if (kind === 'business') reg.style.borderColor = '#0284c7';
+      reg.style.top = (rootRect.top + window.scrollY + n.region.top * rootRect.height) + 'px';
+      reg.style.left = (rootRect.left + window.scrollX + n.region.left * rootRect.width) + 'px';
+      reg.style.width = (n.region.width * rootRect.width) + 'px';
+      reg.style.height = (n.region.height * rootRect.height) + 'px';
+      document.body.appendChild(reg);
+    }
+
+    // Draw pin
+    const pinContainer = document.createElement('div');
+    pinContainer.className = 'dc-note' + (openNoteId === n.id ? ' dc-open' : '');
+    pinContainer.id = 'dc-pin-' + n.id;
+
+    const pinTop = rootRect.top + window.scrollY + (n.y * rootRect.height);
+    const pinLeft = rootRect.left + window.scrollX + (n.x * rootRect.width);
+
+    pinContainer.style.top = pinTop + 'px';
+    pinContainer.style.left = pinLeft + 'px';
+
+    const iconPrefix = kind === 'business' ? '📋' : '🎨';
+    pinContainer.innerHTML = `
+      <div class="dc-pin ${kind}" title="${iconPrefix} ${n.title}: ${n.text}">${num}</div>
+      <div class="dc-note-body">
+        <h4>${iconPrefix} ${n.title || (kind === 'business' ? 'Nghiệp vụ' : 'Thiết kế')}</h4>
+        <p>${n.text}</p>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:10px; color:#64748b;">${n.screenName || ''}</span>
+          ${kind === 'design' ? `<button type="button" style="padding:2px 6px; font-size:11px; color:#f87171; background:none; border:1px solid rgba(248,113,113,0.3); border-radius:4px; cursor:pointer;" onclick="window.__delete_design_note('${n.id}')">Xóa</button>` : ''}
+        </div>
+      </div>
+    `;
+
+    pinContainer.querySelector('.dc-pin').onclick = (e) => {
+      e.stopPropagation();
+      openNoteId = openNoteId === n.id ? null : n.id;
+      drawPins();
+    };
+
+    document.body.appendChild(pinContainer);
+  };
+
+  const highlightPin = (id) => {
+    openNoteId = id;
+    drawPins();
+    const pin = document.getElementById('dc-pin-' + id);
+    if (pin) {
+      pin.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      pin.querySelector('.dc-pin')?.animate([
+        { transform: 'scale(1)' },
+        { transform: 'scale(1.45)' },
+        { transform: 'scale(1)' }
+      ], { duration: 400, iterations: 2 });
+    }
+  };
+
+  // Design Picking Tool Logic
+  document.getElementById('dc-pick').onclick = () => {
+    picking = true;
+    document.body.classList.add('dc-picking');
+    dcPanel.hidden = true;
+  };
+
+  const getSpecificTextTarget = (el) => {
+    if (!el || el === document.body) return null;
     const specificSelector = 'h1, h2, h3, h4, h5, button, label, select, input, .card, .panel, .badge, .tag, table th, table td, tr, .tab-btn, .step-item';
     const specific = el.closest(specificSelector) || el;
     const rect = specific.getBoundingClientRect();
-    
+
     let label = specific.tagName.toLowerCase();
     if (['h1','h2','h3','h4'].includes(label)) label = 'Tiêu đề';
     else if (label === 'button') label = 'Nút bấm';
@@ -14162,203 +14494,6 @@ function renderInternalReportTab(c) {
     };
   };
 
-  const hideHoverBox = () => {
-    if (hoverInspector) hoverInspector.style.display = 'none';
-  };
-
-  const showHoverBox = (rect, labelText) => {
-    if (!hoverInspector) return;
-    hoverInspector.style.display = 'block';
-    hoverInspector.style.top = rect.top + 'px';
-    hoverInspector.style.left = rect.left + 'px';
-    hoverInspector.style.width = rect.width + 'px';
-    hoverInspector.style.height = rect.height + 'px';
-    if (hoverLabel) hoverLabel.textContent = labelText;
-  };
-
-  const saveNote = (note) => {
-    if (editing) {
-      notes = notes.map(n => n.id === editing.id ? { ...note, id: editing.id, createdAt: editing.createdAt } : n);
-    } else {
-      note.id = 'proto_' + Date.now() + Math.random().toString(36).substr(2, 4);
-      note.createdAt = new Date().toISOString();
-      notes.push(note);
-    }
-    localStorage.setItem(key, JSON.stringify(notes));
-    pending.push({ id: note.id, data: note });
-    localStorage.setItem(queueKey, JSON.stringify(pending));
-    sync();
-    renderList();
-    draw();
-  };
-
-  const deleteNote = (id) => {
-    notes = notes.filter(n => n.id !== id);
-    localStorage.setItem(key, JSON.stringify(notes));
-    pending.push({ id: id, data: null });
-    localStorage.setItem(queueKey, JSON.stringify(pending));
-    sync();
-    renderList();
-    draw();
-  };
-
-  const renderList = () => {
-    if (!listContainer) return;
-    const sc = currentScreenEl();
-    const modal = activeModalEl();
-
-    // Filter notes relevant to current screen
-    const visibleNotes = notes.filter(n => {
-      if (modal) return n.modalId === modal.id;
-      return !n.modalId && (n.screen === sc.id || !n.screen);
-    });
-
-    if (countBadge) {
-      countBadge.textContent = notes.length;
-      countBadge.style.display = notes.length > 0 ? 'inline-block' : 'none';
-    }
-
-    listContainer.innerHTML = '';
-    if (notes.length === 0) {
-      listContainer.innerHTML = '<div style="text-align:center; color:#64748b; padding:16px 0; font-size:12px;">Chưa có ghi chú nào.<br>Bấm <b>＋ Thêm ghi chú</b> rồi click/kéo chọn component trên màn hình.</div>';
-      return;
-    }
-
-    notes.forEach((n, idx) => {
-      const item = document.createElement('div');
-      item.className = 'dc-item';
-      item.innerHTML = `
-        <div class="dc-item-header">
-          <span class="dc-item-title">
-            <span class="dc-item-num">${idx + 1}</span>
-            <span>${n.title || 'Ghi chú'}</span>
-          </span>
-          <span style="font-size:10px; color:#64748b;">${n.screenName || ''}</span>
-        </div>
-        <div class="dc-item-text">${n.text}</div>
-        <div class="dc-item-footer">
-          <span>${n.createdAt ? new Date(n.createdAt).toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'}) : ''}</span>
-          <div class="dc-item-btns">
-            <button type="button" class="dc-btn-delete" style="color:#f87171;" onclick="window.__dc_delete('${n.id}')">Xóa</button>
-          </div>
-        </div>
-      `;
-      item.onclick = (e) => {
-        if (e.target.tagName === 'BUTTON') return;
-        highlightNoteOnScreen(n.id);
-      };
-      listContainer.appendChild(item);
-    });
-  };
-
-  window.__dc_delete = (id) => {
-    deleteNote(id);
-  };
-
-  const draw = () => {
-    // Remove existing notes & regions from DOM
-    document.querySelectorAll('.dc-note, .dc-region').forEach(el => el.remove());
-
-    const sc = currentScreenEl();
-    const modal = activeModalEl();
-    const rootEl = modal || sc;
-
-    notes.forEach((n, idx) => {
-      // Check screen / modal visibility
-      if (modal) {
-        if (n.modalId !== modal.id) return;
-      } else {
-        if (n.modalId || (n.screen && n.screen !== sc.id)) return;
-      }
-
-      // 1. Draw Region if rectangle exists
-      if (n.region) {
-        const reg = document.createElement('div');
-        reg.className = 'dc-region';
-        reg.id = 'dc-reg-' + n.id;
-        const rootRect = rootEl.getBoundingClientRect();
-        
-        reg.style.top = (rootRect.top + window.scrollY + n.region.top * rootRect.height) + 'px';
-        reg.style.left = (rootRect.left + window.scrollX + n.region.left * rootRect.width) + 'px';
-        reg.style.width = (n.region.width * rootRect.width) + 'px';
-        reg.style.height = (n.region.height * rootRect.height) + 'px';
-        document.body.appendChild(reg);
-      }
-
-      // 2. Draw Pin Marker
-      const pinContainer = document.createElement('div');
-      pinContainer.className = 'dc-note' + (openNoteId === n.id ? ' dc-open' : '');
-      pinContainer.id = 'dc-pin-' + n.id;
-      
-      const rootRect = rootEl.getBoundingClientRect();
-      const pinTop = rootRect.top + window.scrollY + (n.y * rootRect.height);
-      const pinLeft = rootRect.left + window.scrollX + (n.x * rootRect.width);
-      
-      pinContainer.style.top = pinTop + 'px';
-      pinContainer.style.left = pinLeft + 'px';
-
-      pinContainer.innerHTML = `
-        <div class="dc-pin" title="${n.title}: ${n.text}">${idx + 1}</div>
-        <div class="dc-note-body">
-          <h4>${n.title || 'Ghi chú'}</h4>
-          <p>${n.text}</p>
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-size:10px; color:#64748b;">${n.screenName || ''}</span>
-            <button type="button" style="padding:2px 6px; font-size:11px; color:#f87171; background:none; border:1px solid rgba(248,113,113,0.3); border-radius:4px; cursor:pointer;" onclick="window.__dc_delete('${n.id}')">Xóa</button>
-          </div>
-        </div>
-      `;
-
-      const pinEl = pinContainer.querySelector('.dc-pin');
-      pinEl.onclick = (e) => {
-        e.stopPropagation();
-        openNoteId = openNoteId === n.id ? null : n.id;
-        draw();
-      };
-
-      document.body.appendChild(pinContainer);
-    });
-  };
-
-  const highlightNoteOnScreen = (id) => {
-    openNoteId = id;
-    draw();
-    const pin = document.getElementById('dc-pin-' + id);
-    if (pin) {
-      pin.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      pin.querySelector('.dc-pin')?.animate([
-        { transform: 'scale(1)' },
-        { transform: 'scale(1.45)' },
-        { transform: 'scale(1)' }
-      ], { duration: 400, iterations: 2 });
-    }
-  };
-
-  // Toggle Panel
-  toggle.onclick = (e) => {
-    e.stopPropagation();
-    const isHidden = panel.hidden;
-    panel.hidden = !isHidden;
-    toggle.setAttribute('aria-expanded', String(!isHidden));
-    if (!panel.hidden) {
-      renderList();
-      draw();
-    }
-  };
-
-  document.getElementById('dc-close-panel').onclick = () => {
-    panel.hidden = true;
-    toggle.setAttribute('aria-expanded', 'false');
-  };
-
-  // Start Picking
-  document.getElementById('dc-pick').onclick = () => {
-    picking = true;
-    document.body.classList.add('dc-picking');
-    panel.hidden = true;
-  };
-
-  // Drag region & Hover inspector logic
   let isDragging = false;
   let dragStartX = 0, dragStartY = 0;
 
@@ -14366,7 +14501,6 @@ function renderInternalReportTab(c) {
     if (!picking) return;
 
     if (isDragging) {
-      // Update rubber band box
       const currentX = e.clientX, currentY = e.clientY;
       const left = Math.min(dragStartX, currentX);
       const top = Math.min(dragStartY, currentY);
@@ -14378,32 +14512,36 @@ function renderInternalReportTab(c) {
       dragBox.style.top = top + 'px';
       dragBox.style.width = width + 'px';
       dragBox.style.height = height + 'px';
-      hideHoverBox();
+      hoverInspector.style.display = 'none';
       return;
     }
 
-    // Hover inspector preview
-    if (e.target.closest('#design-comments, #design-comments-toggle, .dc-note')) {
-      hideHoverBox();
+    if (e.target.closest('#wb-notes-bar, .wb-panel, .dc-note')) {
+      hoverInspector.style.display = 'none';
       return;
     }
 
-    const info = getSpecificTextTarget(e.target, e.clientX, e.clientY);
+    const info = getSpecificTextTarget(e.target);
     if (info) {
-      showHoverBox(info.rect, info.title);
+      hoverInspector.style.display = 'block';
+      hoverInspector.style.top = info.rect.top + 'px';
+      hoverInspector.style.left = info.rect.left + 'px';
+      hoverInspector.style.width = info.rect.width + 'px';
+      hoverInspector.style.height = info.rect.height + 'px';
+      hoverLabel.textContent = info.title;
     } else {
-      hideHoverBox();
+      hoverInspector.style.display = 'none';
     }
   });
 
   document.addEventListener('mousedown', (e) => {
     if (!picking) return;
-    if (e.target.closest('#design-comments, #design-comments-toggle, .dc-note')) return;
+    if (e.target.closest('#wb-notes-bar, .wb-panel, .dc-note')) return;
 
     isDragging = true;
     dragStartX = e.clientX;
     dragStartY = e.clientY;
-    hideHoverBox();
+    hoverInspector.style.display = 'none';
   });
 
   document.addEventListener('mouseup', (e) => {
@@ -14423,16 +14561,17 @@ function renderInternalReportTab(c) {
     let targetData = {};
 
     if (width > 20 && height > 20) {
-      // DRAG REGION DETECTED
+      // Drag region
       const left = Math.min(dragStartX, dragEndX) - rootRect.left;
       const top = Math.min(dragStartY, dragEndY) - rootRect.top;
 
       targetData = {
-        page: 'prototype-main',
+        category: 'design',
+        page: 'workbench-design',
         screen: sc.id,
         screenName: currentScreenName(),
         modalId: modal ? modal.id : null,
-        title: 'Vùng được khoanh',
+        title: 'Vùng khoanh thiết kế',
         x: Math.max(0, Math.min(1, left / rootRect.width)),
         y: Math.max(0, Math.min(1, top / rootRect.height)),
         region: {
@@ -14443,17 +14582,18 @@ function renderInternalReportTab(c) {
         }
       };
     } else {
-      // POINT CLICK DETECTED
-      const info = getSpecificTextTarget(e.target, dragEndX, dragEndY);
+      // Point click
+      const info = getSpecificTextTarget(e.target);
       const clickLeft = dragEndX - rootRect.left;
       const clickTop = dragEndY - rootRect.top;
 
       targetData = {
-        page: 'prototype-main',
+        category: 'design',
+        page: 'workbench-design',
         screen: sc.id,
         screenName: currentScreenName(),
         modalId: modal ? modal.id : null,
-        title: info ? info.title : 'Thành phần giao diện',
+        title: info ? info.title : 'Thành phần thiết kế',
         x: Math.max(0, Math.min(1, clickLeft / rootRect.width)),
         y: Math.max(0, Math.min(1, clickTop / rootRect.height))
       };
@@ -14461,116 +14601,138 @@ function renderInternalReportTab(c) {
 
     picking = false;
     document.body.classList.remove('dc-picking');
-    hideHoverBox();
+    hoverInspector.style.display = 'none';
 
-    // Open Form
     target = targetData;
-    panel.hidden = false;
-    form.hidden = false;
+    dcPanel.hidden = false;
+    dcForm.hidden = false;
     document.getElementById('dc-location-label').textContent = 'Vị trí: ' + targetData.title;
-    titleInput.value = targetData.title;
-    input.value = '';
-    input.focus();
+    dcTitleInput.value = targetData.title;
+    dcInput.value = '';
+    dcInput.focus();
   });
 
-  // Form Save
+  // Save Design Note
   document.getElementById('dc-save').onclick = () => {
-    const textVal = input.value.trim();
+    const textVal = dcInput.value.trim();
     if (!textVal) {
-      alert('Vui lòng nhập nội dung ghi chú.');
-      input.focus();
+      alert('Vui lòng nhập nội dung góp ý thiết kế.');
+      dcInput.focus();
       return;
     }
 
     const note = {
       ...(target || {}),
-      title: titleInput.value.trim() || target.title,
-      text: textVal
+      id: 'design_' + Date.now() + Math.random().toString(36).substr(2, 4),
+      title: dcTitleInput.value.trim() || target.title,
+      text: textVal,
+      category: 'design',
+      createdAt: new Date().toISOString()
     };
 
-    saveNote(note);
-    form.hidden = true;
+    designNotes.push(note);
+    localStorage.setItem(DESIGN_KEY, JSON.stringify(designNotes));
+    designPending.push({ id: note.id, data: note });
+    localStorage.setItem(DESIGN_QUEUE_KEY, JSON.stringify(designPending));
+    sync();
+
+    dcForm.hidden = true;
     target = null;
-    editing = null;
+    renderDesignList();
+    drawPins();
   };
 
-  // Form Cancel
   document.getElementById('dc-cancel').onclick = () => {
-    form.hidden = true;
+    dcForm.hidden = true;
     target = null;
-    editing = null;
   };
 
-  // Clear all notes
+  // Clear all design notes
   document.getElementById('dc-clear-all').onclick = () => {
-    if (confirm('Bạn có chắc chắn muốn xóa toàn bộ ghi chú trên màn hình này?')) {
-      notes.forEach(n => {
-        pending.push({ id: n.id, data: null });
+    if (confirm('Bạn có chắc chắn muốn xóa toàn bộ ghi chú thiết kế đã tạo trên màn hình này?')) {
+      designNotes.forEach(n => {
+        designPending.push({ id: n.id, data: null });
       });
-      notes = [];
-      localStorage.setItem(key, JSON.stringify([]));
-      localStorage.setItem(queueKey, JSON.stringify(pending));
+      designNotes = [];
+      localStorage.setItem(DESIGN_KEY, JSON.stringify([]));
+      localStorage.setItem(DESIGN_QUEUE_KEY, JSON.stringify(designPending));
       sync();
-      renderList();
-      draw();
+      renderDesignList();
+      drawPins();
     }
   };
 
-  // Export Markdown
+  // Export Business Markdown
+  document.getElementById('bc-export-md').onclick = () => {
+    let md = '# TÀI LIỆU QUY ĐỊNH & GHI CHÚ NGHIỆP VỤ\n\n';
+    businessNotes.forEach((n, idx) => {
+      md += `### ${idx + 1}. ${n.title || n.label}\n`;
+      md += `- **Màn hình:** ${n.screenName || n.screen || 'Chung'}\n`;
+      md += `- **Nội dung:** ${n.text}\n\n`;
+    });
+    const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `ghi-chu-nghiep-vu-workbench.md`;
+    a.click();
+  };
+
+  // Export Design Markdown
   document.getElementById('dc-export-md').onclick = () => {
-    let md = '# GHI CHÚ THIẾT KẾ UI/UX PROTOTYPE\n\n';
-    notes.forEach((n, idx) => {
+    let md = '# YÊU CẦU SỬA ĐỔI THIẾT KẾ UI/UX PROTOTYPE\n\n';
+    designNotes.forEach((n, idx) => {
       md += `### ${idx + 1}. ${n.title}\n`;
       md += `- **Màn hình:** ${n.screenName || n.screen || 'Chung'}\n`;
-      md += `- **Nội dung:** ${n.text}\n`;
+      md += `- **Nội dung sửa:** ${n.text}\n`;
       md += `- **Thời gian:** ${n.createdAt || ''}\n\n`;
     });
     const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `ghi-chu-thiet-ke-prototype-${Date.now()}.md`;
+    a.download = `yeu-cau-thiet-ke-workbench-${Date.now()}.md`;
     a.click();
   };
 
-  // Export JSON
+  // Export Design JSON
   document.getElementById('dc-export-json').onclick = () => {
-    const blob = new Blob([JSON.stringify(notes, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(designNotes, null, 2)], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `ghi-chu-prototype-${Date.now()}.json`;
+    a.download = `yeu-cau-thiet-ke-${Date.now()}.json`;
     a.click();
   };
 
-  // Escape key cancels picking
+  // Escape key cancels
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && picking) {
       picking = false;
       isDragging = false;
       dragBox.style.display = 'none';
-      hideHoverBox();
+      hoverInspector.style.display = 'none';
       document.body.classList.remove('dc-picking');
-      panel.hidden = false;
+      dcPanel.hidden = false;
     }
   });
 
-  // Re-draw pins when screen changes or modal opens
+  // Re-draw pins on screen transitions
   const observer = new MutationObserver(() => {
     if (!picking) {
-      renderList();
-      draw();
+      renderBusinessList();
+      renderDesignList();
+      drawPins();
     }
   });
   observer.observe(document.body, { attributes: true, subtree: true, attributeFilter: ['class', 'style', 'hidden'] });
 
-  // Initial draw & sync
-  renderList();
-  draw();
+  // Init
+  renderBusinessList();
+  renderDesignList();
+  drawPins();
   void sync();
   setInterval(() => {
-    if (!picking && form.hidden) void sync();
+    if (!picking && dcForm.hidden) void sync();
   }, 15000);
 })();
 </script>
-
 </body>
 </html>
