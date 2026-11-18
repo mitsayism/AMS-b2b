@@ -2262,6 +2262,7 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
   .accident-track{height:22px;border-radius:5px;background:rgba(255,255,255,.08);overflow:hidden;cursor:help}.accident-track:focus-visible{outline:2px solid #2fc8f0;outline-offset:2px}
   .accident-fill{height:100%;display:flex;align-items:center;justify-content:flex-end;padding-right:7px;box-sizing:border-box;color:#fff;font-size:11px;font-weight:700}
   .match-line-chart{padding:16px 20px}.match-line-chart svg{display:block;width:100%;height:auto;max-height:260px}
+  .quality-analysis{padding:20px;overflow-x:auto}.histogram{min-width:570px;display:flex;align-items:end;height:210px;position:relative;border-bottom:1px solid #64748b}.histogram:after{content:'';position:absolute;left:50%;top:0;bottom:0;border-left:1px dashed #94a3b8;pointer-events:none}.hist-col{flex:1;height:100%;display:flex;flex-direction:column;justify-content:end;align-items:center;gap:5px;font-size:11px;color:#cbd5e1}.hist-bar{width:56%;min-height:2px;background:#2fc8f0;border-radius:4px 4px 0 0}.hist-labels{min-width:570px;display:flex;text-align:center;font-size:11px;color:#94a3b8}.hist-labels span{flex:1;padding:8px 2px}.hist-average{text-align:center;color:#fbbf24;font-size:12px}.reason-row{display:grid;grid-template-columns:minmax(160px,260px) minmax(100px,1fr) auto;gap:12px;align-items:center;width:100%;padding:7px 0;color:#cbd5e1;background:none;border:0;text-align:left;cursor:pointer}.reason-track{height:20px;background:#1e293b;border-radius:4px}.reason-fill{height:100%;background:#2fc8f0;border-radius:4px}.reason-row:last-child .reason-fill{background:#64748b}.reason-row:focus-visible{outline:2px solid #2fc8f0}
   @media(max-width:700px){.accident-row{grid-template-columns:minmax(100px,40%) minmax(80px,1fr);gap:8px}.accident-chart{padding:12px}.match-line-chart{padding:12px}}
 </style>
 </head>
@@ -2435,53 +2436,8 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
         </div>
       </div>
 
-      <!-- Weekly Acceptance Trend: Streamlined 1-Metric Chart -->
-      <div class="panel-box" style="margin-bottom:24px;">
-        <div class="panel-header">
-          <div class="panel-title">
-            <span>📈 Xu hướng tỷ lệ Điều tra viên chấp thuận gợi ý AI theo tuần</span>
-          </div>
-        </div>
-        <div class="panel-body">
-          <div class="weekly-chart-wrap" style="grid-template-columns: repeat(4, 1fr); max-width:900px; margin:0 auto 16px;">
-            <div class="week-col">
-              <div class="week-label">Tuần 42</div>
-              <div class="week-bar-container" style="justify-content:center;">
-                <div class="source-bar" style="height:74%; width:32px; background:linear-gradient(to top, #059669, #10b981);" data-tip="Chấp thuận: 74%"></div>
-              </div>
-              <div class="week-match-rate">74.0%</div>
-              <div style="font-size:11px; color:var(--text-dim);">128 vụ việc</div>
-            </div>
-
-            <div class="week-col">
-              <div class="week-label">Tuần 43</div>
-              <div class="week-bar-container" style="justify-content:center;">
-                <div class="source-bar" style="height:77%; width:32px; background:linear-gradient(to top, #059669, #10b981);" data-tip="Chấp thuận: 77%"></div>
-              </div>
-              <div class="week-match-rate">77.0%</div>
-              <div style="font-size:11px; color:var(--text-dim);">135 vụ việc</div>
-            </div>
-
-            <div class="week-col">
-              <div class="week-label">Tuần 44</div>
-              <div class="week-bar-container" style="justify-content:center;">
-                <div class="source-bar" style="height:79%; width:32px; background:linear-gradient(to top, #059669, #10b981);" data-tip="Chấp thuận: 79%"></div>
-              </div>
-              <div class="week-match-rate">79.0%</div>
-              <div style="font-size:11px; color:var(--text-dim);">139 vụ việc</div>
-            </div>
-
-            <div class="week-col" style="border-color:rgba(16,185,129,0.5); background:rgba(16,185,129,0.05);">
-              <div class="week-label" style="color:var(--emerald); font-weight:700;">Tuần 45 (Hiện tại)</div>
-              <div class="week-bar-container" style="justify-content:center;">
-                <div class="source-bar" style="height:81.2%; width:32px; background:linear-gradient(to top, #10b981, #34d399); box-shadow:0 0 12px rgba(16,185,129,0.4);" data-tip="Chấp thuận: 81.2%"></div>
-              </div>
-              <div class="week-match-rate" style="color:var(--emerald); font-size:16px;">81.2%</div>
-              <div style="font-size:11px; color:var(--emerald); font-weight:600;">142 vụ việc</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div class="panel-box" style="margin-bottom:24px;"><div class="panel-header"><div class="panel-title">Phân bố chênh lệch tỷ lệ lỗi</div></div><div id="difference-histogram" class="quality-analysis"></div></div>
+      <div class="panel-box" style="margin-bottom:24px;"><div class="panel-header"><div class="panel-title">Nguyên nhân lệch phổ biến</div></div><div id="difference-reasons" class="quality-analysis"></div></div>
 
       <!-- Breakdown by Accident Category: AI vs Investigator -->
       <div class="panel-box">
@@ -2558,11 +2514,15 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
             <title id="match-line-title">Độ khớp theo tuần</title><desc id="match-line-desc">Tuần 42: 74%; tuần 43: 77%; tuần 44: 79%; tuần 45: 81,2%.</desc>
             <g stroke="#294157" stroke-width="1"><line x1="55" y1="30" x2="690" y2="30"/><line x1="55" y1="90" x2="690" y2="90"/><line x1="55" y1="150" x2="690" y2="150"/></g>
             <g fill="#93a4b5" font-size="12"><text x="10" y="34">100%</text><text x="18" y="94">80%</text><text x="18" y="154">60%</text></g>
+            <g fill="#94a3b8" font-size="10" text-anchor="end"><text x="718" y="140">15 vụ</text><text x="718" y="154">0 vụ</text></g>
+            <g fill="#64748b" opacity=".6"><rect x="60" y="135" width="30" height="15"/><rect x="260" y="138" width="30" height="12"/><rect x="460" y="140" width="30" height="10"/><rect x="660" y="142" width="30" height="8"/></g>
+            <g fill="#cbd5e1" font-size="11" text-anchor="middle"><text x="75" y="132">15</text><text x="275" y="135">12</text><text x="475" y="137">10</text><text x="675" y="139">8</text></g>
             <polyline fill="none" stroke="#2fc8f0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="75,108 275,99 475,93 675,86.4"/>
             <g fill="#2fc8f0" stroke="#0d1a2d" stroke-width="3"><circle cx="75" cy="108" r="6"/><circle cx="275" cy="99" r="6"/><circle cx="475" cy="93" r="6"/><circle cx="675" cy="86.4" r="6"/></g>
             <g fill="#e2e8f0" font-size="13" text-anchor="middle"><text x="75" y="93">74%</text><text x="275" y="84">77%</text><text x="475" y="78">79%</text><text x="675" y="71">81,2%</text></g>
             <g fill="#93a4b5" font-size="12" text-anchor="middle"><text x="75" y="185">Tuần 42</text><text x="275" y="185">Tuần 43</text><text x="475" y="185">Tuần 44</text><text x="675" y="185">Tuần 45</text></g>
           </svg>
+          <div style="text-align:center;color:#94a3b8;font-size:11px;">Đường: độ khớp (%) · Cột: số vụ lệch lớn (&gt;15pp, dữ liệu mẫu)</div>
         </div>
       </div>
 
@@ -2785,10 +2745,6 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
 
             <!-- Card 1: Vai trò và tỷ lệ cơ bản -->
             <div class="card">
-              <h3>
-                <span>Vai trò và tỷ lệ lỗi cơ bản</span>
-                <span class="tag" id="mock-ratio-preview" style="font-family:ui-monospace, monospace; font-weight:700; color:var(--cyan);">0 : 100</span>
-              </h3>
               <div class="b top2">
                 <!-- SVG Collision Diagram Container -->
                 <div id="mock-svg-container" style="width:100%; min-height:150px; display:flex; align-items:center; justify-content:center; background:var(--sf2); border:1px solid var(--line); border-radius:6px; overflow:hidden;">
@@ -2796,8 +2752,8 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
                 </div>
                 <div>
                   <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                    <span id="label-role-a"><b>A</b> · xanh, đi thẳng</span>
-                    <span id="label-role-b"><b>B</b> · đỏ, đi thẳng</span>
+                    <span id="label-role-a"><b>A</b></span>
+                    <span id="label-role-b"><b>B</b></span>
                   </div>
                   <div class="ratio">
                     <i class="a" id="mock-ratio-a" style="width:0%;">0</i>
@@ -2825,7 +2781,6 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
                     <th style="width:55px;">Bên</th>
                     <th>Yếu tố</th>
                     <th style="width:110px;">Điều chỉnh</th>
-                    <th style="width:190px;">Nguồn</th>
                   </tr>
                 </thead>
                 <tbody id="mock-factors-tbody">
@@ -4581,8 +4536,8 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
     // Role labels
     const roleA = document.getElementById('label-role-a');
     const roleB = document.getElementById('label-role-b');
-    if (roleA) roleA.innerHTML = `<b>${data.roleA.split('·')[0].trim()}</b> · ${data.roleA.split('·')[1]?.trim() || ''}`;
-    if (roleB) roleB.innerHTML = `<b>${data.roleB.split('·')[0].trim()}</b> · ${data.roleB.split('·')[1]?.trim() || ''}`;
+    if (roleA) roleA.textContent = 'A';
+    if (roleB) roleB.textContent = 'B';
 
     // Ratio Bar
     const ra = data.ratioA;
@@ -4615,7 +4570,6 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
           <td><span class="code o">${f.side}</span></td>
           <td class="editable-col">${f.factor}</td>
           <td class="val ${f.p ? 'p' : 'n'} editable-col">${f.val}</td>
-          <td><span class="tag ${f.isShared ? 'a' : 'w'} src" onclick="toggleFactorSource(this)">${f.src}</span></td>
         `;
         fTbody.appendChild(tr);
       });
@@ -5030,7 +4984,6 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
       <td><span class="code o" contenteditable="true">A</span></td>
       <td class="editable-col" contenteditable="true">Yếu tố điều chỉnh mới</td>
       <td class="val p editable-col" contenteditable="true">+10</td>
-      <td><span class="tag w src" onclick="toggleFactorSource(this)">Ghi đè tại tình huống</span></td>
       <td class="xd-cell"><button type="button" class="rm-row-btn" onclick="removeMockFactorRow(this)" title="Xóa dòng" style="color:var(--red);border:0;background:none;cursor:pointer;font-weight:700;">✕</button></td>
     `;
     tbody.appendChild(tr);
@@ -7158,6 +7111,57 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
     reason: 'all'
   };
 
+  // ponytail: Dữ liệu mẫu chỉ có tỷ lệ bên A; mở rộng khi có dữ liệu thực tế.
+  function renderQualityAnalysis() {
+    const histogram = document.getElementById('difference-histogram');
+    const reasons = document.getElementById('difference-reasons');
+    const cases = COMPARISON_CASES;
+    const diff = c => c.concluded.finalA - c.ai.finalA;
+    const groups = [[], [], [], [], []];
+    cases.forEach(c => { const d = diff(c); groups[d < -15 ? 0 : d < -5 ? 1 : d <= 5 ? 2 : d <= 15 ? 3 : 4].push(c); });
+    const max = Math.max(1, ...groups.map(g => g.length));
+    const average = cases.reduce((sum, c) => sum + diff(c), 0) / (cases.length || 1);
+    histogram.innerHTML = '<div class="histogram"></div><div class="hist-labels"></div><div class="hist-average"></div>';
+    const chart = histogram.querySelector('.histogram');
+    const marker = document.createElement('div');
+    marker.style.cssText = `position:absolute;z-index:1;top:0;bottom:0;border-left:2px solid #fbbf24;left:${Math.max(0, Math.min(100, 50 + average * 2))}%`;
+    marker.title = `Trung bình ${average >= 0 ? '+' : ''}${average.toFixed(1)}pp`;
+    chart.appendChild(marker);
+    const labels = ['Dưới −15pp', '−15 đến dưới −5pp', '−5 đến +5pp', 'Trên +5 đến +15pp', 'Trên +15pp'];
+    groups.forEach((group, i) => {
+      const col = document.createElement('div'); col.className = 'hist-col'; col.tabIndex = 0;
+      col.title = group.length ? group.map(c => c.id).join('\n') : 'Không có vụ việc';
+      const count = document.createElement('span'); count.textContent = `${group.length} vụ`;
+      const bar = document.createElement('div'); bar.className = 'hist-bar'; bar.style.height = `${group.length / max * 75}%`;
+      col.append(count, bar); chart.appendChild(col);
+      const label = document.createElement('span'); label.textContent = labels[i]; histogram.querySelector('.hist-labels').appendChild(label);
+    });
+    histogram.querySelector('.hist-average').textContent = `Vạch vàng: TB ${average >= 0 ? '+' : ''}${average.toFixed(1)}pp · Dữ liệu mẫu`;
+    const different = cases.filter(c => diff(c) !== 0 || c.ai.chartCode !== c.concluded.chartCode);
+    const counts = new Map(); different.forEach(c => counts.set(c.reason || '', (counts.get(c.reason || '') || 0) + 1));
+    const ordered = [...counts.entries()].filter(([reason]) => reason).sort((a, b) => b[1] - a[1]);
+    ordered.push(['', counts.get('') || 0]);
+    reasons.replaceChildren();
+    const reasonMax = Math.max(1, ...ordered.map(([, count]) => count));
+    ordered.forEach(([reason, count]) => {
+      const button = document.createElement('button'); button.type = 'button'; button.className = 'reason-row';
+      const label = document.createElement('span'); label.textContent = reason || 'Chưa nhập lý do';
+      const track = document.createElement('span'); track.className = 'reason-track';
+      const fill = document.createElement('span'); fill.className = 'reason-fill'; fill.style.display = 'block'; fill.style.width = `${count / reasonMax * 100}%`; track.appendChild(fill);
+      const value = document.createElement('span'); value.textContent = `${count} vụ · ${different.length ? Math.round(count / different.length * 100) : 0}%`;
+      button.append(label, track, value); button.onclick = () => {
+        cmpHeaderFilters = { period: 'all', ratio: 'all', reason: reason || '__unrecorded__' };
+        const search = document.getElementById('cmp-search-input'); if (search) search.value = '';
+        cmpActiveQuickFilter = 'diff'; switchMainTab('tab-discrepancy');
+        document.getElementById('th-filter-btn-reason')?.classList.add('filtered');
+        document.querySelectorAll('.qf-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.qf === 'diff'));
+        renderComparisonTable();
+      };
+      reasons.appendChild(button);
+    });
+  }
+  renderQualityAnalysis();
+
   function toggleSidebarCollapse() {
     const left = document.getElementById('mock-left-col');
     const reopenBtn = document.getElementById('btn-reopen-sidebar');
@@ -7249,7 +7253,9 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
       }
 
       // Reason filter (from column header icon)
-      if (reasonFilter === 'none') {
+      if (reasonFilter === '__unrecorded__') {
+        if (c.reason || (metrics.diff === 0 && metrics.chartMatch)) return false;
+      } else if (reasonFilter === 'none') {
         if (metrics.diff !== 0 || !metrics.chartMatch) return false;
       } else if (reasonFilter !== 'all') {
         if (c.reason !== reasonFilter) return false;
