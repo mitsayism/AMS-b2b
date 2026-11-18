@@ -13947,15 +13947,54 @@ function renderInternalReportTab(c) {
   .dc-pin:hover {
     transform: scale(1.18);
   }
+  .dc-note-close-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(15, 23, 42, 0.7);
+    color: #94a3b8;
+    font-size: 11px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    z-index: 10;
+  }
+  .dc-note-close-btn:hover {
+    background: rgba(239, 68, 68, 0.25);
+    color: #f87171;
+    border-color: rgba(248, 113, 113, 0.4);
+  }
+  .dc-btn-edit-note {
+    padding: 2px 7px;
+    font-size: 11px;
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .dc-btn-edit-note:hover {
+    background: rgba(56, 189, 248, 0.22);
+    border-color: #38bdf8;
+    color: #fff;
+  }
   .dc-note-body {
     position: absolute;
     top: 32px;
     left: 0;
-    width: 280px;
+    width: 290px;
     background: #09131f;
     border: 1px solid #1e3a5a;
     border-radius: 9px;
-    padding: 10px 12px;
+    padding: 10px 30px 10px 12px;
     box-shadow: 0 12px 30px rgba(0,0,0,0.7);
     color: #e2e8f0;
     display: none;
@@ -14027,9 +14066,17 @@ function renderInternalReportTab(c) {
   }
   body.dc-picking {
     cursor: crosshair !important;
+    user-select: none !important;
   }
   body.dc-picking * {
     cursor: crosshair !important;
+    user-select: none !important;
+  }
+  body.dc-picking img,
+  body.dc-picking video {
+    pointer-events: none !important;
+    -webkit-user-drag: none !important;
+    user-select: none !important;
   }
 </style>
 
@@ -14046,6 +14093,43 @@ function renderInternalReportTab(c) {
     <span>🎨 Ghi chú thiết kế</span>
     <span class="wb-badge wb-badge-design" id="dc-count-badge">0</span>
   </button>
+</div>
+
+<!-- MODAL CHỈNH SỬA GHI CHÚ (TEXT & KHUNG/COMPONENT) -->
+<div id="dc-edit-modal" class="dc-edit-backdrop" hidden style="z-index: 100000; display:none; align-items:center; justify-content:center; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(3,7,18,0.72); backdrop-filter:blur(3px);">
+  <div class="dc-edit-dialog" style="width: 450px; max-width: 92vw; background: #0b1728; border: 1px solid #1e3a5a; border-radius: 12px; box-shadow: 0 20px 45px rgba(0,0,0,0.85); overflow: hidden;">
+    <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 18px; border-bottom:1px solid #1e293b; background:#071220;">
+      <h3 style="margin:0; font-size:14px; font-weight:700; color:#38bdf8; display:flex; align-items:center; gap:6px;">
+        <span id="dc-edit-modal-icon">✏️</span>
+        <span id="dc-edit-modal-title">Chỉnh sửa ghi chú</span>
+      </h3>
+      <button type="button" id="dc-edit-close" style="background:none; border:none; color:#94a3b8; font-size:16px; cursor:pointer; padding:2px 6px;" title="Đóng">✕</button>
+    </div>
+    <div style="padding: 16px 18px;">
+      <div style="margin-bottom:12px;">
+        <label style="display:block; font-size:11.5px; font-weight:600; color:#94a3b8; margin-bottom:5px;">Tiêu đề ghi chú</label>
+        <input type="text" id="dc-edit-input-title" class="dc-input" style="width:100%; box-sizing:border-box; background:#040c16; border:1px solid #1e3a5a; border-radius:6px; color:#e2e8f0; padding:8px 10px; font-size:12.5px; outline:none;" />
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="display:block; font-size:11.5px; font-weight:600; color:#94a3b8; margin-bottom:5px;">Nội dung chi tiết</label>
+        <textarea id="dc-edit-input-text" class="dc-input" rows="4" style="width:100%; box-sizing:border-box; background:#040c16; border:1px solid #1e3a5a; border-radius:6px; color:#e2e8f0; padding:8px 10px; font-size:12.5px; outline:none; resize:vertical; line-height:1.45;"></textarea>
+      </div>
+      <div style="margin-bottom:16px; background:#071524; border:1px dashed #1e3a5a; border-radius:8px; padding:10px 12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <span style="font-size:11px; font-weight:600; color:#94a3b8;">Khung vị trí component:</span>
+          <span id="dc-edit-location-badge" style="font-size:10.5px; color:#38bdf8; background:rgba(56,189,248,0.1); padding:2px 6px; border-radius:4px;">Đang liên kết</span>
+        </div>
+        <div id="dc-edit-location-text" style="font-size:11.5px; color:#cbd5e1; margin-bottom:10px; word-break:break-word;"></div>
+        <button type="button" id="dc-edit-repick-btn" style="width:100%; background:rgba(6,182,212,0.15); border:1px solid #06b6d4; color:#22d3ee; padding:7px 12px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s;">
+          <span style="font-size:14px;">🎯</span> Chọn lại component / Vẽ lại khung khoanh
+        </button>
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:8px;">
+        <button type="button" id="dc-edit-cancel-btn" style="background:transparent; border:1px solid #334155; color:#94a3b8; padding:7px 14px; border-radius:6px; font-size:12px; cursor:pointer;">Hủy</button>
+        <button type="button" id="dc-edit-save-btn" class="dc-btn-primary" style="background:#0284c7; border:none; color:#fff; padding:7px 16px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer;">Lưu thay đổi</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- PANEL 1: GHI CHÚ NGHIỆP VỤ -->
@@ -14120,6 +14204,36 @@ function renderInternalReportTab(c) {
   const BUSINESS_KEY = 'ams-b2b-business-comments-v1';
   const DESIGN_KEY = 'ams-b2b-workbench-design-comments-v1';
   const DESIGN_QUEUE_KEY = `${DESIGN_KEY}-pending`;
+  const OVERRIDES_KEY = 'ams-b2b-comments-user-overrides-v1';
+
+  const getUserOverrides = () => {
+    try {
+      return JSON.parse(localStorage.getItem(OVERRIDES_KEY) || '{}');
+    } catch (_) {
+      return {};
+    }
+  };
+
+  const saveUserOverrides = (overrides) => {
+    try {
+      localStorage.setItem(OVERRIDES_KEY, JSON.stringify(overrides));
+    } catch (_) {}
+  };
+
+  const applyOverrides = (notes) => {
+    const ov = getUserOverrides();
+    return notes.map(n => {
+      let merged = n;
+      // Safeguard Pin 29: 'Án lệ tham khảo' targets #evidence-precedent, never AI Chat!
+      if (String(n.id) === '1794222820562.6973' || (n.title && n.title.includes('Án lệ tham khảo'))) {
+        merged = { ...merged, targetSelector: '#evidence-precedent' };
+      }
+      if (ov[n.id]) {
+        merged = { ...merged, ...ov[n.id] };
+      }
+      return merged;
+    });
+  };
 
   // Elements
   const bcToggle = document.getElementById('business-comments-toggle');
@@ -14148,11 +14262,13 @@ function renderInternalReportTab(c) {
   try {
     businessNotes = JSON.parse(localStorage.getItem(BUSINESS_KEY) || '[]');
     if (!Array.isArray(businessNotes)) businessNotes = [];
+    businessNotes = applyOverrides(businessNotes);
   } catch (_) {}
 
   try {
     designNotes = JSON.parse(localStorage.getItem(DESIGN_KEY) || '[]');
     if (!Array.isArray(designNotes)) designNotes = [];
+    designNotes = applyOverrides(designNotes);
   } catch (_) {}
 
   let designPending = [];
@@ -14209,11 +14325,11 @@ function renderInternalReportTab(c) {
           .filter(d => d && (String(d.id).startsWith('design_') || d.category === 'design' || d.page === 'workbench-design'));
 
         if (bNotes.length > 0) {
-          businessNotes = bNotes;
+          businessNotes = applyOverrides(bNotes);
           localStorage.setItem(BUSINESS_KEY, JSON.stringify(businessNotes));
         }
 
-        designNotes = dNotes;
+        designNotes = applyOverrides(dNotes);
         localStorage.setItem(DESIGN_KEY, JSON.stringify(designNotes));
 
         renderBusinessList();
@@ -14249,6 +14365,7 @@ function renderInternalReportTab(c) {
   const activeModalEl = () => {
     const modals = [...document.querySelectorAll('.modal-backdrop, .modal')];
     return modals.filter(m => {
+      if (m.id === 'dc-edit-modal' || m.closest('#dc-edit-modal')) return false;
       const s = window.getComputedStyle(m);
       return s.display !== 'none' && s.visibility !== 'hidden' && (m.classList.contains('active') || !m.hidden);
     }).pop() || null;
@@ -14323,6 +14440,17 @@ function renderInternalReportTab(c) {
     const text = (note.text || '').toLowerCase();
 
     // Context-aware semantic resolution for notes targeting key interactive elements
+    if (title.includes('án lệ') || text.includes('án lệ')) {
+      const ep = root.querySelector('#evidence-precedent');
+      if (isElVisible(ep)) return ep;
+      const tabEp = root.querySelector('[data-evidence-tab="precedent"]');
+      if (isElVisible(tabEp)) return tabEp;
+      // In step 4 report, check for dispute_cases section row
+      const reportRow = Array.from(root.querySelectorAll('.report-section-row, [data-section-id="dispute_cases"]')).find(r => isElVisible(r));
+      if (reportRow) return reportRow;
+      // Under no circumstances should Án lệ fall back to AI chat or random path!
+      return null;
+    }
     if (title.includes('trạng thái') && !title.includes('người dùng')) {
       const qm = root.querySelector('.queue-metrics');
       if (isElVisible(qm)) return qm;
@@ -14414,6 +14542,10 @@ function renderInternalReportTab(c) {
         if (!el) break;
       }
       if (isElVisible(el)) {
+        // Guard: If element is inside AI Chat column but note doesn't mention chat/ai
+        if (el.closest('.col-right-chat, #chat-container') && !title.includes('chat') && !title.includes('hỏi ai') && !text.includes('chat') && !text.includes('hỏi ai')) {
+          return null; // Block false anchoring to chat!
+        }
         const btn = el.closest('button, .analyzed-chart-card, .chart-card, .queue-metrics, .card, .panel, table, #video-source-cards-grid, #video-keyframes');
         return (btn && isElVisible(btn)) ? btn : el;
       }
@@ -14540,6 +14672,12 @@ function renderInternalReportTab(c) {
           <span style="font-size:10px; color:#64748b;">${n.screenName || n.screen || ''}</span>
         </div>
         <div class="dc-item-text">${n.text}</div>
+        <div class="dc-item-footer" style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+          <span style="font-size:10px; color:#64748b;">#${idx + 1}</span>
+          <div class="dc-item-btns">
+            <button type="button" style="color:#38bdf8; background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.3); border-radius:4px; padding:2px 8px; font-size:11px; cursor:pointer;" onclick="event.stopPropagation(); window.__open_edit_note('${n.id}')">✏️ Sửa</button>
+          </div>
+        </div>
       `;
       item.onclick = () => highlightPin(n.id);
       item.addEventListener('mouseenter', () => {
@@ -14580,8 +14718,9 @@ function renderInternalReportTab(c) {
         <div class="dc-item-text">${n.text}</div>
         <div class="dc-item-footer">
           <span>${n.createdAt ? new Date(n.createdAt).toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'}) : ''}</span>
-          <div class="dc-item-btns">
-            <button type="button" style="color:#f87171;" onclick="window.__delete_design_note('${n.id}')">Xóa</button>
+          <div class="dc-item-btns" style="display:flex; gap:6px;">
+            <button type="button" style="color:#38bdf8; background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.3); border-radius:4px; padding:2px 8px; font-size:11px; cursor:pointer;" onclick="event.stopPropagation(); window.__open_edit_note('${n.id}')">✏️ Sửa</button>
+            <button type="button" style="color:#f87171;" onclick="event.stopPropagation(); window.__delete_design_note('${n.id}')">Xóa</button>
           </div>
         </div>
       `;
@@ -14670,11 +14809,15 @@ function renderInternalReportTab(c) {
     pinContainer.innerHTML = `
       <div class="dc-pin ${kind}" title="${iconPrefix} #${num}. ${n.title}: ${n.text} (Kéo để di chuyển vị trí)">${num}</div>
       <div class="dc-note-body">
+        <button type="button" class="dc-note-close-btn" onclick="event.stopPropagation(); window.__close_active_note();" title="Đóng">✕</button>
         <h4>${iconPrefix} ${n.title || (kind === 'business' ? 'Nghiệp vụ' : 'Thiết kế')}</h4>
         <p>${n.text}</p>
-        <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; padding-top:6px; border-top:1px solid rgba(255,255,255,0.08);">
           <span style="font-size:10px; color:#64748b;">${n.screenName || ''}</span>
-          ${kind === 'design' ? `<button type="button" style="padding:2px 6px; font-size:11px; color:#f87171; background:none; border:1px solid rgba(248,113,113,0.3); border-radius:4px; cursor:pointer;" onclick="window.__delete_design_note('${n.id}')">Xóa</button>` : ''}
+          <div style="display:flex; gap:6px; align-items:center;">
+            <button type="button" class="dc-btn-edit-note" onclick="event.stopPropagation(); window.__open_edit_note('${n.id}')">✏️ Sửa</button>
+            ${kind === 'design' ? `<button type="button" style="padding:2px 6px; font-size:11px; color:#f87171; background:none; border:1px solid rgba(248,113,113,0.3); border-radius:4px; cursor:pointer;" onclick="event.stopPropagation(); window.__delete_design_note('${n.id}')">Xóa</button>` : ''}
+          </div>
         </div>
       </div>
     `;
@@ -14783,6 +14926,14 @@ function renderInternalReportTab(c) {
           const modal = activeModalEl();
           const root = modal || sc;
 
+          const rRect = root ? root.getBoundingClientRect() : document.body.getBoundingClientRect();
+          const newCustomPos = {
+            absX: dropX,
+            absY: dropY,
+            relX: (dropX - rRect.left) / rRect.width,
+            relY: (dropY - rRect.top) / rRect.height
+          };
+
           if (candidate && candidate !== document.body && candidate !== sc && root) {
             const tRect = candidate.getBoundingClientRect();
             n.x = Math.max(0.05, Math.min(0.95, (dropX - tRect.left) / tRect.width));
@@ -14791,7 +14942,7 @@ function renderInternalReportTab(c) {
             n.targetSelector = getSelectorFor(candidate, root);
             n.rootId = root.id;
             n.screen = sc.id;
-            n.customPinPos = null;
+            n.customPinPos = newCustomPos; // Retain exact drop coordinates!
 
             if (n.region) {
               n.region.rootId = root.id;
@@ -14799,19 +14950,32 @@ function renderInternalReportTab(c) {
               n.region.targetSelector = n.targetSelector;
             }
           } else if (root) {
-            const rRect = root.getBoundingClientRect();
-            n.customPinPos = {
-              relX: Math.max(0.02, Math.min(0.98, (dropX - rRect.left) / rRect.width)),
-              relY: Math.max(0.02, Math.min(0.98, (dropY - rRect.top) / rRect.height)),
-              absX: dropX,
-              absY: dropY
-            };
+            n.customPinPos = newCustomPos;
           }
+
+          // Persist permanently to userOverrides so sync() will NEVER wipe user's moved position!
+          const userOverrides = getUserOverrides();
+          userOverrides[n.id] = {
+            ...(userOverrides[n.id] || {}),
+            customPinPos: n.customPinPos,
+            path: n.path,
+            targetSelector: n.targetSelector,
+            rootId: n.rootId,
+            screen: n.screen,
+            x: n.x,
+            y: n.y,
+            region: n.region,
+            updatedAt: Date.now()
+          };
+          saveUserOverrides(userOverrides);
 
           if (kind === 'business') {
             localStorage.setItem(BUSINESS_KEY, JSON.stringify(businessNotes));
           } else {
             localStorage.setItem(DESIGN_KEY, JSON.stringify(designNotes));
+            designPending.push({ id: n.id, data: n });
+            localStorage.setItem(DESIGN_QUEUE_KEY, JSON.stringify(designPending));
+            sync();
           }
 
           if (typeof showToast === 'function') {
@@ -15076,8 +15240,9 @@ function renderInternalReportTab(c) {
 
   document.addEventListener('mousedown', (e) => {
     if (!picking) return;
-    if (e.target.closest('#wb-notes-bar, .wb-panel, .dc-note')) return;
+    if (e.target.closest('#wb-notes-bar, .wb-panel, .dc-note, #dc-edit-modal')) return;
 
+    e.preventDefault();
     isDragging = true;
     dragStartX = e.clientX;
     dragStartY = e.clientY;
@@ -15152,6 +15317,27 @@ function renderInternalReportTab(c) {
     document.body.classList.remove('dc-picking');
     hoverInspector.style.display = 'none';
 
+    if (isEditingRepick) {
+      isEditingRepick = false;
+      editingTempTarget = targetData;
+      editLocationText.textContent = targetData.title || (targetData.region ? 'Vùng khoanh mới' : 'Component mới');
+      editLocationBadge.textContent = targetData.region ? 'Khung khoanh mới' : 'Component mới';
+      editModal.style.display = 'flex';
+      editModal.hidden = false;
+
+      if (typeof showToast === 'function') {
+        showToast('✓ Đã chọn khung/vị trí mới. Bấm "Lưu thay đổi" để áp dụng.');
+      }
+
+      const blockClick = (clickEv) => {
+        clickEv.preventDefault();
+        clickEv.stopImmediatePropagation();
+      };
+      document.addEventListener('click', blockClick, { capture: true, once: true });
+      setTimeout(() => document.removeEventListener('click', blockClick, true), 150);
+      return;
+    }
+
     target = targetData;
     dcPanel.hidden = false;
     dcForm.hidden = false;
@@ -15167,6 +15353,160 @@ function renderInternalReportTab(c) {
     };
     document.addEventListener('click', blockClick, { capture: true, once: true });
     setTimeout(() => document.removeEventListener('click', blockClick, true), 150);
+  });
+
+  // Close active note popover
+  window.__close_active_note = () => {
+    openNoteId = null;
+    updatePinPositions();
+    updateRegionVisibility();
+  };
+
+  // EDIT NOTE MODAL LOGIC & RE-PICKING
+  let currentlyEditingNoteId = null;
+  let editingTempTarget = null;
+  let isEditingRepick = false;
+
+  const editModal = document.getElementById('dc-edit-modal');
+  const editTitleInput = document.getElementById('dc-edit-input-title');
+  const editTextInput = document.getElementById('dc-edit-input-text');
+  const editLocationText = document.getElementById('dc-edit-location-text');
+  const editLocationBadge = document.getElementById('dc-edit-location-badge');
+
+  window.__open_edit_note = (id) => {
+    const allNotes = [...businessNotes, ...designNotes];
+    const n = allNotes.find(item => item.id == id);
+    if (!n) return;
+
+    currentlyEditingNoteId = id;
+    editingTempTarget = null;
+    isEditingRepick = false;
+
+    editTitleInput.value = n.title || '';
+    editTextInput.value = n.text || '';
+    editLocationText.textContent = n.targetSelector || n.title || (n.region ? 'Vùng khoanh tỷ lệ' : 'Tọa độ tương đối');
+    editLocationBadge.textContent = n.region ? 'Khung khoanh' : 'Component';
+
+    editModal.style.display = 'flex';
+    editModal.hidden = false;
+    editModal.removeAttribute('hidden');
+  };
+
+  const closeEditModal = () => {
+    editModal.style.display = 'none';
+    editModal.hidden = true;
+    editModal.setAttribute('hidden', '');
+    currentlyEditingNoteId = null;
+    editingTempTarget = null;
+    isEditingRepick = false;
+  };
+
+  document.getElementById('dc-edit-close').onclick = closeEditModal;
+  document.getElementById('dc-edit-cancel-btn').onclick = closeEditModal;
+
+  document.getElementById('dc-edit-repick-btn').onclick = (e) => {
+    stopCommentEv(e);
+    editModal.style.display = 'none';
+    editModal.hidden = true;
+    isEditingRepick = true;
+    picking = true;
+    document.body.classList.add('dc-picking');
+    if (typeof showToast === 'function') {
+      showToast('🎯 Di chuột để chọn component hoặc kéo chuột để vẽ khung khoanh mới');
+    }
+  };
+
+  document.getElementById('dc-edit-save-btn').onclick = () => {
+    if (!currentlyEditingNoteId) return;
+
+    const newTitle = editTitleInput.value.trim();
+    const newText = editTextInput.value.trim();
+    if (!newText) {
+      alert('Vui lòng nhập nội dung ghi chú.');
+      editTextInput.focus();
+      return;
+    }
+
+    let bNote = businessNotes.find(item => item.id == currentlyEditingNoteId);
+    let dNote = designNotes.find(item => item.id == currentlyEditingNoteId);
+    const targetNote = bNote || dNote;
+    if (!targetNote) return;
+
+    targetNote.title = newTitle || targetNote.title;
+    targetNote.text = newText;
+
+    if (editingTempTarget) {
+      targetNote.path = editingTempTarget.path;
+      targetNote.targetSelector = editingTempTarget.targetSelector;
+      targetNote.rootId = editingTempTarget.rootId;
+      targetNote.screen = editingTempTarget.screen;
+      targetNote.screenName = editingTempTarget.screenName;
+      targetNote.x = editingTempTarget.x;
+      targetNote.y = editingTempTarget.y;
+      if (editingTempTarget.region) {
+        targetNote.region = editingTempTarget.region;
+      } else {
+        delete targetNote.region;
+      }
+      targetNote.customPinPos = null; // Snap to new component/region
+    }
+
+    // Persist permanently in userOverrides
+    const userOverrides = getUserOverrides();
+    userOverrides[targetNote.id] = {
+      ...(userOverrides[targetNote.id] || {}),
+      title: targetNote.title,
+      text: targetNote.text,
+      path: targetNote.path,
+      targetSelector: targetNote.targetSelector,
+      rootId: targetNote.rootId,
+      screen: targetNote.screen,
+      screenName: targetNote.screenName,
+      x: targetNote.x,
+      y: targetNote.y,
+      region: targetNote.region,
+      customPinPos: targetNote.customPinPos,
+      updatedAt: Date.now()
+    };
+    saveUserOverrides(userOverrides);
+
+    if (bNote) {
+      localStorage.setItem(BUSINESS_KEY, JSON.stringify(businessNotes));
+      renderBusinessList();
+    } else if (dNote) {
+      localStorage.setItem(DESIGN_KEY, JSON.stringify(designNotes));
+      designPending.push({ id: dNote.id, data: dNote });
+      localStorage.setItem(DESIGN_QUEUE_KEY, JSON.stringify(designPending));
+      sync();
+      renderDesignList();
+    }
+
+    closeEditModal();
+    drawPins();
+    scheduleUpdate();
+    if (typeof showToast === 'function') {
+      showToast('✓ Đã cập nhật ghi chú thành công!');
+    }
+  };
+
+  // Keyboard shortcut Esc to close open popovers or modals
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (picking) {
+        picking = false;
+        document.body.classList.remove('dc-picking');
+        hoverInspector.style.display = 'none';
+        if (isEditingRepick) {
+          isEditingRepick = false;
+          editModal.style.display = 'flex';
+          editModal.hidden = false;
+        }
+      } else if (!editModal.hidden) {
+        closeEditModal();
+      } else if (openNoteId != null) {
+        window.__close_active_note();
+      }
+    }
   });
 
   // Save Design Note
