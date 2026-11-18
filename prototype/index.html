@@ -9090,6 +9090,7 @@
     }
 
     function showAnalysisStep(step) {
+      setTimeout(() => window.dispatchEvent(new CustomEvent('ams-screen-change', { detail: { step } })), 50);
       const c = STATE.cases[STATE.currentCaseId];
       if (!c || ((step === 'evidence' || step === 'result' || step === 'negotiation' || step === 'notification') && !c.selectedChart)) return;
       if (step === 'charts' && c.isAnalyzing) step = 'reasoning';
@@ -14286,14 +14287,35 @@ function renderInternalReportTab(c) {
     return parts.join(' > ');
   };
 
+      const isElVisible = (el) => {
+    if (!el) return false;
+    if (el.getClientRects().length === 0) return false;
+    const s = window.getComputedStyle(el);
+    if (s.display === 'none' || s.visibility === 'hidden' || s.opacity === '0') return false;
+    const rect = el.getBoundingClientRect();
+    if (rect.width === 0 && rect.height === 0) return false;
+    if (el.offsetParent === null && s.position !== 'fixed') return false;
+    return true;
+  };
+
   const resolveTarget = (note) => {
-    const root = document.getElementById(note.rootId || note.screen) || currentScreenEl();
+    const sc = currentScreenEl();
+    const modal = activeModalEl();
+    const root = modal || document.getElementById(note.rootId || note.screen) || sc;
     if (!root) return null;
+
+    // If note is scoped to a modal that is currently NOT open, hide it!
+    if (note.rootId && note.rootId.startsWith('modal') && (!modal || modal.id !== note.rootId)) {
+      return null;
+    }
+    if (note.modalId && (!modal || modal.id !== note.modalId)) {
+      return null;
+    }
 
     if (note.targetSelector) {
       try {
         const el = root.querySelector(note.targetSelector);
-        if (el && el.getClientRects().length) return el;
+        if (isElVisible(el)) return el;
       } catch (_) {}
     }
 
@@ -14303,72 +14325,107 @@ function renderInternalReportTab(c) {
     // Context-aware semantic resolution for notes targeting key interactive elements
     if (title.includes('trạng thái') && !title.includes('người dùng')) {
       const qm = root.querySelector('.queue-metrics');
-      if (qm) return qm;
+      if (isElVisible(qm)) return qm;
     }
     if (title.includes('làm mới')) {
       const b = root.querySelector('button[aria-label*="Làm mới"], button[title*="Làm mới"]') || 
                 Array.from(root.querySelectorAll('button')).find(btn => btn.textContent.includes('Làm mới'));
-      if (b) return b;
+      if (isElVisible(b)) return b;
     }
     if (title.includes('kho lưu trữ') || title.includes('lưu trữ')) {
       const b = root.querySelector('#btn-tab-archived') || 
                 Array.from(root.querySelectorAll('button')).find(btn => btn.textContent.includes('Kho lưu trữ'));
-      if (b) return b;
+      if (isElVisible(b)) return b;
     }
     if (title.includes('tạo vụ việc')) {
       const b = Array.from(root.querySelectorAll('button')).find(btn => btn.textContent.includes('Tạo Vụ Việc'));
-      if (b) return b;
+      if (isElVisible(b)) return b;
     }
     if (title.includes('tìm kiếm')) {
       const inp = root.querySelector('input.chat-input, input[placeholder*="Tìm"]');
-      if (inp) return inp;
+      if (isElVisible(inp)) return inp;
     }
     if (title.includes('chọn chart khác')) {
-      const b = root.querySelector('button.chart-library-open, button[onclick*="openChartLibrary"]');
-      if (b) return b;
+      const b = root.querySelector('button.chart-library-open, button[onclick*="openChartSwitcher"]') || 
+                Array.from(root.querySelectorAll('button')).find(btn => btn.textContent.includes('Chọn chart khác'));
+      if (isElVisible(b)) return b;
+    }
+    if (title.includes('nút quản lý video') || title.includes('quản lý video')) {
+      const b = root.querySelector('button[onclick*="openVideoManager"]') || 
+                Array.from(root.querySelectorAll('button')).find(btn => btn.textContent.includes('Quản lý video'));
+      if (isElVisible(b)) return b;
+    }
+    if (title.includes('chuyển đổi chế độ') || title.includes('hiển thị video')) {
+      const b = root.querySelector('#video-mode-single') || 
+                Array.from(root.querySelectorAll('button')).find(btn => btn.textContent.includes('Một video'));
+      if (isElVisible(b)) return b;
+    }
+    if (title.includes('chế độ xem') || title.includes('chuyển chế độ')) {
+      const b = root.querySelector('#video-mode-grid') || 
+                Array.from(root.querySelectorAll('button')).find(btn => btn.textContent.includes('Lưới'));
+      if (isElVisible(b)) return b;
+    }
+    if (title.includes('mốc va chạm') || text.includes('mốc va chạm')) {
+      const b = root.querySelector('#single-impact-controls button') || 
+                Array.from(root.querySelectorAll('button')).find(btn => btn.textContent.includes('Tới mốc va chạm'));
+      if (isElVisible(b)) return b;
+    }
+    if (title.includes('thanh chuyển video') || text.includes('các góc nhìn từ các camera') || text.includes('chuyển giữa các góc nhìn')) {
+      const g = root.querySelector('#video-source-cards-grid, .video-source-cards-grid');
+      if (isElVisible(g)) return g;
+    }
+    if (title.includes('key frame') || title.includes('keyframe') || text.includes('keyframe') || title.includes('dòng thời gian diễn ra')) {
+      const kf = root.querySelector('#video-keyframes, .video-keyframes');
+      if (isElVisible(kf)) return kf;
     }
     if (title.includes('phân tích lại')) {
-      const b = root.querySelector('button.btn-primary[onclick*="reanalyze"]') || 
+      const b = root.querySelector('button[onclick*="retryVideoAnalysis"]') || 
                 Array.from(root.querySelectorAll('button')).find(btn => btn.textContent.includes('Phân tích lại'));
-      if (b) return b;
+      if (isElVisible(b)) return b;
     }
-    if (title.includes('kết quả phân tích')) {
-      const c = root.querySelector('.analyzed-chart-card.selected, .analyzed-chart-card, .chart-card.selected');
-      if (c) return c;
+    if (title.includes('bằng chứng cốt lõi')) {
+      const c = root.querySelector('#core-evidence-card') || root.querySelector('.evidence-stage.active');
+      if (isElVisible(c)) return c;
     }
     if (title.includes('điều chỉnh độ rộng')) {
       const r = root.querySelector('.video-resizer');
-      if (r) return r;
+      if (isElVisible(r)) return r;
     }
     if (title.includes('tiếp tục')) {
       const b = Array.from(root.querySelectorAll('button')).find(btn => btn.textContent.includes('Tiếp tục'));
-      if (b) return b;
+      if (isElVisible(b)) return b;
     }
     if (title.includes('lịch sử') || text.includes('lịch sử')) {
       const h = root.querySelector('.history-toggle') || 
                 Array.from(root.querySelectorAll('button')).find(btn => btn.textContent.includes('Lịch sử'));
-      if (h) return h;
+      if (isElVisible(h)) return h;
     }
     if (title.includes('quick chip')) {
       const qc = root.querySelector('.chat-footer .chat-chips') || root.querySelector('.chat-footer');
-      if (qc) return qc;
+      if (isElVisible(qc)) return qc;
     }
 
     // Default: Path traversal
-    if (note.path != null) {
+    if (note.path != null && String(note.path).trim() !== '') {
       const parts = String(note.path).split('.').filter(Boolean);
-      if (parts.length === 0) return root;
       let el = root;
       for (const idx of parts) {
         el = el?.children?.[Number(idx)];
         if (!el) break;
       }
-      if (el && el.getClientRects().length && window.getComputedStyle(el).visibility !== 'hidden') {
-        const btn = el.closest('button, .analyzed-chart-card, .chart-card, .queue-metrics');
-        return btn || el;
+      if (isElVisible(el)) {
+        const btn = el.closest('button, .analyzed-chart-card, .chart-card, .queue-metrics, .card, .panel, table, #video-source-cards-grid, #video-keyframes');
+        return (btn && isElVisible(btn)) ? btn : el;
       }
     }
-    return root;
+
+    // Fallback ONLY if note explicitly targets the root container itself
+    if (note.target === 'root') {
+      return root;
+    }
+
+    // Component is hidden or in another step/tab -> Hide pin!
+    return null;
   };
 
   // Toggle Panels (Never close open menus when clicking design comments)
