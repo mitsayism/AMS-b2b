@@ -14234,7 +14234,7 @@ function renderInternalReportTab(c) {
     }).pop() || null;
   };
 
-  // DOM Path utilities
+  // DOM Path utilities with precise element resolution
   const pathFor = (el, root) => {
     const path = [];
     while (el && el !== root) {
@@ -14246,26 +14246,80 @@ function renderInternalReportTab(c) {
     return el === root ? path.join('.') : '';
   };
 
-  const resolveTarget = (note) => {
+    const resolveTarget = (note) => {
     const root = document.getElementById(note.rootId || note.screen) || currentScreenEl();
     if (!root) return null;
-    if (note.path) {
+
+    const title = (note.title || '').toLowerCase();
+    const text = (note.text || '').toLowerCase();
+
+    // Context-aware semantic resolution for notes targeting key interactive elements
+    if (title.includes('trạng thái') && !title.includes('người dùng')) {
+      const qm = root.querySelector('.queue-metrics');
+      if (qm) return qm;
+    }
+    if (title.includes('làm mới')) {
+      const b = root.querySelector('button[aria-label*="Làm mới"], button[title*="Làm mới"]') || 
+                Array.from(root.querySelectorAll('button')).find(btn => btn.textContent.includes('Làm mới'));
+      if (b) return b;
+    }
+    if (title.includes('kho lưu trữ') || title.includes('lưu trữ')) {
+      const b = root.querySelector('#btn-tab-archived') || 
+                Array.from(root.querySelectorAll('button')).find(btn => btn.textContent.includes('Kho lưu trữ'));
+      if (b) return b;
+    }
+    if (title.includes('tạo vụ việc')) {
+      const b = Array.from(root.querySelectorAll('button')).find(btn => btn.textContent.includes('Tạo Vụ Việc'));
+      if (b) return b;
+    }
+    if (title.includes('tìm kiếm')) {
+      const inp = root.querySelector('input.chat-input, input[placeholder*="Tìm"]');
+      if (inp) return inp;
+    }
+    if (title.includes('chọn chart khác')) {
+      const b = root.querySelector('button.chart-library-open, button[onclick*="openChartLibrary"]');
+      if (b) return b;
+    }
+    if (title.includes('phân tích lại')) {
+      const b = root.querySelector('button.btn-primary[onclick*="reanalyze"]') || 
+                Array.from(root.querySelectorAll('button')).find(btn => btn.textContent.includes('Phân tích lại'));
+      if (b) return b;
+    }
+    if (title.includes('kết quả phân tích')) {
+      const c = root.querySelector('.analyzed-chart-card.selected, .analyzed-chart-card, .chart-card.selected');
+      if (c) return c;
+    }
+    if (title.includes('điều chỉnh độ rộng')) {
+      const r = root.querySelector('.video-resizer');
+      if (r) return r;
+    }
+    if (title.includes('tiếp tục')) {
+      const b = Array.from(root.querySelectorAll('button')).find(btn => btn.textContent.includes('Tiếp tục'));
+      if (b) return b;
+    }
+    if (title.includes('lịch sử') || text.includes('lịch sử')) {
+      const h = root.querySelector('.history-toggle') || 
+                Array.from(root.querySelectorAll('button')).find(btn => btn.textContent.includes('Lịch sử'));
+      if (h) return h;
+    }
+    if (title.includes('quick chip')) {
+      const qc = root.querySelector('.chat-footer .chat-chips') || root.querySelector('.chat-footer');
+      if (qc) return qc;
+    }
+
+    // Default: Path traversal
+    if (note.path != null) {
+      const parts = String(note.path).split('.').filter(Boolean);
+      if (parts.length === 0) return root;
       let el = root;
-      for (const idx of note.path.split('.').filter(Boolean)) {
+      for (const idx of parts) {
         el = el?.children?.[Number(idx)];
         if (!el) break;
       }
       if (el && el.getClientRects().length && window.getComputedStyle(el).visibility !== 'hidden') {
-        return el;
+        const btn = el.closest('button, .analyzed-chart-card, .chart-card, .queue-metrics');
+        return btn || el;
       }
-    }
-    if (note.region?.scopePath) {
-      let el = root;
-      for (const idx of note.region.scopePath.split('.').filter(Boolean)) {
-        el = el?.children?.[Number(idx)];
-        if (!el) break;
-      }
-      if (el && el.getClientRects().length) return el;
     }
     return root;
   };
@@ -14462,7 +14516,7 @@ function renderInternalReportTab(c) {
     document.body.appendChild(pinContainer);
   };
 
-  // UPDATE POSITIONS DYNAMICALLY (RESIZING, SCROLLING, EXPANDING)
+    // UPDATE POSITIONS DYNAMICALLY WITH EXACT PROPORTIONAL SCALING
   const updatePinPositions = () => {
     const sc = currentScreenEl();
     const modal = activeModalEl();
@@ -14470,50 +14524,110 @@ function renderInternalReportTab(c) {
 
     allNotes.forEach(n => {
       const pinContainer = document.getElementById('dc-pin-' + n.id);
-      const reg = document.getElementById('dc-reg-' + n.id);
-      if (!pinContainer && !reg) return;
+      const regEl = document.getElementById('dc-reg-' + n.id);
+      if (!pinContainer && !regEl) return;
 
       const targetEl = resolveTarget(n);
       if (!targetEl || !targetEl.getClientRects().length) {
         if (pinContainer) pinContainer.style.display = 'none';
-        if (reg) reg.style.display = 'none';
+        if (regEl) regEl.style.display = 'none';
         return;
       }
 
-      const rect = targetEl.getBoundingClientRect();
+      const targetRect = targetEl.getBoundingClientRect();
 
-      // Check if target element is scrolled completely out of view
-      if (rect.bottom < -20 || rect.top > window.innerHeight + 20 || rect.right < -20 || rect.left > window.innerWidth + 20) {
+      // Check if target is hidden/offscreen
+      if (targetRect.bottom < -40 || targetRect.top > window.innerHeight + 40 || targetRect.right < -40 || targetRect.left > window.innerWidth + 40) {
         if (pinContainer) pinContainer.style.display = 'none';
-        if (reg) reg.style.display = 'none';
+        if (regEl) regEl.style.display = 'none';
         return;
       }
 
-      // Position Pin (clamped inside viewport)
+      let hasValidRegion = false;
+      let rBox = null;
+
+      // 1. Calculate Region if exists
+      if (n.region && regEl) {
+        const reg = n.region;
+        const regionRoot = document.getElementById(reg.rootId || n.rootId || n.screen) || sc;
+
+        // If targetEl is a specific interactive component (not whole screen or root backdrop)
+        if (targetEl && targetEl !== regionRoot && targetEl !== sc && targetEl !== document.body) {
+          const tRect = targetEl.getBoundingClientRect();
+          rBox = {
+            left: tRect.left - 4,
+            top: tRect.top - 4,
+            width: tRect.width + 8,
+            height: tRect.height + 8
+          };
+          regEl.style.display = 'block';
+          regEl.style.left = `${rBox.left}px`;
+          regEl.style.top = `${rBox.top}px`;
+          regEl.style.width = `${rBox.width}px`;
+          regEl.style.height = `${rBox.height}px`;
+          hasValidRegion = true;
+        } else {
+          // Fallback to proportional coordinate scaling inside scope container
+          let scopeEl = null;
+          if (reg.scopePath != null) {
+            scopeEl = resolveTarget({ rootId: reg.rootId || n.rootId || n.screen, path: reg.scopePath, screen: n.screen });
+          }
+          const baseEl = scopeEl || regionRoot;
+
+          if (baseEl && baseEl.getClientRects().length) {
+            const baseRect = baseEl.getBoundingClientRect();
+            const isRelative = reg.relative === true;
+
+            const wMultiplier = isRelative ? baseRect.width : 1;
+            const hMultiplier = isRelative ? baseRect.height : 1;
+
+            rBox = {
+              left: baseRect.left + reg.left * wMultiplier,
+              top: baseRect.top + reg.top * hMultiplier,
+              width: reg.width * wMultiplier,
+              height: reg.height * hMultiplier
+            };
+
+            regEl.style.display = 'block';
+            regEl.style.left = `${rBox.left}px`;
+            regEl.style.top = `${rBox.top}px`;
+            regEl.style.width = `${rBox.width}px`;
+            regEl.style.height = `${rBox.height}px`;
+            hasValidRegion = true;
+          } else {
+            regEl.style.display = 'none';
+          }
+        }
+
+        // Highlight box when active
+        if (hasValidRegion && regEl) {
+          regEl.style.boxShadow = openNoteId === n.id ? '0 0 12px rgba(6, 182, 212, 0.5)' : 'none';
+        }
+      }
+
+      // 2. Calculate Pin position
       if (pinContainer) {
         pinContainer.style.display = 'block';
         pinContainer.classList.toggle('dc-open', openNoteId === n.id);
 
-        let px = rect.left + rect.width * (n.x ?? 0.5);
-        let py = rect.top + rect.height * (n.y ?? 0.5);
+        let px, py;
 
-        px = Math.max(8, Math.min(window.innerWidth - 34, px));
-        py = Math.max(8, Math.min(window.innerHeight - 34, py));
+        if (hasValidRegion && rBox) {
+          // Place pin neatly at top-left corner of the region box
+          px = rBox.left - 13;
+          py = rBox.top - 13;
+        } else {
+          // Point pin attached to element
+          px = targetRect.left + targetRect.width * (n.x ?? 0.5) - 13;
+          py = targetRect.top + targetRect.height * (n.y ?? 0.5) - 13;
+        }
+
+        // Clamp inside viewport
+        px = Math.max(6, Math.min(window.innerWidth - 32, px));
+        py = Math.max(6, Math.min(window.innerHeight - 32, py));
 
         pinContainer.style.left = `${px}px`;
         pinContainer.style.top = `${py}px`;
-      }
-
-      // Position Region
-      if (reg && n.region) {
-        const scopeEl = n.region.scopePath ? resolveTarget({ rootId: n.region.rootId || n.rootId, path: n.region.scopePath, screen: n.screen }) : targetEl;
-        const sRect = (scopeEl || targetEl).getBoundingClientRect();
-
-        reg.style.display = 'block';
-        reg.style.left = `${sRect.left + n.region.left * sRect.width}px`;
-        reg.style.top = `${sRect.top + n.region.top * sRect.height}px`;
-        reg.style.width = `${n.region.width * sRect.width}px`;
-        reg.style.height = `${n.region.height * sRect.height}px`;
       }
     });
   };
@@ -14824,8 +14938,21 @@ function renderInternalReportTab(c) {
   });
 
   // Re-draw pins on screen transitions & DOM mutations
+  let lastActiveScreenId = '';
+  const checkScreenChange = () => {
+    const sc = currentScreenEl();
+    const modal = activeModalEl();
+    const curId = (modal?.id || '') + ':' + (sc?.id || '');
+    if (curId !== lastActiveScreenId) {
+      lastActiveScreenId = curId;
+      scheduleUpdate();
+    } else {
+      scheduleRepositionOnly();
+    }
+  };
+
   const observer = new MutationObserver(() => {
-    if (!picking) scheduleRepositionOnly();
+    if (!picking) checkScreenChange();
   });
   observer.observe(document.body, { attributes: true, subtree: true, attributeFilter: ['class', 'style', 'hidden'] });
 
