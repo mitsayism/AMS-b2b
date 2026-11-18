@@ -13897,11 +13897,13 @@ function renderInternalReportTab(c) {
     margin-top: 4px;
   }
 
-  /* Screen Pins */
+  /* Dynamic Fixed Screen Pins */
   .dc-note {
-    position: absolute;
+    position: fixed;
     z-index: 99989;
     font: 13px/1.4 'Inter', system-ui, sans-serif;
+    pointer-events: auto;
+    transition: transform 0.12s ease-out;
   }
   .dc-note.dc-hidden { display: none !important; }
   .dc-pin {
@@ -13941,6 +13943,7 @@ function renderInternalReportTab(c) {
     box-shadow: 0 12px 30px rgba(0,0,0,0.7);
     color: #e2e8f0;
     display: none;
+    z-index: 99995;
   }
   .dc-note.dc-open .dc-note-body {
     display: block;
@@ -13959,14 +13962,15 @@ function renderInternalReportTab(c) {
     white-space: pre-wrap;
   }
 
-  /* Region / Selection Boxes */
+  /* Region / Selection Boxes (Dynamic Fixed) */
   .dc-region {
-    position: absolute;
+    position: fixed;
     border: 2px dashed #06b6d4;
     background: rgba(6, 182, 212, 0.12);
     border-radius: 6px;
     pointer-events: none;
     z-index: 99988;
+    transition: all 0.08s ease-out;
   }
   #dc-drag-box {
     position: fixed;
@@ -14157,7 +14161,6 @@ function renderInternalReportTab(c) {
   // Synchronize both data sets
   const sync = async () => {
     try {
-      // 1. Process pending design notes
       while (designPending.length) {
         const op = designPending[0];
         if (op.data) {
@@ -14173,17 +14176,14 @@ function renderInternalReportTab(c) {
         localStorage.setItem(DESIGN_QUEUE_KEY, JSON.stringify(designPending));
       }
 
-      // 2. Fetch all comments from Supabase
       const res = await request(`${endpoint}?select=*`);
       if (res && res.ok) {
         const rows = await res.json();
 
-        // Business notes: Existing specification notes (exclude rules_ and design_)
         const bNotes = rows
           .map(r => r.data)
           .filter(d => d && !String(d.id).startsWith('rules_') && !String(d.id).startsWith('design_') && d.category !== 'design' && d.page !== 'analysis-rules');
 
-        // Design notes: Only workbench design feedback notes
         const dNotes = rows
           .map(r => r.data)
           .filter(d => d && (String(d.id).startsWith('design_') || d.category === 'design' || d.page === 'workbench-design'));
@@ -14198,11 +14198,9 @@ function renderInternalReportTab(c) {
 
         renderBusinessList();
         renderDesignList();
-        drawPins();
+        scheduleUpdate();
       }
-    } catch (_) {
-      // Offline fallback
-    }
+    } catch (_) {}
   };
 
   // Screen helpers
@@ -14236,7 +14234,43 @@ function renderInternalReportTab(c) {
     }).pop() || null;
   };
 
-  // Toggle Panels (mutually exclusive)
+  // DOM Path utilities
+  const pathFor = (el, root) => {
+    const path = [];
+    while (el && el !== root) {
+      const parent = el.parentElement;
+      if (!parent) return '';
+      path.unshift([...parent.children].indexOf(el));
+      el = parent;
+    }
+    return el === root ? path.join('.') : '';
+  };
+
+  const resolveTarget = (note) => {
+    const root = document.getElementById(note.rootId || note.screen) || currentScreenEl();
+    if (!root) return null;
+    if (note.path) {
+      let el = root;
+      for (const idx of note.path.split('.').filter(Boolean)) {
+        el = el?.children?.[Number(idx)];
+        if (!el) break;
+      }
+      if (el && el.getClientRects().length && window.getComputedStyle(el).visibility !== 'hidden') {
+        return el;
+      }
+    }
+    if (note.region?.scopePath) {
+      let el = root;
+      for (const idx of note.region.scopePath.split('.').filter(Boolean)) {
+        el = el?.children?.[Number(idx)];
+        if (!el) break;
+      }
+      if (el && el.getClientRects().length) return el;
+    }
+    return root;
+  };
+
+  // Toggle Panels
   bcToggle.onclick = (e) => {
     e.stopPropagation();
     dcPanel.hidden = true;
@@ -14247,7 +14281,7 @@ function renderInternalReportTab(c) {
     bcToggle.setAttribute('aria-expanded', String(!isHidden));
     if (!bcPanel.hidden) {
       renderBusinessList();
-      drawPins();
+      scheduleUpdate();
     }
   };
 
@@ -14261,7 +14295,7 @@ function renderInternalReportTab(c) {
     dcToggle.setAttribute('aria-expanded', String(!isHidden));
     if (!dcPanel.hidden) {
       renderDesignList();
-      drawPins();
+      scheduleUpdate();
     }
   };
 
@@ -14276,18 +14310,12 @@ function renderInternalReportTab(c) {
 
   window.toggleBusinessPins = (checked) => {
     showBusinessPins = checked;
-    drawPins();
+    scheduleUpdate();
   };
 
   // Render Business List
   const renderBusinessList = () => {
-    const sc = currentScreenEl();
-    const modal = activeModalEl();
-
-    if (bcCountBadge) {
-      bcCountBadge.textContent = businessNotes.length;
-    }
-
+    if (bcCountBadge) bcCountBadge.textContent = businessNotes.length;
     if (!bcList) return;
     bcList.innerHTML = '';
     if (businessNotes.length === 0) {
@@ -14315,10 +14343,7 @@ function renderInternalReportTab(c) {
 
   // Render Design List
   const renderDesignList = () => {
-    if (dcCountBadge) {
-      dcCountBadge.textContent = designNotes.length;
-    }
-
+    if (dcCountBadge) dcCountBadge.textContent = designNotes.length;
     if (!dcList) return;
     dcList.innerHTML = '';
     if (designNotes.length === 0) {
@@ -14360,17 +14385,16 @@ function renderInternalReportTab(c) {
     localStorage.setItem(DESIGN_QUEUE_KEY, JSON.stringify(designPending));
     sync();
     renderDesignList();
-    drawPins();
+    scheduleUpdate();
   };
 
-  // Draw Screen Pins & Regions
+  // DYNAMIC ELEMENT-ANCHORED PIN DRAWING & POSITIONING
   const drawPins = () => {
     document.querySelectorAll('.dc-note, .dc-region').forEach(el => el.remove());
 
     const sc = currentScreenEl();
     const modal = activeModalEl();
-    const rootEl = modal || sc;
-    const rootRect = rootEl.getBoundingClientRect();
+    const currentRoot = modal || sc;
 
     // 1. Draw Business Pins
     if (showBusinessPins) {
@@ -14382,7 +14406,7 @@ function renderInternalReportTab(c) {
           if (n.screen && n.screen !== sc.id) return;
         }
 
-        drawSinglePin(n, idx + 1, 'business', rootEl, rootRect);
+        createPinElement(n, idx + 1, 'business', currentRoot);
       });
     }
 
@@ -14394,34 +14418,27 @@ function renderInternalReportTab(c) {
         if (n.modalId || (n.screen && n.screen !== sc.id)) return;
       }
 
-      drawSinglePin(n, idx + 1, 'design', rootEl, rootRect);
+      createPinElement(n, idx + 1, 'design', currentRoot);
     });
+
+    updatePinPositions();
   };
 
-  const drawSinglePin = (n, num, kind, rootEl, rootRect) => {
-    // Draw region if exists
+  const createPinElement = (n, num, kind, currentRoot) => {
+    // Region element
     if (n.region) {
       const reg = document.createElement('div');
       reg.className = 'dc-region';
       reg.id = 'dc-reg-' + n.id;
       if (kind === 'business') reg.style.borderColor = '#0284c7';
-      reg.style.top = (rootRect.top + window.scrollY + n.region.top * rootRect.height) + 'px';
-      reg.style.left = (rootRect.left + window.scrollX + n.region.left * rootRect.width) + 'px';
-      reg.style.width = (n.region.width * rootRect.width) + 'px';
-      reg.style.height = (n.region.height * rootRect.height) + 'px';
       document.body.appendChild(reg);
     }
 
-    // Draw pin
+    // Pin element
     const pinContainer = document.createElement('div');
     pinContainer.className = 'dc-note' + (openNoteId === n.id ? ' dc-open' : '');
     pinContainer.id = 'dc-pin-' + n.id;
-
-    const pinTop = rootRect.top + window.scrollY + (n.y * rootRect.height);
-    const pinLeft = rootRect.left + window.scrollX + (n.x * rootRect.width);
-
-    pinContainer.style.top = pinTop + 'px';
-    pinContainer.style.left = pinLeft + 'px';
+    pinContainer.dataset.kind = kind;
 
     const iconPrefix = kind === 'business' ? '📋' : '🎨';
     pinContainer.innerHTML = `
@@ -14439,15 +14456,98 @@ function renderInternalReportTab(c) {
     pinContainer.querySelector('.dc-pin').onclick = (e) => {
       e.stopPropagation();
       openNoteId = openNoteId === n.id ? null : n.id;
-      drawPins();
+      updatePinPositions();
     };
 
     document.body.appendChild(pinContainer);
   };
 
+  // UPDATE POSITIONS DYNAMICALLY (RESIZING, SCROLLING, EXPANDING)
+  const updatePinPositions = () => {
+    const sc = currentScreenEl();
+    const modal = activeModalEl();
+    const allNotes = [...(showBusinessPins ? businessNotes : []), ...designNotes];
+
+    allNotes.forEach(n => {
+      const pinContainer = document.getElementById('dc-pin-' + n.id);
+      const reg = document.getElementById('dc-reg-' + n.id);
+      if (!pinContainer && !reg) return;
+
+      const targetEl = resolveTarget(n);
+      if (!targetEl || !targetEl.getClientRects().length) {
+        if (pinContainer) pinContainer.style.display = 'none';
+        if (reg) reg.style.display = 'none';
+        return;
+      }
+
+      const rect = targetEl.getBoundingClientRect();
+
+      // Check if target element is scrolled completely out of view
+      if (rect.bottom < -20 || rect.top > window.innerHeight + 20 || rect.right < -20 || rect.left > window.innerWidth + 20) {
+        if (pinContainer) pinContainer.style.display = 'none';
+        if (reg) reg.style.display = 'none';
+        return;
+      }
+
+      // Position Pin (clamped inside viewport)
+      if (pinContainer) {
+        pinContainer.style.display = 'block';
+        pinContainer.classList.toggle('dc-open', openNoteId === n.id);
+
+        let px = rect.left + rect.width * (n.x ?? 0.5);
+        let py = rect.top + rect.height * (n.y ?? 0.5);
+
+        px = Math.max(8, Math.min(window.innerWidth - 34, px));
+        py = Math.max(8, Math.min(window.innerHeight - 34, py));
+
+        pinContainer.style.left = `${px}px`;
+        pinContainer.style.top = `${py}px`;
+      }
+
+      // Position Region
+      if (reg && n.region) {
+        const scopeEl = n.region.scopePath ? resolveTarget({ rootId: n.region.rootId || n.rootId, path: n.region.scopePath, screen: n.screen }) : targetEl;
+        const sRect = (scopeEl || targetEl).getBoundingClientRect();
+
+        reg.style.display = 'block';
+        reg.style.left = `${sRect.left + n.region.left * sRect.width}px`;
+        reg.style.top = `${sRect.top + n.region.top * sRect.height}px`;
+        reg.style.width = `${n.region.width * sRect.width}px`;
+        reg.style.height = `${n.region.height * sRect.height}px`;
+      }
+    });
+  };
+
+  let rafScheduled = false;
+  const scheduleUpdate = () => {
+    if (rafScheduled) return;
+    rafScheduled = true;
+    requestAnimationFrame(() => {
+      rafScheduled = false;
+      drawPins();
+    });
+  };
+
+  const scheduleRepositionOnly = () => {
+    if (rafScheduled) return;
+    rafScheduled = true;
+    requestAnimationFrame(() => {
+      rafScheduled = false;
+      updatePinPositions();
+    });
+  };
+
+  // LISTEN FOR WINDOW RESIZE, SCROLL, AND SCREEN CHANGES
+  window.addEventListener('resize', scheduleRepositionOnly, { passive: true });
+  window.addEventListener('scroll', (e) => {
+    if (!(e.target instanceof Element) || !e.target.closest('#wb-notes-bar, .wb-panel')) {
+      scheduleRepositionOnly();
+    }
+  }, { passive: true, capture: true });
+
   const highlightPin = (id) => {
     openNoteId = id;
-    drawPins();
+    updatePinPositions();
     const pin = document.getElementById('dc-pin-' + id);
     if (pin) {
       pin.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -14556,14 +14656,15 @@ function renderInternalReportTab(c) {
     const sc = currentScreenEl();
     const modal = activeModalEl();
     const rootEl = modal || sc;
-    const rootRect = rootEl.getBoundingClientRect();
 
     let targetData = {};
 
     if (width > 20 && height > 20) {
       // Drag region
-      const left = Math.min(dragStartX, dragEndX) - rootRect.left;
-      const top = Math.min(dragStartY, dragEndY) - rootRect.top;
+      const scopeEl = e.target.closest('.card, .panel, .case-table-container, .modal-body, table') || rootEl;
+      const scopeRect = scopeEl.getBoundingClientRect();
+      const left = Math.min(dragStartX, dragEndX) - scopeRect.left;
+      const top = Math.min(dragStartY, dragEndY) - scopeRect.top;
 
       targetData = {
         category: 'design',
@@ -14571,21 +14672,27 @@ function renderInternalReportTab(c) {
         screen: sc.id,
         screenName: currentScreenName(),
         modalId: modal ? modal.id : null,
+        rootId: rootEl.id,
+        path: pathFor(scopeEl, rootEl),
         title: 'Vùng khoanh thiết kế',
-        x: Math.max(0, Math.min(1, left / rootRect.width)),
-        y: Math.max(0, Math.min(1, top / rootRect.height)),
+        x: Math.max(0, Math.min(1, left / scopeRect.width)),
+        y: Math.max(0, Math.min(1, top / scopeRect.height)),
         region: {
-          left: Math.max(0, Math.min(1, left / rootRect.width)),
-          top: Math.max(0, Math.min(1, top / rootRect.height)),
-          width: Math.min(1, width / rootRect.width),
-          height: Math.min(1, height / rootRect.height)
+          scopePath: pathFor(scopeEl, rootEl),
+          rootId: rootEl.id,
+          left: Math.max(0, Math.min(1, left / scopeRect.width)),
+          top: Math.max(0, Math.min(1, top / scopeRect.height)),
+          width: Math.min(1, width / scopeRect.width),
+          height: Math.min(1, height / scopeRect.height)
         }
       };
     } else {
       // Point click
       const info = getSpecificTextTarget(e.target);
-      const clickLeft = dragEndX - rootRect.left;
-      const clickTop = dragEndY - rootRect.top;
+      const clickedEl = info ? info.element : e.target;
+      const elRect = clickedEl.getBoundingClientRect();
+      const clickLeft = dragEndX - elRect.left;
+      const clickTop = dragEndY - elRect.top;
 
       targetData = {
         category: 'design',
@@ -14593,9 +14700,11 @@ function renderInternalReportTab(c) {
         screen: sc.id,
         screenName: currentScreenName(),
         modalId: modal ? modal.id : null,
+        rootId: rootEl.id,
+        path: pathFor(clickedEl, rootEl),
         title: info ? info.title : 'Thành phần thiết kế',
-        x: Math.max(0, Math.min(1, clickLeft / rootRect.width)),
-        y: Math.max(0, Math.min(1, clickTop / rootRect.height))
+        x: elRect.width ? Math.max(0, Math.min(1, clickLeft / elRect.width)) : 0.5,
+        y: elRect.height ? Math.max(0, Math.min(1, clickTop / elRect.height)) : 0.5
       };
     }
 
@@ -14639,7 +14748,7 @@ function renderInternalReportTab(c) {
     dcForm.hidden = true;
     target = null;
     renderDesignList();
-    drawPins();
+    scheduleUpdate();
   };
 
   document.getElementById('dc-cancel').onclick = () => {
@@ -14658,7 +14767,7 @@ function renderInternalReportTab(c) {
       localStorage.setItem(DESIGN_QUEUE_KEY, JSON.stringify(designPending));
       sync();
       renderDesignList();
-      drawPins();
+      scheduleUpdate();
     }
   };
 
@@ -14714,20 +14823,16 @@ function renderInternalReportTab(c) {
     }
   });
 
-  // Re-draw pins on screen transitions
+  // Re-draw pins on screen transitions & DOM mutations
   const observer = new MutationObserver(() => {
-    if (!picking) {
-      renderBusinessList();
-      renderDesignList();
-      drawPins();
-    }
+    if (!picking) scheduleRepositionOnly();
   });
   observer.observe(document.body, { attributes: true, subtree: true, attributeFilter: ['class', 'style', 'hidden'] });
 
   // Init
   renderBusinessList();
   renderDesignList();
-  drawPins();
+  scheduleUpdate();
   void sync();
   setInterval(() => {
     if (!picking && dcForm.hidden) void sync();
