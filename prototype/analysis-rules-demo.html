@@ -2255,6 +2255,15 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
 }
 
 </style>
+<style id="quality-chart-design">
+  .accident-chart{background:rgba(15,23,42,.6);padding:14px 18px;border-radius:10px;border:1px solid rgba(255,255,255,.07)}
+  .accident-chart-title{font-size:12.5px;font-weight:700;color:#e2e8f0;margin-bottom:14px}
+  .accident-bars{display:grid;gap:12px}.accident-row{display:grid;grid-template-columns:minmax(120px,42%) minmax(100px,1fr);align-items:center;gap:12px;color:#cbd5e1;font-size:11.5px}
+  .accident-track{height:22px;border-radius:5px;background:rgba(255,255,255,.08);overflow:hidden;cursor:help}.accident-track:focus-visible{outline:2px solid #2fc8f0;outline-offset:2px}
+  .accident-fill{height:100%;display:flex;align-items:center;justify-content:flex-end;padding-right:7px;box-sizing:border-box;color:#fff;font-size:11px;font-weight:700}
+  .match-line-chart{padding:16px 20px}.match-line-chart svg{display:block;width:100%;height:auto;max-height:260px}
+  @media(max-width:700px){.accident-row{grid-template-columns:minmax(100px,40%) minmax(80px,1fr);gap:8px}.accident-chart{padding:12px}.match-line-chart{padding:12px}}
+</style>
 </head>
 <body>
 
@@ -2495,62 +2504,15 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
         <div id="accident-view-overview">
 <!-- 2 Biểu đồ đặt cạnh nhau: Biểu đồ cột phân bố + Biểu đồ Donut cơ cấu -->
         <div style="display:grid; grid-template-columns: 1.35fr 1fr; gap:16px; padding:16px; background:rgba(0,0,0,0.18); border-bottom:1px solid rgba(255,255,255,0.06);">
-          <!-- Biểu đồ cột bên trái: Tỷ lệ chấp thuận theo từng loại tai nạn -->
-          <div style="background:rgba(15,23,42,0.6); padding:14px 18px; border-radius:10px; border:1px solid rgba(255,255,255,0.07);">
-            <div style="font-size:12.5px; font-weight:700; color:#e2e8f0; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
-              <span>📊 Tỷ lệ chấp thuận theo loại tai nạn</span>
-              <span style="font-size:11px; color:#10b981; font-weight:600;">Mục tiêu ≥80%</span>
-            </div>
-            <div style="display:flex; flex-direction:column; gap:9px;">
-              <div>
-                <div style="display:flex; justify-content:space-between; font-size:11.5px; margin-bottom:3px;">
-                  <span style="color:#cbd5e1;">Ngã tư không đèn</span>
-                  <span style="font-weight:700; color:#f87171;">73.9% (34/46)</span>
-                </div>
-                <div style="height:7px; background:rgba(255,255,255,0.08); border-radius:4px; overflow:hidden;">
-                  <div style="height:100%; width:73.9%; background:linear-gradient(90deg, #ef4444, #f87171); border-radius:4px;"></div>
-                </div>
-              </div>
-
-              <div>
-                <div style="display:flex; justify-content:space-between; font-size:11.5px; margin-bottom:3px;">
-                  <span style="color:#cbd5e1;">Chuyển làn cùng chiều</span>
-                  <span style="font-weight:700; color:#34d399;">86.8% (33/38)</span>
-                </div>
-                <div style="height:7px; background:rgba(255,255,255,0.08); border-radius:4px; overflow:hidden;">
-                  <div style="height:100%; width:86.8%; background:linear-gradient(90deg, #059669, #10b981); border-radius:4px;"></div>
-                </div>
-              </div>
-
-              <div>
-                <div style="display:flex; justify-content:space-between; font-size:11.5px; margin-bottom:3px;">
-                  <span style="color:#cbd5e1;">Đâm đuôi (Rear-end)</span>
-                  <span style="font-weight:700; color:#34d399;">92.9% (26/28)</span>
-                </div>
-                <div style="height:7px; background:rgba(255,255,255,0.08); border-radius:4px; overflow:hidden;">
-                  <div style="height:100%; width:92.9%; background:linear-gradient(90deg, #059669, #34d399); border-radius:4px;"></div>
-                </div>
-              </div>
-
-              <div>
-                <div style="display:flex; justify-content:space-between; font-size:11.5px; margin-bottom:3px;">
-                  <span style="color:#cbd5e1;">Vòng xuyến</span>
-                  <span style="font-weight:700; color:#fbbf24;">71.4% (10/14)</span>
-                </div>
-                <div style="height:7px; background:rgba(255,255,255,0.08); border-radius:4px; overflow:hidden;">
-                  <div style="height:100%; width:71.4%; background:linear-gradient(90deg, #d97706, #fbbf24); border-radius:4px;"></div>
-                </div>
-              </div>
-
-              <div>
-                <div style="display:flex; justify-content:space-between; font-size:11.5px; margin-bottom:3px;">
-                  <span style="color:#cbd5e1;">Người đi bộ / Xe đạp</span>
-                  <span style="font-weight:700; color:#34d399;">87.5% (14/16)</span>
-                </div>
-                <div style="height:7px; background:rgba(255,255,255,0.08); border-radius:4px; overflow:hidden;">
-                  <div style="height:100%; width:87.5%; background:linear-gradient(90deg, #059669, #10b981); border-radius:4px;"></div>
-                </div>
-              </div>
+          <!-- Biểu đồ tỷ lệ chấp thuận theo loại tai nạn -->
+          <div class="accident-chart">
+            <div class="accident-chart-title">Tỷ lệ chấp thuận theo loại tai nạn</div>
+            <div class="accident-bars">
+              <div class="accident-row"><span>Ngã tư không đèn</span><div class="accident-track" tabindex="0" title="34 / 46 vụ chấp thuận" aria-label="Ngã tư không đèn: 73,9%, 34 trên 46 vụ"><div class="accident-fill" style="width:73.9%;background:#ef4444">73,9%</div></div></div>
+              <div class="accident-row"><span>Chuyển làn cùng chiều</span><div class="accident-track" tabindex="0" title="33 / 38 vụ chấp thuận" aria-label="Chuyển làn cùng chiều: 86,8%, 33 trên 38 vụ"><div class="accident-fill" style="width:86.8%;background:#10b981">86,8%</div></div></div>
+              <div class="accident-row"><span>Đâm đuôi</span><div class="accident-track" tabindex="0" title="26 / 28 vụ chấp thuận" aria-label="Đâm đuôi: 92,9%, 26 trên 28 vụ"><div class="accident-fill" style="width:92.9%;background:#10b981">92,9%</div></div></div>
+              <div class="accident-row"><span>Vòng xuyến</span><div class="accident-track" tabindex="0" title="10 / 14 vụ chấp thuận" aria-label="Vòng xuyến: 71,4%, 10 trên 14 vụ"><div class="accident-fill" style="width:71.4%;background:#d97706">71,4%</div></div></div>
+              <div class="accident-row"><span>Người đi bộ / Xe đạp</span><div class="accident-track" tabindex="0" title="14 / 16 vụ chấp thuận" aria-label="Người đi bộ / Xe đạp: 87,5%, 14 trên 16 vụ"><div class="accident-fill" style="width:87.5%;background:#10b981">87,5%</div></div></div>
             </div>
           </div>
 
@@ -2586,125 +2548,24 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
           </div>
         </div>
 
-        <div class="table-responsive">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Loại tai nạn</th>
-                <th>Tổng số vụ</th>
-                <th>Số vụ đồng thuận (AI = ĐTV)</th>
-                <th>Tỷ lệ chấp thuận</th>
-                <th>Số vụ lệch</th>
-                <th>Hành động</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><b>Ngã tư không có đèn tín hiệu</b></td>
-                <td>46 vụ</td>
-                <td><b style="color:var(--emerald);">34 vụ</b></td>
-                <td><span class="badge badge-rose">73.9%</span></td>
-                <td><b style="color:var(--rose);">8 vụ lệch</b></td>
-                <td><button class="btn btn-primary btn-sm" onclick="filterDiscrepancy('Ngã tư')">Xem 8 vụ lệch</button></td>
-              </tr>
-              <tr>
-                <td><b>Chuyển làn cùng chiều</b></td>
-                <td>38 vụ</td>
-                <td><b style="color:var(--emerald);">33 vụ</b></td>
-                <td><span class="badge badge-emerald">86.8%</span></td>
-                <td><b style="color:var(--text-muted);">3 vụ lệch</b></td>
-                <td><button class="btn btn-secondary btn-sm" onclick="filterDiscrepancy('Chuyển làn')">Xem 3 vụ lệch</button></td>
-              </tr>
-              <tr>
-                <td><b>Đâm đuôi (Rear-end)</b></td>
-                <td>28 vụ</td>
-                <td><b style="color:var(--emerald);">26 vụ</b></td>
-                <td><span class="badge badge-emerald">92.9%</span></td>
-                <td><b style="color:var(--emerald);">1 vụ lệch</b></td>
-                <td><button class="btn btn-secondary btn-sm" onclick="filterDiscrepancy('Đâm đuôi')">Xem 1 vụ lệch</button></td>
-              </tr>
-              <tr>
-                <td><b>Vòng xuyến / Đảo giao thông</b></td>
-                <td>14 vụ</td>
-                <td><b style="color:var(--emerald);">10 vụ</b></td>
-                <td><span class="badge badge-amber">71.4%</span></td>
-                <td><b style="color:var(--amber);">2 vụ lệch</b></td>
-                <td><button class="btn btn-primary btn-sm" onclick="filterDiscrepancy('Vòng xuyến')">Xem 2 vụ lệch</button></td>
-              </tr>
-              <tr>
-                <td><b>Người đi bộ / Xe đạp băng đường</b></td>
-                <td>16 vụ</td>
-                <td><b style="color:var(--emerald);">14 vụ</b></td>
-                <td><span class="badge badge-emerald">87.5%</span></td>
-                <td><b style="color:var(--text-muted);">0 vụ lệch</b></td>
-                <td><button class="btn btn-secondary btn-sm" disabled style="opacity:0.4;">0 vụ lệch</button></td>
-              </tr>
-            </tbody>
-          </table>
+      </div>
+
+      <!-- Xu hướng độ khớp theo thời gian -->
+      <div class="panel-box" style="margin-top:20px;">
+        <div class="panel-header"><div class="panel-title">Độ khớp AI và điều tra viên theo thời gian</div></div>
+        <div class="match-line-chart">
+          <svg viewBox="0 0 720 220" role="img" aria-labelledby="match-line-title match-line-desc">
+            <title id="match-line-title">Độ khớp theo tuần</title><desc id="match-line-desc">Tuần 42: 74%; tuần 43: 77%; tuần 44: 79%; tuần 45: 81,2%.</desc>
+            <g stroke="#294157" stroke-width="1"><line x1="55" y1="30" x2="690" y2="30"/><line x1="55" y1="90" x2="690" y2="90"/><line x1="55" y1="150" x2="690" y2="150"/></g>
+            <g fill="#93a4b5" font-size="12"><text x="10" y="34">100%</text><text x="18" y="94">80%</text><text x="18" y="154">60%</text></g>
+            <polyline fill="none" stroke="#2fc8f0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="75,108 275,99 475,93 675,86.4"/>
+            <g fill="#2fc8f0" stroke="#0d1a2d" stroke-width="3"><circle cx="75" cy="108" r="6"/><circle cx="275" cy="99" r="6"/><circle cx="475" cy="93" r="6"/><circle cx="675" cy="86.4" r="6"/></g>
+            <g fill="#e2e8f0" font-size="13" text-anchor="middle"><text x="75" y="93">74%</text><text x="275" y="84">77%</text><text x="475" y="78">79%</text><text x="675" y="71">81,2%</text></g>
+            <g fill="#93a4b5" font-size="12" text-anchor="middle"><text x="75" y="185">Tuần 42</text><text x="275" y="185">Tuần 43</text><text x="475" y="185">Tuần 44</text><text x="675" y="185">Tuần 45</text></g>
+          </svg>
         </div>
       </div>
-    
-      <!-- Nhóm quy tắc thường tạo ra sai lệch -->
-      <div class="panel-box" style="margin-top:20px;">
-        <div class="panel-header">
-          <div class="panel-title">
-            <span>⚠️ Nhóm quy tắc thường tạo ra sai lệch nhiều nhất</span>
-          </div>
-        </div>
-        <div class="table-responsive">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Nhóm quy tắc</th>
-                <th>Số vụ lệch</th>
-                <th>Chênh lệch TB</th>
-                <th>Căn cứ KNIA liên quan</th>
-                <th>Mẫu Chart thường lệch</th>
-                <th>Đánh giá nguyên nhân</th>
-                <th>Hành động</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><b>Nhường đường ngã tư &amp; Đường ưu tiên</b></td>
-                <td><b style="color:var(--rose);">8 vụ</b></td>
-                <td><span class="badge badge-rose">±15.0% lỗi</span></td>
-                <td>KNIA Điều 112 / 114</td>
-                <td>Chart 112 ➔ Chart 114</td>
-                <td style="font-size:12px; color:var(--text-muted);">Camera góc hẹp không thấy độ rộng lòng đường, bỏ sót lời khai đường nhánh</td>
-                <td><button class="btn btn-primary btn-sm" onclick="filterDiscrepancy('Ngã tư')">Rà soát 8 vụ</button></td>
-              </tr>
-              <tr>
-                <td><b>Xi-nhan &amp; Khoảng cách chuyển làn</b></td>
-                <td><b style="color:var(--amber);">3 vụ</b></td>
-                <td><span class="badge badge-amber">±10.0% lỗi</span></td>
-                <td>KNIA Điều 252 (차31-3)</td>
-                <td>Chart 252 (tăng lỗi tạt đầu)</td>
-                <td style="font-size:12px; color:var(--text-muted);">AI chưa đo được khoảng cách bật đèn tín hiệu &lt;30m trước khi chuyển làn</td>
-                <td><button class="btn btn-secondary btn-sm" onclick="filterDiscrepancy('Chuyển làn')">Rà soát 3 vụ</button></td>
-              </tr>
-              <tr>
-                <td><b>Quyền ưu tiên trong Vòng xuyến</b></td>
-                <td><b style="color:var(--amber);">2 vụ</b></td>
-                <td><span class="badge badge-rose">±20.0% lỗi</span></td>
-                <td>KNIA Điều 311 / 314</td>
-                <td>Chart 311 ➔ Chart 314</td>
-                <td style="font-size:12px; color:var(--text-muted);">Xe đã vào sâu hơn 2/3 vòng xuyến nhưng AI vẫn tính ngã rẽ thông thường</td>
-                <td><button class="btn btn-primary btn-sm" onclick="filterDiscrepancy('Vòng xuyến')">Rà soát 2 vụ</button></td>
-              </tr>
-              <tr>
-                <td><b>Đèn tín hiệu khi rẽ phải</b></td>
-                <td><b style="color:var(--text-muted);">1 vụ</b></td>
-                <td><span class="badge badge-rose">±20.0% lỗi</span></td>
-                <td>KNIA Điều 103 / 105</td>
-                <td>Chart 103 ➔ Chart 105</td>
-                <td style="font-size:12px; color:var(--text-muted);">Giao lộ có biển cấm rẽ phải khi đèn đỏ nhưng AI không quét được biển phụ</td>
-                <td><button class="btn btn-secondary btn-sm" onclick="filterDiscrepancy('Ngã tư')">Rà soát 1 vụ</button></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      
+
         </div>
 
         <!-- CHẾ ĐỘ 2: XEM CHI TIẾT THEO LOẠI TAI NẠN (CẢ BIỂU ĐỒ VÀ BẢNG) -->
