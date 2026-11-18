@@ -1504,6 +1504,62 @@
 /* ==========================================================================
    TAB 3: SO SÁNH KẾT QUẢ AI VÀ KẾT QUẢ CHỐT (STYLING & DESIGN TOKENS)
    ========================================================================== */
+.th-filter-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.th-filter-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 4px;
+  color: var(--text-dim);
+  cursor: pointer;
+  padding: 2px 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  line-height: 1;
+}
+.th-filter-btn:hover,
+.th-filter-btn.filtered {
+  background: rgba(6, 182, 212, 0.2);
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+.th-filter-dropdown {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  background: #081422;
+  border: 1px solid #1e3a5a;
+  border-radius: 6px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.8);
+  z-index: 10000;
+  min-width: 175px;
+  padding: 4px 0;
+  max-height: 240px;
+  overflow-y: auto;
+}
+.th-filter-item {
+  padding: 6px 12px;
+  font-size: 11.5px;
+  color: #cbd5e1;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.12s;
+  text-align: left;
+}
+.th-filter-item:hover {
+  background: rgba(6, 182, 212, 0.14);
+  color: #fff;
+}
+.th-filter-item.active {
+  color: var(--cyan);
+  font-weight: 700;
+  background: rgba(6, 182, 212, 0.18);
+}
 #tab-discrepancy {
   --diff-green-bg: rgba(16, 185, 129, 0.12);
   --diff-green-border: rgba(16, 185, 129, 0.4);
@@ -2234,15 +2290,12 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
     <nav class="tab-nav">
       <button class="nav-tab-btn active" onclick="switchMainTab('tab-quality')" id="btn-tab-quality">
         <span>Tổng quan chất lượng</span>
-        <span class="tab-count">Đối soát</span>
       </button>
       <button class="nav-tab-btn" onclick="switchMainTab('tab-rules')" id="btn-tab-rules">
         <span>Quy tắc tỷ lệ lỗi</span>
-        <span class="tab-count" id="badge-rules-count">Bản 10 · 6/2023</span>
       </button>
       <button class="nav-tab-btn" onclick="switchMainTab('tab-discrepancy')" id="btn-tab-discrepancy">
         <span>So sánh kết quả</span>
-        <span class="tab-count" id="badge-discrepancy-count" style="background:rgba(6,182,212,0.15); color:var(--cyan); border-color:rgba(6,182,212,0.3);">20 vụ đã chốt</span>
       </button>
     </nav>
     <div class="tab-bar-actions">
@@ -2732,10 +2785,16 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
         <!-- VIEW 1: THEO TÌNH HUỐNG -->
         <div class="ws on" id="vs">
           <!-- Col 1: Left Tree -->
-          <nav class="col left" aria-label="Phân cấp tình huống">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <nav class="col left" id="mock-left-col" aria-label="Phân cấp tình huống">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:4px;">
               <span class="lbl" style="margin:0;">Phân cấp tình huống</span>
-              <button type="button" onclick="expandAllTree(true)" style="background:none; border:0; color:var(--ac); font-size:11px; cursor:pointer;" title="Mở rộng tất cả">Mở rộng</button>
+              <div style="display:flex; gap:6px; align-items:center;">
+                <button type="button" id="btn-tree-collapse" onclick="expandAllTree(false)" style="background:none; border:0; color:var(--text-dim); font-size:11px; cursor:pointer;" title="Thu gọn toàn bộ cây tình huống">Thu gọn</button>
+                <span style="color:var(--line); font-size:10px;">|</span>
+                <button type="button" id="btn-tree-expand" onclick="expandAllTree(true)" style="background:none; border:0; color:var(--cyan); font-size:11px; cursor:pointer;" title="Mở rộng toàn bộ cây tình huống">Mở rộng</button>
+                <span style="color:var(--line); font-size:10px;">|</span>
+                <button type="button" id="btn-collapse-sidebar" onclick="toggleSidebarCollapse()" style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:4px; color:var(--text-main); font-size:10.5px; padding:2px 6px; cursor:pointer;" title="Thu gọn thanh danh mục bên trái">◧ Ẩn</button>
+              </div>
             </div>
             <ul class="tree" id="mock-situation-tree">
               <!-- CHƯƠNG 1 -->
@@ -2854,6 +2913,9 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
 
             <!-- Head -->
             <div class="head">
+              <button type="button" id="btn-reopen-sidebar" class="mock-btn" onclick="toggleSidebarCollapse()" style="display:none; font-size:11.5px; padding:3px 9px; margin-right:8px; align-items:center; gap:4px;" title="Mở lại ngăn phân cấp tình huống">
+                <span>◧ Hiện danh mục</span>
+              </button>
               <span class="code" id="mock-chart-badge">차1-1</span>
               <button class="edbtn" id="mock-edbtn" onclick="enterMockupEdit()">✎ Chỉnh sửa</button>
             </div>
@@ -3098,9 +3160,7 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
           <h1 class="screen-title" style="margin:0; font-size:20px; font-weight:700; color:#fff;">SO SÁNH KẾT QUẢ AI VÀ KẾT QUẢ CHỐT</h1>
 
         </div>
-        <div style="display:flex; gap:10px; align-items:center;">
-          <span class="badge badge-cyan" id="cmp-total-badge" style="font-size:12px; padding:6px 10px;">20 vụ đã chốt</span>
-        </div>
+
       </div>
 
                         <!-- Phần số tổng hợp phía trên bảng (Chỉ hiển thị 3 số chuẩn theo yêu cầu) -->
@@ -3108,41 +3168,18 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
         <div class="compare-kpi-card">
           <span class="compare-kpi-label">Tỷ lệ Chart giống nhau</span>
           <strong class="compare-kpi-val" id="kpi-chart-match-rate">85.0%</strong>
-          <span class="compare-kpi-sub" id="kpi-chart-match-sub">17 / 20 vụ trùng khớp</span>
         </div>
         <div class="compare-kpi-card">
           <span class="compare-kpi-label">Chênh lệch trung bình (pp)</span>
           <strong class="compare-kpi-val" id="kpi-avg-diff">5.5 pp</strong>
-          <span class="compare-kpi-sub" id="kpi-avg-diff-sub">Độ lệch trung bình bên A</span>
         </div>
         <div class="compare-kpi-card">
           <span class="compare-kpi-label">Số vụ việc (Cỡ mẫu)</span>
           <strong class="compare-kpi-val" id="kpi-sample-size" style="color:var(--cyan);">20 vụ</strong>
-          <span class="compare-kpi-sub" id="kpi-sample-sub">17 vụ tính KPI sau khi loại thương lượng</span>
         </div>
       </div>
 
-      <!-- Công tắc: Loại trừ thương lượng & Nút mở ngăn Phân tích chuyên sâu -->
-      <div class="compare-toggle-bar">
-        <div class="compare-toggle-left">
-          <label class="compare-switch">
-            <input type="checkbox" id="toggle-exclude-negotiation" checked onchange="handleNegotiationToggle()">
-            <span class="compare-slider"></span>
-          </label>
-          <div>
-            <b>Loại trừ các vụ lệch do thương lượng giữa hai bên</b>
-            <span style="color:var(--text-muted); font-size:12px; margin-left:6px;">
-              (Tránh chấm AI thấp oan khi chênh lệch xuất phát từ nhượng bộ thỏa thuận)
-            </span>
-          </div>
-        </div>
-        <div style="display:flex; align-items:center; gap:8px;">
-          <span class="tag" id="negotiation-filter-status" style="font-size:11px;">Đang bật: Đã loại 3 vụ</span>
-          <button type="button" class="btn btn-secondary btn-sm" id="btn-deep-analysis" onclick="toggleDeepAnalysisDrawer()" style="font-size:11.5px; padding:3px 9px;" title="Mở ngăn phân tích sâu về biểu đồ lệch, yếu tố và xu hướng">
-            <span id="deep-analysis-btn-text">📊 Phân tích chuyên sâu ⌄</span>
-          </button>
-        </div>
-      </div>
+
 
       <!-- Ngăn Phân tích chuyên sâu (Mặc định đóng) -->
       <div id="deep-analysis-drawer" class="deep-analysis-drawer" style="display:none;">
@@ -3191,39 +3228,25 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
       </div>
 
       <!-- Bộ lọc và tìm kiếm -->
-      <div class="filter-bar" style="margin-bottom:14px;">
-        <div class="search-input-wrap" style="flex:1; max-width:260px;">
-          <input type="text" id="cmp-search-input" placeholder="Tìm theo mã vụ (#AMS-..., CS-...)..." oninput="handleComparisonFilterChange()">
+      <div class="filter-bar" style="margin-bottom:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+        <div style="display:flex; align-items:center; gap:8px; flex:1;">
+          <div class="search-input-wrap" style="flex:1; max-width:280px;">
+            <input type="text" id="cmp-search-input" placeholder="Tìm theo mã vụ (#AMS-..., CS-...)..." oninput="handleComparisonFilterChange()">
+          </div>
+
+          <!-- Quick filter pills -->
+          <div class="quick-filter-group">
+            <button type="button" class="qf-btn active" data-qf="all" onclick="setCmpQuickFilter('all')">Tất cả</button>
+            <button type="button" class="qf-btn" data-qf="diff" onclick="setCmpQuickFilter('diff')">Chỉ vụ lệch</button>
+            <button type="button" class="qf-btn" data-qf="chart_diff" onclick="setCmpQuickFilter('chart_diff')">Chỉ vụ Chart khác</button>
+          </div>
         </div>
 
-        <select class="filter-select" id="cmp-period-select" onchange="handleComparisonFilterChange()" style="min-width:160px;">
-          <option value="all">Tất cả thời gian</option>
-          <option value="week">Tuần này (04/11 - 10/11)</option>
-          <option value="month">Tháng 11/2026</option>
-          <option value="last_month">Tháng 10/2026</option>
-        </select>
-
-        <!-- Quick filter pills -->
-        <div class="quick-filter-group">
-          <button type="button" class="qf-btn active" data-qf="all" onclick="setCmpQuickFilter('all')">Tất cả</button>
-          <button type="button" class="qf-btn" data-qf="diff" onclick="setCmpQuickFilter('diff')">Chỉ vụ có chênh lệch</button>
-          <button type="button" class="qf-btn" data-qf="chart_diff" onclick="setCmpQuickFilter('chart_diff')">Chỉ vụ Chart khác</button>
+        <div>
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-deep-analysis" onclick="toggleDeepAnalysisDrawer()" style="font-size:11.5px; padding:4px 10px;" title="Mở ngăn phân tích sâu về biểu đồ lệch, yếu tố và xu hướng">
+            <span id="deep-analysis-btn-text">📊 Phân tích chuyên sâu ⌄</span>
+          </button>
         </div>
-
-        <select class="filter-select" id="cmp-reason-select" onchange="handleComparisonFilterChange()" style="min-width:210px;">
-          <option value="all">Tất cả nguyên nhân</option>
-          <option value="none">— Khớp hoàn toàn</option>
-          <option value="Có bằng chứng bổ sung sau khi AI chạy">Có bằng chứng bổ sung sau khi AI chạy</option>
-          <option value="AI nhận diện sai tình huống">AI nhận diện sai tình huống</option>
-          <option value="AI chọn đúng nhưng áp sai yếu tố điều chỉnh">AI chọn đúng nhưng áp sai yếu tố điều chỉnh</option>
-          <option value="Diễn giải khác về cùng bằng chứng">Diễn giải khác về cùng bằng chứng</option>
-          <option value="Thương lượng giữa hai bên">Thương lượng giữa hai bên</option>
-          <option value="Chất lượng dữ liệu đầu vào hạn chế (video mờ / góc khuất)">Chất lượng dữ liệu đầu vào hạn chế</option>
-          <option value="Kết luận chính thức của CSGT / Biên bản điều tra">Kết luận chính thức của CSGT</option>
-          <option value="Áp dụng án lệ / Tập quán hòa giải địa phương">Áp dụng án lệ / Hòa giải địa phương</option>
-          <option value="Yếu tố đặc thù ngoài bộ quy tắc chuẩn">Yếu tố đặc thù ngoài quy tắc chuẩn</option>
-          <option value="Lý do khác (ghi rõ ở phần ghi chú)">Lý do khác (ghi chú riêng)</option>
-        </select>
       </div>
 
       <!-- BẢNG SO SÁNH (6 CỘT CHẾ ĐỘ GỌN, STICKY LEFT, EXPANDABLE) -->
@@ -3231,14 +3254,65 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
         <table class="cmp-table" id="comparison-main-table">
           <thead>
             <tr class="col-row">
-              <th class="sticky-c1" style="min-width:130px;">Mã vụ việc</th>
-              <th class="sticky-c2" style="min-width:110px;">Thời gian</th>
-              <th style="min-width:240px;">Chart (AI → Chốt)</th>
-              <th style="min-width:125px; text-align:center;">Tỷ lệ (AI → Chốt)</th>
-              <th class="sortable" onclick="toggleSortDiff()" style="min-width:130px; text-align:center;" title="Bấm để sắp xếp theo giá trị tuyệt đối chênh lệch" id="th-sort-diff">
+              <th class="sticky-c1" style="min-width:120px;">Mã vụ việc</th>
+              <th class="sticky-c2" style="min-width:125px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:4px;">
+                  <span>Thời gian</span>
+                  <div class="th-filter-wrap">
+                    <button type="button" class="th-filter-btn" id="th-filter-btn-period" onclick="toggleThFilter(event, 'filter-th-period')" title="Lọc theo thời gian">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+                    </button>
+                    <div id="filter-th-period" class="th-filter-dropdown" hidden>
+                      <div class="th-filter-item active" onclick="applyThFilter('period', 'all', this)">Tất cả thời gian</div>
+                      <div class="th-filter-item" onclick="applyThFilter('period', 'week', this)">Tuần này (04/11 - 10/11)</div>
+                      <div class="th-filter-item" onclick="applyThFilter('period', 'month', this)">Tháng 11/2026</div>
+                      <div class="th-filter-item" onclick="applyThFilter('period', 'last_month', this)">Tháng 10/2026</div>
+                    </div>
+                  </div>
+                </div>
+              </th>
+              <th style="min-width:220px;">Chart (AI → Chốt)</th>
+              <th style="min-width:150px; text-align:center;">
+                <div style="display:flex; align-items:center; justify-content:center; gap:6px;">
+                  <span>Tỷ lệ (AI → Chốt)</span>
+                  <div class="th-filter-wrap">
+                    <button type="button" class="th-filter-btn" id="th-filter-btn-ratio" onclick="toggleThFilter(event, 'filter-th-ratio')" title="Lọc theo tỷ lệ">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+                    </button>
+                    <div id="filter-th-ratio" class="th-filter-dropdown" hidden>
+                      <div class="th-filter-item active" onclick="applyThFilter('ratio', 'all', this)">Tất cả tỷ lệ</div>
+                      <div class="th-filter-item" onclick="applyThFilter('ratio', 'diff', this)">Chỉ vụ có lệch tỷ lệ</div>
+                      <div class="th-filter-item" onclick="applyThFilter('ratio', 'match', this)">Khớp hoàn toàn (0pp)</div>
+                    </div>
+                  </div>
+                </div>
+              </th>
+              <th class="sortable" onclick="toggleSortDiff()" style="min-width:120px; text-align:center;" title="Bấm để sắp xếp theo giá trị tuyệt đối chênh lệch" id="th-sort-diff">
                 Chênh lệch <span id="sort-diff-icon">⇅</span>
               </th>
-              <th style="min-width:240px;">Nguyên nhân lệch</th>
+              <th style="min-width:240px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:4px;">
+                  <span>Nguyên nhân lệch</span>
+                  <div class="th-filter-wrap">
+                    <button type="button" class="th-filter-btn" id="th-filter-btn-reason" onclick="toggleThFilter(event, 'filter-th-reason')" title="Lọc theo nguyên nhân">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+                    </button>
+                    <div id="filter-th-reason" class="th-filter-dropdown" style="right:0; left:auto; width:260px;" hidden>
+                      <div class="th-filter-item active" onclick="applyThFilter('reason', 'all', this)">Tất cả nguyên nhân</div>
+                      <div class="th-filter-item" onclick="applyThFilter('reason', 'none', this)">— Khớp hoàn toàn</div>
+                      <div class="th-filter-item" onclick="applyThFilter('reason', 'Có bằng chứng bổ sung sau khi AI chạy', this)">Có bằng chứng bổ sung</div>
+                      <div class="th-filter-item" onclick="applyThFilter('reason', 'AI nhận diện sai tình huống', this)">AI nhận diện sai tình huống</div>
+                      <div class="th-filter-item" onclick="applyThFilter('reason', 'AI chọn đúng nhưng áp sai yếu tố điều chỉnh', this)">Áp sai yếu tố điều chỉnh</div>
+                      <div class="th-filter-item" onclick="applyThFilter('reason', 'Diễn giải khác về cùng bằng chứng', this)">Diễn giải khác về bằng chứng</div>
+                      <div class="th-filter-item" onclick="applyThFilter('reason', 'Thương lượng giữa hai bên', this)">Thương lượng giữa hai bên</div>
+                      <div class="th-filter-item" onclick="applyThFilter('reason', 'Chất lượng dữ liệu đầu vào hạn chế (video mờ / góc khuất)', this)">Dữ liệu đầu vào hạn chế</div>
+                      <div class="th-filter-item" onclick="applyThFilter('reason', 'Kết luận chính thức của CSGT / Biên bản điều tra', this)">Kết luận của CSGT</div>
+                      <div class="th-filter-item" onclick="applyThFilter('reason', 'Áp dụng án lệ / Tập quán hòa giải địa phương', this)">Áp dụng án lệ / Tập quán</div>
+                      <div class="th-filter-item" onclick="applyThFilter('reason', 'Lý do khác (ghi rõ ở phần ghi chú)', this)">Lý do khác</div>
+                    </div>
+                  </div>
+                </div>
+              </th>
             </tr>
           </thead>
 
@@ -7217,6 +7291,50 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
   let cmpFullDetailSet = new Set();
   let cmpSortDiffMode = 'none'; // 'none' | 'desc' | 'asc'
   let cmpActiveQuickFilter = 'all'; // 'all' | 'diff' | 'chart_diff'
+  let cmpHeaderFilters = {
+    period: 'all',
+    ratio: 'all',
+    reason: 'all'
+  };
+
+  function toggleSidebarCollapse() {
+    const left = document.getElementById('mock-left-col');
+    const reopenBtn = document.getElementById('btn-reopen-sidebar');
+    if (!left) return;
+    const isHidden = (left.style.display === 'none');
+    left.style.display = isHidden ? 'flex' : 'none';
+    if (reopenBtn) reopenBtn.style.display = isHidden ? 'none' : 'inline-flex';
+  }
+
+  function toggleThFilter(e, dropdownId) {
+    e.stopPropagation();
+    const dd = document.getElementById(dropdownId);
+    if (!dd) return;
+    const isHidden = dd.hidden;
+    document.querySelectorAll('.th-filter-dropdown').forEach(d => d.hidden = true);
+    dd.hidden = !isHidden;
+  }
+
+  function applyThFilter(type, value, itemEl) {
+    cmpHeaderFilters[type] = value;
+    const parentDd = itemEl.closest('.th-filter-dropdown');
+    if (parentDd) {
+      parentDd.querySelectorAll('.th-filter-item').forEach(it => it.classList.remove('active'));
+      itemEl.classList.add('active');
+      parentDd.hidden = true;
+    }
+    const btn = document.getElementById('th-filter-btn-' + type);
+    if (btn) {
+      btn.classList.toggle('filtered', value !== 'all');
+    }
+    renderComparisonTable();
+  }
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.th-filter-wrap')) {
+      document.querySelectorAll('.th-filter-dropdown').forEach(d => d.hidden = true);
+    }
+  });
   let cmpDeepAnalysisOpen = false;
 
   function toggleDeepAnalysisDrawer() {
@@ -7239,9 +7357,10 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
     if (!tbody) return;
 
     const search = (document.getElementById('cmp-search-input')?.value || '').toLowerCase().trim();
-    const period = document.getElementById('cmp-period-select')?.value || 'all';
-    const reasonFilter = document.getElementById('cmp-reason-select')?.value || 'all';
-    const excludeNegotiated = document.getElementById('toggle-exclude-negotiation')?.checked ?? true;
+    const period = cmpHeaderFilters.period;
+    const reasonFilter = cmpHeaderFilters.reason;
+    const ratioFilter = cmpHeaderFilters.ratio;
+    const excludeNegotiated = false; // Always include sample cases
 
     // Filter Cases
     let filtered = COMPARISON_CASES.filter(c => {
@@ -7252,19 +7371,23 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
         return false;
       }
 
-      // Filter by period
+      // Filter by period (from column header icon)
       if (period === 'week' && c.period !== 'week') return false;
       if (period === 'month' && c.period !== 'week' && c.period !== 'month') return false;
       if (period === 'last_month' && c.period !== 'last_month') return false;
 
-      // Quick filters
+      // Filter by ratio (from column header icon)
+      if (ratioFilter === 'diff' && metrics.diff === 0) return false;
+      if (ratioFilter === 'match' && metrics.diff !== 0) return false;
+
+      // Quick filter buttons
       if (cmpActiveQuickFilter === 'diff') {
         if (metrics.diff === 0 && metrics.chartMatch) return false;
       } else if (cmpActiveQuickFilter === 'chart_diff') {
         if (metrics.chartMatch) return false;
       }
 
-      // Reason filter
+      // Reason filter (from column header icon)
       if (reasonFilter === 'none') {
         if (metrics.diff !== 0 || !metrics.chartMatch) return false;
       } else if (reasonFilter !== 'all') {
