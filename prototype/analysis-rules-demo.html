@@ -6268,12 +6268,18 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
     }
   };
 
-  // Toggle Panel
-  toggle.onclick = () => {
+  // Toggle Panel (Never close open menus when clicking design comments)
+  const stopEv = (e) => { if (e) { e.stopPropagation(); if (e.stopImmediatePropagation) e.stopImmediatePropagation(); } };
+  toggle.onclick = (e) => {
+    stopEv(e);
     panel.hidden = !panel.hidden;
     toggle.setAttribute('aria-expanded', String(!panel.hidden));
     draw();
   };
+  toggle.onmousedown = stopEv;
+  toggle.onpointerdown = stopEv;
+  panel.onmousedown = stopEv;
+  panel.onpointerdown = stopEv;
   document.getElementById('dc-close-panel').onclick = () => {
     panel.hidden = true;
     toggle.setAttribute('aria-expanded', 'false');
@@ -6287,10 +6293,13 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
     toggle.setAttribute('aria-expanded', 'false');
   };
 
-  document.getElementById('dc-pick').onclick = () => {
+  document.getElementById('dc-pick').onclick = (e) => {
+    stopEv(e);
     redrawing = false;
     startPicking();
   };
+  document.getElementById('dc-pick').onmousedown = stopEv;
+  document.getElementById('dc-pick').onpointerdown = stopEv;
   document.getElementById('dc-redraw').onclick = () => {
     redrawing = true;
     startPicking();
@@ -7479,6 +7488,10 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
   }
 
   function selectWeekIndex(idx) {
+    // If user is picking an element for design feedback, do not trigger week change or close dropdown
+    if (document.body.classList.contains('dc-picking') || (typeof picking !== 'undefined' && picking)) {
+      return;
+    }
     if (idx < 0 || idx >= WEEKS_DATA.length) return;
     currentWeekIndex = idx;
     updateWeekDisplay();
@@ -7486,6 +7499,14 @@ input:checked + .compare-slider:before { transform: translateX(18px); }
   }
 
   document.addEventListener('click', (e) => {
+    // DO NOT close menu if interacting with comments UI or currently in picking mode
+    if (e.target.closest('#design-comments, #design-comments-toggle, #business-comments, #business-comments-toggle, .dc-note, #dc-form, #dc-drag-box, #dc-hover-inspector, .wb-note-btn, .wb-panel')) {
+      return;
+    }
+    if (document.body.classList.contains('dc-picking') || (typeof picking !== 'undefined' && picking)) {
+      return;
+    }
+
     if (!e.target.closest('#week-range-display') && !e.target.closest('#week-calendar-dropdown')) {
       closeWeekDropdown();
     }

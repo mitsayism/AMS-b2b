@@ -14324,9 +14324,34 @@ function renderInternalReportTab(c) {
     return root;
   };
 
-  // Toggle Panels
+  // Toggle Panels (Never close open menus when clicking design comments)
+  const stopCommentEv = (e) => {
+    if (e) {
+      e.stopPropagation();
+      if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+    }
+  };
+
+  [bcToggle, dcToggle].forEach(btn => {
+    if (!btn) return;
+    btn.addEventListener('mousedown', stopCommentEv);
+    btn.addEventListener('pointerdown', stopCommentEv);
+  });
+
+  const notesBarEl = document.getElementById('wb-notes-bar');
+  if (notesBarEl) {
+    notesBarEl.addEventListener('mousedown', stopCommentEv);
+    notesBarEl.addEventListener('pointerdown', stopCommentEv);
+  }
+
+  [bcPanel, dcPanel].forEach(p => {
+    if (!p) return;
+    p.addEventListener('mousedown', stopCommentEv);
+    p.addEventListener('pointerdown', stopCommentEv);
+  });
+
   bcToggle.onclick = (e) => {
-    e.stopPropagation();
+    stopCommentEv(e);
     dcPanel.hidden = true;
     dcToggle.setAttribute('aria-expanded', 'false');
 
@@ -14340,7 +14365,7 @@ function renderInternalReportTab(c) {
   };
 
   dcToggle.onclick = (e) => {
-    e.stopPropagation();
+    stopCommentEv(e);
     bcPanel.hidden = true;
     bcToggle.setAttribute('aria-expanded', 'false');
 
@@ -14674,11 +14699,14 @@ function renderInternalReportTab(c) {
   };
 
   // Design Picking Tool Logic
-  document.getElementById('dc-pick').onclick = () => {
+  document.getElementById('dc-pick').onclick = (e) => {
+    stopCommentEv(e);
     picking = true;
     document.body.classList.add('dc-picking');
     dcPanel.hidden = true;
   };
+  document.getElementById('dc-pick').onmousedown = stopCommentEv;
+  document.getElementById('dc-pick').onpointerdown = stopCommentEv;
 
   const getSpecificTextTarget = (el) => {
     if (!el || el === document.body) return null;
@@ -14833,6 +14861,14 @@ function renderInternalReportTab(c) {
     dcTitleInput.value = targetData.title;
     dcInput.value = '';
     dcInput.focus();
+
+    // Block subsequent click event so target elements/menus do not trigger action or close
+    const blockClick = (clickEv) => {
+      clickEv.preventDefault();
+      clickEv.stopImmediatePropagation();
+    };
+    document.addEventListener('click', blockClick, { capture: true, once: true });
+    setTimeout(() => document.removeEventListener('click', blockClick, true), 150);
   });
 
   // Save Design Note
