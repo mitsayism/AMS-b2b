@@ -3843,7 +3843,7 @@
 
     .nego4-cols {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 12px;
       align-items: start;
     }
@@ -4538,6 +4538,16 @@
 
     #SCR-CASE-DETAIL .chart-card-detail section {
       min-width: 0;
+    }
+
+    #SCR-CASE-DETAIL .chart-rationale-roles {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    #SCR-CASE-DETAIL .chart-roles-block h4 {
+      margin-top: 0;
     }
 
     #SCR-CASE-DETAIL .chart-card-detail h4 {
@@ -10403,20 +10413,24 @@
             </summary>
             <div class="chart-card-detail" style="margin-top:10px; padding-top:10px; border-top:1px solid #1e3650;">
               <section>
-                ${chart.desc ? `
-                  <div class="chart-card-detail-rationale" style="background:rgba(15,23,42,0.6); border-left:3px solid #38bdf8; padding:8px 10px; margin-bottom:12px; border-radius:0 6px 6px 0;">
-                    <div style="font-size:11.5px; font-weight:700; color:#38bdf8; margin-bottom:4px;">💡 ${t('chart_rationale')}:</div>
-                    <p style="font-size:11.5px; color:#cbd5e1; line-height:1.45; margin:0;">${escapeHtml(localizedChartField(chart, 'desc'))}</p>
+                <div class="chart-rationale-roles">
+                  ${chart.desc ? `
+                    <div class="chart-card-detail-rationale" style="background:rgba(15,23,42,0.6); border-left:3px solid #38bdf8; padding:8px 10px; margin-bottom:12px; border-radius:0 6px 6px 0;">
+                      <div style="font-size:11.5px; font-weight:700; color:#38bdf8; margin-bottom:4px;">💡 ${t('chart_rationale')}:</div>
+                      <p style="font-size:11.5px; color:#cbd5e1; line-height:1.45; margin:0;">${escapeHtml(localizedChartField(chart, 'desc'))}</p>
+                    </div>
+                  ` : ''}
+                  <div class="chart-roles-block">
+                    <h4>${t('chart_roles')}</h4>
+                    <div class="chart-actor"><b>A · ${t('chart_customer')}</b><br>${escapeHtml(localizedChartField(chart, 'roleA') || 'Chưa có mô tả')}</div>
+                    <div class="chart-actor"><b>B · ${t('chart_other')}</b><br>${escapeHtml(localizedChartField(chart, 'roleB') || 'Chưa có mô tả')}</div>
                   </div>
-                ` : ''}
+                </div>
                 ${renderKniaProse(chart, conditions)}
-              </section>
-              <section>
-                <h4>${t('chart_roles')}</h4>
-                <div class="chart-actor"><b>A · ${t('chart_customer')}</b><br>${escapeHtml(localizedChartField(chart, 'roleA') || 'Chưa có mô tả')}</div>
-                <div class="chart-actor"><b>B · ${t('chart_other')}</b><br>${escapeHtml(localizedChartField(chart, 'roleB') || 'Chưa có mô tả')}</div>
                 <h4>${t('chart_sample')}</h4>
                 <div class="chart-base-ratio">A ${escapeHtml(baseRatio)} B</div>
+              </section>
+              <section>
                 <h4>${t('chart_simulation')}</h4>
                 <div class="chart-sim-road" role="group" aria-label="Mô phỏng xe A và xe B theo biểu đồ; dữ liệu minh họa"><span class="chart-sim-car a">A</span><span class="chart-sim-car b ${chart.code.includes('252') ? 'lane-change' : ''}">B</span><div class="chart-sim-controls"><button type="button" class="chart-sim-toggle" aria-label="Tạm dừng mô phỏng" title="Tạm dừng">❚❚</button></div><div class="chart-sim-progress" aria-hidden="true"></div></div>
               </section>
@@ -10919,6 +10933,7 @@
       }
       const items = ensureNegoItems(c);
       if (!items.length) return;
+      items.forEach(item => { item.status = 'AGREED'; });
 
       STATE.negoGroupOpen = { 'us-situation': true, 'us-general': true, 'them-situation': true, 'them-general': true };
       STATE.negoItemExpanded = {};
@@ -11230,7 +11245,7 @@
         c.negoProgressStep = index + 1;
         if (index === 2) {
           c.negoProgressStatus = 'done';
-          ensureNegoItems(c).forEach(item => { item.status = 'PENDING'; });
+          ensureNegoItems(c).forEach(item => { item.status = 'AGREED'; });
         }
         if (STATE.cases[STATE.currentCaseId] === c) {
           renderCaseDetail();
@@ -11325,9 +11340,7 @@
           <span class="plus"><span class="nego4-impact-dot" style="background:#3b82f6;" aria-hidden="true"></span>+ ${tr('tăng lỗi phía mình','당사 과실 증가','increases our fault')}</span>
         </div>
         <div class="nego4-cols">
-          ${col('PENDING', 'Pending', tr('Chưa phân loại','미분류','Not classified'))}
           ${col('AGREED', tr('Đồng thuận','합의','Agreed'), tr('Được tính vào tỷ lệ hiện tại','현재 비율에 반영','Included in current ratio'))}
-          ${col('NEGOTIATING', tr('Đang thương lượng','협의 중','Negotiating'), tr('Đang chờ quyết định','결정 대기','Waiting for decision'))}
           ${col('EXCLUDED', tr('Không áp dụng','제외','Not applied'), tr('Không tính vào tỷ lệ','비율에 미반영','Excluded from ratio'))}
         </div>
                 <div class="nego4-foot-actions" style="margin-top:20px; display:flex; justify-content:center; align-items:center; gap:12px; padding:14px; background:rgba(15,23,42,0.6); border-radius:8px; border:1px solid #1e334a; flex-wrap:wrap;">
