@@ -7487,7 +7487,7 @@
         const navListButton = document.querySelector('.header-nav button:first-child');
         if (navListButton) { navListButton.title = t('nav_case_list'); navListButton.setAttribute('aria-label', t('nav_case_list')); navListButton.querySelector('[data-nav-label="case-list"]')?.replaceChildren(document.createTextNode(t('nav_case_list'))); }
         const navRules = document.querySelector('.header-nav a[href*="analysis-rules-demo"]');
-        if (navRules) { navRules.title = tr('Quản lý quy tắc phân tích', '분석 규칙 관리', 'Manage analysis rules'); navRules.setAttribute('aria-label', navRules.title); }
+        if (navRules) { navRules.title = tr('Quản lý quy tắc phân tích', '분석 규칙 관리', 'Manage analysis rules'); navRules.setAttribute('aria-label', navRules.title); navRules.textContent = `🧠 ${tr('Quy tắc AI', 'AI 규칙', 'AI rules')}`; }
         const navSpec = document.querySelector('.header-nav a[href*="domain-spec"]');
         if (navSpec) { navSpec.title = tr('Tài liệu nghiệp vụ', '업무 문서', 'Business documentation'); navSpec.setAttribute('aria-label', navSpec.title); }
         const refresh = document.querySelector('#SCR-CASE-LIST button[onclick="renderCaseTable()"]');
