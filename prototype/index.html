@@ -1096,6 +1096,17 @@
 
     .header-case-context { min-width:0; flex:1; order:2; margin-left:18px; color:#cfe7f2; font-size:12px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .header-case-context small { color:#7f9bb1; font-weight:600; margin-left:6px; }
+    .knia-prose { margin:8px 0 10px; color:#dbeafe; line-height:1.65; }
+    .knia-condition-tag { display:inline; padding:1px 4px; margin:0 1px; color:#a5f3fc; background:rgba(14,165,233,.13); border:1px dotted rgba(56,189,248,.8); border-radius:4px; cursor:pointer; font:inherit; }
+    .knia-condition-tag:hover, .knia-condition-tag[data-active="true"] { color:#fff; background:rgba(14,165,233,.42); border-style:solid; }
+    .knia-prose, .knia-condition-tag { box-decoration-break:clone; -webkit-box-decoration-break:clone; }
+    .multi-video-cell.knia-condition-active { outline:2px solid #22d3ee; outline-offset:-2px; box-shadow:inset 0 0 0 2px rgba(34,211,238,.35), 0 0 18px rgba(34,211,238,.35); }
+    .knia-condition-hud { position:absolute; top:6px; left:6px; z-index:5; background:#082f49e8; color:#cffafe; border:1px solid #22d3ee; border-radius:5px; padding:3px 6px; font-size:10px; font-weight:800; pointer-events:none; }
+    .knia-condition-reticle { position:absolute; inset:20% 27%; z-index:4; border:2px dashed rgba(34,211,238,.9); border-radius:6px; pointer-events:none; box-shadow:0 0 0 999px rgba(8,47,73,.08); }
+    .knia-condition-reticle[data-reticle="lane"] { inset:16% 34%; transform:skewY(-4deg); }
+    .knia-condition-reticle[data-reticle="turn"] { inset:24% 29%; border-radius:50%; }
+    .knia-condition-reticle[data-reticle="rear"] { inset:30% 22%; }
+    .knia-condition-reticle[data-reticle="impact"] { inset:35% 40%; border-radius:50%; }
     header.app-header > .brand { order:1; }
     header.app-header > .lang-switcher-wrap { order:4; margin-left:14px; }
     header.app-header > .header-user { order:5; margin-left:10px; }
@@ -7641,6 +7652,8 @@
       })(),
       currentScreen: 'SCR-CASE-LIST',
       currentCaseId: '10',
+      activeKniaCondition: null,
+      kniaConditionSeeking: false,
       activeTab: 'active',
       caseStageFilter: 'ALL',
       cases: {
@@ -10168,6 +10181,79 @@
       renderCaseDetail();
     }
 
+    function kniaInlineData(chart, conditions) {
+      const code = chart.subCode || chart.code || '';
+      const ids = conditions.map((_, i) => `c${code.replace(/[^0-9]/g, '') || 'chart'}-${i + 1}`);
+      const reticles = ['lane', 'rear', 'impact', 'turn'];
+      const localizedConditions = chartTranslations[chart.code]?.[STATE.lang]?.conditions || [];
+      const basis = conditions.map((row, i) => ({
+        id: ids[i], highlight: localizedConditions[i] || row.name || `Condition ${i + 1}`, time: row.frame || row.time || '00:00',
+        cam: Math.min(4, Number(row.cam) || (i % 4) + 1), hud: row.hud || row.name || `Condition ${i + 1}`, reticle: row.reticle || reticles[i % reticles.length]
+      }));
+      const joiner = STATE.lang === 'ko' ? ' 및 ' : STATE.lang === 'en' ? ' and ' : ' và ';
+      const prefix = STATE.lang === 'ko' ? '다음 조건이 충족될 때 적용: ' : STATE.lang === 'en' ? 'Applies when ' : 'Áp dụng khi ';
+      const prose = conditions.length ? `${prefix}${ids.map(id => `{${id}}`).join(joiner)}.` : '';
+      return { kniaProse: chart.kniaProse || prose, kniaBasis: chart.kniaBasis || basis };
+    }
+
+    function parseKniaTime(value) {
+      const match = String(value || '').match(/(?:^|\D)(\d{1,2}):(\d{1,2}(?:\.\d+)?)/);
+      if (match) return Number(match[1]) * 60 + Number(match[2]);
+      const seconds = Number(String(value || '').match(/\d+(?:\.\d+)?/)?.[0]);
+      return Number.isFinite(seconds) ? seconds : 0;
+    }
+
+    function renderKniaProse(chart, conditions) {
+      const data = kniaInlineData(chart, conditions);
+      const basis = Object.fromEntries(data.kniaBasis.map(item => [item.id, item]));
+      const prose = String(data.kniaProse || '').split(/(\{[^}]+\})/g).map(part => {
+        const id = part.match(/^\{([^}]+)\}$/)?.[1];
+        if (!id || !basis[id]) return escapeHtml(part);
+        const item = basis[id];
+        return `<button type="button" class="knia-condition-tag" data-knia-condition="${escapeHtml(item.id)}" data-chart-code="${escapeHtml(chart.code)}" title="${escapeHtml(`${item.time} · Cam ${item.cam}`)}">${escapeHtml(item.highlight)}</button>`;
+      }).join('');
+      return `<p class="knia-prose" data-knia-prose="${escapeHtml(chart.code)}">${prose}</p>`;
+    }
+
+    function clearKniaConditionOverlay() {
+      document.querySelectorAll('.knia-condition-tag[data-active="true"]').forEach(tag => tag.removeAttribute('data-active'));
+      document.querySelectorAll('#multi-video-grid .multi-video-cell').forEach(cell => { cell.classList.remove('knia-condition-active'); cell.querySelector('.knia-condition-hud')?.remove(); cell.querySelector('.knia-condition-reticle')?.remove(); });
+      document.querySelector('#single-video-player .knia-condition-hud')?.remove();
+      document.querySelector('#single-video-player .knia-condition-reticle')?.remove();
+      STATE.activeKniaCondition = null;
+    }
+
+    function activateKniaCondition(chartCode, conditionId) {
+      const c = STATE.cases[STATE.currentCaseId];
+      const chart = c?.charts?.find(item => item.code === chartCode);
+      const conditions = chart?.conditions || (c?.charts?.[0] === chart ? c.conditions : []) || [];
+      const item = kniaInlineData(chart || {}, conditions).kniaBasis.find(entry => entry.id === conditionId);
+      if (!c || !item) return;
+      clearKniaConditionOverlay();
+      document.querySelectorAll(`[data-knia-condition="${CSS.escape(conditionId)}"]`).forEach(tag => tag.dataset.active = 'true');
+      const seconds = parseKniaTime(item.time);
+      STATE.kniaConditionSeeking = true;
+      const gridPosition = seconds - (c.videos[item.cam - 1]?.impact || 0);
+      c.videoMode === 'grid' ? seekMultiVideo(gridPosition) : (selectVideoSource(item.cam - 1), seekVideo(seconds));
+      requestAnimationFrame(() => {
+        const cells = document.querySelectorAll('#multi-video-grid .multi-video-cell');
+        if (c.videoMode === 'grid' && cells[item.cam - 1]) {
+          const cell = cells[item.cam - 1]; cell.classList.add('knia-condition-active');
+          const hud = document.createElement('span'); hud.className = 'knia-condition-hud'; hud.textContent = `Cam ${item.cam} · ${item.hud}`; cell.appendChild(hud);
+          const reticle = document.createElement('span'); reticle.className = 'knia-condition-reticle'; reticle.dataset.reticle = item.reticle; cell.appendChild(reticle);
+        } else if (c.videoMode === 'single') {
+          const stage = document.getElementById('single-video-player');
+          if (stage) {
+            const hud = document.createElement('span'); hud.className = 'knia-condition-hud'; hud.textContent = `Cam ${item.cam} · ${item.hud}`; stage.appendChild(hud);
+            const reticle = document.createElement('span'); reticle.className = 'knia-condition-reticle'; reticle.dataset.reticle = item.reticle; stage.appendChild(reticle);
+          }
+        }
+        STATE.activeKniaCondition = { id: conditionId, time: seconds, gridPosition, cam: item.cam };
+        document.querySelectorAll(`[data-knia-condition="${CSS.escape(conditionId)}"]`).forEach(tag => tag.dataset.active = 'true');
+        STATE.kniaConditionSeeking = false;
+      });
+    }
+
     function closeInspector() {
       closeReportEditor();
       const c = STATE.cases[STATE.currentCaseId];
@@ -10251,6 +10337,7 @@
                     <p style="font-size:11.5px; color:#cbd5e1; line-height:1.45; margin:0;">${escapeHtml(localizedChartField(chart, 'desc'))}</p>
                   </div>
                 ` : ''}
+                ${renderKniaProse(chart, conditions)}
                 <div class="chart-condition-table"><table><thead><tr><th>${t('chart_condition')}</th><th>${t('chart_assessment')}</th><th>${t('chart_probability')}</th><th>${t('chart_evidence')}</th></tr></thead><tbody>${conditionRows}</tbody></table></div>
               </section>
               <section>
@@ -10274,6 +10361,12 @@
               const time = button.dataset.chartSeek.match(/(\d+):(\d+(?:\.\d+)?)/);
               if (time) seekVideo(Number(time[1]) * 60 + Number(time[2]));
             };
+          });
+          details.querySelectorAll('[data-knia-condition]').forEach(tag => {
+            tag.addEventListener('click', event => {
+              event.stopPropagation();
+              activateKniaCondition(tag.dataset.chartCode, tag.dataset.kniaCondition);
+            });
           });
           const simToggle = details.querySelector('.chart-sim-toggle');
           if (simToggle) {
@@ -13789,6 +13882,8 @@ function renderInternalReportTab(c) {
       const progress = range ? (multiVideoPosition - Number(seek.min)) / range * 100 : 0;
       document.querySelectorAll('#multi-timeline-tracks .multi-timeline-playhead').forEach(marker => { marker.style.left = `${progress}%`; });
       document.getElementById('multi-time').textContent = `${multiVideoPosition < 0 ? '−' : '+'}${formatVideoTime(Math.abs(multiVideoPosition))}`;
+      const active = STATE.activeKniaCondition;
+      if (active && !STATE.kniaConditionSeeking && Math.abs(multiVideoPosition - active.gridPosition) > 0.25) clearKniaConditionOverlay();
       document.querySelectorAll('#multi-video-grid .multi-video-cell').forEach((cell, index) => {
         const source = c.videos[index];
         const player = cell.querySelector('video');
@@ -13842,6 +13937,8 @@ function renderInternalReportTab(c) {
         video.onloadedmetadata = () => { video.currentTime = c.videoTime || 0; video.playbackRate = c.videoSpeed || 1; };
         video.ontimeupdate = () => {
           c.videoTime = video.currentTime;
+          const active = STATE.activeKniaCondition;
+          if (active && !STATE.kniaConditionSeeking && Math.abs(c.videoTime - active.time) > 0.25) clearKniaConditionOverlay();
           updateVideoClock(c);
         };
         video.onended = () => setVideoPlayButton(false);
@@ -13926,6 +14023,8 @@ function renderInternalReportTab(c) {
     function seekVideo(value) {
       const c = STATE.cases[STATE.currentCaseId];
       c.videoTime = Math.min(c.videoDuration, Math.max(0, Number(value)));
+      const active = STATE.activeKniaCondition;
+      if (active && !STATE.kniaConditionSeeking && Math.abs(c.videoTime - active.time) > 0.25) clearKniaConditionOverlay();
       const video = document.getElementById('case-video');
       if (c.videoUrl) video.currentTime = c.videoTime;
       updateVideoClock(c);
