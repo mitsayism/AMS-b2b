@@ -3843,7 +3843,7 @@
 
     .nego4-cols {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 12px;
       align-items: start;
     }
@@ -3880,6 +3880,24 @@
     .nego4-col.them .nego4-col-head b {
       color: #f87171;
     }
+
+    .nego4-col.status-col .nego4-col-head b { color: #e2e8f0; }
+    .nego4-col.status-col[data-status="PENDING"] .nego4-col-head b { color: #93c5fd; }
+    .nego4-col.status-col[data-status="AGREED"] .nego4-col-head b { color: #4ade80; }
+    .nego4-col.status-col[data-status="NEGOTIATING"] .nego4-col-head b { color: #fbbf24; }
+    .nego4-col.status-col[data-status="EXCLUDED"] .nego4-col-head b { color: #94a3b8; }
+    .nego4-drop-zone { min-height: 90px; border: 1px dashed transparent; border-radius: 6px; padding: 2px; transition: background .15s ease, border-color .15s ease; }
+    .nego4-drop-zone.is-drag-over { background: rgba(56,189,248,.08); border-color: #38bdf8; }
+    .nego4-impact-mark { display:inline-flex; align-items:center; gap:5px; width:max-content; font-size:10.5px; font-weight:800; line-height:1.2; }
+    .nego4-impact-dot { width:8px; height:8px; border-radius:50%; flex:0 0 8px; box-shadow:0 0 0 2px rgba(255,255,255,.08); }
+    .nego4-impact-mark.us { color:#93c5fd; }
+    .nego4-impact-mark.us .nego4-impact-dot { background:#3b82f6; }
+    .nego4-impact-mark.them { color:#fca5a5; }
+    .nego4-impact-mark.them .nego4-impact-dot { background:#ef4444; }
+    .nego4-impact-legend { display:flex; align-items:center; justify-content:flex-end; gap:12px; margin:0 0 8px; color:#94a3b8; font-size:10.5px; }
+    .nego4-impact-legend span { display:inline-flex; align-items:center; gap:5px; }
+    .nego4-impact-legend .minus { color:#fca5a5; }
+    .nego4-impact-legend .plus { color:#93c5fd; }
 
     .nego4-scroll { overflow: visible; }
     .nego4-scroll-status { padding: 6px 4px 0; text-align: center; color: #91a5b8; font-size: 11px; }
@@ -3955,6 +3973,8 @@
       background: #0e1a29;
       border-color: #1a2d42;
     }
+
+    .nego4-item.st-PENDING { border-color:#31506d; background:#102238; }
 
     .nego4-item.st-NEGOTIATING, .nego4-item.st-AGREED, .nego4-item.st-EXCLUDED { background: #122133; border-color: #233e59; opacity: 1; }
 
@@ -10779,10 +10799,10 @@
     function ensureNegoItems(c) {
       if (c.negoItems) return c.negoItems;
       const items = [
-        // CỘT TRÁI: TA CÓ THỂ CHỦ TRƯƠNG (GIẢM LỖI KHÁCH HÀNG)
+        // Yếu tố phía đối phương: AI chỉ gợi ý các yếu tố làm giảm lỗi phía mình.
         // 1. Tình huống (situation)
         {
-          id: 'u-sit-1', side: 'us', category: 'situation',
+          id: 'u-sit-1', side: 'them', category: 'situation',
           name: 'Xe trước phanh gấp không có lý do chính đáng', delta: -10,
           subject: 'Xe đối phương (상대차)',
           evidenceStatus: 'Cần thêm tài liệu ngoài (video không đủ tự chứng minh)',
@@ -10790,7 +10810,7 @@
           aiReasoning: 'G-sensor IMU đo được gia tốc hãm phanh -0.68G lúc 00:09.50. Phía trước xe Tucson hoàn toàn trống trải (>15m) không có chướng ngại vật hay tình huống khẩn cấp. Căn cứ Án lệ Tối cao 96다39314, hành vi phanh gấp vô cớ cấu thành lỗi trực tiếp làm tăng nguy cơ tai nạn, có cơ sở vững chắc để giảm 10% tỷ lệ lỗi.'
         },
         {
-          id: 'u-sit-2', side: 'us', category: 'situation',
+          id: 'u-sit-2', side: 'them', category: 'situation',
           name: 'Xe đối phương không bật xi-nhan khi nhập làn', delta: -10,
           subject: 'Xe đối phương (상대차)',
           evidenceStatus: 'Cần thêm tài liệu ngoài (video không đủ tự chứng minh)',
@@ -10798,7 +10818,7 @@
           aiReasoning: 'Mô hình VLM nhận diện đèn tín hiệu xi-nhan của xe đối phương đã tắt trước mốc phanh; đối chiếu khung hình trước 00:08.20 cho thấy nhập làn thiếu cảnh báo liên tục, cần trích xuất thêm góc cam sau.'
         },
         {
-          id: 'u-sit-3', side: 'us', category: 'situation',
+          id: 'u-sit-3', side: 'them', category: 'situation',
           name: 'Xe đối phương giảm tốc đột ngột trên làn thông suốt', delta: -20,
           subject: 'Xe đối phương (상대차)',
           evidenceStatus: 'Cần thêm tài liệu ngoài (video không đủ tự chứng minh)',
@@ -10807,7 +10827,7 @@
         },
         // 2. Lỗi hành vi chung (general)
         {
-          id: 'u-gen-1', side: 'us', category: 'general',
+          id: 'u-gen-1', side: 'them', category: 'general',
           name: 'Tài xế đối phương dùng điện thoại / màn hình khi lái xe', delta: -10,
           subject: 'Xe đối phương (상대차)',
           evidenceStatus: 'Cần thêm tài liệu ngoài (video không đủ tự chứng minh)',
@@ -10815,7 +10835,7 @@
           aiReasoning: 'Lỗi đáng kể (현저한 과실) theo chuẩn KNIA (+10% xe đối phương / -10% xe ta). Cần yêu cầu bên bảo hiểm đối phương cung cấp dữ liệu trích xuất nhật ký cuộc gọi hoặc camera cabin.'
         },
         {
-          id: 'u-gen-2', side: 'us', category: 'general',
+          id: 'u-gen-2', side: 'them', category: 'general',
           name: 'Kính xe đối phương dán quá tối trong điều kiện hạn chế', delta: -5,
           subject: 'Xe đối phương (상대차)',
           evidenceStatus: 'Cần thêm tài liệu ngoài (video không đủ tự chứng minh)',
@@ -10823,10 +10843,10 @@
           aiReasoning: 'Kính hậu và kính sườn xe đối phương dán phim cách nhiệt có độ truyền sáng quá thấp trong điều kiện chiều muộn, làm hạn chế khả năng quan sát đèn cảnh báo từ xa.'
         },
 
-        // CỘT PHẢI: ĐỐI PHƯƠNG CÓ THỂ CHỦ TRƯƠNG (TĂNG LỖI KHÁCH HÀNG)
+        // Yếu tố phía mình: các yếu tố này làm tăng lỗi phía mình nếu được công nhận.
         // 1. Tình huống (situation)
         {
-          id: 't-sit-1', side: 'them', category: 'situation',
+          id: 't-sit-1', side: 'us', category: 'situation',
           name: 'Không giữ khoảng cách an toàn tối thiểu (Đ.19.1 Luật GTĐB)', delta: 10,
           subject: 'Xe khách hàng (고객차)',
           evidenceStatus: 'Có thể phản bác ngay (thực tế video khác lời khai đối phương)',
@@ -10834,7 +10854,7 @@
           aiReasoning: 'Đối phương cáo buộc xe sau vi phạm Điều 19.1 Luật GTĐB khi cự ly rút xuống 2.1m. Phản biện của AI: Cự ly bị rút ngắn đột ngột do xe trước phanh gấp vô cớ (-0.68G), xe khách hàng đã đạp phanh ngay sau 0.6s.'
         },
         {
-          id: 't-sit-2', side: 'them', category: 'situation',
+          id: 't-sit-2', side: 'us', category: 'situation',
           name: 'Không giảm tốc khi gặp chướng ngại vật phía trước', delta: 10,
           subject: 'Xe khách hàng (고객차)',
           evidenceStatus: 'Có thể phản bác ngay (thực tế video khác lời khai đối phương)',
@@ -10843,7 +10863,7 @@
         },
         // 2. Lỗi hành vi chung (general)
         {
-          id: 't-gen-1', side: 'them', category: 'general',
+          id: 't-gen-1', side: 'us', category: 'general',
           name: 'Lỗi đáng kể: Thao tác phanh hoặc đánh lái chậm', delta: 10,
           subject: 'Xe khách hàng (고객차)',
           evidenceStatus: 'Có thể phản bác ngay (thực tế video khác lời khai đối phương)',
@@ -10851,7 +10871,7 @@
           aiReasoning: 'Đối phương viện dẫn Lỗi đáng kể theo KNIA. Phản biện của AI: Cảm biến IMU đo thời gian từ lúc đèn phanh xe trước bật (00:09.50) đến khi xe khách hàng hãm phanh là 0.62 giây, hoàn toàn nằm trong giới hạn phản xạ sinh lý chuẩn (0.6s - 0.8s). Căn cứ của đối phương rất yếu (근거 약함).'
         },
         {
-          id: 't-gen-2', side: 'them', category: 'general',
+          id: 't-gen-2', side: 'us', category: 'general',
           name: 'Xe khách hàng chạy quá tốc độ giới hạn khu vực', delta: 10,
           subject: 'Xe khách hàng (고객차)',
           evidenceStatus: 'Có thể phản bác ngay (thực tế video khác lời khai đối phương)',
@@ -10859,7 +10879,7 @@
           aiReasoning: 'GPS viễn trắc và chuỗi khung hình camera xác định tốc độ xe khách hàng dao động 47.8 - 48.2 km/h trên cung đường có giới hạn 50 km/h. Hoàn toàn không vi phạm quá tốc độ, bác bỏ cáo buộc của đối phương.'
         },
         {
-          id: 't-gen-3', side: 'them', category: 'general',
+          id: 't-gen-3', side: 'us', category: 'general',
           name: 'Không chú ý quan sát phía trước / Mất tập trung', delta: 10,
           subject: 'Xe khách hàng (고객차)',
           evidenceStatus: 'Có thể phản bác ngay (thực tế video khác lời khai đối phương)',
@@ -11208,7 +11228,10 @@
       [1800, 3600, 5400].forEach((delay, index) => setTimeout(() => {
         if (c.negoRunId !== run || c.negoProgressStatus !== 'processing') return;
         c.negoProgressStep = index + 1;
-        if (index === 2) c.negoProgressStatus = 'done';
+        if (index === 2) {
+          c.negoProgressStatus = 'done';
+          ensureNegoItems(c).forEach(item => { item.status = 'PENDING'; });
+        }
         if (STATE.cases[STATE.currentCaseId] === c) {
           renderCaseDetail();
           if (index === 2 && c.analysisView === 'negotiation') startAiReasoningWalkthrough();
@@ -11238,22 +11261,15 @@
         const isAiActive = (STATE.activeScanningId === it.id);
         const isJustRevealed = (STATE.justRevealedId === it.id);
         return `
-          <div class="nego4-item st-${it.status} ${isAiActive ? "is-scanning" : ""} ${isJustRevealed ? "nego4-item-revealing" : ""}" id="nego-item-${it.id}">
+          <div class="nego4-item st-${it.status} ${isAiActive ? "is-scanning" : ""} ${isJustRevealed ? "nego4-item-revealing" : ""}" id="nego-item-${it.id}" draggable="${locked ? 'false' : 'true'}" onclick="toggleNegoItemDetail('${it.id}')" ondragstart="startNegoDrag(event, '${it.id}')" ondragend="endNegoDrag(event)">
             <div class="nego4-item-main-row">
               <div class="nego4-item-top-line">
-                <span class="nego4-delta ${it.delta < 0 ? "neg" : "pos"}">${it.delta > 0 ? "+" : ""}${it.delta}%</span>
+                <span class="nego4-impact-mark ${it.side}" title="${it.side === 'us' ? tr('Phía mình','당사','Our side') : tr('Phía đối phương','상대방','Other side')}"><span class="nego4-impact-dot" aria-hidden="true"></span><span>${it.delta > 0 ? "+" : ""}${it.delta}%</span></span>
                 <span class="nego4-item-name">${escapeHtml(localNegoField(it, 'name'))}</span>
-                <select class="nego4-status-select sel-${it.status}" ${locked ? "disabled" : ""}
-                        onchange="setNegoItemStatus('${it.id}', this.value); event.stopPropagation();"
-                        aria-label="Chọn trạng thái thương lượng cho ${escapeHtml(it.name)}">
-                  <option value="EXCLUDED" ${it.status === "EXCLUDED" ? "selected" : ""}>${t("exclude")}</option>
-                  <option value="NEGOTIATING" ${it.status === "NEGOTIATING" ? "selected" : ""}>${t("negotiating")}</option>
-                  <option value="AGREED" ${it.status === "AGREED" ? "selected" : ""}>${t("agreed")}</option>
-                </select>
               </div>
 
               <div class="nego4-bottom-row">
-                <button type="button" class="nego4-toggle-btn" onclick="toggleNegoItemDetail('${it.id}')"
+                <button type="button" class="nego4-toggle-btn" onclick="event.stopPropagation(); toggleNegoItemDetail('${it.id}')"
                         title="${isExp ? "Thu gọn chi tiết" : "Xem chi tiết"}"
                         aria-label="${isExp ? "Thu gọn chi tiết" : "Xem chi tiết"}" aria-expanded="${isExp}">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transition:transform 0.2s; ${isExp ? 'transform:rotate(180deg);' : ''}">
@@ -11273,29 +11289,18 @@
         `;
       };
 
-      const col = (side, title, sub, arrow) => {
-        const allSideItems = r.items.filter(i => i.side === side);
-        const list = visibleItemIds ? allSideItems.filter(i => visibleItemIds.has(i.id)) : allSideItems;
-        const done = list.filter(i => i.status === "AGREED").length;
-        const sitList = list.filter(i => i.category === "situation");
-        const genList = list.filter(i => i.category === "general");
-        const group = (items, name, key) => items.length ? `
-          <section style="border:1px solid #233e59;border-radius:6px;padding:8px;margin-top:8px;">
-            <div class="nego4-group-title">${name} (${items.length})</div>
-            <div class="nego4-scroll" data-group="${side}-${key}" tabindex="0" aria-label="${name} - ${title}" onscroll="updateNegoScrollStatus(this)">
-              <div class="nego4-group-content">${items.map(card).join('')}</div>
-            </div>
-
-          </section>` : '';
+      const col = (status, title, description) => {
+        const allItems = r.items.filter(i => i.status === status);
+        const list = visibleItemIds ? allItems.filter(i => visibleItemIds.has(i.id)) : allItems;
         return `
-          <div class="nego4-col ${side}">
+          <div class="nego4-col status-col" data-status="${status}">
             <div class="nego4-col-head">
-              <span><b>${title}</b> <small style="color:#64748b;">(${sub} ${arrow})</small></span>
-              <span class="badge badge-mid" style="font-size:10.5px;padding:2px 7px;">${t('agreed')} ${done}/${allSideItems.length}</span>
+              <span><b>${title}</b><small style="display:block;color:#64748b;margin-top:3px;">${description}</small></span>
+              <span class="badge badge-mid" style="font-size:10.5px;padding:2px 7px;">${list.length}</span>
             </div>
-            ${group(sitList, tr('YẾU TỐ TÌNH HUỐNG','상황별 가감 요소','SITUATIONAL FACTORS'), 'situation')}
-            ${group(genList, tr('LỖI HÀNH VI CHUNG','일반 과실','GENERAL NEGLIGENCE'), 'general')}
-            ${!list.length && isWalking ? `<div style="color:#94a3b8;font-size:11px;padding:8px;">${tr('AI đang phân tích...','AI 분석 중...','AI is analyzing...')}</div>` : ''}
+            <div class="nego4-drop-zone" data-status="${status}" ondragover="allowNegoDrop(event)" ondragleave="leaveNegoDrop(event)" ondrop="dropNegoStatus(event, '${status}')">
+              <div class="nego4-group-content">${list.map(card).join('') || (isWalking ? `<div style="color:#94a3b8;font-size:11px;padding:8px;">${tr('AI đang phân tích...','AI 분석 중...','AI is analyzing...')}</div>` : `<div style="color:#64748b;font-size:11px;padding:12px 8px;text-align:center;">${tr('Kéo thẻ vào đây','이곳으로 카드를 드래그하세요','Drag cards here')}</div>`)}</div>
+            </div>
           </div>`;
       };
 
@@ -11315,9 +11320,15 @@
             <div class="big">${themVal}%</div>
           </div>
         </div>
+        <div class="nego4-impact-legend" aria-label="${tr('Quy ước tác động tỷ lệ lỗi','과실 비율 영향 기준','Fault ratio impact legend')}">
+          <span class="minus"><span class="nego4-impact-dot" style="background:#ef4444;" aria-hidden="true"></span>− ${tr('giảm lỗi phía mình','당사 과실 감소','reduces our fault')}</span>
+          <span class="plus"><span class="nego4-impact-dot" style="background:#3b82f6;" aria-hidden="true"></span>+ ${tr('tăng lỗi phía mình','당사 과실 증가','increases our fault')}</span>
+        </div>
         <div class="nego4-cols">
-          ${col('us', tr('Lập luận bảo vệ khách hàng','고객을 위한 주장','Arguments supporting the customer'), tr('giảm lỗi khách hàng','고객 과실 감소','reduce customer fault'), '↓')}
-          ${col('them', tr('Lập luận đối phương có thể đưa ra','상대방의 예상 주장','Arguments the other party may raise'), tr('tăng lỗi khách hàng','고객 과실 증가','increase customer fault'), '↑')}
+          ${col('PENDING', 'Pending', tr('Chưa phân loại','미분류','Not classified'))}
+          ${col('AGREED', tr('Đồng thuận','합의','Agreed'), tr('Được tính vào tỷ lệ hiện tại','현재 비율에 반영','Included in current ratio'))}
+          ${col('NEGOTIATING', tr('Đang thương lượng','협의 중','Negotiating'), tr('Đang chờ quyết định','결정 대기','Waiting for decision'))}
+          ${col('EXCLUDED', tr('Không áp dụng','제외','Not applied'), tr('Không tính vào tỷ lệ','비율에 미반영','Excluded from ratio'))}
         </div>
                 <div class="nego4-foot-actions" style="margin-top:20px; display:flex; justify-content:center; align-items:center; gap:12px; padding:14px; background:rgba(15,23,42,0.6); border-radius:8px; border:1px solid #1e334a; flex-wrap:wrap;">
           <button type="button" class="btn btn-primary" onclick="goToNotification()"
@@ -11353,6 +11364,41 @@
       renderNegoStage(c);
       const ns = document.getElementById('analysis-nego-status');
       if (ns) ns.textContent = 'Chọn trạng thái từng mục';
+    }
+
+    function startNegoDrag(event, id) {
+      const c = STATE.cases[STATE.currentCaseId];
+      if (!c || isNegotiationConfirmed(c)) { event.preventDefault(); return; }
+      STATE.draggingNegoId = id;
+      event.dataTransfer.effectAllowed = 'move';
+      event.dataTransfer.setData('text/plain', id);
+      event.currentTarget.classList.add('is-dragging');
+    }
+
+    function endNegoDrag(event) {
+      event.currentTarget.classList.remove('is-dragging');
+      document.querySelectorAll('.nego4-drop-zone.is-drag-over').forEach(zone => zone.classList.remove('is-drag-over'));
+      STATE.draggingNegoId = null;
+    }
+
+    function allowNegoDrop(event) {
+      const c = STATE.cases[STATE.currentCaseId];
+      if (!c || isNegotiationConfirmed(c)) return;
+      event.preventDefault();
+      event.dataTransfer.dropEffect = 'move';
+      event.currentTarget.classList.add('is-drag-over');
+    }
+
+    function leaveNegoDrop(event) {
+      if (!event.currentTarget.contains(event.relatedTarget)) event.currentTarget.classList.remove('is-drag-over');
+    }
+
+    function dropNegoStatus(event, status) {
+      event.preventDefault();
+      event.currentTarget.classList.remove('is-drag-over');
+      const id = event.dataTransfer.getData('text/plain') || STATE.draggingNegoId;
+      if (id) setNegoItemStatus(id, status);
+      STATE.draggingNegoId = null;
     }
 
     function finalizeNegoRatio() {
