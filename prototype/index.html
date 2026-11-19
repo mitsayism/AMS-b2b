@@ -1100,6 +1100,10 @@
     .knia-condition-tag { display:inline; padding:1px 4px; margin:0 1px; color:#a5f3fc; background:rgba(14,165,233,.13); border:1px dotted rgba(56,189,248,.8); border-radius:4px; cursor:pointer; font:inherit; }
     .knia-condition-tag:hover, .knia-condition-tag[data-active="true"] { color:#fff; background:rgba(14,165,233,.42); border-style:solid; }
     .knia-prose, .knia-condition-tag { box-decoration-break:clone; -webkit-box-decoration-break:clone; }
+    .knia-condition-preview { position:fixed; z-index:1100; width:230px; padding:6px; background:#081522; border:1px solid #38bdf8; border-radius:7px; box-shadow:0 12px 28px rgba(0,0,0,.42); pointer-events:none; opacity:0; transform:translateY(4px); transition:opacity .12s ease, transform .12s ease; }
+    .knia-condition-preview.is-visible { opacity:1; transform:translateY(0); }
+    .knia-condition-preview img { display:block; width:100%; height:124px; object-fit:cover; border-radius:4px; background:#132438; }
+    .knia-condition-preview-meta { display:flex; justify-content:space-between; gap:8px; margin-top:5px; color:#c7f9ff; font-size:10px; font-weight:700; }
     .multi-video-cell.knia-condition-active { outline:2px solid #22d3ee; outline-offset:-2px; box-shadow:inset 0 0 0 2px rgba(34,211,238,.35), 0 0 18px rgba(34,211,238,.35); }
     .knia-condition-hud { position:absolute; top:6px; left:6px; z-index:5; background:#082f49e8; color:#cffafe; border:1px solid #22d3ee; border-radius:5px; padding:3px 6px; font-size:10px; font-weight:800; pointer-events:none; }
     .knia-condition-reticle { position:absolute; inset:20% 27%; z-index:4; border:2px dashed rgba(34,211,238,.9); border-radius:6px; pointer-events:none; box-shadow:0 0 0 999px rgba(8,47,73,.08); }
@@ -10188,12 +10192,18 @@
       const localizedConditions = chartTranslations[chart.code]?.[STATE.lang]?.conditions || [];
       const basis = conditions.map((row, i) => ({
         id: ids[i], highlight: localizedConditions[i] || row.name || `Condition ${i + 1}`, time: row.frame || row.time || '00:00',
-        cam: Math.min(4, Number(row.cam) || (i % 4) + 1), hud: row.hud || row.name || `Condition ${i + 1}`, reticle: row.reticle || reticles[i % reticles.length]
+        cam: Math.min(4, Number(row.cam) || (i % 4) + 1), frameIdx: Number.isFinite(Number(row.frameIdx)) ? Number(row.frameIdx) : i % 6,
+        image: row.image || '', hud: row.hud || row.name || `Condition ${i + 1}`, reticle: row.reticle || reticles[i % reticles.length]
       }));
       const joiner = STATE.lang === 'ko' ? ' 및 ' : STATE.lang === 'en' ? ' and ' : ' và ';
       const prefix = STATE.lang === 'ko' ? '다음 조건이 충족될 때 적용: ' : STATE.lang === 'en' ? 'Applies when ' : 'Áp dụng khi ';
       const prose = conditions.length ? `${prefix}${ids.map(id => `{${id}}`).join(joiner)}.` : '';
-      return { kniaProse: chart.kniaProse || prose, kniaBasis: chart.kniaBasis || basis };
+      const kniaBasis = (chart.kniaBasis || basis).map((item, i) => ({
+        ...item,
+        frameIdx: Number.isFinite(Number(item.frameIdx)) ? Number(item.frameIdx) : (basis[i]?.frameIdx ?? i % 6),
+        image: item.image || basis[i]?.image || ''
+      }));
+      return { kniaProse: chart.kniaProse || prose, kniaBasis };
     }
 
     function parseKniaTime(value) {
@@ -10210,12 +10220,61 @@
         const id = part.match(/^\{([^}]+)\}$/)?.[1];
         if (!id || !basis[id]) return escapeHtml(part);
         const item = basis[id];
-        return `<button type="button" class="knia-condition-tag" data-knia-condition="${escapeHtml(item.id)}" data-chart-code="${escapeHtml(chart.code)}" title="${escapeHtml(`${item.time} · Cam ${item.cam}`)}">${escapeHtml(item.highlight)}</button>`;
+        const frame = (typeof EVIDENCE_FRAMES !== 'undefined' && EVIDENCE_FRAMES[item.frameIdx]) || {};
+        const previewSrc = item.image || frame.image || '';
+        return `<button type="button" class="knia-condition-tag" data-knia-condition="${escapeHtml(item.id)}" data-chart-code="${escapeHtml(chart.code)}" data-knia-time="${escapeHtml(item.time)}" data-knia-cam="${escapeHtml(item.cam)}" data-knia-preview-src="${escapeHtml(previewSrc)}" title="${escapeHtml(`${item.time} · Cam ${item.cam}`)}">${escapeHtml(item.highlight)}</button>`;
       }).join('');
       return `<p class="knia-prose" data-knia-prose="${escapeHtml(chart.code)}">${prose}</p>`;
     }
 
+    function hideKniaConditionPreview() {
+      const preview = document.getElementById('knia-condition-preview');
+      if (!preview) return;
+      preview.classList.remove('is-visible');
+      preview.setAttribute('aria-hidden', 'true');
+    }
+
+    function positionKniaConditionPreview(tag) {
+      const preview = document.getElementById('knia-condition-preview');
+      if (!preview || !tag) return;
+      const rect = tag.getBoundingClientRect();
+      const gap = 8;
+      const width = preview.offsetWidth || 230;
+      const height = preview.offsetHeight || 160;
+      const left = Math.max(8, Math.min(window.innerWidth - width - 8, rect.left + rect.width / 2 - width / 2));
+      const top = Math.max(8, rect.top - height - gap);
+      preview.style.left = `${left}px`;
+      preview.style.top = `${top}px`;
+    }
+
+    function showKniaConditionPreview(tag) {
+      if (!tag) return;
+      let preview = document.getElementById('knia-condition-preview');
+      if (!preview) {
+        preview = document.createElement('div');
+        preview.id = 'knia-condition-preview';
+        preview.className = 'knia-condition-preview';
+        preview.setAttribute('role', 'tooltip');
+        preview.setAttribute('aria-hidden', 'true');
+        document.body.appendChild(preview);
+      }
+      const src = tag.dataset.kniaPreviewSrc || document.getElementById('video-demo-still')?.src || '';
+      preview.innerHTML = `${src ? `<img src="${escapeHtml(src)}" alt="">` : ''}<div class="knia-condition-preview-meta"><span>${escapeHtml(tag.textContent || '')}</span><span>${escapeHtml(tag.dataset.kniaTime || '')} · Cam ${escapeHtml(tag.dataset.kniaCam || '')}</span></div>`;
+      preview.setAttribute('aria-hidden', 'false');
+      preview.classList.add('is-visible');
+      positionKniaConditionPreview(tag);
+    }
+
+    function bindKniaConditionPreview(tag) {
+      tag.addEventListener('mouseenter', () => showKniaConditionPreview(tag));
+      tag.addEventListener('mousemove', () => positionKniaConditionPreview(tag));
+      tag.addEventListener('mouseleave', hideKniaConditionPreview);
+      tag.addEventListener('focus', () => showKniaConditionPreview(tag));
+      tag.addEventListener('blur', hideKniaConditionPreview);
+    }
+
     function clearKniaConditionOverlay() {
+      hideKniaConditionPreview();
       document.querySelectorAll('.knia-condition-tag[data-active="true"]').forEach(tag => tag.removeAttribute('data-active'));
       document.querySelectorAll('#multi-video-grid .multi-video-cell').forEach(cell => { cell.classList.remove('knia-condition-active'); cell.querySelector('.knia-condition-hud')?.remove(); cell.querySelector('.knia-condition-reticle')?.remove(); });
       document.querySelector('#single-video-player .knia-condition-hud')?.remove();
@@ -10265,6 +10324,7 @@
     function renderChartCards(c) {
       const container = document.getElementById('chart-cards-container');
       if (!container) return;
+      hideKniaConditionPreview();
       container.innerHTML = '';
       (c.charts || []).forEach((chart, idx) => {
         const isSelected = (c.selectedChart === chart.code);
@@ -10282,14 +10342,6 @@
         const matchBadgeClass = chart.match >= 80 ? 'badge-high' : (chart.match >= 60 ? 'badge-primary' : 'badge-mid');
         const baseRatio = chart.faultA != null && chart.faultB != null ? `${chart.faultA} : ${chart.faultB}` : chart.baseFault || '—';
         const conditions = chart.conditions || (idx === 0 ? c.conditions : []) || [];
-        const conditionState = row => { const match = row.status === 'Khớp' || row.status === '일치'; const conflict = row.status === 'Mâu thuẫn' || row.status === '모순'; const label = match ? t('condition_match') : conflict ? t('condition_conflict') : t('condition_review'); return match || conflict ? `<span aria-label="${label}" title="${label}">${match ? '✓' : '✕'}</span>` : escapeHtml(label); };
-        const conditionName = name => STATE.lang === 'ko' && /[가-힣]/.test(name) ? name.replace(/\s*\([^)]*[À-ỹĐđ][^)]*\)\s*$/, '') : name.match(/\((?=[A-Za-zÀ-ỹĐđ])(.+)\)\s*$/)?.[1] || name;
-        const conditionRows = conditions.length ? conditions.map((row, conditionIndex) => {
-          const frame = row.frame || row.time || '';
-          const localizedCondition = chartTranslations[chart.code]?.[STATE.lang]?.conditions?.[conditionIndex] || conditionName(row.name);
-          return `<tr><td>${escapeHtml(localizedCondition)}</td><td>${conditionState(row)}</td><td>${escapeHtml(row.conf || '—')}</td><td>${frame ? `<button type="button" class="core-ev-time-btn" data-chart-seek="${escapeHtml(frame)}" aria-label="${t('seek_to')} ${escapeHtml(frame)}">▶ ${escapeHtml(frame)}</button>` : ''} ${escapeHtml(localizedConditionSource(row))}</td></tr>`;
-        }).join('') : '<tr><td colspan="4">Chưa có dữ liệu đối chiếu.</td></tr>';
-
         card.innerHTML = `
           <!-- 1. Mã số chart dạng badge màu xanh ở trên đầu -->
           <div style="margin-bottom:6px;">
@@ -10338,7 +10390,6 @@
                   </div>
                 ` : ''}
                 ${renderKniaProse(chart, conditions)}
-                <div class="chart-condition-table"><table><thead><tr><th>${t('chart_condition')}</th><th>${t('chart_assessment')}</th><th>${t('chart_probability')}</th><th>${t('chart_evidence')}</th></tr></thead><tbody>${conditionRows}</tbody></table></div>
               </section>
               <section>
                 <h4>${t('chart_roles')}</h4>
@@ -10363,6 +10414,7 @@
             };
           });
           details.querySelectorAll('[data-knia-condition]').forEach(tag => {
+            bindKniaConditionPreview(tag);
             tag.addEventListener('click', event => {
               event.stopPropagation();
               activateKniaCondition(tag.dataset.chartCode, tag.dataset.kniaCondition);
