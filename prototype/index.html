@@ -1084,16 +1084,21 @@
       gap: 6px;
       margin-left: 18px;
       margin-right: 0;
+      order: 3;
     }
 
     .header-nav .btn {
       padding: 5px 10px;
     }
-    .header-icon-btn { width:32px; height:30px; padding:0 !important; display:inline-flex; align-items:center; justify-content:center; }
+    .header-icon-btn { height:30px; padding:5px 10px !important; display:inline-flex; align-items:center; justify-content:center; gap:6px; }
     .header-icon-btn svg { width:16px; height:16px; }
 
-    .header-case-context { min-width:0; flex:1; margin-left:18px; color:#cfe7f2; font-size:12px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .header-case-context { min-width:0; flex:1; order:2; margin-left:18px; color:#cfe7f2; font-size:12px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .header-case-context small { color:#7f9bb1; font-weight:600; margin-left:6px; }
+    header.app-header > .brand { order:1; }
+    header.app-header > .lang-switcher-wrap { order:4; margin-left:14px; }
+    header.app-header > .header-user { order:5; margin-left:10px; }
+    @media (max-width:900px) { .header-nav { gap:3px; margin-left:8px; } .header-icon-btn { padding:4px 7px !important; font-size:11px; } .header-icon-btn svg { display:none; } }
 
     #SCR-CASE-DETAIL {
       --primary: #48cce9;
@@ -5960,19 +5965,15 @@
     <nav class="header-nav" aria-label="Điều hướng chính">
       <button class="btn btn-secondary btn-sm header-icon-btn" onclick="navigate('SCR-CASE-LIST')"
         data-tooltip="Danh sách vụ việc" aria-label="Danh sách vụ việc" title="Danh sách vụ việc">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 5h16M4 12h16M4 19h16"/><circle cx="7" cy="5" r="1" fill="currentColor"/><circle cx="7" cy="12" r="1" fill="currentColor"/><circle cx="7" cy="19" r="1" fill="currentColor"/></svg>
+        <span data-nav-label="case-list">Danh sách vụ việc</span>
       </button>
       <button class="btn btn-secondary btn-sm header-icon-btn" id="header-history-button" onclick="openHeaderHistory()"
         data-tooltip="Nhật ký hoạt động" aria-label="Nhật ký hoạt động" title="Nhật ký hoạt động">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/><path d="M4 4v4h4"/></svg>
+        <span data-nav-label="activity-log">Nhật ký hoạt động</span>
       </button>
       <a href="./analysis-rules-demo.html" class="btn btn-secondary btn-sm"
         data-tooltip="Quản lý quy tắc phân tích (Reviewer/TFT Demo)" aria-label="Quản lý quy tắc" title="Quản lý quy tắc phân tích (Reviewer/TFT Demo)" style="text-decoration:none; display:inline-flex; align-items:center; gap:4px; font-size:11.5px; padding:3px 9px; font-weight:700; color:#c084fc; border-color:#7e22ce; background:rgba(147,51,234,0.08); border-radius:6px;">
         🧠 Quy tắc AI
-      </a>
-      <a href="../domain-spec/index.html" class="btn btn-secondary btn-sm"
-        data-tooltip="Tài liệu nghiệp vụ &amp; Swimlane Flow" aria-label="Tài liệu nghiệp vụ" title="Tài liệu nghiệp vụ &amp; Swimlane Flow" style="text-decoration:none; display:inline-flex; align-items:center; gap:4px; font-size:11.5px; padding:3px 9px; font-weight:700; color:#38bdf8; border-color:#0369a1; background:rgba(14,165,233,0.08); border-radius:6px;">
-        📘 Spec
       </a>
     </nav>
     <div id="header-case-context" class="header-case-context" hidden></div>
@@ -7481,9 +7482,9 @@
         const bProduct = document.querySelector('.brand-product');
         if (bProduct) bProduct.textContent = t('brand_title');
         const navHist = document.getElementById('header-history-button');
-        if (navHist) { navHist.title = t('nav_activity_log'); navHist.setAttribute('aria-label', t('nav_activity_log')); }
+        if (navHist) { navHist.title = t('nav_activity_log'); navHist.setAttribute('aria-label', t('nav_activity_log')); navHist.querySelector('[data-nav-label="activity-log"]')?.replaceChildren(document.createTextNode(t('nav_activity_log'))); }
         const navListButton = document.querySelector('.header-nav button:first-child');
-        if (navListButton) { navListButton.title = t('nav_case_list'); navListButton.setAttribute('aria-label', t('nav_case_list')); }
+        if (navListButton) { navListButton.title = t('nav_case_list'); navListButton.setAttribute('aria-label', t('nav_case_list')); navListButton.querySelector('[data-nav-label="case-list"]')?.replaceChildren(document.createTextNode(t('nav_case_list'))); }
         const navRules = document.querySelector('.header-nav a[href*="analysis-rules-demo"]');
         if (navRules) { navRules.title = tr('Quản lý quy tắc phân tích', '분석 규칙 관리', 'Manage analysis rules'); navRules.setAttribute('aria-label', navRules.title); }
         const navSpec = document.querySelector('.header-nav a[href*="domain-spec"]');
