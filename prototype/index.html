@@ -2675,7 +2675,7 @@
 
     .version-compare {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 16px;
     }
 
@@ -10933,7 +10933,7 @@
       }
       const items = ensureNegoItems(c);
       if (!items.length) return;
-      items.forEach(item => { item.status = 'AGREED'; });
+      items.forEach(item => { item.status = 'EXCLUDED'; });
 
       STATE.negoGroupOpen = { 'us-situation': true, 'us-general': true, 'them-situation': true, 'them-general': true };
       STATE.negoItemExpanded = {};
@@ -11245,7 +11245,7 @@
         c.negoProgressStep = index + 1;
         if (index === 2) {
           c.negoProgressStatus = 'done';
-          ensureNegoItems(c).forEach(item => { item.status = 'AGREED'; });
+          ensureNegoItems(c).forEach(item => { item.status = 'EXCLUDED'; });
         }
         if (STATE.cases[STATE.currentCaseId] === c) {
           renderCaseDetail();
@@ -11342,6 +11342,7 @@
         <div class="nego4-cols">
           ${col('AGREED', tr('Đồng thuận','합의','Agreed'), tr('Được tính vào tỷ lệ hiện tại','현재 비율에 반영','Included in current ratio'))}
           ${col('EXCLUDED', tr('Không áp dụng','제외','Not applied'), tr('Không tính vào tỷ lệ','비율에 미반영','Excluded from ratio'))}
+          ${col('NEGOTIATING', tr('Đang thỏa thuận','협의 중','Negotiating'), tr('Đang chờ thống nhất','합의 대기','Waiting for agreement'))}
         </div>
                 <div class="nego4-foot-actions" style="margin-top:20px; display:flex; justify-content:center; align-items:center; gap:12px; padding:14px; background:rgba(15,23,42,0.6); border-radius:8px; border:1px solid #1e334a; flex-wrap:wrap;">
           <button type="button" class="btn btn-primary" onclick="goToNotification()"
