@@ -6021,6 +6021,7 @@
         data-tooltip="Quản lý quy tắc phân tích (Reviewer/TFT Demo)" aria-label="Quản lý quy tắc" title="Quản lý quy tắc phân tích (Reviewer/TFT Demo)" style="text-decoration:none; display:inline-flex; align-items:center; gap:4px; font-size:11.5px; padding:3px 9px; font-weight:700; color:#c084fc; border-color:#7e22ce; background:rgba(147,51,234,0.08); border-radius:6px;">
         🧠 Quy tắc AI
       </a>
+      <a href="../domain-spec/index.html" class="btn btn-secondary btn-sm" title="Flow nghiệp vụ" aria-label="Flow nghiệp vụ">Flow nghiệp vụ</a>
     </nav>
     <div id="header-case-context" class="header-case-context" hidden></div>
     <div class="lang-switcher-wrap" role="group" aria-label="Language Selector">
@@ -7534,7 +7535,7 @@
         const navRules = document.querySelector('.header-nav a[href*="analysis-rules-demo"]');
         if (navRules) { navRules.title = tr('Quản lý quy tắc phân tích', '분석 규칙 관리', 'Manage analysis rules'); navRules.setAttribute('aria-label', navRules.title); navRules.textContent = `🧠 ${tr('Quy tắc AI', 'AI 규칙', 'AI rules')}`; }
         const navSpec = document.querySelector('.header-nav a[href*="domain-spec"]');
-        if (navSpec) { navSpec.title = tr('Tài liệu nghiệp vụ', '업무 문서', 'Business documentation'); navSpec.setAttribute('aria-label', navSpec.title); }
+        if (navSpec) { navSpec.textContent = tr('Flow nghiệp vụ', '업무 흐름', 'Business flow'); navSpec.title = navSpec.textContent; navSpec.setAttribute('aria-label', navSpec.title); }
         const refresh = document.querySelector('#SCR-CASE-LIST button[onclick="renderCaseTable()"]');
         if (refresh) { refresh.setAttribute('aria-label', tr('Làm mới danh sách vụ việc', '사건 목록 새로고침', 'Refresh case list')); refresh.title = refresh.getAttribute('aria-label'); refresh.textContent = tr('↻ Làm mới', '↻ 새로고침', '↻ Refresh'); }
         const userSpan = document.getElementById('header-user-name');
